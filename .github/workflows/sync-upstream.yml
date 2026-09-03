@@ -1,0 +1,119 @@
+name: 'sync-upstream'
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 21 * * *'  # daily 21:30 UTC (05:30 Beijing)
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    # Requires the default branch to be zh-cn (scheduled workflows only run
+    # from the default branch).
+    permissions:
+      contents: write
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+      with:
+        ref: zh-cn
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Configure git
+      run: |
+        git config user.name "Vex9th"
+        git config user.email "Vex9th@users.noreply.github.com"
+        git remote add upstream https://github.com/winsiderss/systeminformer.git
+        git fetch upstream master
+
+    - name: Check for upstream changes
+      id: changes
+      run: |
+        COUNT=$(git rev-list --count HEAD..upstream/master)
+        echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+        echo "upstream commits ahead: $COUNT"
+
+    - name: Merge upstream/master
+      if: steps.changes.outputs.count != '0'
+      run: |
+        git merge upstream/master --no-edit || {
+          echo "::error::merge conflict with upstream; manual resolution required"
+          echo "conflicted files:"
+          git diff --name-only --diff-filter=U
+          exit 1
+        }
+
+    - name: Audit, translate and regenerate
+      if: steps.changes.outputs.count != '0'
+      env:
+        LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        LLM_MODEL: ${{ vars.LLM_MODEL }}
+        LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+      run: |
+        python3 tools/zhcn/audit.py
+        # no-op without the LLM_API_KEY secret; new strings stay English
+        python3 tools/zhcn/auto_translate.py || true
+        python3 tools/zhcn/check_translation.py || true
+        python3 tools/zhcn/generate_translation.py
+
+    - name: Coverage gate
+      if: steps.changes.outputs.count != '0'
+      id: coverage
+      run: |
+        COVERAGE=$(grep -oP '(?<=总覆盖率：\*\*)[0-9.]+(?=%\*\*)' tools/zhcn/coverage-report.md | head -1)
+        echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
+        echo "effective coverage: $COVERAGE%"
+
+    - name: Commit and push sync
+      if: steps.changes.outputs.count != '0'
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        git add -A
+        if git diff --cached --quiet; then
+          echo "merge produced no changes"
+          exit 0
+        fi
+        RANGE="$(git rev-parse --short upstream/master~${{ steps.changes.outputs.count }})..$(git rev-parse --short upstream/master)"
+        git commit -m "chore(sync): 合并上游 master ($RANGE)"
+        git push origin zh-cn
+
+    - name: Tag release build
+      if: steps.changes.outputs.count != '0' && steps.coverage.outputs.coverage >= 99
+      run: |
+        BASE="v3.2.$(date -u +%y%j)"
+        N=1
+        while git rev-parse "${BASE}-zh-cn.${N}" >/dev/null 2>&1; do
+          N=$((N+1))
+        done
+        TAG="${BASE}-zh-cn.${N}"
+        git tag "$TAG"
+        git push origin "$TAG"
+        echo "tagged $TAG (the zh-cn-build workflow builds and publishes the release)"
+
+    - name: Open issue for untranslated strings
+      if: steps.changes.outputs.count != '0' && steps.coverage.outputs.coverage < 99
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        {
+          echo "上游合并后翻译覆盖率降至 ${{ steps.coverage.outputs.coverage }}%（阈值 99%），已推送合并但未自动发布。"
+          echo
+          echo '```
+          '"$(grep -A 40 '## 未翻译字符串' tools/zhcn/coverage-report.md | head -40)"'
+          ```'
+          echo
+          echo "补翻 tools/zhcn/zh-CN.json 后运行 tools/zhcn 流程并打 tag 即可发布。"
+        } > issue-body.md
+        gh issue create --repo "$GITHUB_REPOSITORY" \
+          --title "上游同步：新增字符串待翻译（覆盖率 ${{ steps.coverage.outputs.coverage }}%）" \
+          --body-file issue-body.md || true
