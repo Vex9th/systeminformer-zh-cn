@@ -226,14 +226,16 @@ PVOID PhTranslateDialogTemplateCopy(
     changed = FALSE;
 
     cursor = (PBYTE)Template;
-    extended = *(PUSHORT)cursor == USHRT_MAX;
+
+    // DLGTEMPLATEEX as emitted by rc.exe: version(2) signature(2) helpID(4)
+    // exStyle(4) style(4) cdit(2) x(2) y(2) cx(2) cy(2); the signature word
+    // (0xFFFF) is at offset 2, and there is no cDlgPages field.
+    extended = ((PUSHORT)cursor)[1] == USHRT_MAX;
 
     if (extended)
     {
-        // DLGTEMPLATEEX: signature(2) version(2) helpID(4) exStyle(4)
-        // style(4) cDlgPages(2) cdit(2) x(2) y(2) cx(2) cy(2)
-        itemCount = *(PUSHORT)(cursor + 18);
-        headerSize = 28;
+        itemCount = *(PUSHORT)(cursor + 16);
+        headerSize = 26;
     }
     else
     {
@@ -254,17 +256,38 @@ PVOID PhTranslateDialogTemplateCopy(
     {
         if (extended)
         {
-            // pointsize(2) weight(2) italic(1) charset(1) typeface(string)
-            PhTlpWrite(&writer, (PVOID)cursor, 6);
+            // pointsize(2) weight(2) italic(1) charset(1) typeface(string);
+            // substitute the Windows zh-CN standard UI font so Chinese text
+            // renders crisp instead of falling back from MS Shell Dlg 8pt.
+            USHORT pointSize = *(PUSHORT)cursor;
+            USHORT weight = *(PUSHORT)(cursor + 2);
+
+            if (pointSize < 9)
+                pointSize = 9;
+
+            PhTlpWriteWord(&writer, pointSize);
+            PhTlpWriteWord(&writer, weight);
+            PhTlpWrite(&writer, (PVOID)(cursor + 4), 2); // italic + charset
             cursor += 6;
         }
         else
         {
-            PhTlpWrite(&writer, (PVOID)cursor, 2);
+            USHORT pointSize = *(PUSHORT)cursor;
+
+            if (pointSize < 9)
+                pointSize = 9;
+
+            PhTlpWriteWord(&writer, pointSize);
             cursor += 2;
         }
 
-        PhTlpCopyTemplateString(&writer, &cursor);
+        // skip the original typeface (wide characters)
+        while (*(PUSHORT)cursor != 0)
+            cursor += sizeof(WCHAR);
+        cursor += sizeof(WCHAR);
+        PhTlpWrite(&writer, (PVOID)L"Microsoft YaHei UI", 20);
+        PhTlpWriteWord(&writer, 0);
+        changed = TRUE;
     }
 
     PhTlpPadToDword(&writer);

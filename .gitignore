@@ -172,3 +172,4 @@ build-*/
 tools/zhcn/manifest.json
 tools/zhcn/coverage-report.md
 tools/zhcn/batches/
+tools/zhcn/__pycache__/

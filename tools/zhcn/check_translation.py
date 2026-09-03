@@ -30,6 +30,25 @@ REPO_ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 
 FORMAT_SPEC_RE = re.compile(r"%(?:%|[0-9]*(?:\.[0-9]+)?(?:I64|ll|l|L|h|hh|w|I)?[a-zA-Z])")
 
+# Strings intentionally kept in English: per-CPU graph labels, key names,
+# technical acronyms, designer placeholders, product/service names and noise
+# fragments. These are excluded from the effective coverage figure and listed
+# separately in the report so the exclusion stays transparent.
+KEEP_ENGLISH_RULES = [
+    r"CPU \d+",
+    r"^(Alt|Ctrl|Shift|CPU|I/O|WMI|NTVDM|ANSI|Unicode|DPI|Ping|PCR|PID|SID|SDDL|MVID|TTL|ASLR|CET|DEP|TID|PnP|DRAM|FPS|GPU|NPU|RAPL|SMART|SMBIOS)$",
+    r"^(PID|TID|MVID|TTL) \(LXSS\)$",
+    r"^(Dialog|Static|\(Repurposed\)|<a href=.*|<section placeholder>)$",
+    r"^System Informer$",
+    r"^(, D |, U |0 ms\.\.\.)$",
+    r"^-debug\n$",
+    r"^(Hybrid-Analysis|VirusTotal|Worker Factory|PingGraphLayout)$",
+]
+
+
+def is_keep_english(s: str) -> bool:
+    return any(re.fullmatch(k, s) for k in KEEP_ENGLISH_RULES)
+
 
 def format_specs(s: str):
     """Return the multiset (sorted list) of printf format specifiers.
@@ -117,6 +136,7 @@ def main():
     per_mod = defaultdict(lambda: [0, 0])   # module    -> [translated, total]
 
     manifest_keys = set()
+    keep_english = []
     for entry in manifest["unique_strings"]:
         en = entry["english"]
         manifest_keys.add(en)
@@ -127,6 +147,9 @@ def main():
                 module = f"plugins/{sub}"
         zh = strings.get(en)
         translated = zh is not None and zh != en
+        if not translated and is_keep_english(en):
+            keep_english.append(entry)
+            continue
         per_cat[entry["category"]][1] += 1
         per_mod[module][1] += 1
         if translated:
@@ -152,13 +175,15 @@ def main():
     total_t = sum(v[0] for v in per_cat.values())
     total_a = sum(v[1] for v in per_cat.values())
     overall = 100.0 * total_t / total_a if total_a else 0.0
+    untranslated = [e for e in untranslated if not is_keep_english(e["english"])]
 
     lines = []
     lines.append("# 翻译覆盖率报告 / Translation Coverage Report")
     lines.append("")
-    lines.append(f"- 清单唯一字符串：{total_a}")
+    lines.append(f"- 清单唯一字符串（不含约定保留英文项）：{total_a}")
     lines.append(f"- 已翻译：{total_t}")
-    lines.append(f"- 总覆盖率：**{overall:.1f}%**")
+    lines.append(f"- 有效覆盖率：**{overall:.1f}%**")
+    lines.append(f"- 约定保留英文（技术缩写/键名/占位符等）：{len(keep_english)} 项")
     lines.append("")
     lines.append("## 按类别 / By category")
     lines.append("")
@@ -176,6 +201,13 @@ def main():
         t, a = per_mod[mod]
         lines.append(f"| {mod} | {t} | {a} | {100.0 * t / a:.1f}% |")
     lines.append("")
+    if keep_english:
+        lines.append("## 约定保留英文 / Kept in English by design")
+        lines.append("")
+        for e in keep_english[:80]:
+            lines.append(f"- `{e['english']}` ({e['category']})")
+        lines.append("")
+
     if untranslated:
         lines.append("## 未翻译字符串 / Untranslated")
         lines.append("")
@@ -199,7 +231,8 @@ def main():
     with open(args.report, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    print(f"coverage: {total_t}/{total_a} = {overall:.1f}%")
+    print(f"effective coverage: {total_t}/{total_a} = {overall:.1f}% "
+          f"(kept-english: {len(keep_english)})")
     print(f"untranslated: {len(untranslated)}, unused keys: {len(unused)}, "
           f"placeholder errors: {len(errors)}")
     print(f"report written to {args.report}")

@@ -1,6 +1,13 @@
-# System Informer 简体中文社区版
+# System Informer 简体中文社区版（sys_info）
 
-[![zh-ci](https://github.com/Vex9th/systeminformer/actions/workflows/zh-cn-build.yml/badge.svg?branch=zh-cn)](https://github.com/Vex9th/systeminformer/actions/workflows/zh-cn-build.yml)
+<!--
+搜索关键词 / Search keywords:
+systeminformer 中文 汉化 中文版 简体中文 zh-CN Chinese Simplified 汉化版
+process hacker 中文 processhacker 汉化 任务管理器 增强版 系统监控 进程管理器
+sys_info system monitor task manager alternative process viewer 中文版下载
+-->
+
+[![zh-ci](https://github.com/Vex9th/systeminformer-zh-cn/actions/workflows/zh-cn-build.yml/badge.svg?branch=zh-cn)](https://github.com/Vex9th/systeminformer-zh-cn/actions/workflows/zh-cn-build.yml)
 
 > **本项目是非官方社区 Fork，与 System Informer 官方团队及任何游戏、发行商或反作弊厂商无隶属关系。**
 
@@ -32,7 +39,7 @@
 
 ## 下载与校验
 
-1. 到 [Releases](https://github.com/Vex9th/systeminformer/releases) 下载 `systeminformer-v*-zh-cn*-portable.zip`（便携版，解压即用）
+1. 到 [Releases](https://github.com/Vex9th/systeminformer-zh-cn/releases) 下载 `systeminformer-v*-zh-cn*-portable.zip`（便携版，解压即用）
 2. 校验 SHA-256（每个 Release 附有 `SHA256SUMS.txt`，摘要同时写在发布说明中）：
 
    ```powershell
