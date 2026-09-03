@@ -1,0 +1,9 @@
+{
+  "_meta": {
+    "language": "zh-CN",
+    "fallback": "en",
+    "note": "English source string -> Simplified Chinese translation. See glossary.md for terminology."
+  },
+  "strings": {
+  }
+}

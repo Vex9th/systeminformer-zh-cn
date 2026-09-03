@@ -167,3 +167,7 @@ build-*/
 !KSystemInformer/bin-signed/*/systeminformer.pdb
 !tools/CustomSignTool/bin/Release*/CustomSignTool.exe
 !tools/fixlib/bin/Release/fixlib.exe
+
+# zh-cn community edition generated files
+tools/zhcn/manifest.json
+tools/zhcn/coverage-report.md
