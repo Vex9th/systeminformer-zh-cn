@@ -153,6 +153,7 @@ namespace CustomBuildTool
             "phnativeinl.h",
             "phnet.h",
             "phsup.h",
+            "phtranslation.h",
             "phutil.h",
             "provider.h",
             "queuedlock.h",
