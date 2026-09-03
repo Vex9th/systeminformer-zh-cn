@@ -99,6 +99,11 @@ jobs:
         )
         & $msbuild @common 'SystemInformer.sln'
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        Write-Host "sdk\include\Release64\phdk.h present after exe build: $(Test-Path 'sdk\include\Release64\phdk.h')"
+        # Populate sdk\include\Release64 for the plugin builds. This mirrors
+        # the SystemInformer.vcxproj post-build event and is idempotent.
+        cmd /c "build\build_zdriver_sdk.cmd bin\Release64\SystemInformer.exe -Release -x64"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         & $msbuild @common 'plugins\Plugins.sln'
         exit $LASTEXITCODE
 
