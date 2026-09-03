@@ -192,6 +192,8 @@ CALL_SPECS = {
     "PhShowMessageOneTime": {3: "c_msgbox", 4: "c_msgbox"},
     "PhShowMessageOneTime2": {3: "c_msgbox", 4: "c_msgbox"},
     "PhShowConfirmMessage": {1: "c_confirm", 2: "c_confirm", 3: "c_confirm"},
+    "PhAddListViewItem": {2: "c_listview_item"},
+    "PhAddIListViewItem": {2: "c_listview_item"},
     "PhNfShowBalloonTip": {0: "c_balloon", 1: "c_balloon"},
     "PhNfShowBalloonTipEx": {0: "c_balloon", 1: "c_balloon"},
 }
@@ -298,6 +300,25 @@ def scan_statusbar(path: str, entries):
 TABNEW_INSERT_RE = re.compile(
     r"PhTabNew_InsertItem\s*\([^;]*?\)", re.S)
 TCITEM_TEXT_RE = re.compile(r"pszText\s*=\s*(?:\(PWSTR\)\s*)?(L\"(?:[^\"\\]|\\.)*\")")
+
+
+TRANSLATED_CALL_RE = re.compile(r'PhTranslateString\s*\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
+
+
+def scan_translated_calls(path: str, entries):
+    """Strings routed through PhTranslateString at hand-patched call sites
+    (e.g. ToolStatus toolbar button text)."""
+    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    with open(path, "r", encoding="utf-8", errors="replace") as f:
+        text = f.read()
+    for m in TRANSLATED_CALL_RE.finditer(text):
+        t = literal_text(m.group(1))
+        if is_noise(t):
+            continue
+        entries.append({
+            "category": "c_toolbar", "file": rel,
+            "line": line_of_offset(text, m.start()), "english": t,
+        })
 
 
 def scan_tabnew(path: str, entries):
@@ -436,6 +457,11 @@ def main():
             continue
         if rel == "plugins/ToolStatus/statusbar.c":
             scan_statusbar(path, entries)
+        if rel == "plugins/ToolStatus/toolbar.c":
+            scan_translated_calls(path, entries)
+        if rel == "plugins/ToolStatus/statusbar.c":
+            scan_c_file(path, entries)
+            scan_tabnew(path, entries)
             continue
         scan_c_file(path, entries)
         scan_tabnew(path, entries)
