@@ -69,7 +69,7 @@ jobs:
       if: steps.changes.outputs.count != '0'
       id: coverage
       run: |
-        COVERAGE=$(grep -oP '(?<=总覆盖率：\*\*)[0-9.]+(?=%\*\*)' tools/zhcn/coverage-report.md | head -1)
+        COVERAGE=$(grep -oP '(?<=有效覆盖率：\*\*)[0-9.]+(?=%\*\*)' tools/zhcn/coverage-report.md | head -1)
         echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
         echo "effective coverage: $COVERAGE%"
 

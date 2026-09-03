@@ -282,7 +282,7 @@ jobs:
       run: |
         $hash = (Get-FileHash -Algorithm SHA256 ".\$env:ZIP_NAME").Hash
         "$hash  $env:ZIP_NAME" | Out-File -FilePath .\SHA256SUMS.txt -Encoding ascii
-        $coverage = (Select-String -Path tools\zhcn\coverage-report.md -Pattern '总覆盖率：\*\*([0-9.]+)%\*\*').Matches.Groups[1].Value
+        $coverage = (Select-String -Path tools\zhcn\coverage-report.md -Pattern '有效覆盖率：\*\*([0-9.]+)%\*\*').Matches.Groups[1].Value
         @("ZIP_NAME=$env:ZIP_NAME", "SHA256=$hash", "COVERAGE=$coverage") |
           Out-File -FilePath .\release-meta.txt -Encoding utf8
         Copy-Item tools\zhcn\coverage-report.md .\coverage-report.md
