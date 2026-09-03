@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1885] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1886] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -612,6 +612,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1885] =
     { L"Find window", L"查找窗口", },
     { L"Find window and kill", L"查找窗口并终止", },
     { L"Find window and thread", L"查找窗口和线程", },
+    { L"Firewall", L"防火墙", },
     { L"Firmware Table", L"固件表", },
     { L"First failure:", L"第一次失败：", },
     { L"Flags", L"标志", },

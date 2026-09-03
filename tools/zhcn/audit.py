@@ -304,6 +304,24 @@ TCITEM_TEXT_RE = re.compile(r"pszText\s*=\s*(?:\(PWSTR\)\s*)?(L\"(?:[^\"\\]|\\.)
 
 TRANSLATED_CALL_RE = re.compile(r'PhTranslateString\s*\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
 
+PAGE_NAME_RE = re.compile(r'(\w*PageText\w*)\s*=\s*PH_STRINGREF_INIT\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
+
+
+def scan_page_names(path: str, entries):
+    """Main tab page labels (PH_STRINGREF constants handed to
+    PhMwpCreatePage), translated at runtime by the TabNew hook."""
+    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    with open(path, "r", encoding="utf-8", errors="replace") as f:
+        text = f.read()
+    for m in PAGE_NAME_RE.finditer(text):
+        t = literal_text(m.group(2))
+        if is_noise(t):
+            continue
+        entries.append({
+            "category": "c_tab", "file": rel,
+            "line": line_of_offset(text, m.start()), "english": t,
+        })
+
 
 def scan_translated_calls(path: str, entries):
     """Strings routed through PhTranslateString at hand-patched call sites
@@ -465,6 +483,7 @@ def main():
             continue
         scan_c_file(path, entries)
         scan_tabnew(path, entries)
+        scan_page_names(path, entries)
 
     # Deduplicate identical (category, english) pairs while keeping locations.
     merged = defaultdict(lambda: {"category": None, "english": None, "locations": []})
