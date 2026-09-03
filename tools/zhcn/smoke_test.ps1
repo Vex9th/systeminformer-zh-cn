@@ -29,12 +29,12 @@ function Get-ProcessWindows([int]$Id) {
         if ($pid2 -eq $Id -and [Native.Win]::IsWindowVisible($hWnd)) {
             $sb = New-Object System.Text.StringBuilder 512
             [Native.Win]::GetWindowText($hWnd, $sb, 512) | Out-Null
-            if ($sb.Length -gt 0) { [void]$list.Add(@{ Handle = $hWnd; Title = $sb.ToString() }) }
+            [void]$list.Add(@{ Handle = $hWnd; Title = $sb.ToString() })
         }
         return $true
     }
     [Native.Win]::EnumWindows($cb, [IntPtr]::Zero) | Out-Null
-    return $list
+    return ,$list
 }
 
 function HasChinese([string]$s) {
@@ -46,50 +46,61 @@ $workDir = Split-Path $ExePath
 Write-Host "launching: $ExePath"
 $p = Start-Process -FilePath $ExePath -WorkingDirectory $workDir -PassThru
 $failed = $false
+$mainWindow = $null
 
 try {
-    Start-Sleep -Seconds 20
-    if ($p.HasExited) { throw "process exited during startup (code $($p.ExitCode))" }
-    $p.Refresh()
-
-    # 1. main window title must contain sys_info
-    if ($p.MainWindowTitle -notmatch 'sys_info') {
-        Write-Host "::error::main window title is '$($p.MainWindowTitle)', expected sys_info"
-        $failed = $true
-    } else {
-        Write-Host "PASS main title: $($p.MainWindowTitle)"
-    }
-
-    # 2. main menu must contain Chinese entries
-    $hWnd = $p.MainWindowHandle
-    $hMenu = [Native.Win]::GetMenu($hWnd)
-    $menuText = ''
-    if ($hMenu -ne [IntPtr]::Zero) {
-        $count = [Native.Win]::GetMenuItemCount($hMenu)
-        for ($i = 0; $i -lt $count; $i++) {
-            $sb = New-Object System.Text.StringBuilder 256
-            [Native.Win]::GetMenuString($hMenu, $i, $sb, 256, 0x400) | Out-Null  # MF_BYPOSITION
-            $menuText += $sb.ToString() + ' '
+    # wait up to 90s for the main window (title contains sys_info)
+    $deadline = (Get-Date).AddSeconds(90)
+    while ((Get-Date) -lt $deadline) {
+        if ($p.HasExited) { throw "process exited during startup (code $($p.ExitCode))" }
+        $windows = Get-ProcessWindows($p.Id)
+        $titled = @($windows | Where-Object { $_.Title.Length -gt 0 })
+        Write-Host ("visible windows: {0}, titled: {1}" -f $windows.Count, $titled.Count)
+        if ($titled.Count -gt 0) {
+            Write-Host ("titles: " + (($titled | ForEach-Object { $_.Title }) -join ' | '))
         }
-    }
-    if (-not (HasChinese $menuText)) {
-        Write-Host "::error::main menu has no Chinese text: '$menuText'"
-        $failed = $true
-    } else {
-        Write-Host "PASS main menu: $menuText"
+        $mainWindow = $titled | Where-Object { $_.Title -match 'sys_info' } | Select-Object -First 1
+        if ($mainWindow) { break }
+        Start-Sleep -Seconds 5
     }
 
-    # 3. open the Options dialog (ID_HACKER_OPTIONS = 10083) and verify Chinese
-    [Native.Win]::PostMessage($hWnd, 0x0111, [IntPtr]10083, [IntPtr]::Zero) | Out-Null  # WM_COMMAND
-    Start-Sleep -Seconds 8
-    $windows = Get-ProcessWindows($p.Id)
-    $optionsWin = $windows | Where-Object { $_.Title -match '设置|选项' } | Select-Object -First 1
-    if (-not $optionsWin) {
-        $titles = ($windows | ForEach-Object { $_.Title }) -join ' | '
-        Write-Host "::error::options dialog not found or caption not Chinese; titles: $titles"
+    if (-not $mainWindow) {
+        Write-Host "::error::main window (title containing sys_info) not found within 90s"
         $failed = $true
     } else {
-        Write-Host "PASS options caption: $($optionsWin.Title)"
+        Write-Host "PASS main title: $($mainWindow.Title)"
+        $hWnd = $mainWindow.Handle
+
+        # main menu must contain Chinese entries
+        $hMenu = [Native.Win]::GetMenu($hWnd)
+        $menuText = ''
+        if ($hMenu -ne [IntPtr]::Zero) {
+            $count = [Native.Win]::GetMenuItemCount($hMenu)
+            for ($i = 0; $i -lt $count; $i++) {
+                $sb = New-Object System.Text.StringBuilder 256
+                [Native.Win]::GetMenuString($hMenu, $i, $sb, 256, 0x400) | Out-Null  # MF_BYPOSITION
+                $menuText += $sb.ToString() + ' '
+            }
+        }
+        if (-not (HasChinese $menuText)) {
+            Write-Host "::error::main menu has no Chinese text: '$menuText'"
+            $failed = $true
+        } else {
+            Write-Host "PASS main menu: $menuText"
+        }
+
+        # open the Options dialog (ID_HACKER_OPTIONS = 10083) and verify Chinese caption
+        [Native.Win]::PostMessage($hWnd, 0x0111, [IntPtr]10083, [IntPtr]::Zero) | Out-Null  # WM_COMMAND
+        Start-Sleep -Seconds 10
+        $windows = Get-ProcessWindows($p.Id)
+        $optionsWin = $windows | Where-Object { $_.Title -match '设置|选项' } | Select-Object -First 1
+        if (-not $optionsWin) {
+            $titles = (@($windows) | ForEach-Object { $_.Title }) -join ' | '
+            Write-Host "::error::options dialog not found or caption not Chinese; titles: $titles"
+            $failed = $true
+        } else {
+            Write-Host "PASS options caption: $($optionsWin.Title)"
+        }
     }
 
     if ($failed) { exit 1 }
