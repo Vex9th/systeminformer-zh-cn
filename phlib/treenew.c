@@ -2666,7 +2666,7 @@ LRESULT PhTnpOnUserMessage(
 
             if (translatedText != text->Buffer)
             {
-                Context->EmptyText.Buffer = translatedText;
+                Context->EmptyText.Buffer = (PWSTR)translatedText;
                 Context->EmptyText.Length = (ULONG)(wcslen(translatedText) * sizeof(WCHAR));
             }
             else
