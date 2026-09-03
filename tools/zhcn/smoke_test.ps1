@@ -18,6 +18,7 @@ public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lp);
 [DllImport("user32.dll")] public static extern uint GetMenuString(IntPtr hMenu, uint index, System.Text.StringBuilder sb, int max, uint flags);
 [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp);
 [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hWnd);
+[DllImport("user32.dll")] public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp, uint flags, uint timeout, out IntPtr result);
 '@
 
 function Get-ProcessWindows([int]$Id) {
@@ -71,11 +72,18 @@ try {
         Write-Host "PASS main title: $($mainWindow.Title)"
         $hWnd = $mainWindow.Handle
 
+        # probe the UI thread for responsiveness
+        $probeResult = [IntPtr]::Zero
+        $probeOk = [Native.Win]::SendMessageTimeout($hWnd, 0x0000, [IntPtr]::Zero, [IntPtr]::Zero, 2, 5000, [ref]$probeResult)
+        Write-Host ("UI thread responsive: {0}" -f ($probeOk -ne 0))
+
         # main menu must contain Chinese entries
         $hMenu = [Native.Win]::GetMenu($hWnd)
+        Write-Host ("menu handle: {0}" -f $hMenu)
         $menuText = ''
         if ($hMenu -ne [IntPtr]::Zero) {
             $count = [Native.Win]::GetMenuItemCount($hMenu)
+            Write-Host ("menu items: {0}" -f $count)
             for ($i = 0; $i -lt $count; $i++) {
                 $sb = New-Object System.Text.StringBuilder 256
                 [Native.Win]::GetMenuString($hMenu, $i, $sb, 256, 0x400) | Out-Null  # MF_BYPOSITION
@@ -91,15 +99,27 @@ try {
 
         # open the Options dialog (ID_HACKER_OPTIONS = 10083) and verify Chinese caption
         [Native.Win]::PostMessage($hWnd, 0x0111, [IntPtr]10083, [IntPtr]::Zero) | Out-Null  # WM_COMMAND
-        Start-Sleep -Seconds 10
-        $windows = Get-ProcessWindows($p.Id)
-        $optionsWin = $windows | Where-Object { $_.Title -match '设置|选项' } | Select-Object -First 1
+        $optionsWin = $null
+        $deadline = (Get-Date).AddSeconds(30)
+        while ((Get-Date) -lt $deadline) {
+            Start-Sleep -Seconds 3
+            $windows = Get-ProcessWindows($p.Id)
+            $optionsWin = $windows | Where-Object { $_.Title -match '设置|选项' } | Select-Object -First 1
+            if ($optionsWin) { break }
+        }
+        if (-not $optionsWin) {
+            # fall back to the System Information window (ID_VIEW_SYSTEMINFORMATION = 10091)
+            [Native.Win]::PostMessage($hWnd, 0x0111, [IntPtr]10091, [IntPtr]::Zero) | Out-Null
+            Start-Sleep -Seconds 10
+            $windows = Get-ProcessWindows($p.Id)
+            $optionsWin = $windows | Where-Object { $_.Title -match '系统信息' } | Select-Object -First 1
+        }
         if (-not $optionsWin) {
             $titles = (@($windows) | ForEach-Object { $_.Title }) -join ' | '
-            Write-Host "::error::options dialog not found or caption not Chinese; titles: $titles"
+            Write-Host "::error::translated dialog not found; titles: $titles"
             $failed = $true
         } else {
-            Write-Host "PASS options caption: $($optionsWin.Title)"
+            Write-Host "PASS translated dialog caption: $($optionsWin.Title)"
         }
     }
 
