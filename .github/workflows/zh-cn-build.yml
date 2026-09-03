@@ -5,13 +5,27 @@ on:
   push:
     branches: ['zh-cn']
     tags: ['v*-zh-cn*']
+    paths-ignore:
+      - '**.md'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.vscode/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   BUILD_MAJORVERSION: '3'
   BUILD_MINORVERSION: '2'
 
 jobs:
-  build:
+  # Branch pushes and manual runs: fast compile verification of the user-mode
+  # x64 build only, mirroring the msbuild invocation CustomBuildTool generates
+  # (same /graph All matrix targets and properties, narrowed to x64). The full
+  # official build_release.cmd pipeline runs only for release tags.
+  build-ci:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     permissions:
       contents: read
     runs-on: 'windows-2025-vs2026'
@@ -28,6 +42,130 @@ jobs:
       run: Remove-Item -Recurse -Force .\KSystemInformer\bin-signed
 
     - name: NuGet Cache
+      id: nuget-cache
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
+      with:
+        path: |
+          packages
+          ~\.nuget\packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/packages.config', '**/*.csproj', '**/Directory.Packages.props', '**/packages.lock.json', '**/NuGet.Config', '**/global.json') }}
+        restore-keys: nuget-${{ runner.os }}-
+
+    - name: Nuget Restore
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: nuget restore .\packages.config -PackagesDirectory .\packages\
+
+    - name: BuildTools Cache
+      id: custombuildtool-cache
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
+      with:
+        path: tools/CustomBuildTool/bin/Release/**
+        key: custombuildtool-${{ runner.os }}-${{ hashFiles('tools/CustomBuildTool/**', '!tools/CustomBuildTool/bin/**') }}
+        restore-keys: custombuildtool-${{ runner.os }}-
+
+    - name: BuildThirdParty Cache
+      id: thirdparty-cache
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
+      with:
+        path: tools/thirdparty/**
+        key: thirdparty-${{ runner.os }}-${{ hashFiles('tools/thirdparty/**', '!tools/thirdparty/bin/**') }}
+        restore-keys: thirdparty-${{ runner.os }}-
+
+    - name: Build Tools
+      if: steps.custombuildtool-cache.outputs.cache-hit != 'true' || steps.thirdparty-cache.outputs.cache-hit != 'true'
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\build_init.cmd
+
+    - name: Build user-mode x64 (CI verification)
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+          -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe |
+          Select-Object -First 1
+        if (-not $msbuild) { Write-Error "::error::MSBuild.exe not found via vswhere"; exit 1 }
+        Write-Host "MSBuild: $msbuild"
+        # Same matrix invocation CustomBuildTool generates (Build.cs
+        # MsbuildParallelCommandString), narrowed to x64 Release.
+        $common = @(
+          '/m', '/graph', '/t:All', '/nologo', '/nodereuse:false', '/verbosity:minimal',
+          '/p:RestoreUseStaticGraphEvaluation=true',
+          '/p:CopyRetryCount=10', '/p:CopyRetryDelayMilliseconds=200',
+          '/p:Platform=x64', '/p:Configuration=Release',
+          '/p:TargetPlatforms=x64', '/p:TargetConfigurations=Release',
+          '/p:ExternalPreprocessorOptions=PH_BUILD_API'
+        )
+        & $msbuild @common 'SystemInformer.sln'
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        & $msbuild @common 'plugins\Plugins.sln'
+        exit $LASTEXITCODE
+
+    - name: Setup Python
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      with:
+        python-version: '3.x'
+
+    - name: zh-cn string audit and coverage check
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        python tools\zhcn\audit.py
+        python tools\zhcn\check_translation.py
+        python tools\zhcn\generate_translation.py --check
+
+    - name: Assert driverless output (no .sys / .inf)
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        $forbidden = Get-ChildItem -Path .\bin -Recurse -File -ErrorAction SilentlyContinue |
+          Where-Object { $_.Extension -in '.sys', '.inf' }
+        if ($forbidden) {
+          $forbidden | ForEach-Object { Write-Host "FORBIDDEN: $($_.FullName)" }
+          Write-Host "::error::driver files (.sys/.inf) found in build output"
+          exit 1
+        }
+        Write-Host "OK: no .sys or .inf files under bin\"
+
+    - name: Cache report
+      if: always()
+      shell: pwsh
+      run: |
+        $summary = @"
+        ## zh-cn CI build summary
+
+        | cache | hit |
+        |---|---|
+        | NuGet | ${{ steps.nuget-cache.outputs.cache-hit }} |
+        | CustomBuildTool | ${{ steps.custombuildtool-cache.outputs.cache-hit }} |
+        | ThirdParty | ${{ steps.thirdparty-cache.outputs.cache-hit }} |
+
+        build_init.cmd executed: ${{ steps.custombuildtool-cache.outputs.cache-hit != 'true' || steps.thirdparty-cache.outputs.cache-hit != 'true' }}
+        "@
+        Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $summary
+
+  # Release tags: full official user-mode pipeline (build_init + build_release)
+  # with no driver jobs, then package the portable zip.
+  build-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+    runs-on: 'windows-2025-vs2026'
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+
+    # Upstream commits pre-signed test driver binaries under
+    # KSystemInformer\bin-signed; the SDK post-build step would copy them into
+    # the user-mode output. Remove them so this build stays driverless.
+    - name: Remove committed driver binaries (driverless build)
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: Remove-Item -Recurse -Force .\KSystemInformer\bin-signed
+
+    - name: NuGet Cache
+      id: nuget-cache
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
       with:
         path: |
@@ -101,8 +239,7 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         $tag = "${{ github.ref_name }}"
-        if ("${{ github.ref }}" -like "refs/tags/*") { $version = $tag } else { $version = "ci-${{ github.run_number }}" }
-        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+        $version = $tag
         $staging = Join-Path $env:RUNNER_TEMP "portable-stage"
         if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
         Expand-Archive -Path .\build\output\systeminformer-build-bin.zip -DestinationPath $staging
@@ -112,8 +249,7 @@ jobs:
         Copy-Item .\README.md (Join-Path $staging 'README-zh-CN.md')
         $zip = "systeminformer-$version-portable.zip"
         "ZIP_NAME=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-        Compress-Archive -Path (Join-Path $staging '*') -DestinationPath (Join-Path $env:RUNNER_TEMP $zip) -Force
-        Copy-Item (Join-Path $env:RUNNER_TEMP $zip) .\systeminformer-$version-portable.zip
+        Compress-Archive -Path (Join-Path $staging '*') -DestinationPath $zip -Force
 
     - name: Generate SHA-256 and release metadata
       shell: pwsh
@@ -138,10 +274,12 @@ jobs:
           coverage-report.md
           release-meta.txt
         if-no-files-found: error
+        retention-days: 7
+        compression-level: 0
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: build-release
     permissions:
       contents: write
     runs-on: 'windows-2025-vs2026'
