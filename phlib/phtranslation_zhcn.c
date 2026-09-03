@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1886] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1890] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -448,6 +448,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1886] =
     { L"Disk", L"磁盘", },
     { L"Disk Drives", L"磁盘驱动器", },
     { L"Disk I/O", L"磁盘 I/O", },
+    { L"Disk monitoring requires System Informer to be restarted with administrative privileges.", L"磁盘监控需要以管理员权限重启 sys_info。", },
     { L"Disk reads", L"磁盘读取数", },
     { L"Disk writes", L"磁盘写入数", },
     { L"Display name", L"显示名称", },
@@ -613,6 +614,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1886] =
     { L"Find window and kill", L"查找窗口并终止", },
     { L"Find window and thread", L"查找窗口和线程", },
     { L"Firewall", L"防火墙", },
+    { L"Firewall monitoring requires System Informer to be restarted with administrative privileges.", L"防火墙监控需要以管理员权限重启 sys_info。", },
     { L"Firmware Table", L"固件表", },
     { L"First failure:", L"第一次失败：", },
     { L"Flags", L"标志", },
@@ -1002,6 +1004,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1886] =
     { L"New variable...", L"新建变量...", },
     { L"New...", L"新建...", },
     { L"Next update check: N/A", L"下次检查更新：不可用", },
+    { L"No events to display.", L"没有可显示的事件。", },
     { L"No-Execute-Up", L"不得向上执行", },
     { L"No-Read-Up", L"不得向上读取", },
     { L"No-Write-Up", L"不得向上写入", },
@@ -1605,6 +1608,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1886] =
     { L"The window property will be permanently deleted.", L"该窗口属性将被永久删除。", },
     { L"Theme mode:", L"主题模式：", },
     { L"Themes", L"主题", },
+    { L"There are no policies to display.", L"没有可显示的策略。", },
     { L"Third failure:", L"第三次失败：", },
     { L"This kernel version is not yet supported. ", L"尚不支持此内核版本。", },
     { L"This looks like a wildcard path, not a regular expression.", L"这看起来是通配符路径，而不是正则表达式。", },

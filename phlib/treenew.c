@@ -2656,8 +2656,23 @@ LRESULT PhTnpOnUserMessage(
         {
             PPH_STRINGREF text = (PPH_STRINGREF)LParam;
             ULONG flags = (ULONG)WParam;
+            PCWSTR translatedText;
 
-            Context->EmptyText = *text;
+            UNREFERENCED_PARAMETER(flags);
+
+            // The empty-list hint is displayed when there is no data; point it
+            // at the static translation when one exists.
+            translatedText = PhTranslateString(text->Buffer);
+
+            if (translatedText != text->Buffer)
+            {
+                Context->EmptyText.Buffer = translatedText;
+                Context->EmptyText.Length = (ULONG)(wcslen(translatedText) * sizeof(WCHAR));
+            }
+            else
+            {
+                Context->EmptyText = *text;
+            }
         }
         return TRUE;
     case TNM_SETROWHEIGHT:

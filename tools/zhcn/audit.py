@@ -306,6 +306,27 @@ TRANSLATED_CALL_RE = re.compile(r'PhTranslateString\s*\(\s*(L"(?:[^"\\]|\\.)*")\
 
 PAGE_NAME_RE = re.compile(r'(\w*PageText\w*)\s*=\s*PH_STRINGREF_INIT\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
 
+EMPTY_TEXT_RE = re.compile(r'(\w*EmptyText\w*)\s*=\s*PH_STRINGREF_INIT\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
+
+OPTIONS_SECTION_RE = re.compile(r'PhOptionsCreateSection\w*\(\s*(L"(?:[^"\\]|\\.)*")')
+
+
+def scan_extra_statics(path: str, entries):
+    """TreeNew empty-list hints and options section tree labels."""
+    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    with open(path, "r", encoding="utf-8", errors="replace") as f:
+        text = f.read()
+    for m in EMPTY_TEXT_RE.finditer(text):
+        t = literal_text(m.group(2))
+        if not is_noise(t):
+            entries.append({"category": "c_treenew_empty", "file": rel,
+                            "line": line_of_offset(text, m.start()), "english": t})
+    for m in OPTIONS_SECTION_RE.finditer(text):
+        t = literal_text(m.group(1))
+        if not is_noise(t):
+            entries.append({"category": "c_tree_item", "file": rel,
+                            "line": line_of_offset(text, m.start()), "english": t})
+
 
 def scan_page_names(path: str, entries):
     """Main tab page labels (PH_STRINGREF constants handed to
@@ -475,7 +496,8 @@ def main():
             continue
         if rel == "plugins/ToolStatus/statusbar.c":
             scan_statusbar(path, entries)
-        if rel == "plugins/ToolStatus/toolbar.c":
+        if rel in ("plugins/ToolStatus/toolbar.c", "plugins/ExtendedTools/fwtab.c",
+                   "plugins/ExtendedTools/disktab.c"):
             scan_translated_calls(path, entries)
         if rel == "plugins/ToolStatus/statusbar.c":
             scan_c_file(path, entries)
@@ -484,6 +506,7 @@ def main():
         scan_c_file(path, entries)
         scan_tabnew(path, entries)
         scan_page_names(path, entries)
+        scan_extra_statics(path, entries)
 
     # Deduplicate identical (category, english) pairs while keeping locations.
     merged = defaultdict(lambda: {"category": None, "english": None, "locations": []})

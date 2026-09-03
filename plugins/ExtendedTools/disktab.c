@@ -11,6 +11,7 @@
  */
 
 #include "exttools.h"
+#include <phtranslation.h>
 #include <toolstatusintf.h>
 #include "disktabp.h"
 

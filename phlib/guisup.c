@@ -2494,6 +2494,7 @@ HWND PhCreateDialogFromTemplate(
         if (dialogHandle)
         {
             PhFree(originalTemplate);
+            PhTranslateWindowTree(dialogHandle);
             return dialogHandle;
         }
 
@@ -2520,6 +2521,9 @@ HWND PhCreateDialogFromTemplate(
         );
 
     PhFree(dialogTemplate);
+
+    if (dialogHandle)
+        PhTranslateWindowTree(dialogHandle);
 
     return dialogHandle;
 }
@@ -2572,6 +2576,9 @@ HWND PhCreateDialog(
                 );
         }
     }
+
+    if (dialogHandle)
+        PhTranslateWindowTree(dialogHandle);
 
     return dialogHandle;
 }
@@ -2680,6 +2687,7 @@ INT_PTR PhDialogBox(
     if (!(dialogTemplate = PhTranslateDialogTemplateCached(Instance, Template, &translated)))
         return INT_ERROR;
 
+    PhTranslateModalDialogBegin();
     dialogResult = DialogBoxIndirectParam(
         Instance,
         (LPDLGTEMPLATE)dialogTemplate,
@@ -2687,12 +2695,14 @@ INT_PTR PhDialogBox(
         DialogProc,
         (LPARAM)Parameter
         );
+    PhTranslateModalDialogEnd();
 
     if (dialogResult == INT_ERROR && translated)
     {
         // The translated copy was rejected; retry with the original template.
         if (NT_SUCCESS(PhLoadResource(Instance, Template, RT_DIALOG, NULL, &dialogTemplate)))
         {
+            PhTranslateModalDialogBegin();
             dialogResult = DialogBoxIndirectParam(
                 Instance,
                 (LPDLGTEMPLATE)dialogTemplate,
@@ -2700,6 +2710,7 @@ INT_PTR PhDialogBox(
                 DialogProc,
                 (LPARAM)Parameter
                 );
+            PhTranslateModalDialogEnd();
         }
     }
 

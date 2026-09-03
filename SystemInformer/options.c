@@ -12,6 +12,8 @@
 
 #include <phapp.h>
 
+#include <phtranslation.h>
+
 #include <commdlg.h>
 #include <colmgr.h>
 #include <colorbox.h>
@@ -222,7 +224,7 @@ static HTREEITEM PhpTreeViewInsertItem(
     insert.hParent = TVI_ROOT;
     insert.hInsertAfter = HandleInsertAfter;
     insert.item.mask = TVIF_TEXT | TVIF_PARAM;
-    insert.item.pszText = (PWSTR)Text;
+    insert.item.pszText = (PWSTR)PhTranslateString(Text);
     insert.item.lParam = (LPARAM)Context;
 
     return TreeView_InsertItem(OptionsTreeControl, &insert);

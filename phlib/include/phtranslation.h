@@ -43,6 +43,25 @@ PHLIBAPI PCWSTR PhTranslateString(
     );
 
 /**
+ * Translates the caption and all child control texts of a window when they
+ * are present in the translation table (second dialog translation layer).
+ *
+ * \param WindowHandle The dialog or container window.
+ */
+PHLIBAPI VOID PhTranslateWindowTree(
+    _In_ HWND WindowHandle
+    );
+
+/**
+ * Installs a thread CBT hook that translates a modal dialog when it
+ * activates. Call PhTranslateModalDialogBegin before DialogBoxIndirectParam
+ * and PhTranslateModalDialogEnd after it returns.
+ */
+PHLIBAPI VOID PhTranslateModalDialogBegin(VOID);
+
+PHLIBAPI VOID PhTranslateModalDialogEnd(VOID);
+
+/**
  * Rebuilds a dialog template with the caption and control texts translated.
  *
  * \param Template A DLGTEMPLATE or DLGTEMPLATEEX resource.
