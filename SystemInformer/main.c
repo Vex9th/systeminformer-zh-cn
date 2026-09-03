@@ -1568,7 +1568,7 @@ VOID PhInitializeAppSettings(
     // restores the English interface; any other value keeps it enabled.
     {
         PPH_STRING languageSetting = PhGetStringSetting(SETTING_LANGUAGE);
-        PhTranslationEnabled = !PhEqualStringZ(languageSetting, L"en", FALSE);
+        PhTranslationEnabled = !PhEqualStringZ(PhGetString(languageSetting), L"en", FALSE);
         PhDereferenceObject(languageSetting);
     }
 
