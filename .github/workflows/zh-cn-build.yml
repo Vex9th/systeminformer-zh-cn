@@ -1,0 +1,190 @@
+name: 'zh-cn-build'
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['zh-cn']
+    tags: ['v*-zh-cn*']
+
+env:
+  BUILD_MAJORVERSION: '3'
+  BUILD_MINORVERSION: '2'
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    runs-on: 'windows-2025-vs2026'
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+
+    - name: NuGet Cache
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
+      with:
+        path: |
+          packages
+          ~\.nuget\packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/packages.config', '**/*.csproj', '**/Directory.Packages.props', '**/packages.lock.json', '**/NuGet.Config', '**/global.json') }}
+        restore-keys: nuget-${{ runner.os }}-
+
+    - name: Nuget Restore
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: nuget restore .\packages.config -PackagesDirectory .\packages\
+
+    - name: BuildTools Cache
+      id: custombuildtool-cache
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
+      with:
+        path: tools/CustomBuildTool/bin/Release/**
+        key: custombuildtool-${{ runner.os }}-${{ hashFiles('tools/CustomBuildTool/**', '!tools/CustomBuildTool/bin/**') }}
+        restore-keys: custombuildtool-${{ runner.os }}-
+
+    - name: BuildThirdParty Cache
+      id: thirdparty-cache
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
+      with:
+        path: tools/thirdparty/**
+        key: thirdparty-${{ runner.os }}-${{ hashFiles('tools/thirdparty/**', '!tools/thirdparty/bin/**') }}
+        restore-keys: thirdparty-${{ runner.os }}-
+
+    - name: Build Tools
+      if: steps.custombuildtool-cache.outputs.cache-hit != 'true' || steps.thirdparty-cache.outputs.cache-hit != 'true'
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\build_init.cmd
+
+    # User-mode only: the driver jobs of the upstream workflow are intentionally
+    # not reproduced (no build_zdriver.cmd, no KSystemInformer).
+    - name: Build Solution (release, user-mode only)
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\build_release.cmd
+
+    - name: Setup Python
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      with:
+        python-version: '3.x'
+
+    - name: zh-cn string audit and coverage check
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        python tools\zhcn\audit.py
+        python tools\zhcn\check_translation.py
+        python tools\zhcn\generate_translation.py --check
+
+    - name: Assert driverless output (no .sys / .inf)
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        $forbidden = Get-ChildItem -Path .\bin, .\build\output -Recurse -File -ErrorAction SilentlyContinue |
+          Where-Object { $_.Extension -in '.sys', '.inf' }
+        if ($forbidden) {
+          $forbidden | ForEach-Object { Write-Host "FORBIDDEN: $($_.FullName)" }
+          Write-Host "::error::driver files (.sys/.inf) found in build output"
+          exit 1
+        }
+        Write-Host "OK: no .sys or .inf files under bin\ or build\output"
+
+    - name: Package portable zip
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        $tag = "${{ github.ref_name }}"
+        if ("${{ github.ref }}" -like "refs/tags/*") { $version = $tag } else { $version = "ci-${{ github.run_number }}" }
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+        $staging = Join-Path $env:RUNNER_TEMP "portable-stage"
+        if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
+        Expand-Archive -Path .\build\output\systeminformer-build-bin.zip -DestinationPath $staging
+        # re-assert on the actual package contents
+        $forbidden = Get-ChildItem -Path $staging -Recurse -File | Where-Object { $_.Extension -in '.sys', '.inf' }
+        if ($forbidden) { $forbidden | ForEach-Object { Write-Host "FORBIDDEN: $($_.FullName)" }; exit 1 }
+        Copy-Item .\README.md (Join-Path $staging 'README-zh-CN.md')
+        $zip = "systeminformer-$version-portable.zip"
+        "ZIP_NAME=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+        Compress-Archive -Path (Join-Path $staging '*') -DestinationPath (Join-Path $env:RUNNER_TEMP $zip) -Force
+        Copy-Item (Join-Path $env:RUNNER_TEMP $zip) .\systeminformer-$version-portable.zip
+
+    - name: Generate SHA-256 and release metadata
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        $hash = (Get-FileHash -Algorithm SHA256 ".\$env:ZIP_NAME").Hash
+        "$hash  $env:ZIP_NAME" | Out-File -FilePath .\SHA256SUMS.txt -Encoding ascii
+        $coverage = (Select-String -Path tools\zhcn\coverage-report.md -Pattern '总覆盖率：\*\*([0-9.]+)%\*\*').Matches.Groups[1].Value
+        @("ZIP_NAME=$env:ZIP_NAME", "SHA256=$hash", "COVERAGE=$coverage") |
+          Out-File -FilePath .\release-meta.txt -Encoding utf8
+        Copy-Item tools\zhcn\coverage-report.md .\coverage-report.md
+        Get-Content .\SHA256SUMS.txt
+        Get-Content .\release-meta.txt
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+      with:
+        name: zh-cn-portable
+        path: |
+          systeminformer-*-portable.zip
+          SHA256SUMS.txt
+          coverage-report.md
+          release-meta.txt
+        if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    permissions:
+      contents: write
+    runs-on: 'windows-2025-vs2026'
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+      with:
+        name: zh-cn-portable
+
+    - name: Create GitHub release
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+        REPO: ${{ github.repository }}
+      run: |
+        $tag = "${{ github.ref_name }}"
+        $meta = @{}
+        Get-Content .\release-meta.txt | ForEach-Object {
+          $k, $v = $_ -split '=', 2
+          $meta[$k.Trim()] = $v.Trim()
+        }
+        $zip = $meta['ZIP_NAME']
+        $sha = $meta['SHA256']
+        $coverage = $meta['COVERAGE']
+        $lines = @(
+          "# System Informer 简体中文社区版 $tag",
+          '',
+          '本项目是非官方社区 Fork，与 System Informer 官方团队及任何游戏、发行商或反作弊厂商无隶属关系。',
+          '',
+          '## 下载与校验',
+          '',
+          "- ``$zip`` — 便携版（解压即用，无需安装）",
+          '',
+          'SHA-256：',
+          '',
+          '```',
+          $sha,
+          '```',
+          '',
+          '校验示例（PowerShell）：```Get-FileHash -Algorithm SHA256 .\' + $zip + '```',
+          '',
+          '## 本次翻译覆盖率',
+          '',
+          "$coverage%（明细见附件 coverage-report.md）",
+          '',
+          '## 无驱动说明',
+          '',
+          '本构建不包含内核驱动（KSystemInformer），仅用户态程序；高级内核功能不可用。',
+          '无驱动不代表获得游戏反作弊白名单，受保护游戏运行期间请退出本程序。',
+          '',
+          '上游源码与许可证：https://github.com/winsiderss/systeminformer（MIT）'
+        )
+        $lines | Out-File -FilePath release-notes.md -Encoding utf8
+        gh release create $tag --repo $env:REPO --title "System Informer 简体中文社区版 $tag" --notes-file release-notes.md $zip SHA256SUMS.txt coverage-report.md
