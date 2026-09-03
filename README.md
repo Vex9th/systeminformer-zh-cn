@@ -78,10 +78,10 @@
 
 ## GitHub Actions 构建
 
-工作流 [`.github/workflows/zh-cn-build.yml`](.github/workflows/zh-cn-build.yml)（与上游 CI 相同的 runner 与步骤，但**不包含任何 driver 任务**）：
+工作流 [`.github/workflows/zh-cn-build.yml`](.github/workflows/zh-cn-build.yml)（与上游 CI 相同的 runner，但**不包含任何 driver 任务**）：
 
-- 触发：`workflow_dispatch` 手动运行；`zh-cn` 分支推送做编译验证；`v*-zh-cn*` 标签发布正式版
-- 步骤：NuGet 恢复 → `build\build_init.cmd` → `build\build_release.cmd` → 字符串审计与覆盖率检查 → 无驱动断言（递归检查 `.sys`/`.inf`）→ 打包便携 ZIP → 生成 SHA-256 → 创建 Release（附 ZIP、SHA256SUMS、覆盖率报告）
+- **CI 验证**：`zh-cn` 分支推送（文档类改动除外）与手动触发；仅构建 x64 Release 用户态程序（镜像上游构建工具生成的 msbuild 命令），执行字符串审计与无驱动断言。同分支新推送会自动取消未完成的旧构建，构建工具与第三方依赖按文件哈希缓存，热缓存约 6 分钟完成
+- **正式发布**：`v*-zh-cn*` 标签触发完整官方流程（NuGet 恢复 → `build\build_init.cmd` → `build\build_release.cmd` 全架构用户态构建 → 审计与覆盖率检查 → 无驱动断言 → 打包便携 ZIP → SHA-256 → 创建 Release，附 ZIP、SHA256SUMS 与覆盖率报告）
 - 所有 Action 固定到官方仓库的具体 commit；权限最小化（仅发布任务 `contents: write`）
 
 ## 与上游同步
