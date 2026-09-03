@@ -222,7 +222,7 @@ PPH_STRING UpdateVersionString(
     VOID
     )
 {
-    static const PH_STRINGREF versionHeader = PH_STRINGREF_INIT(L"SystemInformer-Build: ");
+    static const PH_STRINGREF versionHeader = PH_STRINGREF_INIT(L"sys_info-Build: ");
     ULONG majorVersion;
     ULONG minorVersion;
     ULONG buildVersion;
@@ -280,7 +280,7 @@ PPH_STRING UpdateWindowsString(
             {
                 PH_FORMAT format[5];
 
-                PhInitFormatS(&format[0], L"SystemInformer-OsBuild: ");
+                PhInitFormatS(&format[0], L"sys_info-OsBuild: ");
                 PhInitFormatU(&format[1], HIWORD(rootBlock->dwFileVersionLS));
                 PhInitFormatC(&format[2], '.');
                 PhInitFormatU(&format[3], LOWORD(rootBlock->dwFileVersionLS));

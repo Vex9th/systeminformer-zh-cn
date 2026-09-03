@@ -2815,7 +2815,7 @@ static NTSTATUS PhpFixupLoaderEntryImageDelayImports(
 
         if (PhEqualBytesZ(importName, ImportDllName, TRUE))
         {
-            if (PhEqualBytesZ(importName, "SystemInformer.exe", FALSE))
+            if (PhEqualBytesZ(importName, "sys_info.exe", FALSE))
             {
                 importBaseAddress = NtCurrentImageBase();
                 status = STATUS_SUCCESS;
@@ -3301,7 +3301,7 @@ NTSTATUS PhLoaderEntryUnloadDll(
  * Resolves all delay-load imports for a specific DLL within a loaded image.
  *
  * \param [in] BaseAddress The base address of the image to process.
- * \param [in] ImportDllName The name of the DLL whose imports should be resolved (e.g., "SystemInformer.exe").
+ * \param [in] ImportDllName The name of the DLL whose imports should be resolved (e.g., "sys_info.exe").
  * \return NTSTATUS Successful or errant status.
  * \remarks This function resolves delay-load imports from the specified DLL by calling
  * PhpFixupLoaderEntryImageDelayImports(). Delay-load imports are not resolved at load time
@@ -3338,7 +3338,7 @@ NTSTATUS PhLoaderEntryLoadAllImportsForDll(
  * Resolves all delay-load imports for a specific DLL within a loaded image identified by name.
  *
  * \param [in] TargetDllName The name of the target DLL whose imports should be resolved.
- * \param [in] ImportDllName The name of the DLL to import from (e.g., "SystemInformer.exe").
+ * \param [in] ImportDllName The name of the DLL to import from (e.g., "sys_info.exe").
  * \return NTSTATUS Successful or errant status.
  * \retval STATUS_INVALID_PARAMETER The target DLL was not found in the process.
  * \remarks This is a convenience wrapper around PhLoaderEntryLoadAllImportsForDll() that
@@ -3432,17 +3432,17 @@ NTSTATUS PhLoadPluginImage(
     status = PhpFixupLoaderEntryImageImports(
         imageBaseAddress,
         imageNtHeaders,
-        "SystemInformer.exe"
+        "sys_info.exe"
         );
 
     if (!NT_SUCCESS(status))
         goto CleanupExit;
 
-    //status = PhLoaderEntryLoadAllImportsForDll(imageBaseAddress, "SystemInformer.exe");
+    //status = PhLoaderEntryLoadAllImportsForDll(imageBaseAddress, "sys_info.exe");
     status = PhpFixupLoaderEntryImageDelayImports(
         imageBaseAddress,
         imageNtHeaders,
-        "SystemInformer.exe"
+        "sys_info.exe"
         );
 
     if (!NT_SUCCESS(status))

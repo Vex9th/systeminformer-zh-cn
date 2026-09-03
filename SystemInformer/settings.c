@@ -151,7 +151,7 @@ VOID PhAddDefaultSettings(
     PhpAddIntegerPairSetting(SETTING_LOG_WINDOW_POSITION, L"0,0");
     PhpAddScalableIntegerPairSetting(SETTING_LOG_WINDOW_SIZE, L"@96|450,500");
     PhpAddIntegerSetting(SETTING_MAIN_WINDOW_ALWAYS_ON_TOP, L"0");
-    PhpAddStringSetting(SETTING_MAIN_WINDOW_CLASS_NAME, L"MainWindowClassName");
+    PhpAddStringSetting(SETTING_MAIN_WINDOW_CLASS_NAME, L"sys_infoMainWindow");
     PhpAddIntegerSetting(SETTING_MAIN_WINDOW_OPACITY, L"0"); // means 100%
     PhpAddIntegerPairSetting(SETTING_MAIN_WINDOW_POSITION, L"100,100");
     PhpAddScalableIntegerPairSetting(SETTING_MAIN_WINDOW_SIZE, L"@96|800,600");
@@ -185,7 +185,7 @@ VOID PhAddDefaultSettings(
     PhpAddIntegerSetting(SETTING_MEM_STRINGS_MINIMUM_LENGTH, L"a"); // 10
     PhpAddIntegerPairSetting(SETTING_MEM_STRINGS_WINDOW_POSITION, L"0,0");
     PhpAddScalableIntegerPairSetting(SETTING_MEM_STRINGS_WINDOW_SIZE, L"@96|550,420");
-    PhpAddStringSetting(SETTING_MINI_INFO_CONTAINER_CLASS_NAME, L"MiniInfoContainerClassName");
+    PhpAddStringSetting(SETTING_MINI_INFO_CONTAINER_CLASS_NAME, L"sys_infoMiniInfoContainer");
     PhpAddIntegerSetting(SETTING_MINI_INFO_GRAPH_CLICK_SWITCHES_SECTION, L"1");
     PhpAddIntegerSetting(SETTING_MINI_INFO_SHOW_GRAPHS_DEFAULT, L"1");
     PhpAddStringSetting(SETTING_MINI_INFO_WINDOW_CLASS_NAME, L"MiniInfoWindowClassName");

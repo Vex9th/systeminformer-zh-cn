@@ -32,6 +32,10 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectName>SystemInformer</ProjectName>
     <RootNamespace>SystemInformer</RootNamespace>
+    <!-- Community edition: the shipped executable is named sys_info.exe so
+         plugins (whose import tables reference the module by name) resolve
+         against it and users can identify the process easily. -->
+    <TargetName>sys_info</TargetName>
     <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

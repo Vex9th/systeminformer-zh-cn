@@ -11,7 +11,7 @@
 
 #include "updater.h"
 
-#define UPDATER_TOAST_APP_ID L"SystemInformer"
+#define UPDATER_TOAST_APP_ID L"sys_info"
 #define UPDATER_TOAST_TAG    L"SI.Updater"
 #define UPDATER_TOAST_GROUP  L"SI.Updater"
 

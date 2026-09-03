@@ -519,9 +519,9 @@ namespace CustomBuildTool
 
             string[] buildWow64Files =
             [
-                "SystemInformer.exe",
-                "SystemInformer.pdb",
-                "SystemInformer.sig",
+                "sys_info.exe",
+                "sys_info.pdb",
+                "sys_info.sig",
                 "plugins\\DotNetTools.dll",
                 "plugins\\DotNetTools.pdb",
                 "plugins\\DotNetTools.sig",
@@ -716,7 +716,7 @@ namespace CustomBuildTool
             {
                 if (Flags.HasFlag(configuration) && Flags.HasFlag(architecture))
                 {
-                    string exePath = Path.Join(baseDirectory, folder, "SystemInformer.exe");
+                    string exePath = Path.Join(baseDirectory, folder, "sys_info.exe");
 
                     if (!File.Exists(exePath))
                     {
@@ -907,8 +907,8 @@ namespace CustomBuildTool
 
             string[] buildSdkFiles =
             [
-                "SystemInformer.lib",
-                "SystemInformer.pdb"
+                "sys_info.lib",
+                "sys_info.pdb"
             ];
 
             string baseDirectory = GetBuildBaseDirectory(Flags);

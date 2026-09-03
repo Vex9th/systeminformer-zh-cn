@@ -16,7 +16,7 @@ PPH_STRING ClientIdHeaderString(
     VOID
     )
 {
-    static const PH_STRINGREF clientIdHeader = PH_STRINGREF_INIT(L"SystemInformer-Client-Id: ");
+    static const PH_STRINGREF clientIdHeader = PH_STRINGREF_INIT(L"sys_info-Client-Id: ");
     PPH_STRING clientId = PhGetStringSetting(SETTING_CLIENT_ID);
     PhMoveReference(&clientId, PhConcatStringRef2(&clientIdHeader, &clientId->sr));
     return clientId;

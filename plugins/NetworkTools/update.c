@@ -89,7 +89,7 @@ PPH_STRING GeoLiteCreateUserAgentString(
     ULONG revisionVersion;
 
     PhGetBuildVersionNumbers(&majorVersion, &minorVersion, &buildVersion, &revisionVersion);
-    PhInitFormatS(&format[0], L"SystemInformer_");
+    PhInitFormatS(&format[0], L"sys_info_");
     PhInitFormatU(&format[1], majorVersion);
     PhInitFormatC(&format[2], L'.');
     PhInitFormatU(&format[3], minorVersion);

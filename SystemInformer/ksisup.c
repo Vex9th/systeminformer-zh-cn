@@ -825,7 +825,7 @@ NTSTATUS KsiSvcConnectToServer(
     if (!(fileName = PhGetApplicationFileNameWin32()))
         return STATUS_UNSUCCESSFUL;
 
-    KsiCreateRandomizedName(L"SystemInformer_", &serviceName, FALSE);
+    KsiCreateRandomizedName(L"sys_info_", &serviceName, FALSE);
 
     commandLine = PhFormatString(
         L"\"%s\" -ras \"%s\"",
@@ -1418,7 +1418,7 @@ NTSTATUS KsiCreateTemporaryDriverFile(
     PhQuerySystemTime(&timeStamp);
 
     PhInitFormatSR(&format[0], TempDirectory->sr);
-    PhInitFormatS(&format[1], L"SystemInformer");
+    PhInitFormatS(&format[1], L"sys_info");
     PhInitFormatI64X(&format[2], timeStamp.QuadPart);
     PhInitFormatSR(&format[3], DriverExtension);
 

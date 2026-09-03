@@ -2292,7 +2292,7 @@ NTSTATUS PhExecuteRunAsCommand3(
     // An existing instance was not available. Proceed normally.
 
     memset(serviceName, 0, sizeof(serviceName));
-    memcpy(serviceName, L"SystemInformer", 14 * sizeof(WCHAR));
+    memcpy(serviceName, L"sys_info", 8 * sizeof(WCHAR));
     PhGenerateRandomAlphaString(&serviceName[14], ARRAYSIZE(serviceName) - 14);
     PhAcquireQueuedLockExclusive(&RunAsOldServiceLock);
     memcpy(RunAsOldServiceName, serviceName, sizeof(serviceName) - sizeof(UNICODE_NULL));

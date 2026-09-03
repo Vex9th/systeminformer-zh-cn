@@ -64,7 +64,7 @@ INT WINAPI wWinMain(
     PHP_BASE_THREAD_DBG dbg;
 #endif
 
-    if (!NT_SUCCESS(PhInitializePhLib(L"System Informer")))
+    if (!NT_SUCCESS(PhInitializePhLib(L"sys_info")))
         return 1;
     if (!NT_SUCCESS(PhInitializeDirectoryPolicy()))
         return 1;
@@ -824,7 +824,7 @@ VOID PhpCreateUnhandledExceptionCrashDump(
 
     PhGenerateRandomAlphaString(alphastring, RTL_NUMBER_OF(alphastring));
     directory = PhExpandEnvironmentStringsZ(L"\\??\\%USERPROFILE%\\Desktop\\");
-    fileName = PhConcatStrings(5, PhGetString(directory), L"SystemInformer", L"_DumpFile_", alphastring, L".dmp");
+    fileName = PhConcatStrings(5, PhGetString(directory), L"sys_info", L"_DumpFile_", alphastring, L".dmp");
     PhCreateDirectoryFullPath(&fileName->sr);
 
     if (NT_SUCCESS(PhCreateFile(
@@ -1489,7 +1489,7 @@ VOID PhInitializeAppSettings(
     {
         // There are three possible locations for the settings file:
         // 1. The file name given in the command line.
-        // 2. A file named SystemInformer.exe.settings.json in the program directory. (This changes
+        // 2. A file named sys_info.exe.settings.json in the program directory. (This changes
         //    based on the executable file name.)
         // 3. The default location.
         NTSTATUS status = STATUS_OBJECT_NAME_NOT_FOUND;
