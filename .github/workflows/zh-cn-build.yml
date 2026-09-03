@@ -19,6 +19,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
 
+    # Upstream commits pre-signed test driver binaries under
+    # KSystemInformer\bin-signed; the SDK post-build step would copy them into
+    # the user-mode output. Remove them so this build stays driverless.
+    - name: Remove committed driver binaries (driverless build)
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: Remove-Item -Recurse -Force .\KSystemInformer\bin-signed
+
     - name: NuGet Cache
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # 5.0.5
       with:
