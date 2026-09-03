@@ -120,6 +120,11 @@ jobs:
         python tools\zhcn\check_translation.py
         python tools\zhcn\generate_translation.py --check
 
+    - name: Validate dialog template translation in built exe
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: python tools\zhcn\validate_templates.py bin\Release64\sys_info.exe
+
     - name: Assert driverless output (no .sys / .inf)
       shell: pwsh
       working-directory: ${{github.workspace}}
@@ -230,6 +235,11 @@ jobs:
         python tools\zhcn\audit.py
         python tools\zhcn\check_translation.py
         python tools\zhcn\generate_translation.py --check
+
+    - name: Validate dialog template translation in built exe
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: python tools\zhcn\validate_templates.py bin\Release64\sys_info.exe
 
     - name: Assert driverless output (no .sys / .inf)
       shell: pwsh
