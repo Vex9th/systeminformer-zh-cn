@@ -10,6 +10,7 @@
  */
 
 #include "toolstatus.h"
+#include <phtranslation.h>
 
 SIZE ToolBarImageSize = { 16, 16 };
 HIMAGELIST ToolBarImageList = NULL;
@@ -974,28 +975,28 @@ PWSTR ToolbarGetText(
     switch (CommandID)
     {
     case PHAPP_ID_VIEW_REFRESH:
-        return L"Refresh";
+        return (PWSTR)PhTranslateString(L"Refresh");
     case PHAPP_ID_HACKER_OPTIONS:
-        return L"Options";
+        return (PWSTR)PhTranslateString(L"Options");
     case PHAPP_ID_HACKER_FINDHANDLESORDLLS:
-        return L"Find handles or DLLs";
+        return (PWSTR)PhTranslateString(L"Find handles or DLLs");
     case PHAPP_ID_VIEW_SYSTEMINFORMATION:
-        return L"System information";
+        return (PWSTR)PhTranslateString(L"System information");
     case TIDC_FINDWINDOW:
-        return L"Find window";
+        return (PWSTR)PhTranslateString(L"Find window");
     case TIDC_FINDWINDOWTHREAD:
-        return L"Find window and thread";
+        return (PWSTR)PhTranslateString(L"Find window and thread");
     case TIDC_FINDWINDOWKILL:
-        return L"Find window and kill";
+        return (PWSTR)PhTranslateString(L"Find window and kill");
     case PHAPP_ID_VIEW_ALWAYSONTOP:
-        return L"Always on top";
+        return (PWSTR)PhTranslateString(L"Always on top");
     case TIDC_POWERMENUDROPDOWN:
-        return L"Computer";
+        return (PWSTR)PhTranslateString(L"Computer");
     case PHAPP_ID_HACKER_SHOWDETAILSFORALLPROCESSES:
-        return L"Show details for all processes";
+        return (PWSTR)PhTranslateString(L"Show details for all processes");
     }
 
-    return L"ERROR";
+    return (PWSTR)PhTranslateString(L"ERROR");
 }
 
 /**

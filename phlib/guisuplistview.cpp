@@ -139,7 +139,7 @@ LONG PhAddListViewItem(
     item.mask = LVIF_TEXT | LVIF_PARAM;
     item.iItem = Index;
     item.iSubItem = 0;
-    item.pszText = const_cast<PWSTR>(Text);
+    item.pszText = const_cast<PWSTR>(PhTranslateString(Text));
     item.lParam = reinterpret_cast<LPARAM>(Param);
 
     return ListView_InsertItem(ListViewHandle, &item);
@@ -158,7 +158,7 @@ LONG PhAddIListViewItem(
     item.mask = LVIF_TEXT | LVIF_PARAM;
     item.iItem = Index;
     item.iSubItem = 0;
-    item.pszText = const_cast<PWSTR>(Text);
+    item.pszText = const_cast<PWSTR>(PhTranslateString(Text));
     item.lParam = reinterpret_cast<LPARAM>(Param);
 
     if (SUCCEEDED(ListView->InsertItem(&item, &index)))

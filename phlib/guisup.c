@@ -2476,8 +2476,30 @@ HWND PhCreateDialogFromTemplate(
 
     if (translatedTemplate = PhTranslateDialogTemplateCopy(dialogTemplate))
     {
-        PhFree(dialogTemplate);
-        dialogTemplate = (PDLGTEMPLATEEX)translatedTemplate;
+        PVOID originalTemplate = dialogTemplate;
+
+        if (dialogTemplate->signature == USHRT_MAX)
+            ((PDLGTEMPLATEEX)translatedTemplate)->style = Style;
+        else
+            ((DLGTEMPLATE *)translatedTemplate)->style = Style;
+
+        dialogHandle = CreateDialogIndirectParam(
+            Instance,
+            (DLGTEMPLATE *)translatedTemplate,
+            Parent,
+            DialogProc,
+            (LPARAM)Parameter
+            );
+
+        if (dialogHandle)
+        {
+            PhFree(originalTemplate);
+            return dialogHandle;
+        }
+
+        // The translated copy was rejected; fall back to the original template.
+        PhFree(translatedTemplate);
+        dialogTemplate = (PDLGTEMPLATEEX)originalTemplate;
     }
 
     if (dialogTemplate->signature == USHRT_MAX)
@@ -2523,7 +2545,9 @@ HWND PhCreateDialog(
     PDLGTEMPLATEEX dialogTemplate;
     HWND dialogHandle;
 
-    if (!(dialogTemplate = PhTranslateDialogTemplateCached(Instance, Template, NULL)))
+    BOOLEAN translated;
+
+    if (!(dialogTemplate = PhTranslateDialogTemplateCached(Instance, Template, &translated)))
         return NULL;
 
     dialogHandle = CreateDialogIndirectParam(
@@ -2533,6 +2557,21 @@ HWND PhCreateDialog(
         DialogProc,
         (LPARAM)Parameter
         );
+
+    if (!dialogHandle && translated)
+    {
+        // The translated copy was rejected; retry with the original template.
+        if (NT_SUCCESS(PhLoadResource(Instance, Template, RT_DIALOG, NULL, &dialogTemplate)))
+        {
+            dialogHandle = CreateDialogIndirectParam(
+                Instance,
+                (LPDLGTEMPLATE)dialogTemplate,
+                ParentWindow,
+                DialogProc,
+                (LPARAM)Parameter
+                );
+        }
+    }
 
     return dialogHandle;
 }
@@ -2636,7 +2675,9 @@ INT_PTR PhDialogBox(
     PDLGTEMPLATEEX dialogTemplate;
     INT_PTR dialogResult;
 
-    if (!(dialogTemplate = PhTranslateDialogTemplateCached(Instance, Template, NULL)))
+    BOOLEAN translated;
+
+    if (!(dialogTemplate = PhTranslateDialogTemplateCached(Instance, Template, &translated)))
         return INT_ERROR;
 
     dialogResult = DialogBoxIndirectParam(
@@ -2646,6 +2687,21 @@ INT_PTR PhDialogBox(
         DialogProc,
         (LPARAM)Parameter
         );
+
+    if (dialogResult == INT_ERROR && translated)
+    {
+        // The translated copy was rejected; retry with the original template.
+        if (NT_SUCCESS(PhLoadResource(Instance, Template, RT_DIALOG, NULL, &dialogTemplate)))
+        {
+            dialogResult = DialogBoxIndirectParam(
+                Instance,
+                (LPDLGTEMPLATE)dialogTemplate,
+                ParentWindow,
+                DialogProc,
+                (LPARAM)Parameter
+                );
+        }
+    }
 
     return dialogResult;
 }
@@ -2833,6 +2889,7 @@ HPROPSHEETPAGE PhCreatePropertySheetPage(
     PROPSHEETPAGE page;
     PVOID dialogTemplate;
     BOOLEAN translated;
+    HPROPSHEETPAGE propSheetPageHandle;
 
     if (!PhTranslationEnabled || (Page->dwFlags & PSP_DLGINDIRECT))
         return CreatePropertySheetPage(Page);
@@ -2846,7 +2903,12 @@ HPROPSHEETPAGE PhCreatePropertySheetPage(
     page.dwFlags |= PSP_DLGINDIRECT;
     page.pResource = dialogTemplate;
 
-    return CreatePropertySheetPage(&page);
+    if (propSheetPageHandle = CreatePropertySheetPage(&page))
+        return propSheetPageHandle;
+
+    // Fall back to the resource-based page when the translated template is
+    // rejected.
+    return CreatePropertySheetPage(Page);
 }
 
 /**
