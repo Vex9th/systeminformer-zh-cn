@@ -94,7 +94,8 @@ def main():
     if args.check:
         with open(args.output, "rb") as f:
             raw = f.read()
-        current = raw.decode("utf-8-sig")
+        # Normalize line endings: Windows checkouts may have CRLF.
+        current = raw.decode("utf-8-sig").replace("\r\n", "\n")
         if current != content:
             print("error: phlib/phtranslation_zhcn.c is stale; regenerate it")
             return 1
