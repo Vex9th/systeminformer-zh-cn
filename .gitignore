@@ -171,3 +171,4 @@ build-*/
 # zh-cn community edition generated files
 tools/zhcn/manifest.json
 tools/zhcn/coverage-report.md
+tools/zhcn/batches/

@@ -458,7 +458,9 @@ VOID PhAddDefaultSettings(
     PhpAddIntegerSetting(SETTING_COLOR_FAN_RPM, L"ff0077");
 
     PhpAddIntegerSetting(SETTING_KSI_ENABLE, L"0");
-    PhpAddIntegerSetting(SETTING_KSI_ENABLE_WARNINGS, L"1");
+    // Community edition: no kernel driver ships with this build, so driver
+    // warnings would only be noise; they can be re-enabled manually.
+    PhpAddIntegerSetting(SETTING_KSI_ENABLE_WARNINGS, L"0");
     PhpAddStringSetting(SETTING_KSI_SERVICE_NAME, L"");
     PhpAddStringSetting(SETTING_KSI_OBJECT_NAME, L"");
     PhpAddStringSetting(SETTING_KSI_PORT_NAME, L"");

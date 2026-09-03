@@ -4407,6 +4407,14 @@
         }
       ]
     },
+    "Language": {
+      "description": "Interface language for the community edition.\n\nSetting: 'zh-CN' enables the Simplified Chinese interface (default); 'en' restores English.",
+      "type": "string",
+      "enum": [
+        "zh-CN",
+        "en"
+      ]
+    },
     "KsiEnable": {
       "description": "Boolean-like flag stored as '0' or '1'.\n\nSetting: Enables the Kernel System Informer (KSystemInformer) driver.",
       "anyOf": [
