@@ -14,6 +14,7 @@
 #include <guisupp.h>
 #include <tabnew.h>
 #include <tabnewp.h>
+#include <phtranslation.h>
 #include <vsstyle.h>
 #include <uxtheme.h>
 #include <vssym32.h>

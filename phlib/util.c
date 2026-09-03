@@ -1338,8 +1338,8 @@ BOOLEAN PhShowTaskDialog(
     LONG radio;
     BOOL selected;
     ULONG i;
-    PTASKDIALOG_BUTTON buttons;
-    PTASKDIALOG_BUTTON radioButtons;
+    TASKDIALOG_BUTTON *buttons;
+    TASKDIALOG_BUTTON *radioButtons;
     const TASKDIALOG_BUTTON *originalButtons;
     const TASKDIALOG_BUTTON *originalRadioButtons;
 
