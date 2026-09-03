@@ -172,7 +172,7 @@ static VOID PhTlpWriteTemplateString(
     if (Changed && translated != source)
         *Changed = TRUE;
 
-    PhTlpWrite(Writer, translated, (length + 1) * sizeof(WCHAR));
+    PhTlpWrite(Writer, (PVOID)translated, (length + 1) * sizeof(WCHAR));
     *Cursor += (length + 1) * sizeof(WCHAR);
 }
 
@@ -196,7 +196,7 @@ static VOID PhTlpCopyTemplateString(
 
     source = (PCWSTR)*Cursor;
     length = wcslen(source);
-    PhTlpWrite(Writer, source, (length + 1) * sizeof(WCHAR));
+    PhTlpWrite(Writer, (PVOID)source, (length + 1) * sizeof(WCHAR));
     *Cursor += (length + 1) * sizeof(WCHAR);
 }
 

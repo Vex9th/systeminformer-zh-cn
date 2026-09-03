@@ -1338,9 +1338,15 @@ BOOLEAN PhShowTaskDialog(
     LONG radio;
     BOOL selected;
     ULONG i;
+    PTASKDIALOG_BUTTON buttons;
+    PTASKDIALOG_BUTTON radioButtons;
+    const TASKDIALOG_BUTTON *originalButtons;
+    const TASKDIALOG_BUTTON *originalRadioButtons;
 
     // Translate display text in place; repeated translation of an already
-    // translated string is a dictionary miss and leaves it unchanged.
+    // translated string is a dictionary miss and leaves it unchanged. The
+    // button arrays are const in TASKDIALOGCONFIG, so translations are made
+    // in local copies that are freed and restored after the dialog returns.
     Config->pszWindowTitle = PhTranslateString(Config->pszWindowTitle);
     Config->pszMainInstruction = PhTranslateString(Config->pszMainInstruction);
     Config->pszContent = PhTranslateString(Config->pszContent);
@@ -1350,10 +1356,32 @@ BOOLEAN PhShowTaskDialog(
     Config->pszCollapsedControlText = PhTranslateString(Config->pszCollapsedControlText);
     Config->pszFooter = PhTranslateString(Config->pszFooter);
 
-    for (i = 0; i < Config->cButtons; i++)
-        Config->pButtons[i].pszButtonText = PhTranslateString(Config->pButtons[i].pszButtonText);
-    for (i = 0; i < Config->cRadioButtons; i++)
-        Config->pRadioButtons[i].pszButtonText = PhTranslateString(Config->pRadioButtons[i].pszButtonText);
+    buttons = NULL;
+    radioButtons = NULL;
+    originalButtons = Config->pButtons;
+    originalRadioButtons = Config->pRadioButtons;
+
+    if (Config->cButtons)
+    {
+        buttons = PhAllocate(Config->cButtons * sizeof(TASKDIALOG_BUTTON));
+        memcpy(buttons, Config->pButtons, Config->cButtons * sizeof(TASKDIALOG_BUTTON));
+
+        for (i = 0; i < Config->cButtons; i++)
+            buttons[i].pszButtonText = PhTranslateString(buttons[i].pszButtonText);
+
+        Config->pButtons = buttons;
+    }
+
+    if (Config->cRadioButtons)
+    {
+        radioButtons = PhAllocate(Config->cRadioButtons * sizeof(TASKDIALOG_BUTTON));
+        memcpy(radioButtons, Config->pRadioButtons, Config->cRadioButtons * sizeof(TASKDIALOG_BUTTON));
+
+        for (i = 0; i < Config->cRadioButtons; i++)
+            radioButtons[i].pszButtonText = PhTranslateString(radioButtons[i].pszButtonText);
+
+        Config->pRadioButtons = radioButtons;
+    }
 
     status = TaskDialogIndirect(
         Config,
@@ -1361,6 +1389,18 @@ BOOLEAN PhShowTaskDialog(
         &radio,
         &selected
         );
+
+    if (buttons)
+    {
+        Config->pButtons = originalButtons;
+        PhFree(buttons);
+    }
+
+    if (radioButtons)
+    {
+        Config->pRadioButtons = originalRadioButtons;
+        PhFree(radioButtons);
+    }
 
     if (HR_SUCCESS(status))
     {
