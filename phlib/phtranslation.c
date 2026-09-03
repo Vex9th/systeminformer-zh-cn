@@ -149,7 +149,7 @@ static VOID PhTlpPadToDword(
  */
 static VOID PhTlpWriteTemplateString(
     _Inout_ PPH_TL_WRITER Writer,
-    _Inout_ PCBYTE *Cursor,
+    _Inout_ PBYTE *Cursor,
     _In_ BOOLEAN Translate,
     _Inout_opt_ PBOOLEAN Changed
     )
@@ -181,7 +181,7 @@ static VOID PhTlpWriteTemplateString(
  */
 static VOID PhTlpCopyTemplateString(
     _Inout_ PPH_TL_WRITER Writer,
-    _Inout_ PCBYTE *Cursor
+    _Inout_ PBYTE *Cursor
     )
 {
     PCWSTR source;
@@ -212,7 +212,7 @@ PVOID PhTranslateDialogTemplateCopy(
     )
 {
     PH_TL_WRITER writer;
-    PCBYTE cursor;
+    PBYTE cursor;
     ULONG headerSize;
     USHORT itemCount;
     ULONG extended;
@@ -225,7 +225,7 @@ PVOID PhTranslateDialogTemplateCopy(
     memset(&writer, 0, sizeof(writer));
     changed = FALSE;
 
-    cursor = (PCBYTE)Template;
+    cursor = (PBYTE)Template;
     extended = *(PUSHORT)cursor == USHRT_MAX;
 
     if (extended)
