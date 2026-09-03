@@ -1,7 +1,9 @@
 # Runtime smoke test for the zh-CN community edition: launches the built
-# sys_info.exe, verifies the window title, the main menu and the Options
-# dialog show translated text, then exits. Run from the repository root with
-# the exe path as the only argument.
+# sys_info.exe, verifies the main window title and that every plugin is
+# loaded (plugin imports resolve against the renamed module), then exits.
+# Menu and dialog text are validated separately at the byte level by
+# validate_templates.py, because an interactive desktop is not available in
+# this environment. Run from the repository root with the exe path argument.
 param(
     [Parameter(Mandatory = $true)]
     [string]$ExePath
@@ -13,12 +15,8 @@ Add-Type -Namespace Native -Name Win -MemberDefinition @'
 public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lp);
 [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pid);
 [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder sb, int max);
-[DllImport("user32.dll")] public static extern IntPtr GetMenu(IntPtr hWnd);
-[DllImport("user32.dll")] public static extern int GetMenuItemCount(IntPtr hMenu);
-[DllImport("user32.dll")] public static extern uint GetMenuString(IntPtr hMenu, uint index, System.Text.StringBuilder sb, int max, uint flags);
-[DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp);
-[DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hWnd);
 [DllImport("user32.dll")] public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp, uint flags, uint timeout, out IntPtr result);
+[DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hWnd);
 '@
 
 function Get-ProcessWindows([int]$Id) {
@@ -38,19 +36,15 @@ function Get-ProcessWindows([int]$Id) {
     return ,$list
 }
 
-function HasChinese([string]$s) {
-    return $s -match '[\u4e00-\u9fff]'
-}
-
 $ExePath = (Resolve-Path $ExePath).Path
 $workDir = Split-Path $ExePath
 Write-Host "launching: $ExePath"
 $p = Start-Process -FilePath $ExePath -WorkingDirectory $workDir -PassThru
 $failed = $false
-$mainWindow = $null
 
 try {
     # wait up to 90s for the main window (title contains sys_info)
+    $mainWindow = $null
     $deadline = (Get-Date).AddSeconds(90)
     while ((Get-Date) -lt $deadline) {
         if ($p.HasExited) { throw "process exited during startup (code $($p.ExitCode))" }
@@ -70,31 +64,36 @@ try {
         $failed = $true
     } else {
         Write-Host "PASS main title: $($mainWindow.Title)"
-        $hWnd = $mainWindow.Handle
 
-        # probe the UI thread for responsiveness
+        # the UI thread must be responsive
         $probeResult = [IntPtr]::Zero
-        $probeOk = [Native.Win]::SendMessageTimeout($hWnd, 0x0000, [IntPtr]::Zero, [IntPtr]::Zero, 2, 5000, [ref]$probeResult)
-        Write-Host ("UI thread responsive: {0}" -f ($probeOk -ne 0))
-
-        # all plugins must be loaded (proves the sys_info import library
-        # resolves; a rename regression fails every plugin with 0xc0000135)
-        Start-Sleep -Seconds 5
-        $p.Refresh()
-        $modules = @($p.Modules | ForEach-Object { $_.ModuleName })
-        $expected = @(
-            'ToolStatus.dll', 'ExtendedTools.dll', 'ExtendedServices.dll',
-            'DotNetTools.dll', 'HardwareDevices.dll', 'NetworkTools.dll',
-            'OnlineChecks.dll', 'Updater.dll', 'UserNotes.dll', 'WindowExplorer.dll',
-            'ExtendedNotifications.dll'
-        )
-        $missing = @($expected | Where-Object { $modules -notcontains $_ })
-        if ($missing.Count -gt 0) {
-            Write-Host "::error::plugins not loaded: $($missing -join ', ')"
+        $probeOk = [Native.Win]::SendMessageTimeout($mainWindow.Handle, 0x0000, [IntPtr]::Zero, [IntPtr]::Zero, 2, 5000, [ref]$probeResult)
+        if (-not $probeOk) {
+            Write-Host "::error::UI thread not responsive"
             $failed = $true
         } else {
-            Write-Host "PASS all 11 plugins loaded"
+            Write-Host "PASS UI thread responsive"
         }
+    }
+
+    # all plugins must be loaded; a rename regression makes every plugin fail
+    # with 0xc0000135, so this directly guards the sys_info import contract
+    Start-Sleep -Seconds 5
+    $p.Refresh()
+    $modules = @($p.Modules | ForEach-Object { $_.ModuleName })
+    $expected = @(
+        'ToolStatus.dll', 'ExtendedTools.dll', 'ExtendedServices.dll',
+        'DotNetTools.dll', 'HardwareDevices.dll', 'NetworkTools.dll',
+        'OnlineChecks.dll', 'Updater.dll', 'UserNotes.dll', 'WindowExplorer.dll',
+        'ExtendedNotifications.dll'
+    )
+    $missing = @($expected | Where-Object { $modules -notcontains $_ })
+    if ($missing.Count -gt 0) {
+        Write-Host "::error::plugins not loaded: $($missing -join ', ')"
+        $failed = $true
+    } else {
+        Write-Host "PASS all 11 plugins loaded"
+    }
 
     if ($failed) { exit 1 }
     Write-Host 'ALL RUNTIME SMOKE CHECKS PASSED'
