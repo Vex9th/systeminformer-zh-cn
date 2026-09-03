@@ -11,6 +11,8 @@
  */
 
 #include <phapp.h>
+
+#include <phtranslation.h>
 #include <colorbox.h>
 #include <tabnew.h>
 #include <graphscroll.h>
@@ -1561,6 +1563,14 @@ VOID PhInitializeAppSettings(
     }
 
     PhUpdateCachedSettings();
+
+    // Community edition: "en" disables the zh-CN translation table and
+    // restores the English interface; any other value keeps it enabled.
+    {
+        PPH_STRING languageSetting = PhGetStringSetting(SETTING_LANGUAGE);
+        PhTranslationEnabled = !PhEqualStringZ(languageSetting, L"en", FALSE);
+        PhDereferenceObject(languageSetting);
+    }
 
     // Apply basic global settings.
     PhPluginsEnabled = !!PhGetIntegerSetting(SETTING_ENABLE_PLUGINS);

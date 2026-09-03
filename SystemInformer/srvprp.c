@@ -366,7 +366,7 @@ NTSTATUS PhpShowServicePropertiesThread(
     propSheetPage.hInstance = NtCurrentImageBase();
     propSheetPage.pfnDlgProc = PhpServiceGeneralDlgProc;
     propSheetPage.lParam = (LPARAM)&context;
-    pages[propSheetHeader.nPages++] = CreatePropertySheetPage(&propSheetPage);
+    pages[propSheetHeader.nPages++] = PhCreatePropertySheetPage(&propSheetPage);
 
     if (PhPluginsEnabled)
     {

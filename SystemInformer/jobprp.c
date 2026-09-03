@@ -117,7 +117,7 @@ HPROPSHEETPAGE PhCreateJobPage(
     propSheetPage.lParam = (LPARAM)jobPageContext;
     propSheetPage.pfnCallback = PhpJobPropPageProc;
 
-    propSheetPageHandle = CreatePropertySheetPage(&propSheetPage);
+    propSheetPageHandle = PhCreatePropertySheetPage(&propSheetPage);
     // CreatePropertySheetPage would have sent PSPCB_ADDREF (below),
     // which would have added a reference.
     PhDereferenceObject(jobPageContext);
@@ -650,7 +650,7 @@ VOID PhpShowJobAdvancedProperties(
     statisticsPage.hInstance = PhInstanceHandle;
     statisticsPage.pfnDlgProc = PhpJobStatisticsPageProc;
     statisticsPage.lParam = (LPARAM)Context;
-    pages[0] = CreatePropertySheetPage(&statisticsPage);
+    pages[0] = PhCreatePropertySheetPage(&statisticsPage);
 
     // Security
 

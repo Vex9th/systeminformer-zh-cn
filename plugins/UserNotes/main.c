@@ -2511,7 +2511,7 @@ VOID ServicePropertiesInitializingCallback(
         propSheetPage.pszTitle = L"Comment";
         propSheetPage.pfnDlgProc = ServiceCommentPageDlgProc;
         propSheetPage.lParam = (LPARAM)objectProperties->Parameter;
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 }
 

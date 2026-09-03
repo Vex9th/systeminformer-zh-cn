@@ -13,6 +13,7 @@
 #include <ph.h>
 #include <emenu.h>
 #include <guisup.h>
+#include <phtranslation.h>
 
 static const PH_FLAG_MAPPING EMenuTypeMappings[] =
 {
@@ -62,9 +63,18 @@ PPH_EMENU_ITEM PhCreateEMenuItem(
 
     item->Flags = Flags;
     item->Id = Id;
-    item->Text = (PWSTR)Text;
+    item->Text = (PWSTR)PhTranslateString(Text);
     item->Bitmap = Bitmap;
     item->Context = Context;
+
+    if (item->Text != (PWSTR)Text)
+    {
+        // The translation points into a static table; if the caller handed us
+        // an owned buffer, release it now that it has been replaced.
+        if ((Flags & PH_EMENU_TEXT_OWNED) && Text)
+            PhFree((PWSTR)Text);
+        item->Flags &= ~PH_EMENU_TEXT_OWNED;
+    }
 
     return item;
 }
@@ -84,10 +94,17 @@ PPH_EMENU_ITEM PhCreateEMenuItemCallback(
     item = PhAllocateZero(sizeof(PH_EMENU_ITEM));
     item->Flags = Flags;
     item->Id = Id;
-    item->Text = (PWSTR)Text;
+    item->Text = (PWSTR)PhTranslateString(Text);
     item->Bitmap = Bitmap;
     item->Context = Context;
     item->DelayFunction = DelayFunction;
+
+    if (item->Text != (PWSTR)Text)
+    {
+        if ((Flags & PH_EMENU_TEXT_OWNED) && Text)
+            PhFree((PWSTR)Text);
+        item->Flags &= ~PH_EMENU_TEXT_OWNED;
+    }
 
     delay = PhCreateEMenuItem(0, USHRT_MAX, L" ", NULL, NULL);
     PhInsertEMenuItem(item, delay, ULONG_MAX);
@@ -894,9 +911,20 @@ VOID PhModifyEMenuItem(
         if ((Item->Flags & PH_EMENU_TEXT_OWNED) && Item->Text)
             PhFree(Item->Text);
 
-        Item->Text = Text;
+        Item->Text = (PWSTR)PhTranslateString(Text);
         Item->Flags &= ~PH_EMENU_TEXT_OWNED;
-        Item->Flags |= OwnedFlags & PH_EMENU_TEXT_OWNED;
+
+        if (Item->Text == (PWSTR)Text)
+        {
+            // No translation; keep the caller-provided ownership.
+            Item->Flags |= OwnedFlags & PH_EMENU_TEXT_OWNED;
+        }
+        else if ((OwnedFlags & PH_EMENU_TEXT_OWNED) && Text)
+        {
+            // The caller owned the replaced buffer; the translation is a
+            // static pointer, so release the buffer and drop ownership.
+            PhFree(Text);
+        }
     }
 
     if (ModifyFlags & PH_EMENU_MODIFY_BITMAP)

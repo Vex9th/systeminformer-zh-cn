@@ -13,6 +13,7 @@
 #include <ph.h>
 #include <guisup.h>
 #include <guisupview.h>
+#include <phtranslation.h>
 
 #include <commoncontrols.h>
 #include <wincodec.h>
@@ -35,7 +36,7 @@ LONG PhAddListViewColumnDpi(
     column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM | LVCF_ORDER;
     column.fmt = Format;
     column.cx = WindowsVersion < WINDOWS_10 ? Width : PhScaleToDisplay(Width, ListViewDpi);
-    column.pszText = const_cast<PWSTR>(Text);
+    column.pszText = const_cast<PWSTR>(PhTranslateString(Text));
     column.iSubItem = SubItemIndex;
     column.iOrder = DisplayIndex;
 
@@ -60,7 +61,7 @@ LONG PhAddIListViewColumnDpi(
     column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM | LVCF_ORDER;
     column.fmt = Format;
     column.cx = WindowsVersion < WINDOWS_10 ? Width : PhScaleToDisplay(Width, ListViewDpi);
-    column.pszText = const_cast<PWSTR>(Text);
+    column.pszText = const_cast<PWSTR>(PhTranslateString(Text));
     column.iSubItem = SubItemIndex;
     column.iOrder = DisplayIndex;
 
@@ -470,7 +471,7 @@ LONG PhAddListViewGroup(
     group.uAlign = LVGA_HEADER_LEFT;
     group.state = LVGS_COLLAPSIBLE;
     group.iGroupId = GroupId;
-    group.pszHeader = const_cast<PWSTR>(Text);
+    group.pszHeader = const_cast<PWSTR>(PhTranslateString(Text));
 
     return static_cast<LONG>(ListView_InsertGroup(ListViewHandle, MAXUINT, &group));
 }
@@ -490,7 +491,7 @@ LONG PhAddIListViewGroup(
     group.uAlign = LVGA_HEADER_LEFT;
     group.state = LVGS_COLLAPSIBLE;
     group.iGroupId = GroupId;
-    group.pszHeader = const_cast<PWSTR>(Text);
+    group.pszHeader = const_cast<PWSTR>(PhTranslateString(Text));
 
     if (SUCCEEDED(ListView->InsertGroup(MAXUINT, &group, &index)))
         return index;

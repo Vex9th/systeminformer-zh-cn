@@ -11,6 +11,7 @@
  */
 
 #include <phapp.h>
+#include <phtranslation.h>
 #include <phsettings.h>
 
 #include <shellapi.h>
@@ -842,8 +843,8 @@ BOOLEAN PhNfpShowBalloonTip(
         notifyIcon.guidItem = registeredIcon->IconGuid;
     }
 
-    wcsncpy_s(notifyIcon.szInfoTitle, RTL_NUMBER_OF(notifyIcon.szInfoTitle), Title, _TRUNCATE);
-    wcsncpy_s(notifyIcon.szInfo, RTL_NUMBER_OF(notifyIcon.szInfo), Text, _TRUNCATE);
+    wcsncpy_s(notifyIcon.szInfoTitle, RTL_NUMBER_OF(notifyIcon.szInfoTitle), PhTranslateString(Title), _TRUNCATE);
+    wcsncpy_s(notifyIcon.szInfo, RTL_NUMBER_OF(notifyIcon.szInfo), PhTranslateString(Text), _TRUNCATE);
     notifyIcon.uTimeout = Timeout;
 
     if (PhGetIntegerSetting(SETTING_ICON_BALLOON_SHOW_ICON) || WindowsVersion < WINDOWS_11)

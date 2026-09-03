@@ -363,7 +363,7 @@ HPROPSHEETPAGE PhCreateTokenPage(
     propSheetPage.lParam = (LPARAM)tokenPageContext;
     propSheetPage.pfnCallback = PhpTokenPropPageProc;
 
-    propSheetPageHandle = CreatePropertySheetPage(&propSheetPage);
+    propSheetPageHandle = PhCreatePropertySheetPage(&propSheetPage);
     // CreatePropertySheetPage would have sent PSPCB_ADDREF (below),
     // which would have added a reference.
     PhDereferenceObject(tokenPageContext);
@@ -2388,7 +2388,7 @@ VOID PhpShowTokenAdvancedProperties(
     page.hInstance = NtCurrentImageBase();
     page.pfnDlgProc = PhpTokenGeneralPageProc;
     page.lParam = (LPARAM)Context;
-    pages[numberOfPages++] = CreatePropertySheetPage(&page);
+    pages[numberOfPages++] = PhCreatePropertySheetPage(&page);
 
     // Advanced
 
@@ -2398,7 +2398,7 @@ VOID PhpShowTokenAdvancedProperties(
     page.hInstance = NtCurrentImageBase();
     page.pfnDlgProc = PhpTokenAdvancedPageProc;
     page.lParam = (LPARAM)Context;
-    pages[numberOfPages++] = CreatePropertySheetPage(&page);
+    pages[numberOfPages++] = PhCreatePropertySheetPage(&page);
 
     if (WindowsVersion >= WINDOWS_8)
     {
@@ -2412,7 +2412,7 @@ VOID PhpShowTokenAdvancedProperties(
             page.pszTitle = L"Container";
             page.pfnDlgProc = PhpTokenContainerPageProc;
             page.lParam = (LPARAM)Context;
-            pages[numberOfPages++] = CreatePropertySheetPage(&page);
+            pages[numberOfPages++] = PhCreatePropertySheetPage(&page);
         }
 
         // Capabilities
@@ -2423,7 +2423,7 @@ VOID PhpShowTokenAdvancedProperties(
         page.hInstance = NtCurrentImageBase();
         page.pfnDlgProc = PhpTokenCapabilitiesPageProc;
         page.lParam = (LPARAM)Context;
-        pages[numberOfPages++] = CreatePropertySheetPage(&page);
+        pages[numberOfPages++] = PhCreatePropertySheetPage(&page);
 
         // Claims
 
@@ -2435,7 +2435,7 @@ VOID PhpShowTokenAdvancedProperties(
         page.pszTitle = L"Claims";
         page.pfnDlgProc = PhpTokenClaimsPageProc;
         page.lParam = (LPARAM)Context;
-        pages[numberOfPages++] = CreatePropertySheetPage(&page);
+        pages[numberOfPages++] = PhCreatePropertySheetPage(&page);
 
         // AppModel Policy
 
@@ -2447,7 +2447,7 @@ VOID PhpShowTokenAdvancedProperties(
         page.pszTitle = L"Policy";
         page.pfnDlgProc = PhpTokenAppPolicyPageProc;
         page.lParam = (LPARAM)Context;
-        pages[numberOfPages++] = CreatePropertySheetPage(&page);
+        pages[numberOfPages++] = PhCreatePropertySheetPage(&page);
 
         // (Token) Attributes
 
@@ -2459,7 +2459,7 @@ VOID PhpShowTokenAdvancedProperties(
         page.pszTitle = L"Attributes";
         page.pfnDlgProc = PhpTokenAttributesPageProc;
         page.lParam = (LPARAM)Context;
-        pages[numberOfPages++] = CreatePropertySheetPage(&page);
+        pages[numberOfPages++] = PhCreatePropertySheetPage(&page);
     }
 
     propSheetHeader.nPages = numberOfPages;

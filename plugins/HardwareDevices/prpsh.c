@@ -408,7 +408,7 @@ BOOLEAN PvAddPropPage(
     if (PropContext->PropSheetHeader.nPages == PV_PROPCONTEXT_MAXPAGES)
         return FALSE;
 
-    propSheetPageHandle = CreatePropertySheetPage(
+    propSheetPageHandle = PhCreatePropertySheetPage(
         &PropPageContext->PropSheetPage
         );
     // CreatePropertySheetPage would have sent PSPCB_ADDREF,

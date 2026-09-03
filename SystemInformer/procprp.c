@@ -11,6 +11,7 @@
  */
 
 #include <phapp.h>
+#include <phtranslation.h>
 #include <procprp.h>
 #include <procprpp.h>
 #include <proctree.h>
@@ -1190,6 +1191,18 @@ BOOLEAN PhAddProcessPropPage(
 
         titles[idx] = PhpReadDialogTemplateTitle(psp->hInstance, psp->pszTemplate);
 
+        if (titles[idx])
+        {
+            PCWSTR translatedTitle = PhTranslateString(titles[idx]->Buffer);
+
+            if (translatedTitle != titles[idx]->Buffer)
+            {
+                PPH_STRING originalTitle = titles[idx];
+                titles[idx] = PhCreateString(translatedTitle);
+                PhDereferenceObject(originalTitle);
+            }
+        }
+
         pages[idx].Name = PhGetStringOrEmpty(titles[idx]);
         pages[idx].Instance = psp->hInstance;
         pages[idx].Template = psp->pszTemplate;
@@ -1215,7 +1228,7 @@ BOOLEAN PhAddProcessPropPage(
     if (PropContext->PropSheetHeader.nPages == PH_PROCESS_PROPCONTEXT_MAXPAGES)
         return FALSE;
 
-    propSheetPageHandle = CreatePropertySheetPage(
+    propSheetPageHandle = PhCreatePropertySheetPage(
         &PropPageContext->PropSheetPage
         );
     // CreatePropertySheetPage would have sent PSPCB_ADDREF,

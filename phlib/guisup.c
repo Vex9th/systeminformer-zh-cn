@@ -11,6 +11,7 @@
  */
 
 #include <ph.h>
+#include <phtranslation.h>
 #include <apiimport.h>
 #include <guisup.h>
 #include <mapimg.h>
@@ -1518,7 +1519,7 @@ LONG PhAddTabControlTab(
     TCITEM item;
 
     item.mask = TCIF_TEXT;
-    item.pszText = (PWSTR)Text;
+    item.pszText = (PWSTR)PhTranslateString(Text);
 
     return TabCtrl_InsertItem(TabControlHandle, Index, &item);
 }
@@ -2467,10 +2468,17 @@ HWND PhCreateDialogFromTemplate(
     )
 {
     PDLGTEMPLATEEX dialogTemplate;
+    PVOID translatedTemplate;
     HWND dialogHandle;
 
     if (!NT_SUCCESS(PhLoadResourceCopy(Instance, Template, RT_DIALOG, NULL, &dialogTemplate)))
         return NULL;
+
+    if (translatedTemplate = PhTranslateDialogTemplateCopy(dialogTemplate))
+    {
+        PhFree(dialogTemplate);
+        dialogTemplate = (PDLGTEMPLATEEX)translatedTemplate;
+    }
 
     if (dialogTemplate->signature == USHRT_MAX)
     {
@@ -2515,7 +2523,7 @@ HWND PhCreateDialog(
     PDLGTEMPLATEEX dialogTemplate;
     HWND dialogHandle;
 
-    if (!NT_SUCCESS(PhLoadResource(Instance, Template, RT_DIALOG, NULL, &dialogTemplate)))
+    if (!(dialogTemplate = PhTranslateDialogTemplateCached(Instance, Template, NULL)))
         return NULL;
 
     dialogHandle = CreateDialogIndirectParam(
@@ -2628,7 +2636,7 @@ INT_PTR PhDialogBox(
     PDLGTEMPLATEEX dialogTemplate;
     INT_PTR dialogResult;
 
-    if (!NT_SUCCESS(PhLoadResource(Instance, Template, RT_DIALOG, NULL, &dialogTemplate)))
+    if (!(dialogTemplate = PhTranslateDialogTemplateCached(Instance, Template, NULL)))
         return INT_ERROR;
 
     dialogResult = DialogBoxIndirectParam(
@@ -2804,6 +2812,41 @@ INT CALLBACK PhModalPropSheetWindowProcedure(
     }
 
     return 0;
+}
+
+/**
+ * Creates a property sheet page with translated tab title and dialog text.
+ *
+ * The page is switched to PSP_DLGINDIRECT with a cached translated copy of
+ * its dialog template, which translates both the tab title (taken from the
+ * template caption) and the static control texts. Callers should use this
+ * instead of CreatePropertySheetPage to keep community-edition localization
+ * working; the page structure, procedures and parameters are untouched.
+ *
+ * \param Page A PROPSHEETPAGE structure describing the page.
+ * \return A handle to the new page, or NULL on failure.
+ */
+HPROPSHEETPAGE PhCreatePropertySheetPage(
+    _In_ LPCPROPSHEETPAGE Page
+    )
+{
+    PROPSHEETPAGE page;
+    PVOID dialogTemplate;
+    BOOLEAN translated;
+
+    if (!PhTranslationEnabled || (Page->dwFlags & PSP_DLGINDIRECT))
+        return CreatePropertySheetPage(Page);
+
+    dialogTemplate = PhTranslateDialogTemplateCached(Page->hInstance, Page->pszTemplate, &translated);
+
+    if (!translated)
+        return CreatePropertySheetPage(Page);
+
+    page = *Page;
+    page.dwFlags |= PSP_DLGINDIRECT;
+    page.pResource = dialogTemplate;
+
+    return CreatePropertySheetPage(&page);
 }
 
 /**

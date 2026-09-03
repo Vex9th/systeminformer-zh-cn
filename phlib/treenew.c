@@ -36,6 +36,7 @@
 #include <guisup.h>
 #include <treenew.h>
 #include <treenewp.h>
+#include <phtranslation.h>
 #include <vssym32.h>
 
 /**
@@ -3630,6 +3631,7 @@ BOOLEAN PhTnpAddColumn(
         Context->NextId = Column->Id + 1;
 
     realColumn = PhAllocateCopy(Column, sizeof(PH_TREENEW_COLUMN));
+    realColumn->Text = PhTranslateString(Column->Text);
 
     if (realColumn->DpiScaleOnAdd)
     {
@@ -4104,7 +4106,7 @@ VOID PhTnpChangeColumnHeader(
     if (Mask & TN_COLUMN_TEXT)
     {
         item.mask |= HDI_TEXT;
-        item.pszText = (PWSTR)Column->Text;
+        item.pszText = (PWSTR)PhTranslateString(Column->Text);
     }
 
     if (Mask & TN_COLUMN_WIDTH)

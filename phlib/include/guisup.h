@@ -1775,6 +1775,13 @@ PhLoadMenu(
     );
 
 PHLIBAPI
+HPROPSHEETPAGE
+NTAPI
+PhCreatePropertySheetPage(
+    _In_ LPCPROPSHEETPAGE Page
+    );
+
+PHLIBAPI
 BOOLEAN
 NTAPI
 PhModalPropertySheet(

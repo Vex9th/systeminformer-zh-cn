@@ -26,6 +26,12 @@
     <ClCompile Include="dspick.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="phtranslation.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="phtranslation_zhcn.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="emenu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -266,6 +272,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="circbuf_i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\phtranslation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\colorbox.h">

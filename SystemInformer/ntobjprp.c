@@ -103,7 +103,7 @@ HPROPSHEETPAGE PhpCommonCreatePage(
     propSheetPage.lParam = (LPARAM)pageContext;
     propSheetPage.pfnCallback = PhpCommonPropPageProc;
 
-    propSheetPageHandle = CreatePropertySheetPage(&propSheetPage);
+    propSheetPageHandle = PhCreatePropertySheetPage(&propSheetPage);
     // CreatePropertySheetPage would have sent PSPCB_ADDREF (below),
     // which would have added a reference.
     PhDereferenceObject(pageContext);
@@ -813,7 +813,7 @@ HPROPSHEETPAGE PhCreateMappingsPage(
     propSheetPage.pfnDlgProc = PhpMappingsPageProc;
     propSheetPage.lParam = (LPARAM)mappingsPageContext;
 
-    propSheetPageHandle = CreatePropertySheetPage(&propSheetPage);
+    propSheetPageHandle = PhCreatePropertySheetPage(&propSheetPage);
 
     return propSheetPageHandle;
 }
@@ -1103,7 +1103,7 @@ HPROPSHEETPAGE PhCreateAfdSocketPage(
     propSheetPage.pfnDlgProc = PhpAfdSocketPageProc;
     propSheetPage.lParam = (LPARAM)socketPageContext;
 
-    propSheetPageHandle = CreatePropertySheetPage(&propSheetPage);
+    propSheetPageHandle = PhCreatePropertySheetPage(&propSheetPage);
 
     return propSheetPageHandle;
 }

@@ -739,6 +739,7 @@ EXPORTS
     PhTerminateProcess
     PhThawProcess
     PhTraceControl
+    PhTranslateString
     PhTransceiveNamedPipe
     PhUnloadDllProcess
     PhUnloadDriver
@@ -766,6 +767,7 @@ EXPORTS
     PhCreateProcessRedirection
     PhCreateProcessWin32
     PhCreateProcessWin32Ex
+    PhCreatePropertySheetPage
     PhCreateSaveFileDialog
     PhDeleteImageVersionInfo
     PhDevFreeObjectProperties

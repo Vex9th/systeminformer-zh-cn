@@ -286,7 +286,7 @@ VOID NTAPI ServicePropertiesInitializingCallback(
             propSheetPage.pfnDlgProc = EspServiceRecovery2DlgProc;
         }
 
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 
     // Dependencies
@@ -300,7 +300,7 @@ VOID NTAPI ServicePropertiesInitializingCallback(
         propSheetPage.pszTitle = L"Dependencies";
         propSheetPage.pfnDlgProc = EspServiceDependenciesDlgProc;
         propSheetPage.lParam = (LPARAM)serviceItem;
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 
     // Dependents
@@ -314,7 +314,7 @@ VOID NTAPI ServicePropertiesInitializingCallback(
         propSheetPage.pszTitle = L"Dependents";
         propSheetPage.pfnDlgProc = EspServiceDependentsDlgProc;
         propSheetPage.lParam = (LPARAM)serviceItem;
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 
     // Other
@@ -328,7 +328,7 @@ VOID NTAPI ServicePropertiesInitializingCallback(
         propSheetPage.pszTitle = L"Triggers";
         propSheetPage.pfnDlgProc = EspServiceTriggersDlgProc;
         propSheetPage.lParam = (LPARAM)serviceItem;
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 
     // Package
@@ -342,7 +342,7 @@ VOID NTAPI ServicePropertiesInitializingCallback(
         propSheetPage.pszTitle = L"Package";
         propSheetPage.pfnDlgProc = EspPackageServiceDlgProc;
         propSheetPage.lParam = (LPARAM)serviceItem;
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 
     // PnP
@@ -356,7 +356,7 @@ VOID NTAPI ServicePropertiesInitializingCallback(
         propSheetPage.pszTitle = L"PnP";
         propSheetPage.pfnDlgProc = EspPnPServiceDlgProc;
         propSheetPage.lParam = (LPARAM)serviceItem;
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 
     // Other
@@ -370,7 +370,7 @@ VOID NTAPI ServicePropertiesInitializingCallback(
         propSheetPage.pszTitle = L"Other";
         propSheetPage.pfnDlgProc = EspServiceOtherDlgProc;
         propSheetPage.lParam = (LPARAM)serviceItem;
-        objectProperties->Pages[objectProperties->NumberOfPages++] = CreatePropertySheetPage(&propSheetPage);
+        objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
     }
 }
 

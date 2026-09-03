@@ -11,6 +11,7 @@
  */
 
 #include <ph.h>
+#include <phtranslation.h>
 #include <commdlg.h>
 #include <cfgmgr32.h>
 #include <d3dkmthk.h>
@@ -1081,7 +1082,7 @@ LONG PhShowMessage(
     PPH_STRING message;
 
     va_start(argptr, Format);
-    message = PhFormatString_V(Format, argptr);
+    message = PhFormatString_V(PhTranslateString(Format), argptr);
     va_end(argptr);
 
     if (!message)
@@ -1129,7 +1130,7 @@ LONG PhShowMessage2(
     ULONG buttonsFlags;
 
     va_start(argptr, Format);
-    message = PhFormatString_V(Format, argptr);
+    message = PhFormatString_V(PhTranslateString(Format), argptr);
     va_end(argptr);
 
     if (!message)
@@ -1150,7 +1151,7 @@ LONG PhShowMessage2(
     config.hwndParent = WindowHandle;
     config.pszWindowTitle = PhApplicationName;
     config.pszMainIcon = Icon;
-    config.pszMainInstruction = Title;
+    config.pszMainInstruction = PhTranslateString(Title);
     config.pszContent = message->Buffer;
 
     if (PhShowTaskDialog(
@@ -1226,7 +1227,7 @@ BOOLEAN PhpShowMessageOneTime(
     config.hwndParent = WindowHandle;
     config.pszWindowTitle = PhApplicationName;
     config.pszMainIcon = Icon;
-    config.pszMainInstruction = Title;
+    config.pszMainInstruction = PhTranslateString(Title);
     config.pszContent = PhGetString(message);
     config.pszVerificationText = L"Don't show this message again";
     config.cxWidth = 200;
@@ -1336,6 +1337,23 @@ BOOLEAN PhShowTaskDialog(
     LONG button;
     LONG radio;
     BOOL selected;
+    ULONG i;
+
+    // Translate display text in place; repeated translation of an already
+    // translated string is a dictionary miss and leaves it unchanged.
+    Config->pszWindowTitle = PhTranslateString(Config->pszWindowTitle);
+    Config->pszMainInstruction = PhTranslateString(Config->pszMainInstruction);
+    Config->pszContent = PhTranslateString(Config->pszContent);
+    Config->pszVerificationText = PhTranslateString(Config->pszVerificationText);
+    Config->pszExpandedInformation = PhTranslateString(Config->pszExpandedInformation);
+    Config->pszExpandedControlText = PhTranslateString(Config->pszExpandedControlText);
+    Config->pszCollapsedControlText = PhTranslateString(Config->pszCollapsedControlText);
+    Config->pszFooter = PhTranslateString(Config->pszFooter);
+
+    for (i = 0; i < Config->cButtons; i++)
+        Config->pButtons[i].pszButtonText = PhTranslateString(Config->pButtons[i].pszButtonText);
+    for (i = 0; i < Config->cRadioButtons; i++)
+        Config->pRadioButtons[i].pszButtonText = PhTranslateString(Config->pRadioButtons[i].pszButtonText);
 
     status = TaskDialogIndirect(
         Config,
@@ -1460,16 +1478,16 @@ VOID PhShowStatus(
         if (Message)
             PhShowError2(WindowHandle, Message, L"%s", PhGetString(statusMessage));
         else
-            PhShowError2(WindowHandle, L"Unable to perform the operation.", L"%s", PhGetString(statusMessage));
+            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", PhGetString(statusMessage));
 
         PhDereferenceObject(statusMessage);
     }
     else
     {
         if (Message)
-            PhShowError2(WindowHandle, L"Unable to perform the operation.", L"%s", Message);
+            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", Message);
         else
-            PhShowStatus(WindowHandle, L"Unable to perform the operation.", STATUS_UNSUCCESSFUL, 0);
+            PhShowStatus(WindowHandle, PhTranslateString(L"Unable to perform the operation."), STATUS_UNSUCCESSFUL, 0);
     }
 }
 
@@ -1495,16 +1513,16 @@ VOID PhShowStatusHR(
         if (Message)
             PhShowError2(WindowHandle, Message, L"%s", PhGetString(statusMessage));
         else
-            PhShowError2(WindowHandle, L"Unable to perform the operation.", L"%s", PhGetString(statusMessage));
+            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", PhGetString(statusMessage));
 
         PhDereferenceObject(statusMessage);
     }
     else
     {
         if (Message)
-            PhShowError2(WindowHandle, L"Unable to perform the operation.", L"%s", Message);
+            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", Message);
         else
-            PhShowStatusHR(WindowHandle, L"Unable to perform the operation.", E_FAIL, 0);
+            PhShowStatusHR(WindowHandle, PhTranslateString(L"Unable to perform the operation."), E_FAIL, 0);
     }
 }
 
@@ -1533,11 +1551,11 @@ BOOLEAN PhShowContinueStatus(
     if (Message && statusMessage)
         result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CLOSE_BUTTON, TD_ERROR_ICON, Message, L"%s", PhGetString(statusMessage));
     else if (Message)
-        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, L"Unable to perform the operation.", L"%s", Message);
+        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, PhTranslateString(L"Unable to perform the operation."), L"%s", Message);
     else if (statusMessage)
-        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, L"Unable to perform the operation.", L"%s", PhGetString(statusMessage));
+        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, PhTranslateString(L"Unable to perform the operation."), L"%s", PhGetString(statusMessage));
     else
-        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, L"Unable to perform the operation.", L"");
+        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, PhTranslateString(L"Unable to perform the operation."), L"");
 
     if (statusMessage) PhDereferenceObject(statusMessage);
 
@@ -1565,16 +1583,23 @@ BOOLEAN PhShowConfirmMessage(
     PPH_STRING verb;
     PPH_STRING verbCaps;
     PPH_STRING action;
+    PCWSTR object;
 
     // Make sure the verb is all lowercase.
-    verb = PhaLowerString(PhaCreateString(Verb));
+    verb = PhaLowerString(PhaCreateString(PhTranslateString(Verb)));
 
     // "terminate" -> "Terminate"
     verbCaps = PhaDuplicateString(verb);
     if (verbCaps->Length > 0) verbCaps->Buffer[0] = PhUpcaseUnicodeChar(verbCaps->Buffer[0]);
 
-    // "terminate", "the process" -> "terminate the process"
-    action = PhaConcatStrings(3, verb->Buffer, L" ", Object);
+    // "terminate", "the process" -> "terminate the process"; the Chinese
+    // translation joins the phrases without a separating space.
+    object = PhTranslateString(Object);
+
+    if (PhTranslationEnabled)
+        action = PhaConcatStrings(2, verb->Buffer, object);
+    else
+        action = PhaConcatStrings(3, verb->Buffer, L" ", object);
 
     {
         ULONG button;
@@ -1588,13 +1613,13 @@ BOOLEAN PhShowConfirmMessage(
         config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | ((WindowHandle && IsWindowVisible(WindowHandle) && !IsMinimized(WindowHandle)) ? TDF_POSITION_RELATIVE_TO_WINDOW : 0);
         config.pszWindowTitle = PhApplicationName;
         config.pszMainIcon = Warning ? TD_WARNING_ICON : TD_INFORMATION_ICON;
-        config.pszMainInstruction = PhaConcatStrings(3, L"Do you want to ", action->Buffer, L"?")->Buffer;
-        if (Message) config.pszContent = PhaConcatStrings2(Message, L" Are you sure you want to continue?")->Buffer;
+        config.pszMainInstruction = PhaConcatStrings(3, PhTranslateString(L"Do you want to "), action->Buffer, L"?")->Buffer;
+        if (Message) config.pszContent = PhaConcatStrings2(PhTranslateString(Message), PhTranslateString(L" Are you sure you want to continue?"))->Buffer;
 
         buttons[0].nButtonID = IDYES;
         buttons[0].pszButtonText = verbCaps->Buffer;
         buttons[1].nButtonID = IDNO;
-        buttons[1].pszButtonText = L"Cancel";
+        buttons[1].pszButtonText = PhTranslateString(L"Cancel");
 
         config.cButtons = 2;
         config.pButtons = buttons;

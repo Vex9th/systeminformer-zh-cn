@@ -944,7 +944,7 @@ static HPROPSHEETPAGE EtpCommonCreatePage(
     propSheetPage.lParam = (LPARAM)pageContext;
     propSheetPage.pfnCallback = EtpCommonPropPageProc;
 
-    propSheetPageHandle = CreatePropertySheetPage(&propSheetPage);
+    propSheetPageHandle = PhCreatePropertySheetPage(&propSheetPage);
     PhDereferenceObject(pageContext); // already got a ref from above call
 
     return propSheetPageHandle;

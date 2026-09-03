@@ -170,6 +170,8 @@
     <ClCompile Include="directdraw.cpp" />
     <ClCompile Include="dspick.c" />
     <ClCompile Include="emenu.c" />
+    <ClCompile Include="phtranslation.c" />
+    <ClCompile Include="phtranslation_zhcn.c" />
     <ClCompile Include="error.c" />
     <ClCompile Include="extlv.c" />
     <ClCompile Include="fastlock.c" />
@@ -313,6 +315,7 @@
     <ClInclude Include="include\guisup.h" />
     <ClInclude Include="include\phnet.h" />
     <ClInclude Include="include\phsup.h" />
+    <ClInclude Include="include\phtranslation.h" />
     <ClInclude Include="include\queuedlock.h" />
     <ClInclude Include="include\ref.h" />
     <ClInclude Include="include\refp.h" />

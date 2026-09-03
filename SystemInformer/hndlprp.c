@@ -354,7 +354,7 @@ NTSTATUS PhpShowHandlePropertiesThread(
     propSheetPage.hInstance = NtCurrentImageBase();
     propSheetPage.pfnDlgProc = PhpHandleGeneralDlgProc;
     propSheetPage.lParam = (LPARAM)context;
-    pages[propSheetHeader.nPages++] = CreatePropertySheetPage(&propSheetPage);
+    pages[propSheetHeader.nPages++] = PhCreatePropertySheetPage(&propSheetPage);
 
     // Permissions page
     memset(&propSheetPage, 0, sizeof(PROPSHEETPAGE));
@@ -363,7 +363,7 @@ NTSTATUS PhpShowHandlePropertiesThread(
     propSheetPage.hInstance = NtCurrentImageBase();
     propSheetPage.pfnDlgProc = PhpHandlePermissionsDlgProc;
     propSheetPage.lParam = (LPARAM)context;
-    pages[propSheetHeader.nPages++] = CreatePropertySheetPage(&propSheetPage);
+    pages[propSheetHeader.nPages++] = PhCreatePropertySheetPage(&propSheetPage);
 
     // Audiing page
     memset(&propSheetPage, 0, sizeof(PROPSHEETPAGE));
@@ -372,7 +372,7 @@ NTSTATUS PhpShowHandlePropertiesThread(
     propSheetPage.hInstance = NtCurrentImageBase();
     propSheetPage.pfnDlgProc = PhpHandleAuditingDlgProc;
     propSheetPage.lParam = (LPARAM)context;
-    pages[propSheetHeader.nPages++] = CreatePropertySheetPage(&propSheetPage);
+    pages[propSheetHeader.nPages++] = PhCreatePropertySheetPage(&propSheetPage);
 
     // Object-specific page
     if (PhIsNullOrEmptyString(handleContext->HandleItem->TypeName))

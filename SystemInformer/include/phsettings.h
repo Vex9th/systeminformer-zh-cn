@@ -655,6 +655,8 @@ EXT ULONG PhCsProcessMonitorCacheLimit;
 #define SETTING_COLOR_TEMPERATURE                                   L"ColorTemperature"
 #define SETTING_COLOR_FAN_RPM                                       L"ColorFanRpm"
 
+#define SETTING_LANGUAGE                                            L"Language"
+
 #define SETTING_KSI_ENABLE                                          L"KsiEnable"
 #define SETTING_KSI_ENABLE_WARNINGS                                 L"KsiEnableWarnings"
 #define SETTING_KSI_SERVICE_NAME                                    L"KsiServiceName"

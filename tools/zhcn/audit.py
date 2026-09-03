@@ -211,11 +211,12 @@ TASKDIALOG_FIELDS_RE = re.compile(
 # covered by dedicated translation hooks; keep in sync with phlib/util.c.
 PHLIB_INTERNAL = {
     "phlib/util.c": [
-        (1591, "Do you want to "),
-        (1592, " Are you sure you want to continue?"),
-        (1597, "Cancel"),
-        (1617, "Are you sure you want to %s?"),
+        (1610, "Do you want to "),
+        (1612, " Are you sure you want to continue?"),
+        (1617, "Cancel"),
+        (1636, "Are you sure you want to %s?"),
         (1231, "Don't show this message again"),
+        (1463, "Unable to perform the operation."),
     ],
 }
 
