@@ -123,7 +123,7 @@ git commit -m "feat(i18n): 引入语言决策与翻译层回退断点"
 - 修改：`SystemInformer/SystemInformer.zh-cn.rc`（新增）
 - 修改：`phlib/include/mapldr.h` / `phlib/mapldr.c`（如需语言参数化）
 
-- [ ] **步骤 1：抽出主程序核心对话框/字符串/菜单英文资源的 zh-CN 复本**
+- [x] **步骤 1：抽出主程序静态对话框英文资源的 zh-CN 复本**
 
 在新增 `SystemInformer/SystemInformer.zh-cn.rc` 中加入：
 
@@ -131,7 +131,7 @@ git commit -m "feat(i18n): 引入语言决策与翻译层回退断点"
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 ```
 
-并复制对话框/菜单/字符串 ID，逐条替换文案。
+当前主程序 `.rc` 没有 `MENU` 或 `STRINGTABLE` 块；先复制全部对话框 ID 并逐条替换文案。动态菜单和 C 代码字符串继续走英文回退兼容层，后续迁移到 `IDS_*`。
 
 - [ ] **步骤 2：构建资源可达性校验**
 
@@ -143,7 +143,7 @@ python3 tools/zhcn/validate_templates.py bin/Release64/sys_info.exe
 
 预期：可见模板与字符串 ID 与英文版保持一一映射（控件 ID/文本 ID 不缺失）。
 
-- [ ] **步骤 3：提交**
+- [x] **步骤 3：提交**
 
 ```bash
 git add SystemInformer/SystemInformer.rc SystemInformer/SystemInformer.zh-cn.rc

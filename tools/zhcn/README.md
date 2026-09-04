@@ -1,35 +1,42 @@
-# zh-CN 本地化工具
+# zh-CN 资源工具
 
-负责三件事：扫描新英文文本、维护 `zh-CN.json`、生成可编译字符串表。
+这里放本地化数据、生成器和验证脚本。当前处于原生资源迁移期：主程序静态对话框使用生成的 zh-CN 资源，插件和动态文字暂时保留兼容翻译层。
+
+## 常用命令
 
 ```bash
-# 1) 生成清单（不提交）
+# 扫描英文源文件，生成临时清单
 python3 tools/zhcn/audit.py
 
-# 2) 校验字符串完整性与一致性
+# 检查翻译键、占位符和未处理字符串
 python3 tools/zhcn/check_translation.py
 
-# 3) 生成编译用字符串表（提交 phlib/phtranslation_zhcn.c）
-python3 tools/zhcn/generate_translation.py
+# 检查旧兼容字符串表是否与翻译数据一致
+python3 tools/zhcn/generate_translation.py --check
+
+# 检查主程序原生 zh-CN 对话框是否与英文资源同步
+python3 tools/zhcn/generate_native_resources.py --check
+
+# 运行源码契约测试
+python3 -m unittest discover -s tools/zhcn/tests -v
 ```
 
-CI 每次构建都会执行 1 和 3 的 `--check` 校验；输出结果不一致会阻断构建。
+英文 `.rc` 结构或 `zh-CN.json` 发生变化后，重新生成原生资源：
 
-## 文件说明
+```bash
+python3 tools/zhcn/generate_native_resources.py
+```
 
-| 文件 | 作用 |
+## 文件
+
+| 文件 | 用途 |
 |---|---|
-| `audit.py` | 扫描 `.rc` 与 C/C++ 源码中所有用户可见字符串，按运行时翻译插桩点分类 |
-| `zh-CN.json` | 翻译数据源（英文原文 → 中文） |
-| `check_translation.py` | 结构校验 + 变更审计报告（`coverage-report.md`） |
-| `generate_translation.py` | 生成 `phlib/phtranslation_zhcn.c`（UTF-8 BOM，按 UTF-16 码元排序供 wcscmp 二分查找） |
-| `glossary.md` | 术语表与风格约定 |
-| `manifest.json` | 审计输出（派生数据，已 gitignore） |
-| `coverage-report.md` | 变更清单与审计结果（派生数据，已 gitignore） |
+| `zh-CN.json` | 当前翻译数据源 |
+| `generate_native_resources.py` | 生成 `SystemInformer/SystemInformer.zh-cn.rc` |
+| `validate_templates.py` | 检查构建后 PE 中的 en-US/zh-CN 对话框、结构和字体 |
+| `audit.py` | 只扫描英文源文件，不扫描生成的 `*.zh-cn.rc` |
+| `check_translation.py` | 输出缺失键、无用键和占位符错误 |
+| `generate_translation.py` | 生成过渡期运行时字典 |
+| `tests/` | 源码和生成结果契约测试 |
 
-## 运行时机制概述
-
-所有翻译插桩点集中在 phlib 与少量主程序文件：菜单（PhEMenu）、列表列、
-TreeNew 列、消息框/任务对话框、对话框模板（DLGTEMPLATE 翻译副本）、
-状态栏与托盘通知。`zh-CN.json` 中不存在的键在运行时回退为英文原文，
-因此上游更新引入的新字符串不会导致界面缺失，只会暂时显示英文。
+`manifest.json` 与 `coverage-report.md` 是临时审计输出，不作为“覆盖率百分比”或发布质量证明。
