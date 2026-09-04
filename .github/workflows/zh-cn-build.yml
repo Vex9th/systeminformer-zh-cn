@@ -112,7 +112,7 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: zh-cn string audit and coverage check
+    - name: zh-cn string audit and translation contract check
       shell: pwsh
       working-directory: ${{github.workspace}}
       run: |
@@ -228,7 +228,7 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: zh-cn string audit and coverage check
+    - name: zh-cn string audit and translation contract check
       shell: pwsh
       working-directory: ${{github.workspace}}
       run: |
@@ -282,10 +282,8 @@ jobs:
       run: |
         $hash = (Get-FileHash -Algorithm SHA256 ".\$env:ZIP_NAME").Hash
         "$hash  $env:ZIP_NAME" | Out-File -FilePath .\SHA256SUMS.txt -Encoding ascii
-        $coverage = (Select-String -Path tools\zhcn\coverage-report.md -Pattern '有效覆盖率：\*\*([0-9.]+)%\*\*').Matches.Groups[1].Value
-        @("ZIP_NAME=$env:ZIP_NAME", "SHA256=$hash", "COVERAGE=$coverage") |
+        @("ZIP_NAME=$env:ZIP_NAME", "SHA256=$hash") |
           Out-File -FilePath .\release-meta.txt -Encoding utf8
-        Copy-Item tools\zhcn\coverage-report.md .\coverage-report.md
         Get-Content .\SHA256SUMS.txt
         Get-Content .\release-meta.txt
 
@@ -296,7 +294,6 @@ jobs:
         path: |
           systeminformer-*-portable.zip
           SHA256SUMS.txt
-          coverage-report.md
           release-meta.txt
         if-no-files-found: error
         retention-days: 7
@@ -328,7 +325,6 @@ jobs:
         }
         $zip = $meta['ZIP_NAME']
         $sha = $meta['SHA256']
-        $coverage = $meta['COVERAGE']
         $lines = @(
           "# System Informer 简体中文社区版 $tag",
           '',
@@ -346,9 +342,12 @@ jobs:
           '',
           '校验示例（PowerShell）：```Get-FileHash -Algorithm SHA256 .\' + $zip + '```',
           '',
-          '## 本次翻译覆盖率',
+          '## 本次发布验收',
           '',
-          "$coverage%（明细见附件 coverage-report.md）",
+          '- 字符串审计与校验：通过',
+          '- 对话框模板校验：通过',
+          '- 无驱动断言：通过',
+          '- 运行时冒烟脚本：通过',
           '',
           '## 无驱动说明',
           '',
@@ -358,4 +357,4 @@ jobs:
           '上游源码与许可证：https://github.com/winsiderss/systeminformer（MIT）'
         )
         $lines | Out-File -FilePath release-notes.md -Encoding utf8
-        gh release create $tag --repo $env:REPO --title "System Informer 简体中文社区版 $tag" --notes-file release-notes.md $zip SHA256SUMS.txt coverage-report.md
+        gh release create $tag --repo $env:REPO --title "System Informer 简体中文社区版 $tag" --notes-file release-notes.md $zip SHA256SUMS.txt

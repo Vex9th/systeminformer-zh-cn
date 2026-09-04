@@ -65,13 +65,15 @@ jobs:
         python3 tools/zhcn/check_translation.py || true
         python3 tools/zhcn/generate_translation.py
 
-    - name: Coverage gate
+    - name: Translation summary
       if: steps.changes.outputs.count != '0'
-      id: coverage
+      id: zhcn-summary
       run: |
-        COVERAGE=$(grep -oP '(?<=有效覆盖率：\*\*)[0-9.]+(?=%\*\*)' tools/zhcn/coverage-report.md | head -1)
-        echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
-        echo "effective coverage: $COVERAGE%"
+        if grep -q "^## 未翻译字符串" tools/zhcn/coverage-report.md; then
+          echo "has_untranslated=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "has_untranslated=false" >> "$GITHUB_OUTPUT"
+        fi
 
     - name: Commit and push sync
       if: steps.changes.outputs.count != '0'
@@ -87,26 +89,13 @@ jobs:
         git commit -m "chore(sync): 合并上游 master ($RANGE)"
         git push origin zh-cn
 
-    - name: Tag release build
-      if: steps.changes.outputs.count != '0' && steps.coverage.outputs.coverage >= 99
-      run: |
-        BASE="v3.2.$(date -u +%y%j)"
-        N=1
-        while git rev-parse "${BASE}-zh-cn.${N}" >/dev/null 2>&1; do
-          N=$((N+1))
-        done
-        TAG="${BASE}-zh-cn.${N}"
-        git tag "$TAG"
-        git push origin "$TAG"
-        echo "tagged $TAG (the zh-cn-build workflow builds and publishes the release)"
-
     - name: Open issue for untranslated strings
-      if: steps.changes.outputs.count != '0' && steps.coverage.outputs.coverage < 99
+      if: steps.changes.outputs.count != '0' && steps.zhcn-summary.outputs.has_untranslated == 'true'
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
         {
-          echo "上游合并后翻译覆盖率降至 ${{ steps.coverage.outputs.coverage }}%（阈值 99%），已推送合并但未自动发布。"
+          echo "上游合并后发现未翻译字符串，已推送合并但未触发自动发布。"
           echo
           echo '```
           '"$(grep -A 40 '## 未翻译字符串' tools/zhcn/coverage-report.md | head -40)"'
@@ -115,5 +104,5 @@ jobs:
           echo "补翻 tools/zhcn/zh-CN.json 后运行 tools/zhcn 流程并打 tag 即可发布。"
         } > issue-body.md
         gh issue create --repo "$GITHUB_REPOSITORY" \
-          --title "上游同步：新增字符串待翻译（覆盖率 ${{ steps.coverage.outputs.coverage }}%）" \
+          --title "上游同步：新增字符串待翻译" \
           --body-file issue-body.md || true

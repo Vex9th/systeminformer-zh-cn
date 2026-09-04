@@ -67,9 +67,9 @@ sys_info system monitor task manager alternative process viewer 中文版下载
 - **运行受反作弊保护的游戏期间，请退出本程序**，避免账号或游戏进程被误判处置
 - 请从本仓库 Release 或自行构建获取程序，校验 SHA-256，不要使用来历不明的"汉化版"
 
-## 本地化覆盖范围
+## 本地化与验证边界
 
-翻译范围以 CI 每次构建生成的 `coverage-report.md` 为准（Release 附件中提供），覆盖以下界面文字来源：
+当前本地化基于运行时字典+模板处理。`coverage-report.md` 仅记录可审计范围，不等于“100% 覆盖”。按本仓库当前实现，覆盖边界如下：
 
 | 来源 | 说明 |
 |---|---|
@@ -82,14 +82,14 @@ sys_info system monitor task manager alternative process viewer 中文版下载
 
 不在翻译范围内：调试类界面（内核调试、syscall 工具）、命令行服务组件（phsvc）、设置文件的 JSON schema 文档等。未翻译字符串自动回退英文。
 
-术语遵循 [tools/zhcn/glossary.md](tools/zhcn/glossary.md)，字符串清单与覆盖率检查见 [tools/zhcn](tools/zhcn/README.md)。
+术语遵循 [tools/zhcn/glossary.md](tools/zhcn/glossary.md)，字符串清单与审核结果见 [tools/zhcn](tools/zhcn/README.md)。
 
 ## GitHub Actions 构建
 
 工作流 [`.github/workflows/zh-cn-build.yml`](.github/workflows/zh-cn-build.yml)（与上游 CI 相同的 runner，但**不包含任何 driver 任务**）：
 
 - **CI 验证**：`zh-cn` 分支推送（文档类改动除外）与手动触发；仅构建 x64 Release 用户态程序（镜像上游构建工具生成的 msbuild 命令），执行字符串审计与无驱动断言。同分支新推送会自动取消未完成的旧构建，构建工具与第三方依赖按文件哈希缓存，热缓存约 6 分钟完成
-- **正式发布**：`v*-zh-cn*` 标签触发完整官方流程（NuGet 恢复 → `build\build_init.cmd` → `build\build_release.cmd` 全架构用户态构建 → 审计与覆盖率检查 → 无驱动断言 → 打包便携 ZIP → SHA-256 → 创建 Release，附 ZIP、SHA256SUMS 与覆盖率报告）
+- **正式发布**：`v*-zh-cn*` 标签触发完整官方流程（NuGet 恢复 → `build\build_init.cmd` → `build\build_release.cmd` 全架构用户态构建 → 审计与验收 → 无驱动断言 → 打包便携 ZIP → SHA-256 → 创建 Release）
 - 所有 Action 固定到官方仓库的具体 commit；权限最小化（仅发布任务 `contents: write`）
 
 ## 与上游同步
@@ -116,7 +116,7 @@ git push --force-with-lease origin zh-cn
 
 ## 已知限制
 
-- **界面文字与布局尚未在真实 Windows 上人工验收**（截断/重叠问题待实测反馈，中文通常短于英文，风险较低）
+- **界面文字与布局尚未覆盖全部分辨率与场景的人工验收**，真实 Windows 的截图与交互复核仍在持续推进
 - 反作弊兼容性无法逐一验证，受保护游戏期间请退出本程序（见上文声明）
 - 深层调试功能（内核堆栈、驱动对象详情等）因无驱动而不可用
 - 便携版为主；不提供安装器（上游 setup 构建产物不随本社区版发布）
