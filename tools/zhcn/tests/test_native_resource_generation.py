@@ -8,6 +8,7 @@ import subprocess
 import sys
 import unittest
 import xml.etree.ElementTree as ET
+from collections import Counter
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -66,6 +67,14 @@ def load_generator_module():
 def load_audit_module():
     path = REPO_ROOT / "tools" / "zhcn" / "audit.py"
     spec = importlib.util.spec_from_file_location("zhcn_audit", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_translation_checker_module():
+    path = REPO_ROOT / "tools" / "zhcn" / "check_translation.py"
+    spec = importlib.util.spec_from_file_location("check_translation", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -274,12 +283,38 @@ class NativeResourceGenerationTests(unittest.TestCase):
             validator.format_specifiers("%.*s / %-08I64u"),
             ["%.*s", "%-08I64u"],
         )
+        self.assertEqual(
+            validator.format_specifiers(
+                "Append /fail=%1% to pass the fail count to the program."
+            ),
+            [],
+        )
         self.assertTrue(validator.required_string_resources_missing(set(), True))
         self.assertFalse(validator.required_string_resources_missing(set(), False))
         self.assertFalse(validator.required_string_resources_missing({2000}, True))
         self.assertTrue(validator.string_resource_count_mismatch({2000}, 41))
         self.assertFalse(validator.string_resource_count_mismatch(set(range(41)), 41))
         self.assertFalse(validator.string_resource_count_mismatch({2000}, None))
+
+    def test_source_translation_placeholder_check_preserves_order_and_flags(self) -> None:
+        checker = load_translation_checker_module()
+
+        self.assertIsNone(
+            checker.check_placeholders("Error %lu: %s", "错误 %lu：%s")
+        )
+        self.assertIsNotNone(
+            checker.check_placeholders("Error %s: %lu", "错误 %lu：%s")
+        )
+        self.assertEqual(
+            checker.format_specs("%.*s / %-08I64u"),
+            ["%.*s", "%-08I64u"],
+        )
+        self.assertEqual(
+            checker.format_specs(
+                "Append /fail=%1% to pass the fail count to the program."
+            ),
+            [],
+        )
 
     def test_compiled_dialog_parser_keeps_control_ordinals_in_structure(self) -> None:
         validator = load_validator_module()
@@ -810,18 +845,20 @@ class NativeResourceGenerationTests(unittest.TestCase):
             },
         )
         self.assertEqual(
-            dict(
+            Counter(
                 (path, int(count))
                 for path, count in re.findall(
                     r"--expect-string-count-in\s+'([^'=]+)=(\d+)'",
                     workflow,
                 )
             ),
-            {
-                r"bin\Release64\peview.exe": 128,
-                r"build\output\systeminformer-build-release-setup.exe": 74,
-                r"build\output\systeminformer-build-canary-setup.exe": 74,
-            },
+            Counter(
+                {
+                    (r"bin\Release64\peview.exe", 128): 2,
+                    (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
+                    (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
+                }
+            ),
         )
 
     def test_english_manifest_ignores_generated_localized_resources(self) -> None:

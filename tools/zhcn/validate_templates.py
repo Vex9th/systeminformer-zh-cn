@@ -21,7 +21,7 @@ LANG_EN_US = 0x0409
 LANG_ZH_CN = 0x0804
 DS_SETFONT = 0x0040
 FORMAT_SPEC_RE = re.compile(
-    r"%(?:%|[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?"
+    r"(?<![0-9])%(?:%|[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?"
     r"(?:I64|I32|ll|hh|[hlLwIjzt])?[diuoxXfFeEgGaAcCsSpn])"
 )
 

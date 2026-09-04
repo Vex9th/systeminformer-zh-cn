@@ -10,7 +10,7 @@ Checks performed (exit code 1 on structural failure, 0 otherwise):
   2. duplicate keys in the JSON (json would silently allow them via parser,
      we re-parse raw to detect them)
   3. format specifier consistency between English and Chinese
-     (the multiset of printf-style conversions must match)
+     (the ordered printf-style conversions must match exactly)
   4. accelerator-key (\t) consistency for menu-style strings
   5. translated / untranslated counts per category and module
 
@@ -28,7 +28,10 @@ from collections import defaultdict
 HERE = os.path.dirname(__file__)
 REPO_ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 
-FORMAT_SPEC_RE = re.compile(r"%(?:%|[0-9]*(?:\.[0-9]+)?(?:I64|ll|l|L|h|hh|w|I)?[a-zA-Z])")
+FORMAT_SPEC_RE = re.compile(
+    r"(?<![0-9])%(?:%|[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?"
+    r"(?:I64|I32|ll|hh|[hlLwIjzt])?[diuoxXfFeEgGaAcCsSpn])"
+)
 
 # Strings intentionally kept in English: per-CPU graph labels, key names,
 # technical acronyms, designer placeholders, product/service names and noise
@@ -51,20 +54,12 @@ def is_keep_english(s: str) -> bool:
 
 
 def format_specs(s: str):
-    """Return the multiset (sorted list) of printf format specifiers.
-
-    Width/precision are folded to '*' so that legitimate adjustments to
-    field widths do not count as mismatches; type and size must match."""
-    out = []
-    for m in FORMAT_SPEC_RE.finditer(s):
-        spec = m.group(0)
-        if spec == "%%":
-            continue
-        body = spec[1:]
-        body = re.sub(r"^\d+", "", body)
-        body = re.sub(r"^\.\d+", "", body)
-        out.append(body)
-    return sorted(out)
+    """Return printf format specifiers in their original order."""
+    return [
+        match.group(0)
+        for match in FORMAT_SPEC_RE.finditer(s)
+        if match.group(0) != "%%"
+    ]
 
 
 def check_placeholders(en: str, zh: str):
