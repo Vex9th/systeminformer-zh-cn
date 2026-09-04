@@ -6,6 +6,7 @@ import re
 import struct
 import subprocess
 import sys
+import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 from collections import Counter
@@ -172,6 +173,90 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertFalse(
             audit.is_noise("%s is not recommended when running this program.")
         )
+        self.assertEqual(audit.CALL_SPECS["PhShowStatus"], {1: "c_msgbox"})
+        self.assertEqual(
+            audit.CALL_SPECS["PhShowContinueStatus"], {1: "c_msgbox"}
+        )
+
+    def test_audit_scans_message_macro_title_and_format_arguments(self) -> None:
+        audit = load_audit_module()
+        source = """
+            PhShowError(hwnd, L"Real visible message.");
+            PhShowError(hwnd, L"Adjacent " L"format message.");
+            PhShowError(hwnd, L"%s", L"Visible vararg message.");
+            PhShowWarning(hwnd, L"Visible warning: %s", detail);
+            PhShowInformation2(hwnd, L"Visible title", L"Visible content");
+            PhShowError2(
+                hwnd,
+                L"Visible vararg title",
+                L"%s",
+                L"Visible vararg content"
+            );
+            PhShowWarning2(
+                hwnd,
+                L"Adjacent title",
+                L"%s",
+                L"Adjacent "
+                L"content"
+            );
+            PhShowWarning(
+                hwnd,
+                L"Visible format without placeholders.",
+                L"Unused vararg literal."
+            );
+            // PhShowError(hwnd, L"Commented-out message.");
+            /* PhShowError(hwnd, L"Block-commented message."); */
+            PhShowMessageOneTime2(
+                hwnd,
+                TD_CLOSE_BUTTON,
+                TD_INFORMATION_ICON,
+                L"One-time title",
+                &checked,
+                L"One-time content"
+            );
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            {entry["english"] for entry in entries},
+            {
+                "Real visible message.",
+                "Adjacent format message.",
+                "Visible vararg message.",
+                "Visible warning: %s",
+                "Visible title",
+                "Visible content",
+                "Visible vararg title",
+                "Visible vararg content",
+                "Adjacent title",
+                "Adjacent content",
+                "Visible format without placeholders.",
+                "One-time title",
+                "One-time content",
+            },
+        )
+        categories = {
+            entry["english"]: entry["category"]
+            for entry in entries
+        }
+        self.assertEqual(
+            categories["Visible vararg message."],
+            "c_msgbox_vararg",
+        )
+        self.assertEqual(
+            categories["Visible vararg content"],
+            "c_msgbox",
+        )
+        self.assertNotIn("Commented-out message.", categories)
+        self.assertNotIn("Block-commented message.", categories)
+        self.assertNotIn("Unused vararg literal.", categories)
 
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
         audit = load_audit_module()
@@ -326,6 +411,10 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             [],
         )
+        self.assertTrue(checker.translation_is_effective("c_msgbox", "已翻译"))
+        self.assertFalse(
+            checker.translation_is_effective("c_msgbox_vararg", "已翻译")
+        )
 
     def test_compiled_dialog_parser_keeps_control_ordinals_in_structure(self) -> None:
         validator = load_validator_module()
@@ -391,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("224 strings", result.stdout)
+        self.assertIn("233 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -741,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 22)
+        self.assertEqual(len(stringtable_ids(resource_script)), 31)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -749,12 +838,16 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertIn("if (!PhpInitializeApplicationUiStrings())", main)
 
         resource_ids = set(stringtable_ids(resource_script))
+        application_source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
         used_ids = set(
             re.findall(
-                r"PhGetApplicationUiString\((IDS_PH_[A-Z0-9_]+)\)",
-                options + "\n" + main,
+                r"\b(IDS_PH_[A-Z0-9_]+)\b",
+                application_source,
             )
-        )
+        ) - {"IDS_PH_FIRST", "IDS_PH_LAST"}
         self.assertEqual(used_ids, resource_ids)
 
         resource_header = (
@@ -768,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2022)))
+        self.assertEqual(numeric_ids, list(range(2000, 2031)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -795,6 +888,111 @@ class NativeResourceGenerationTests(unittest.TestCase):
                         set(re.findall(r'L"(?:[^"\\]|\\.)*"', call)),
                         {'L""', 'L"%s"'},
                     )
+
+    def test_main_window_creation_errors_share_native_resource(self) -> None:
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
+
+        self.assertNotIn('L"Unable to create the window."', source)
+        self.assertGreaterEqual(
+            source.count(
+                "PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW)"
+            ),
+            10,
+        )
+
+    def test_main_missing_process_errors_share_native_resource(self) -> None:
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
+
+        self.assertNotIn('L"The process does not exist."', source)
+        self.assertGreaterEqual(
+            source.count(
+                "PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST)"
+            ),
+            15,
+        )
+
+    def test_main_common_service_and_file_errors_share_native_resources(self) -> None:
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
+
+        self.assertNotIn('L"The service does not exist."', source)
+        self.assertNotIn('L"Unable to locate the file."', source)
+        self.assertGreaterEqual(
+            source.count(
+                "PhGetApplicationUiString(IDS_PH_SERVICE_DOES_NOT_EXIST)"
+            ),
+            6,
+        )
+        self.assertGreaterEqual(
+            source.count("PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE)"),
+            8,
+        )
+
+    def test_main_common_operation_errors_share_native_resources(self) -> None:
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
+
+        for literal in (
+            'L"Unable to create the file"',
+            'L"Unable to decommit the memory region"',
+            'L"Unable to free the memory region"',
+            'L"Unable to perform the operation."',
+            'L"Unable to unmap the section view"',
+        ):
+            self.assertNotIn(literal, source)
+        self.assertNotRegex(source, r'L"Unable to open the process\.?"')
+        self.assertGreaterEqual(
+            source.count("PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE)"),
+            10,
+        )
+        self.assertGreaterEqual(
+            source.count("PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS)"),
+            14,
+        )
+        self.assertGreaterEqual(
+            source.count(
+                "PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION)"
+            ),
+            9,
+        )
+        for resource_id in (
+            "IDS_PH_UNABLE_DECOMMIT_MEMORY_REGION",
+            "IDS_PH_UNABLE_FREE_MEMORY_REGION",
+            "IDS_PH_UNABLE_UNMAP_SECTION_VIEW",
+        ):
+            self.assertEqual(source.count(resource_id), 1)
+
+    def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
+        audit = load_audit_module()
+        unresolved = []
+
+        for path in (REPO_ROOT / "SystemInformer").glob("*.c"):
+            source = path.read_text(encoding="utf-8-sig")
+            for name, args, spans, call_start in audit.find_calls(
+                source, {"PhShowStatus", "PhShowContinueStatus"}
+            ):
+                if len(args) <= 1:
+                    continue
+                message = args[1]
+                if (
+                    audit.first_literal(message) is None
+                    and "PhGetApplicationUiString" not in message
+                ):
+                    unresolved.append(
+                        f"{path.name}:{audit.line_of_offset(source, call_start)}:{name}"
+                    )
+
+        self.assertEqual(unresolved, [])
 
     def test_setup_progress_and_wizard_buttons_use_string_resources(self) -> None:
         setup_sources = {
@@ -929,7 +1127,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 22): 2,
+                    (r"bin\Release64\sys_info.exe", 31): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,

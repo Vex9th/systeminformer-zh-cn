@@ -1800,4 +1800,13 @@ BEGIN
     IDS_PH_WOW64_WARNING                          "你正在 64 位 Windows 上运行 32 位版本的 sys_info，大多数功能将无法正常工作。\n\n请改用 64 位版本的 sys_info。"
     IDS_PH_UNABLE_CREATE_WINDOW                   "无法创建窗口。"
     IDS_PH_UNABLE_CONFIGURE_TERMINATION_POLICY    "无法配置终止策略。"
+    IDS_PH_PROCESS_DOES_NOT_EXIST                 "该进程不存在。"
+    IDS_PH_SERVICE_DOES_NOT_EXIST                 "服务不存在。"
+    IDS_PH_UNABLE_LOCATE_FILE                     "无法定位文件。"
+    IDS_PH_UNABLE_CREATE_FILE                     "无法创建文件"
+    IDS_PH_UNABLE_OPEN_PROCESS                    "无法打开进程"
+    IDS_PH_UNABLE_PERFORM_OPERATION               "无法执行该操作。"
+    IDS_PH_UNABLE_FREE_MEMORY_REGION              "无法释放内存区域"
+    IDS_PH_UNABLE_DECOMMIT_MEMORY_REGION          "无法取消提交内存区域"
+    IDS_PH_UNABLE_UNMAP_SECTION_VIEW              "无法取消映射节视图"
 END

@@ -2400,7 +2400,7 @@ VOID PhMipHandleListSectionCommand(
 
             if (invalid)
             {
-                PhShowStatus(PhMainWndHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                PhShowStatus(PhMainWndHandle, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
             }
         }
         break;

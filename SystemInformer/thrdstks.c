@@ -1871,7 +1871,7 @@ VOID PhShowThreadStacksDialog(
 
     if (!NT_SUCCESS(PhCreateThread2(PhpThreadStacksDialogThreadStart, context)))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to create the window.", 0, ERROR_OUTOFMEMORY);
+        PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), 0, ERROR_OUTOFMEMORY);
         PhDereferenceObject(context);
     }
 }

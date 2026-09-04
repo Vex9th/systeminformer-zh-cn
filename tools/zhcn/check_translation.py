@@ -48,9 +48,17 @@ KEEP_ENGLISH_RULES = [
     r"^(Hybrid-Analysis|VirusTotal|Worker Factory|PingGraphLayout)$",
 ]
 
+CALLSITE_MIGRATION_CATEGORIES = {"c_msgbox_vararg"}
+
 
 def is_keep_english(s: str) -> bool:
     return any(re.fullmatch(k, s) for k in KEEP_ENGLISH_RULES)
+
+
+def translation_is_effective(category: str, translated_value) -> bool:
+    """A dictionary entry cannot translate literals passed as printf
+    varargs to the non-TaskDialog PhShowMessage family."""
+    return bool(translated_value) and category not in CALLSITE_MIGRATION_CATEGORIES
 
 
 def format_specs(s: str):
@@ -141,7 +149,10 @@ def main():
             if module == "plugins":
                 module = f"plugins/{sub}"
         zh = strings.get(en)
-        translated = zh is not None and zh != en
+        translated = translation_is_effective(
+            entry["category"],
+            zh is not None and zh != en,
+        )
         if not translated and is_keep_english(en):
             keep_english.append(entry)
             continue
@@ -178,6 +189,7 @@ def main():
     lines.append(f"- 已翻译：{total_t}")
     lines.append(f"- 未翻译：{total_a - total_t}")
     lines.append(f"- 约定保留英文（技术缩写/键名/占位符等）：{len(keep_english)} 项")
+    lines.append("- `c_msgbox_vararg` 必须迁移调用点；即使字典存在同名项也不计为已翻译")
     lines.append("")
     lines.append("## 按类别 / By category")
     lines.append("")

@@ -166,7 +166,7 @@ static INT_PTR CALLBACK PhpInformationDlgProc(
                         }
 
                         if (!NT_SUCCESS(status))
-                            PhShowStatus(hwndDlg, L"Unable to create the file", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
                     }
 
                     PhFreeFileDialog(fileDialog);

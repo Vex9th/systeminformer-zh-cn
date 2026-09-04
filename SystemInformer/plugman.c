@@ -894,7 +894,6 @@ INT_PTR CALLBACK PhPluginsDlgProc(
 //        {
 //            if (!NT_SUCCESS(PhCreateThreadEx(&PhPluginsThreadHandle, PhpPluginsDialogThreadStart, NULL)))
 //            {
-//                PhShowError(PhMainWndHandle, L"%s", L"Unable to create the window.");
 //                return;
 //            }
 //

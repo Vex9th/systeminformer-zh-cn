@@ -1820,7 +1820,7 @@ static HRESULT CALLBACK KsiSplashScreenDialogCallbackProc(
             }
             else
             {
-                PhShowStatus(WindowHandle, L"Unable to create the window.", status, 0);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), status, 0);
             }
         }
         break;

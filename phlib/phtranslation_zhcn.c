@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2132] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2139] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -1792,6 +1792,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2132] =
     { L"The section size is greater than 32 MB. Only the first 32 MB will be available.", L"节大小超过 32 MB。仅前 32 MB 可用。", },
     { L"The selected installation directory already contains files and data. If you continue this directory and files will be deleted.\r\n\r\nDo you want to change the directory?", L"所选安装目录已包含文件和数据。如果继续，这些内容将被删除。\r\n\r\n是否更改目录？", },
     { L"The selected privilege has already been added.", L"所选特权已添加。", },
+    { L"The service does not exist.", L"服务不存在。", },
     { L"The thread does not appear to be waiting.", L"该线程似乎未处于等待状态。", },
     { L"The trigger type \"%s\" does not allow data items to be configured.", L"触发器类型“%s”不允许配置数据项。", },
     { L"The update has been downloaded and installed.\r\n\r\nRestart System Informer to apply the update.", L"更新已下载并安装。\r\n\r\n请重启 sys_info 以应用更新。", },
@@ -1888,18 +1889,23 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2132] =
     { L"Unable to configure termination policy.", L"无法配置终止策略。", },
     { L"Unable to configure this option.", L"无法配置此选项。", },
     { L"Unable to create the CLR table preview window.", L"无法创建 CLR 表预览窗口。", },
+    { L"Unable to create the file", L"无法创建文件", },
     { L"Unable to create the minidump.", L"无法创建小型转储。", },
     { L"Unable to create the window.", L"无法创建窗口。", },
+    { L"Unable to decommit the memory region", L"无法取消提交内存区域", },
     { L"Unable to download GeoLite database updates.", L"无法下载 GeoLite 数据库更新。", },
     { L"Unable to download GeoLite update.", L"无法下载 GeoLite 更新。", },
     { L"Unable to enable option start as admin.", L"无法启用以管理员身份启动选项。", },
     { L"Unable to enable start as admin.", L"无法启用以管理员身份启动。", },
     { L"Unable to enumerate the image resources.", L"无法枚举映像资源。", },
+    { L"Unable to free the memory region", L"无法释放内存区域", },
     { L"Unable to load the archive file", L"无法加载归档文件", },
     { L"Unable to load the file.", L"无法加载文件。", },
     { L"Unable to load the following plugin(s)", L"无法加载以下插件", },
     { L"Unable to load the pdb file", L"无法加载 PDB 文件", },
+    { L"Unable to locate the file.", L"无法定位文件。", },
     { L"Unable to locate the resource data.", L"无法定位资源数据。", },
+    { L"Unable to open the process", L"无法打开进程", },
     { L"Unable to open the process.", L"无法打开该进程。", },
     { L"Unable to perform the operation.", L"无法执行该操作。", },
     { L"Unable to preview CLR table rows", L"无法预览 CLR 表行", },
@@ -1912,6 +1918,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2132] =
     { L"Unable to save resource.", L"无法保存资源。", },
     { L"Unable to save the live kernel dump.", L"无法保存实时内核转储。", },
     { L"Unable to start the execution alias with a process token.", L"无法使用进程令牌启动执行别名。", },
+    { L"Unable to unmap the section view", L"无法取消映射节视图", },
     { L"Unable to update the IFEO key for priority.", L"无法更新优先级对应的 IFEO 键。", },
     { L"Undecorated name", L"未修饰名称", },
     { L"Undo", L"撤销", },

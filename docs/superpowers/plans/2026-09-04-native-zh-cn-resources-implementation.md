@@ -145,7 +145,7 @@ python3 tools/zhcn/validate_templates.py bin/Release64/sys_info.exe
 
 预期：可见模板与字符串 ID 与英文版保持一一映射（控件 ID/文本 ID 不缺失）。
 
-验证记录（2026-09-05）：[Windows CI 33898026678](https://github.com/Vex9th/systeminformer-zh-cn/actions/runs/33898026678) 通过；构建后 PE 包含 en-US 106 个、zh-CN 106 个对话框，结构失败 0；原生资源加载探针、11 个插件加载和主界面响应冒烟测试通过。
+历史验证记录（2026-09-05）：[Windows CI 33898026678](https://github.com/Vex9th/systeminformer-zh-cn/actions/runs/33898026678) 曾通过；该次构建后 PE 包含 en-US 106 个、zh-CN 106 个对话框，结构失败 0，并完成当时版本的原生资源加载探针、11 个插件加载和主界面响应冒烟测试。此记录不代表其后的本地提交已经通过 Windows 验证。
 
 - [x] **步骤 3：提交**
 
@@ -235,7 +235,7 @@ CI 明确传入 `sys_info.exe` 和 11 个插件 DLL，逐文件比较 en-US 与 
 - [ ] **步骤 4：校验 en-US/zh-CN 字符串表 ID 和格式占位符一致**
 - [ ] **步骤 5：让新增未迁移 UI 英文字面量在 CI 中失败**
 
-进行中（2026-09-05）：审计范围已覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。当前共 224 条 en-US/zh-CN `STRINGTABLE` 项：PE Viewer 128 条，安装器 74 条，主程序 22 条；PE Viewer 的菜单、列表列名、选项和弹窗提示，以及主程序选项/启动提示已迁移，并新增扫描式守卫防止英文提示回流。PE Viewer 其余动态字段、主程序其余动态文字和插件动态文字仍使用旧兼容字典，因此任务 8 仍不能勾选完成。
+进行中（2026-09-05）：审计范围已覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。当前共 233 条 en-US/zh-CN `STRINGTABLE` 项：PE Viewer 128 条，安装器 74 条，主程序 31 条；PE Viewer 的菜单、列表列名、选项和弹窗提示，以及主程序选项/启动/首批公共错误提示已迁移，并新增扫描式守卫防止英文提示回流。审计现已修正消息宏参数位置，排除注释死代码，并按 C 编译语义合并相邻字符串、检查格式化后续参数和未解析变量；当前仍有 195 条已识别动态提示未作翻译决定，其中 6 条后续参数无法由旧字典可靠接管，必须迁移调用点。PE Viewer 其余动态字段、主程序其余动态文字和插件动态文字仍使用旧兼容字典，因此任务 8 仍不能勾选完成。
 
 ---
 

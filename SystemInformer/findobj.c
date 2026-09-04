@@ -1634,7 +1634,7 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
                         }
                         else
                         {
-                            PhShowStatus(hwndDlg, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
                         }
                     }
                 }
@@ -1830,7 +1830,7 @@ VOID PhShowFindObjectsDialog(
     {
         if (!NT_SUCCESS(PhCreateThreadEx(&PhFindObjectsThreadHandle, PhpFindObjectsDialogThreadStart, ParentWindowHandle)))
         {
-            PhShowStatus(ParentWindowHandle, L"Unable to create the window.", 0, ERROR_OUTOFMEMORY);
+            PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), 0, ERROR_OUTOFMEMORY);
             return;
         }
 

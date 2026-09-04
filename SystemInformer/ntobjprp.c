@@ -679,7 +679,7 @@ VOID PhpShowProcessForMapping(
     }
     else
     {
-        PhShowStatus(hwndDlg, L"The process does not exist.", STATUS_INVALID_CID, 0);
+        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
     }
 }
 
@@ -2204,4 +2204,3 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
 
     return FALSE;
 }
-

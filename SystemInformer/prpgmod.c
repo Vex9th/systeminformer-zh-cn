@@ -655,7 +655,7 @@ VOID PhpProcessModulesSave(
         }
 
         if (!NT_SUCCESS(status))
-            PhShowStatus(ModulesContext->WindowHandle, L"Unable to create the file", status, 0);
+            PhShowStatus(ModulesContext->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
     }
 
     PhFreeFileDialog(fileDialog);

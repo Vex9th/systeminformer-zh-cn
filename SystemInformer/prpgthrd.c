@@ -911,7 +911,7 @@ VOID PhpProcessThreadsSave(
         }
 
         if (!NT_SUCCESS(status))
-            PhShowStatus(ThreadsContext->WindowHandle, L"Unable to create the file", status, 0);
+            PhShowStatus(ThreadsContext->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
     }
 
     PhFreeFileDialog(fileDialog);

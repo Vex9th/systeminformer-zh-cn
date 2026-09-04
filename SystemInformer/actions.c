@@ -7268,23 +7268,23 @@ BOOLEAN PhUiFreeMemory(
 
     if (!NT_SUCCESS(status))
     {
-        PWSTR message;
+        ULONG messageId;
 
         if (!(MemoryItem->Type & (MEM_MAPPED | MEM_IMAGE)))
         {
             if (Free)
-                message = L"Unable to free the memory region";
+                messageId = IDS_PH_UNABLE_FREE_MEMORY_REGION;
             else
-                message = L"Unable to decommit the memory region";
+                messageId = IDS_PH_UNABLE_DECOMMIT_MEMORY_REGION;
         }
         else
         {
-            message = L"Unable to unmap the section view";
+            messageId = IDS_PH_UNABLE_UNMAP_SECTION_VIEW;
         }
 
         PhShowStatus(
             WindowHandle,
-            message,
+            PhGetApplicationUiString(messageId),
             status,
             0
             );
@@ -7504,7 +7504,7 @@ BOOLEAN PhUiCloseHandles(
     }
     else
     {
-        PhShowStatus(WindowHandle, L"Unable to open the process", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
         return FALSE;
     }
 

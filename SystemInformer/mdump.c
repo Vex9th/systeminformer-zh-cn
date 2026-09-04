@@ -221,7 +221,7 @@ VOID PhUiCreateDumpFileProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(WindowHandle, L"Unable to open the process", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
         PhDereferenceObject(context);
         return;
     }

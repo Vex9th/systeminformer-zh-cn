@@ -2620,6 +2620,15 @@ BEGIN
     IDS_PH_WOW64_WARNING                          "You are attempting to run the 32-bit version of System Informer on 64-bit Windows. Most features will not work correctly.\n\nPlease run the 64-bit version of System Informer instead."
     IDS_PH_UNABLE_CREATE_WINDOW                   "Unable to create the window."
     IDS_PH_UNABLE_CONFIGURE_TERMINATION_POLICY    "Unable to configure termination policy."
+    IDS_PH_PROCESS_DOES_NOT_EXIST                 "The process does not exist."
+    IDS_PH_SERVICE_DOES_NOT_EXIST                 "The service does not exist."
+    IDS_PH_UNABLE_LOCATE_FILE                     "Unable to locate the file."
+    IDS_PH_UNABLE_CREATE_FILE                     "Unable to create the file"
+    IDS_PH_UNABLE_OPEN_PROCESS                    "Unable to open the process"
+    IDS_PH_UNABLE_PERFORM_OPERATION               "Unable to perform the operation."
+    IDS_PH_UNABLE_FREE_MEMORY_REGION              "Unable to free the memory region"
+    IDS_PH_UNABLE_DECOMMIT_MEMORY_REGION          "Unable to decommit the memory region"
+    IDS_PH_UNABLE_UNMAP_SECTION_VIEW              "Unable to unmap the section view"
 END
 
 /////////////////////////////////////////////////////////////////////////////

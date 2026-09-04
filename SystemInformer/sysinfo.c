@@ -265,7 +265,7 @@ VOID PhShowSystemInformationDialog(
     {
         if (!NT_SUCCESS(PhCreateThreadEx(&PhSipThread, PhSipSysInfoThreadStart, NULL)))
         {
-            PhShowStatus(PhMainWndHandle, L"Unable to create the window.", 0, ERROR_OUTOFMEMORY);
+            PhShowStatus(PhMainWndHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), 0, ERROR_OUTOFMEMORY);
             return;
         }
 

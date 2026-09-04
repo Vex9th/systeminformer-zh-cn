@@ -744,7 +744,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                         }
                         else
                         {
-                            PhShowStatus(hwndDlg, L"Unable to locate the file.", STATUS_NOT_FOUND, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), STATUS_NOT_FOUND, 0);
                         }
                     }
                 }
@@ -769,7 +769,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                         }
                         else
                         {
-                            PhShowStatus(hwndDlg, L"Unable to locate the file.", STATUS_NOT_FOUND, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), STATUS_NOT_FOUND, 0);
                         }
                     }
                 }
@@ -821,7 +821,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"The process does not exist.", STATUS_NOT_FOUND, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_NOT_FOUND, 0);
                     }
                 }
                 break;
@@ -1036,7 +1036,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                                 }
                                 else
                                 {
-                                    PhShowStatus(hwndDlg, L"Unable to perform the operation.", status, 0);
+                                    PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION), status, 0);
                                 }
                             }
                         }

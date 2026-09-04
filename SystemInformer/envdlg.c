@@ -1570,7 +1570,7 @@ VOID PhShowEnvironmentVariablesDialog(
     {
         if (!NT_SUCCESS(PhCreateThreadEx(&EtEnvironmentVariablesWindowThreadHandle, EtEnvironmentVariablesWindowThreadStart, ParentWindowHandle)))
         {
-            PhShowError2(NULL, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), L"%s", L"");
             return;
         }
 
@@ -1579,7 +1579,7 @@ VOID PhShowEnvironmentVariablesDialog(
         if (!EtEnvironmentVariablesWindowHandle)
         {
             PhResetEvent(&EtEnvironmentVariablesInitializedEvent);
-            PhShowError2(NULL, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), L"%s", L"");
             return;
         }
     }

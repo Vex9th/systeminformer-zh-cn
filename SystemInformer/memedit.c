@@ -129,7 +129,7 @@ VOID PhShowMemoryEditorDialog(
             }
             else
             {
-                PhShowStatus(OwnerWindow, L"Unable to open the process", status, 0);
+                PhShowStatus(OwnerWindow, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
                 return;
             }
         }
@@ -407,7 +407,7 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
                         }
 
                         if (!NT_SUCCESS(status))
-                            PhShowStatus(hwndDlg, L"Unable to create the file", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
                     }
 
                     PhFreeFileDialog(fileDialog);
@@ -493,7 +493,7 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
                         }
                         else
                         {
-                            PhShowStatus(hwndDlg, L"Unable to open the process", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
                         }
                     }
                 }
@@ -528,7 +528,7 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to open the process", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
                     }
 
                     InvalidateRect(context->HexEditHandle, NULL, TRUE);

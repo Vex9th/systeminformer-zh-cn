@@ -109,7 +109,7 @@ VOID PhUiAnalyzeWaitThread(
 
     if (!NT_SUCCESS(status = PhOpenProcess(&processHandle, PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, ProcessId)))
     {
-        PhShowStatus(WindowHandle, L"Unable to open the process.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
         return;
     }
 
@@ -188,7 +188,7 @@ VOID PhpAnalyzeWaitPassive(
 
     if (!NT_SUCCESS(status = PhOpenProcess(&processHandle, PROCESS_DUP_HANDLE, ProcessId)))
     {
-        PhShowStatus(WindowHandle, L"Unable to open the process.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
         goto CleanupExit;
     }
 

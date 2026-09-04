@@ -634,7 +634,7 @@ INT_PTR CALLBACK PhpServicesPageProc(
                                         }
                                         else
                                         {
-                                            PhShowStatus(hwndDlg, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
                                         }
                                     }
                                 }
@@ -729,14 +729,14 @@ INT_PTR CALLBACK PhpServicesPageProc(
                                             }
                                             else
                                             {
-                                                PhShowStatus(hwndDlg, L"The service does not exist.", STATUS_OBJECT_NAME_NOT_FOUND, 0);
+                                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_SERVICE_DOES_NOT_EXIST), STATUS_OBJECT_NAME_NOT_FOUND, 0);
                                             }
 
                                             NtClose(keyHandle);
                                         }
                                         else
                                         {
-                                            PhShowStatus(hwndDlg, L"The service does not exist.", STATUS_OBJECT_NAME_NOT_FOUND, 0);
+                                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_SERVICE_DOES_NOT_EXIST), STATUS_OBJECT_NAME_NOT_FOUND, 0);
                                         }
                                     }
                                 }
@@ -770,14 +770,14 @@ INT_PTR CALLBACK PhpServicesPageProc(
                                             }
                                             else
                                             {
-                                                PhShowStatus(hwndDlg, L"Unable to locate the file.", status, 0);
+                                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), status, 0);
                                             }
 
                                             PhCloseServiceHandle(serviceHandle);
                                         }
                                         else
                                         {
-                                            PhShowStatus(hwndDlg, L"Unable to locate the file.", status, 0);
+                                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), status, 0);
                                         }
                                     }
                                 }

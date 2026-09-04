@@ -6123,7 +6123,7 @@ BOOLEAN PhSelectAndEnsureVisibleProcessNodes(
     {
         PhShowInformation2(
             PhMainWndHandle,
-            L"Unable to perform the operation.",
+            PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION),
             L"%s",
             L"This node cannot be displayed because it is currently hidden by your active filter settings or preferences."
             );

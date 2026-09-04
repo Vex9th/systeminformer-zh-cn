@@ -482,7 +482,7 @@ VOID PhpProcessMemorySave(
         }
 
         if (!NT_SUCCESS(status))
-            PhShowStatus(MemoryContext->WindowHandle, L"Unable to create the file", status, 0);
+            PhShowStatus(MemoryContext->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
     }
 
     PhFreeFileDialog(fileDialog);
@@ -710,7 +710,7 @@ INT_PTR CALLBACK PhpProcessMemoryDlgProc(
                         processItem->ProcessId
                         )))
                     {
-                        PhShowStatus(hwndDlg, L"Unable to open the process", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
                         break;
                     }
 
@@ -783,7 +783,7 @@ INT_PTR CALLBACK PhpProcessMemoryDlgProc(
                             }
 
                             if (!NT_SUCCESS(status))
-                                PhShowStatus(hwndDlg, L"Unable to create the file", status, 0);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
                         }
 
                         PhFreeFileDialog(fileDialog);

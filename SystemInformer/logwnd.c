@@ -314,7 +314,7 @@ INT_PTR CALLBACK PhpLogDlgProc(
                         }
 
                         if (!NT_SUCCESS(status))
-                            PhShowStatus(hwndDlg, L"Unable to create the file", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
                     }
 
                     PhFreeFileDialog(fileDialog);
@@ -418,7 +418,7 @@ INT_PTR CALLBACK PhpLogDlgProc(
                         }
                         else
                         {
-                            PhShowStatus(hwndDlg, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
                         }
                     }
                     else if (entry->Type >= PH_LOG_ENTRY_SERVICE_FIRST && entry->Type <= PH_LOG_ENTRY_SERVICE_LAST)
@@ -525,4 +525,3 @@ INT_PTR CALLBACK PhpLogDlgProc(
 
     return FALSE;
 }
-

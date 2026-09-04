@@ -1342,7 +1342,7 @@ VOID PhShowUserListDialog(
 
     if (!NT_SUCCESS(PhCreateThread2(PhpUserListDialogThreadStart, context)))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to create the window.", 0, ERROR_OUTOFMEMORY);
+        PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), 0, ERROR_OUTOFMEMORY);
         PhFree(context);
     }
 }

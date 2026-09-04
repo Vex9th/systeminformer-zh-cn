@@ -16,6 +16,7 @@ Categories (each maps to a runtime translation hook in phlib or the exe):
   c_listview_col   PhAddListViewColumn* text
   c_treenew_col    PhAddTreeNewColumn* text
   c_msgbox         PhShowMessage* family format/title arguments
+  c_msgbox_vararg  visible printf arguments not covered by the runtime funnel
   c_confirm        PhShowConfirmMessage verb/object/message arguments
   c_taskdialog     TASKDIALOGCONFIG literal fields (title/content/buttons/...)
   c_balloon        PhNfShowBalloonTip title/text
@@ -39,6 +40,10 @@ REPO_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..")
 # ---------------------------------------------------------------------------
 
 C_LITERAL_RE = re.compile(r'L"(?:[^"\\]|\\.)*"')
+PRINTF_SPEC_RE = re.compile(
+    r"%(?:%|[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?"
+    r"(?:I64|I32|ll|hh|[hlLwIjzt])?[diuoxXfFeEgGaAcCsSpn])"
+)
 
 C_ESCAPES = {
     "t": "\t", "n": "\n", "r": "\r", "\\": "\\", '"': '"',
@@ -174,6 +179,80 @@ def all_literals(arg: str):
     return [literal_text(m.group(0)) for m in C_LITERAL_RE.finditer(arg)]
 
 
+def adjacent_literal_text(arg: str):
+    """Return the compile-time value of an argument made only of adjacent
+    wide-string literals, or None when the argument contains other syntax."""
+    matches = list(C_LITERAL_RE.finditer(arg))
+    if not matches or C_LITERAL_RE.sub("", arg).strip():
+        return None
+    return "".join(literal_text(match.group(0)) for match in matches)
+
+
+def printf_string_argument_indexes(format_text: str):
+    """Return zero-based vararg indexes consumed by string conversions."""
+    argument_index = 0
+    indexes = []
+
+    for match in PRINTF_SPEC_RE.finditer(format_text):
+        specifier = match.group(0)
+        if specifier == "%%":
+            continue
+        argument_index += specifier[:-1].count("*")
+        if specifier[-1] in {"s", "S"}:
+            indexes.append(argument_index)
+        argument_index += 1
+
+    return indexes
+
+
+def mask_c_comments(source: str) -> str:
+    """Replace C comments with spaces while preserving strings and offsets."""
+    result = list(source)
+    index = 0
+    state = "normal"
+
+    while index < len(source):
+        char = source[index]
+        next_char = source[index + 1] if index + 1 < len(source) else ""
+
+        if state == "normal":
+            if char == '"':
+                state = "string"
+            elif char == "'":
+                state = "char"
+            elif char == "/" and next_char == "/":
+                result[index] = result[index + 1] = " "
+                index += 1
+                state = "line_comment"
+            elif char == "/" and next_char == "*":
+                result[index] = result[index + 1] = " "
+                index += 1
+                state = "block_comment"
+        elif state in {"string", "char"}:
+            if char == "\\":
+                index += 1
+            elif (state == "string" and char == '"') or (
+                state == "char" and char == "'"
+            ):
+                state = "normal"
+        elif state == "line_comment":
+            if char == "\n":
+                state = "normal"
+            else:
+                result[index] = " "
+        elif state == "block_comment":
+            if char == "*" and next_char == "/":
+                result[index] = result[index + 1] = " "
+                index += 1
+                state = "normal"
+            elif char != "\n":
+                result[index] = " "
+
+        index += 1
+
+    return "".join(result)
+
+
 # ---------------------------------------------------------------------------
 # C/C++ source scanning
 # ---------------------------------------------------------------------------
@@ -191,19 +270,45 @@ CALL_SPECS = {
     "PhAddTreeNewColumnEx2": {3: "c_treenew_col"},
     "PhShowMessage": {2: "c_msgbox"},
     "PhShowMessage2": {3: "c_msgbox", 4: "c_msgbox"},
-    "PhShowError": {2: "c_msgbox"},
-    "PhShowWarning": {2: "c_msgbox"},
-    "PhShowInformation": {2: "c_msgbox"},
-    "PhShowError2": {3: "c_msgbox", 4: "c_msgbox"},
-    "PhShowWarning2": {3: "c_msgbox", 4: "c_msgbox"},
-    "PhShowInformation2": {3: "c_msgbox", 4: "c_msgbox"},
+    "PhShowError": {1: "c_msgbox"},
+    "PhShowWarning": {1: "c_msgbox"},
+    "PhShowInformation": {1: "c_msgbox"},
+    "PhShowError2": {1: "c_msgbox", 2: "c_msgbox"},
+    "PhShowWarning2": {1: "c_msgbox", 2: "c_msgbox"},
+    "PhShowInformation2": {1: "c_msgbox", 2: "c_msgbox"},
+    "PhShowStatus": {1: "c_msgbox"},
+    "PhShowContinueStatus": {1: "c_msgbox"},
     "PhShowMessageOneTime": {3: "c_msgbox", 4: "c_msgbox"},
-    "PhShowMessageOneTime2": {3: "c_msgbox", 4: "c_msgbox"},
+    "PhShowMessageOneTime2": {3: "c_msgbox", 5: "c_msgbox"},
     "PhShowConfirmMessage": {1: "c_confirm", 2: "c_confirm", 3: "c_confirm"},
     "PhAddListViewItem": {2: "c_listview_item"},
     "PhAddIListViewItem": {2: "c_listview_item"},
     "PhNfShowBalloonTip": {0: "c_balloon", 1: "c_balloon"},
     "PhNfShowBalloonTipEx": {0: "c_balloon", 1: "c_balloon"},
+}
+
+# Message functions can receive user-visible string literals through printf
+# varargs after the format argument (for example L"%s", L"Visible text").
+FORMAT_ARG_INDEXES = {
+    "PhShowMessage": 2,
+    "PhShowMessage2": 4,
+    "PhShowError": 1,
+    "PhShowWarning": 1,
+    "PhShowInformation": 1,
+    "PhShowError2": 2,
+    "PhShowWarning2": 2,
+    "PhShowInformation2": 2,
+    "PhShowMessageOneTime": 4,
+    "PhShowMessageOneTime2": 5,
+}
+
+FULL_CONTENT_TRANSLATION_CALLS = {
+    "PhShowMessage2",
+    "PhShowError2",
+    "PhShowWarning2",
+    "PhShowInformation2",
+    "PhShowMessageOneTime",
+    "PhShowMessageOneTime2",
 }
 
 # any literal argument counts (few-literal calls)
@@ -243,20 +348,65 @@ def scan_c_file(path: str, entries):
     except OSError:
         return
 
-    for name, args, spans, call_start in find_calls(text, set(CALL_SPECS) | set(ANY_LITERAL_SPECS)):
+    scan_text = mask_c_comments(text)
+
+    for name, args, spans, call_start in find_calls(scan_text, set(CALL_SPECS) | set(ANY_LITERAL_SPECS)):
         if name in CALL_SPECS:
             spec = CALL_SPECS[name]
             for idx, cat in spec.items():
                 if idx is None:
                     idx = len(args) - 1
                 if idx < len(args):
-                    t = first_literal(args[idx])
+                    t = adjacent_literal_text(args[idx])
+                    if t is None:
+                        t = first_literal(args[idx])
                     if t is not None and not is_noise(t):
                         entries.append({
                             "category": cat, "file": rel,
                             "line": line_of_offset(text, spans[idx][0]),
                             "english": t,
                         })
+            if name in FORMAT_ARG_INDEXES:
+                format_index = FORMAT_ARG_INDEXES[name]
+                if format_index >= len(args):
+                    continue
+                format_text = adjacent_literal_text(args[format_index])
+                if format_text is None:
+                    format_text = first_literal(args[format_index])
+                varargs = args[format_index + 1:]
+                string_argument_indexes = (
+                    printf_string_argument_indexes(format_text)
+                    if format_text is not None
+                    else []
+                )
+                direct_content = (
+                    name in FULL_CONTENT_TRANSLATION_CALLS
+                    and format_text == "%s"
+                    and len(varargs) == 1
+                    and adjacent_literal_text(varargs[0]) is not None
+                )
+                for vararg_index in string_argument_indexes:
+                    idx = format_index + 1 + vararg_index
+                    if idx >= len(args):
+                        continue
+                    compiled_literal = adjacent_literal_text(args[idx])
+                    literals = (
+                        [compiled_literal]
+                        if compiled_literal is not None
+                        else all_literals(args[idx])
+                    )
+                    category = (
+                        "c_msgbox"
+                        if direct_content or "PhTranslateString" in args[idx]
+                        else "c_msgbox_vararg"
+                    )
+                    for t in literals:
+                        if not is_noise(t):
+                            entries.append({
+                                "category": category, "file": rel,
+                                "line": line_of_offset(text, spans[idx][0]),
+                                "english": t,
+                            })
         else:
             cat = ANY_LITERAL_SPECS[name]
             for a in args:
@@ -268,7 +418,7 @@ def scan_c_file(path: str, entries):
                             "english": t,
                         })
 
-    for m in TASKDIALOG_FIELDS_RE.finditer(text):
+    for m in TASKDIALOG_FIELDS_RE.finditer(scan_text):
         t = literal_text(m.group(2))
         if is_noise(t):
             continue
@@ -290,7 +440,7 @@ def scan_statusbar(path: str, entries):
     PhTranslateString; every L"" template literal in the file is counted."""
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     with open(path, "r", encoding="utf-8", errors="replace") as f:
-        text = f.read()
+        text = mask_c_comments(f.read())
     for m in C_LITERAL_RE.finditer(text):
         t = literal_text(m.group(0))
         if is_noise(t):
@@ -323,7 +473,7 @@ def scan_extra_statics(path: str, entries):
     """TreeNew empty-list hints and options section tree labels."""
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     with open(path, "r", encoding="utf-8", errors="replace") as f:
-        text = f.read()
+        text = mask_c_comments(f.read())
     for m in EMPTY_TEXT_RE.finditer(text):
         t = literal_text(m.group(2))
         if not is_noise(t):
@@ -341,7 +491,7 @@ def scan_page_names(path: str, entries):
     PhMwpCreatePage), translated at runtime by the TabNew hook."""
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     with open(path, "r", encoding="utf-8", errors="replace") as f:
-        text = f.read()
+        text = mask_c_comments(f.read())
     for m in PAGE_NAME_RE.finditer(text):
         t = literal_text(m.group(2))
         if is_noise(t):
@@ -357,7 +507,7 @@ def scan_translated_calls(path: str, entries):
     (e.g. ToolStatus toolbar button text)."""
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     with open(path, "r", encoding="utf-8", errors="replace") as f:
-        text = f.read()
+        text = mask_c_comments(f.read())
     for m in TRANSLATED_CALL_RE.finditer(text):
         t = literal_text(m.group(1))
         if is_noise(t):
@@ -371,7 +521,7 @@ def scan_translated_calls(path: str, entries):
 def scan_tabnew(path: str, entries):
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     with open(path, "r", encoding="utf-8", errors="replace") as f:
-        text = f.read()
+        text = mask_c_comments(f.read())
     for m in TABNEW_INSERT_RE.finditer(text):
         call = m.group(0)
         for lm in TCITEM_TEXT_RE.finditer(call):

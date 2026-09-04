@@ -794,7 +794,7 @@ LRESULT CALLBACK PhpOptionsButtonWndProc(
                             }
                             else
                             {
-                                PhShowStatus(WindowHandle, L"Unable to locate the file.", status, 0);
+                                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), status, 0);
                             }
                         }
                         break;

@@ -1314,7 +1314,7 @@ VOID PhMwpOnCommand(
                 }
 
                 if (!NT_SUCCESS(status))
-                    PhShowStatus(WindowHandle, L"Unable to create the file", status, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_FILE), status, 0);
             }
 
             PhFreeFileDialog(fileDialog);
@@ -2237,7 +2237,6 @@ VOID PhMwpOnCommand(
                 //}
                 //else
                 //{
-                //    PhShowStatus(WindowHandle, L"Unable to locate the file.", STATUS_NOT_FOUND, 0);
                 //}
 
                 PhShowRunAsDialog(WindowHandle, NULL);
@@ -2422,7 +2421,7 @@ VOID PhMwpOnCommand(
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"Unable to locate the file.", status, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), status, 0);
                 }
             }
         }
@@ -2468,7 +2467,7 @@ VOID PhMwpOnCommand(
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
                 }
             }
         }
@@ -2562,14 +2561,14 @@ VOID PhMwpOnCommand(
                     }
                     else
                     {
-                        PhShowStatus(WindowHandle, L"The service does not exist.", STATUS_OBJECT_NAME_NOT_FOUND, 0);
+                        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_SERVICE_DOES_NOT_EXIST), STATUS_OBJECT_NAME_NOT_FOUND, 0);
                     }
 
                     NtClose(keyHandle);
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"The service does not exist.", STATUS_OBJECT_NAME_NOT_FOUND, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_SERVICE_DOES_NOT_EXIST), STATUS_OBJECT_NAME_NOT_FOUND, 0);
                 }
             }
         }
@@ -2602,14 +2601,14 @@ VOID PhMwpOnCommand(
                     }
                     else
                     {
-                        PhShowStatus(WindowHandle, L"Unable to locate the file.", status, 0);
+                        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), status, 0);
                     }
 
                     PhCloseServiceHandle(serviceHandle);
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"Unable to locate the file.", status, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_FILE), status, 0);
                 }
             }
         }
@@ -2648,7 +2647,7 @@ VOID PhMwpOnCommand(
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
                 }
             }
         }
@@ -2670,7 +2669,7 @@ VOID PhMwpOnCommand(
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"The service does not exist.", STATUS_INVALID_CID, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_SERVICE_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
                 }
             }
         }
@@ -5052,7 +5051,7 @@ BOOLEAN PhHandleMiniProcessMenuItem(
             }
             else
             {
-                PhShowStatus(PhMainWndHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                PhShowStatus(PhMainWndHandle, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
             }
         }
         break;
@@ -5073,7 +5072,7 @@ BOOLEAN PhHandleMiniProcessMenuItem(
             }
             else
             {
-                PhShowStatus(PhMainWndHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                PhShowStatus(PhMainWndHandle, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
             }
         }
         break;
@@ -5092,7 +5091,7 @@ BOOLEAN PhHandleMiniProcessMenuItem(
             }
             else
             {
-                PhShowStatus(PhMainWndHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                PhShowStatus(PhMainWndHandle, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
             }
         }
         break;
@@ -5364,7 +5363,7 @@ VOID PhShowDetailsForIconNotification(
             }
             else
             {
-                PhShowStatus(PhMainWndHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                PhShowStatus(PhMainWndHandle, PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
             }
         }
         break;
@@ -5385,7 +5384,7 @@ VOID PhShowDetailsForIconNotification(
             }
             else
             {
-                PhShowStatus(PhMainWndHandle, L"The service does not exist.", STATUS_INVALID_CID, 0);
+                PhShowStatus(PhMainWndHandle, PhGetApplicationUiString(IDS_PH_SERVICE_DOES_NOT_EXIST), STATUS_INVALID_CID, 0);
             }
         }
         break;

@@ -56,7 +56,7 @@ VOID PhShowHandleStatisticsDialog(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to open the process", status, 0);
+        PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_PROCESS), status, 0);
         return;
     }
 

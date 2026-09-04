@@ -227,7 +227,7 @@ VOID PhShowHandleObjectProperties1(
             }
             else
             {
-                PhShowError2(hWnd, L"Unable to show the process properties.", L"%s", L"The process does not exist.");
+                PhShowError2(hWnd, L"Unable to show the process properties.", L"%s", PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST));
             }
         }
     }
@@ -422,7 +422,7 @@ VOID PhShowHandleObjectProperties1(
             }
             else
             {
-                PhShowError2(hWnd, L"Unable to show the process properties.", L"%s", L"The process does not exist.");
+                PhShowError2(hWnd, L"Unable to show the process properties.", L"%s", PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST));
             }
         }
     }

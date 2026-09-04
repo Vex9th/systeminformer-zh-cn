@@ -1758,7 +1758,7 @@ VOID PhpRefreshWmiProvidersList(
 
 VOID PhpShowWmiProviderStatus(
     _In_opt_ HWND hWnd,
-    _In_opt_ PWSTR Message,
+    _In_opt_ PCWSTR Message,
     _In_ HRESULT Win32Result
     )
 {
@@ -1784,7 +1784,7 @@ VOID PhpShowWmiProviderStatus(
         }
         else
         {
-            PhShowError2(hWnd, L"Unable to perform the operation.", L"%s", PhGetString(statusMessage));
+            PhShowError2(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION), L"%s", PhGetString(statusMessage));
         }
 
         PhDereferenceObject(statusMessage);
@@ -1797,7 +1797,7 @@ VOID PhpShowWmiProviderStatus(
         }
         else
         {
-            PhShowStatus(hWnd, L"Unable to perform the operation.", STATUS_UNSUCCESSFUL, 0);
+            PhShowStatus(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION), STATUS_UNSUCCESSFUL, 0);
         }
     }
 }
@@ -1859,7 +1859,7 @@ VOID PhpShowWmiProviderNodeContextMenu(
 
                     if (FAILED(status))
                     {
-                        PhpShowWmiProviderStatus(Context->WindowHandle, L"Unable to perform the operation.", status);
+                        PhpShowWmiProviderStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION), status);
                     }
                 }
                 break;
@@ -1871,7 +1871,7 @@ VOID PhpShowWmiProviderNodeContextMenu(
 
                     if (FAILED(status))
                     {
-                        PhpShowWmiProviderStatus(Context->WindowHandle, L"Unable to perform the operation.", status);
+                        PhpShowWmiProviderStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION), status);
                     }
                 }
                 break;
@@ -1883,7 +1883,7 @@ VOID PhpShowWmiProviderNodeContextMenu(
 
                     if (FAILED(status))
                     {
-                        PhpShowWmiProviderStatus(Context->WindowHandle, L"Unable to perform the operation.", status);
+                        PhpShowWmiProviderStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_OPERATION), status);
                     }
                 }
                 break;
