@@ -78,6 +78,11 @@ BEGIN
     EDITTEXT        IDC_COMMENT,7,7,238,165,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL
 END
 
+STRINGTABLE
+BEGIN
+    IDS_UN_AFFINITY_INDIVIDUAL_THREADS "you can only change affinity for individual threads."
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -129,4 +134,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

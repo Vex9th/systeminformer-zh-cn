@@ -1038,8 +1038,7 @@ LONG CALLBACK PhpUnhandledExceptionCallback(
             if (PhShowMessage(
                 NULL,
                 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2,
-                L"System Informer has crashed :(\r\n\r\n%s",
-                L"Do you want to create a minidump on the Desktop?"
+                L"System Informer has crashed :(\r\n\r\nDo you want to create a minidump on the Desktop?"
                 ) == IDYES)
             {
                 PhpCreateUnhandledExceptionCrashDump(ExceptionInfo, PhTriageDumpTypeMinimal);

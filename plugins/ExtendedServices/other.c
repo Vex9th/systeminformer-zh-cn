@@ -368,7 +368,10 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
                     WindowHandle,
                     L"Unable to query service information.",
                     L"%s",
-                    PhGetStringOrDefault(errorMessage, L"Unknown error.")
+                    PhGetStringOrDefault(
+                        errorMessage,
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNKNOWN_ERROR, NULL)))
+                        )
                     );
 
                 PhClearReference(&errorMessage);

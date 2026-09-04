@@ -21,6 +21,7 @@
 #define IDD_SRVTRIGGERS                 110
 #define IDD_SRVPNP                      111
 #define IDD_SRVPACKAGE                  112
+#define IDS_ES_UNKNOWN_ERROR            2000
 #define IDC_SERVICES_LAYOUT             1001
 #define IDC_MESSAGE                     1002
 #define IDC_FIRSTFAILURE                1003
@@ -78,6 +79,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        115
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1052
-#define _APS_NEXT_SYMED_VALUE           107
+#define _APS_NEXT_SYMED_VALUE           2001
 #endif
 #endif

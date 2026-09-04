@@ -155,7 +155,9 @@ jobs:
           'bin\Release64\plugins\WindowExplorer.dll'
         )
         python tools\zhcn\validate_templates.py @resourceTargets `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=31' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=34' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=1' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=1' `
           --expect-string-count-in 'bin\Release64\peview.exe=128'
 
     - name: Assert driverless output (no .sys / .inf)
@@ -308,7 +310,9 @@ jobs:
         python tools\zhcn\validate_templates.py @resourceTargets `
           --require-strings-in 'build\output\systeminformer-build-release-setup.exe' `
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=31' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=34' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=1' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=1' `
           --expect-string-count-in 'bin\Release64\peview.exe=128' `
           --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=74' `
           --expect-string-count-in 'build\output\systeminformer-build-canary-setup.exe=74'

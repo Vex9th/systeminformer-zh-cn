@@ -2629,6 +2629,9 @@ BEGIN
     IDS_PH_UNABLE_FREE_MEMORY_REGION              "Unable to free the memory region"
     IDS_PH_UNABLE_DECOMMIT_MEMORY_REGION          "Unable to decommit the memory region"
     IDS_PH_UNABLE_UNMAP_SECTION_VIEW              "Unable to unmap the section view"
+    IDS_PH_UNKNOWN_ERROR_OCCURRED                  "An unknown error occurred."
+    IDS_PH_ENABLE_SIGNATURE_CHECKING               "Enable it in Options > General and restart System Informer."
+    IDS_PH_UNKNOWN_ERROR                           "Unknown error"
 END
 
 /////////////////////////////////////////////////////////////////////////////

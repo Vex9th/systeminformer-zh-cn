@@ -339,6 +339,11 @@ BEGIN
     0
 END
 
+STRINGTABLE
+BEGIN
+    IDS_ES_UNKNOWN_ERROR            "Unknown error."
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -353,4 +358,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

@@ -1025,8 +1025,11 @@
 #define IDS_PH_UNABLE_FREE_MEMORY_REGION              2028
 #define IDS_PH_UNABLE_DECOMMIT_MEMORY_REGION          2029
 #define IDS_PH_UNABLE_UNMAP_SECTION_VIEW              2030
+#define IDS_PH_UNKNOWN_ERROR_OCCURRED                  2031
+#define IDS_PH_ENABLE_SIGNATURE_CHECKING               2032
+#define IDS_PH_UNKNOWN_ERROR                           2033
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_UNABLE_UNMAP_SECTION_VIEW
+#define IDS_PH_LAST                                  IDS_PH_UNKNOWN_ERROR
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1038,6 +1041,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2031
+#define _APS_NEXT_SYMED_VALUE           2034
 #endif
 #endif

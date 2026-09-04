@@ -1643,7 +1643,7 @@
     "System Informer": "sys_info",
     "System Informer - Updater": "sys_info - 更新程序",
     "System Informer has crashed :(": "sys_info 已崩溃 :(",
-    "System Informer has crashed :(\r\n\r\n%s": "sys_info 已崩溃 :(\r\n\r\n%s",
+    "System Informer has crashed :(\r\n\r\nDo you want to create a minidump on the Desktop?": "sys_info 已崩溃 :(\r\n\r\n要在桌面上创建小型转储吗？",
     "System Informer has partnered with Hybrid-Analysis to provide automatic reputation analysis for processes, loaded modules, and services.": "sys_info 已与 Hybrid-Analysis 展开合作，为进程、已加载的模块和服务提供自动信誉分析。",
     "System Informer is the default Task Manager:": "sys_info 是默认任务管理器：",
     "System Informer's settings file is corrupt. Do you want to reset it?": "sys_info 的设置文件已损坏。要重置吗？",

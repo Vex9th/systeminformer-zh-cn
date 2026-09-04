@@ -1363,7 +1363,11 @@ VOID NTAPI MenuItemCallback(
                             menuItem->OwnerWindow,
                             L"Unable to query the current affinity.",
                             L"This process has multi-group affinity, %s",
-                            L"you can only change affinity for individual threads."
+                            PhGetString(PH_AUTO(PhLoadUiString(
+                                PluginInstance->DllBase,
+                                IDS_UN_AFFINITY_INDIVIDUAL_THREADS,
+                                NULL
+                                )))
                             );
                     }
                     else
@@ -1419,7 +1423,11 @@ VOID NTAPI MenuItemCallback(
                                 menuItem->OwnerWindow,
                                 L"Unable to query the current affinity.",
                                 L"This process has multi-group affinity, %s",
-                                L"you can only change affinity for individual threads."
+                                PhGetString(PH_AUTO(PhLoadUiString(
+                                    PluginInstance->DllBase,
+                                    IDS_UN_AFFINITY_INDIVIDUAL_THREADS,
+                                    NULL
+                                    )))
                                 );
                         }
                         else

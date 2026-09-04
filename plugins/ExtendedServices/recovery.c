@@ -325,7 +325,10 @@ INT_PTR CALLBACK EspServiceRecoveryDlgProc(
                     WindowHandle,
                     L"Unable to query service recovery information.",
                     L"%s",
-                    PhGetStringOrDefault(errorMessage, L"Unknown error.")
+                    PhGetStringOrDefault(
+                        errorMessage,
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNKNOWN_ERROR, NULL)))
+                        )
                     );
 
                 PhClearReference(&errorMessage);

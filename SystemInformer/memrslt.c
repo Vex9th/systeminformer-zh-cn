@@ -166,7 +166,7 @@ static VOID FilterResults(
             {
                 PhShowError2(hwndDlg, L"Unable to compile the regular expression.",
                     L"\"%s\" at position %zu.",
-                    PhGetStringOrDefault(PH_AUTO(PhPcre2GetErrorMessage(errorCode)), L"Unknown error"),
+                    PhGetStringOrDefault(PH_AUTO(PhPcre2GetErrorMessage(errorCode)), PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR)),
                     errorOffset
                     );
                 continue;

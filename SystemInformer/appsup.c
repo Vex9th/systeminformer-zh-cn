@@ -1191,7 +1191,7 @@ VOID PhShellExecuteUserString(
                     WindowHandle,
                     L"Unable to execute the command.",
                     L"%s\n%s",
-                    PhGetStringOrDefault(ntMessage, L"An unknown error occurred."),
+                    PhGetStringOrDefault(ntMessage, PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR_OCCURRED)),
                     ErrorMessage
                     );
                 PhDereferenceObject(ntMessage);

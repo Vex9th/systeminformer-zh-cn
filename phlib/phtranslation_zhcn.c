@@ -1735,7 +1735,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2139] =
     { L"System Informer Uninstall", L"sys_info 卸载程序", },
     { L"System Informer has been uninstalled.", L"System Informer 已卸载。", },
     { L"System Informer has crashed :(", L"sys_info 已崩溃 :(", },
-    { L"System Informer has crashed :(\r\n\r\n%s", L"sys_info 已崩溃 :(\r\n\r\n%s", },
+    { L"System Informer has crashed :(\r\n\r\nDo you want to create a minidump on the Desktop?", L"sys_info 已崩溃 :(\r\n\r\n要在桌面上创建小型转储吗？", },
     { L"System Informer has partnered with Hybrid-Analysis to provide automatic reputation analysis for processes, loaded modules, and services.", L"sys_info 已与 Hybrid-Analysis 展开合作，为进程、已加载的模块和服务提供自动信誉分析。", },
     { L"System Informer is the default Task Manager:", L"sys_info 是默认任务管理器：", },
     { L"System Informer's settings file is corrupt. Do you want to reset it?", L"sys_info 的设置文件已损坏。要重置吗？", },

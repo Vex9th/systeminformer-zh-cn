@@ -1809,4 +1809,7 @@ BEGIN
     IDS_PH_UNABLE_FREE_MEMORY_REGION              "无法释放内存区域"
     IDS_PH_UNABLE_DECOMMIT_MEMORY_REGION          "无法取消提交内存区域"
     IDS_PH_UNABLE_UNMAP_SECTION_VIEW              "无法取消映射节视图"
+    IDS_PH_UNKNOWN_ERROR_OCCURRED                  "发生未知错误。"
+    IDS_PH_ENABLE_SIGNATURE_CHECKING               "请在“设置 > 常规”中启用该选项，然后重启 sys_info。"
+    IDS_PH_UNKNOWN_ERROR                           "未知错误"
 END

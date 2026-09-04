@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("233 strings", result.stdout)
+        self.assertIn("238 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 31)
+        self.assertEqual(len(stringtable_ids(resource_script)), 34)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2031)))
+        self.assertEqual(numeric_ids, list(range(2000, 2034)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -902,6 +902,18 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             10,
         )
+
+    def test_early_crash_prompt_does_not_depend_on_ui_string_cache(self) -> None:
+        main = (REPO_ROOT / "SystemInformer" / "main.c").read_text(
+            encoding="utf-8-sig"
+        )
+        crash_prompt = (
+            'L"System Informer has crashed :(\\r\\n\\r\\n'
+            'Do you want to create a minidump on the Desktop?"'
+        )
+
+        self.assertIn(crash_prompt, main)
+        self.assertNotIn("IDS_PH_CREATE_CRASH_MINIDUMP", main)
 
     def test_main_missing_process_errors_share_native_resource(self) -> None:
         source = "\n".join(
@@ -993,6 +1005,44 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     )
 
         self.assertEqual(unresolved, [])
+
+    def test_printf_vararg_literals_are_migrated_at_their_callsites(self) -> None:
+        audit = load_audit_module()
+        unresolved = []
+
+        for path in audit.iter_source_files():
+            if not path.endswith((".c", ".cpp")):
+                continue
+            entries = []
+            audit.scan_c_file(path, entries)
+            unresolved.extend(
+                entry
+                for entry in entries
+                if entry["category"] == "c_msgbox_vararg"
+            )
+
+        self.assertEqual(
+            [
+                f"{entry['file']}:{entry['line']}:{entry['english']}"
+                for entry in unresolved
+            ],
+            [],
+        )
+
+    def test_plugin_vararg_fallbacks_use_native_string_resources(self) -> None:
+        extended_services = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "plugins" / "ExtendedServices").glob("*.c")
+        )
+        user_notes = (
+            REPO_ROOT / "plugins" / "UserNotes" / "main.c"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertEqual(extended_services.count("IDS_ES_UNKNOWN_ERROR"), 3)
+        self.assertEqual(
+            user_notes.count("IDS_UN_AFFINITY_INDIVIDUAL_THREADS"),
+            2,
+        )
 
     def test_setup_progress_and_wizard_buttons_use_string_resources(self) -> None:
         setup_sources = {
@@ -1127,7 +1177,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 31): 2,
+                    (r"bin\Release64\sys_info.exe", 34): 2,
+                    (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
+                    (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
