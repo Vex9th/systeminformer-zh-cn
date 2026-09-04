@@ -119,6 +119,20 @@ jobs:
         python tools\zhcn\audit.py
         python tools\zhcn\check_translation.py
         python tools\zhcn\generate_translation.py --check
+        python -m unittest discover -s tools\zhcn\tests -v
+
+    - name: Native UI resource loader test
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+          -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe |
+          Select-Object -First 1
+        if (-not $msbuild) { Write-Error "::error::MSBuild.exe not found via vswhere"; exit 1 }
+        & $msbuild /m /nologo /verbosity:minimal /p:Platform=x64 /p:Configuration=Release tools\tests\phlib-test\phlib-test.sln
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        & tools\tests\phlib-test\bin\Release64\phlib-test.exe
+        exit $LASTEXITCODE
 
     - name: Validate dialog template translation in built exe
       shell: pwsh
@@ -235,6 +249,20 @@ jobs:
         python tools\zhcn\audit.py
         python tools\zhcn\check_translation.py
         python tools\zhcn\generate_translation.py --check
+        python -m unittest discover -s tools\zhcn\tests -v
+
+    - name: Native UI resource loader test
+      shell: pwsh
+      working-directory: ${{github.workspace}}
+      run: |
+        $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+          -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe |
+          Select-Object -First 1
+        if (-not $msbuild) { Write-Error "::error::MSBuild.exe not found via vswhere"; exit 1 }
+        & $msbuild /m /nologo /verbosity:minimal /p:Platform=x64 /p:Configuration=Release tools\tests\phlib-test\phlib-test.sln
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        & tools\tests\phlib-test\bin\Release64\phlib-test.exe
+        exit $LASTEXITCODE
 
     - name: Validate dialog template translation in built exe
       shell: pwsh

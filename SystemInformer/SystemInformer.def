@@ -1358,3 +1358,10 @@ EXPORTS
     KsiEnumerateProcessHandles
     KsiLevel
     KsiQueryHashInformationFile
+    PhGetApplicationUiLanguage
+    PhLoadUiResource
+    PhLoadUiResourceCopy
+    PhLoadUiString
+    PhLoadResourceForLanguage
+    PhLoadResourceCopyForLanguage
+    PhSetApplicationUiLanguage

@@ -12,6 +12,7 @@
 
 #include <phapp.h>
 
+#include <mapldr.h>
 #include <phtranslation.h>
 #include <colorbox.h>
 #include <tabnew.h>
@@ -1564,11 +1565,42 @@ VOID PhInitializeAppSettings(
 
     PhUpdateCachedSettings();
 
-    // Community edition: "en" disables the zh-CN translation table and
-    // restores the English interface; any other value keeps it enabled.
+    // Keep the legacy dictionary active only while zh-CN resources are being
+    // migrated. Unknown values fail closed to the English resource set.
     {
         PPH_STRING languageSetting = PhGetStringSetting(SETTING_LANGUAGE);
-        PhTranslationEnabled = !PhEqualStringZ(PhGetString(languageSetting), L"en", FALSE);
+
+        PhTranslationEnabled = FALSE;
+
+        if (PhEqualStringZ(PhGetString(languageSetting), L"zh-CN", TRUE))
+        {
+            PhSetApplicationUiLanguage(
+                MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
+                );
+            PhTranslationEnabled = TRUE;
+        }
+        else if (PhEqualStringZ(PhGetString(languageSetting), L"en", TRUE))
+        {
+            PhSetApplicationUiLanguage(
+                MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)
+                );
+        }
+        else
+        {
+            PhSetApplicationUiLanguage(
+                MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)
+                );
+        }
+
+#ifdef DEBUG
+        PhTrace(
+            "UI language setting: %ls, resource LANGID: 0x%04x, legacy translation: %s",
+            PhGetString(languageSetting),
+            PhGetApplicationUiLanguage(),
+            PhTranslationEnabled ? "enabled" : "disabled"
+            );
+#endif
+
         PhDereferenceObject(languageSetting);
     }
 

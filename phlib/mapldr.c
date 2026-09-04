@@ -796,10 +796,14 @@ CleanupExit:
  * and does not need to be allocated or deallocated. This function cannot be used when the
  * image will be unloaded since the validity of the address is tied to the lifetime of the image.
  */
-NTSTATUS PhLoadResource(
+static ULONG PhpApplicationUiLanguageId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+
+static NTSTATUS PhpLoadResource(
     _In_ PVOID DllBase,
     _In_ PCWSTR Name,
     _In_ PCWSTR Type,
+    _In_ LANGID LanguageId,
+    _In_ BOOLEAN ExactLanguage,
     _Out_opt_ ULONG *ResourceLength,
     _Out_opt_ PVOID *ResourceBuffer
     )
@@ -811,12 +815,30 @@ NTSTATUS PhLoadResource(
     ULONG_PTR resourcePath[] = {
         (ULONG_PTR)Type,
         (ULONG_PTR)Name,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL)
+        LanguageId
     };
 
     __try
     {
-        status = LdrFindResource_U(DllBase, resourcePath, RTL_NUMBER_OF(resourcePath), &resourceData);
+        if (ExactLanguage)
+        {
+            status = LdrFindResourceEx_U(
+                LDR_RES_SEARCH_SKIP_MUI,
+                DllBase,
+                resourcePath,
+                RTL_NUMBER_OF(resourcePath),
+                &resourceData
+                );
+        }
+        else
+        {
+            status = LdrFindResource_U(
+                DllBase,
+                resourcePath,
+                RTL_NUMBER_OF(resourcePath),
+                &resourceData
+                );
+        }
     }
     __except (EXCEPTION_EXECUTE_HANDLER)
     {
@@ -842,6 +864,109 @@ NTSTATUS PhLoadResource(
         *ResourceLength = resourceLength;
     if (ResourceBuffer)
         *ResourceBuffer = resourceBuffer;
+
+    return status;
+}
+
+NTSTATUS PhLoadResourceForLanguage(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _In_ LANGID LanguageId,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer
+    )
+{
+    return PhpLoadResource(
+        DllBase,
+        Name,
+        Type,
+        LanguageId,
+        TRUE,
+        ResourceLength,
+        ResourceBuffer
+        );
+}
+
+NTSTATUS PhLoadResource(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer
+    )
+{
+    return PhpLoadResource(
+        DllBase,
+        Name,
+        Type,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL),
+        FALSE,
+        ResourceLength,
+        ResourceBuffer
+        );
+}
+
+VOID PhSetApplicationUiLanguage(
+    _In_ LANGID LanguageId
+    )
+{
+    // The application sets this during startup, before translated dialog
+    // templates can enter the process-lifetime cache.
+    if (!LanguageId)
+        LanguageId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+
+    InterlockedExchange((PLONG)&PhpApplicationUiLanguageId, LanguageId);
+}
+
+LANGID PhGetApplicationUiLanguage(
+    VOID
+    )
+{
+    return (LANGID)ReadULongAcquire(&PhpApplicationUiLanguageId);
+}
+
+NTSTATUS PhLoadUiResource(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer,
+    _Out_opt_ PBOOLEAN FallbackToEnglish
+    )
+{
+    NTSTATUS status;
+    LANGID languageId;
+    LANGID englishLanguageId;
+
+    if (FallbackToEnglish)
+        *FallbackToEnglish = FALSE;
+
+    languageId = PhGetApplicationUiLanguage();
+    englishLanguageId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+    status = PhLoadResourceForLanguage(
+        DllBase,
+        Name,
+        Type,
+        languageId,
+        ResourceLength,
+        ResourceBuffer
+        );
+
+    if (!NT_SUCCESS(status) && languageId != englishLanguageId)
+    {
+        status = PhLoadResourceForLanguage(
+            DllBase,
+            Name,
+            Type,
+            englishLanguageId,
+            ResourceLength,
+            ResourceBuffer
+            );
+
+        if (NT_SUCCESS(status) && FallbackToEnglish)
+            *FallbackToEnglish = TRUE;
+    }
 
     return status;
 }
@@ -889,7 +1014,122 @@ NTSTATUS PhLoadResourceCopy(
     return status;
 }
 
+NTSTATUS PhLoadResourceCopyForLanguage(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _In_ LANGID LanguageId,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer
+    )
+{
+    NTSTATUS status;
+    ULONG resourceLength;
+    PVOID resourceBuffer;
+
+    status = PhLoadResourceForLanguage(
+        DllBase,
+        Name,
+        Type,
+        LanguageId,
+        &resourceLength,
+        &resourceBuffer
+        );
+
+    if (NT_SUCCESS(status))
+    {
+        if (ResourceLength)
+            *ResourceLength = resourceLength;
+        if (ResourceBuffer)
+            *ResourceBuffer = PhAllocateCopy(resourceBuffer, resourceLength);
+    }
+
+    return status;
+}
+
+NTSTATUS PhLoadUiResourceCopy(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer,
+    _Out_opt_ PBOOLEAN FallbackToEnglish
+    )
+{
+    NTSTATUS status;
+    ULONG resourceLength;
+    PVOID resourceBuffer;
+
+    status = PhLoadUiResource(
+        DllBase,
+        Name,
+        Type,
+        &resourceLength,
+        &resourceBuffer,
+        FallbackToEnglish
+        );
+
+    if (NT_SUCCESS(status))
+    {
+        if (ResourceLength)
+            *ResourceLength = resourceLength;
+        if (ResourceBuffer)
+            *ResourceBuffer = PhAllocateCopy(resourceBuffer, resourceLength);
+    }
+
+    return status;
+}
+
 // rev from LoadString (dmex)
+static PPH_STRING PhpCreateStringFromResource(
+    _In_reads_bytes_(ResourceLength) PVOID ResourceBuffer,
+    _In_ ULONG ResourceLength,
+    _In_ ULONG StringIndex
+    )
+{
+    PIMAGE_RESOURCE_DIR_STRING_U stringBuffer;
+    PBYTE resourceEnd;
+
+    stringBuffer = ResourceBuffer;
+    resourceEnd = PTR_ADD_OFFSET(ResourceBuffer, ResourceLength);
+
+    for (ULONG i = 0; i <= StringIndex; i++)
+    {
+        SIZE_T stringLength;
+
+        if ((PBYTE)PTR_ADD_OFFSET(stringBuffer, sizeof(USHORT)) > resourceEnd)
+            return NULL;
+
+        stringLength = stringBuffer->Length;
+
+        if (
+            stringLength > UNICODE_STRING_MAX_CHARS - 1 ||
+            (PBYTE)PTR_ADD_OFFSET(stringBuffer->NameString, stringLength * sizeof(WCHAR)) > resourceEnd
+            )
+        {
+            return NULL;
+        }
+
+        if (i == StringIndex)
+        {
+            if (!stringLength)
+                return NULL;
+
+            return PhCreateStringEx(
+                stringBuffer->NameString,
+                stringBuffer->Length * sizeof(WCHAR)
+                );
+        }
+
+        stringBuffer = PTR_ADD_OFFSET(
+            stringBuffer->NameString,
+            stringLength * sizeof(WCHAR)
+            );
+    }
+
+    return NULL;
+}
+
 /**
  * Loads a string resource from the image into a buffer.
  *
@@ -903,11 +1143,8 @@ PPH_STRING PhLoadString(
     )
 {
     ULONG resourceId = (LOWORD(ResourceId) >> 4) + 1;
-    PIMAGE_RESOURCE_DIR_STRING_U stringBuffer;
-    PPH_STRING string = NULL;
     ULONG resourceLength;
     PVOID resourceBuffer;
-    ULONG stringIndex;
 
     if (!NT_SUCCESS(PhLoadResource(
         DllBase,
@@ -923,24 +1160,78 @@ PPH_STRING PhLoadString(
     if (!resourceBuffer)
         return NULL;
 
-    stringBuffer = resourceBuffer;
-    stringIndex = ResourceId & 0x000F;
+    return PhpCreateStringFromResource(
+        resourceBuffer,
+        resourceLength,
+        ResourceId & 0x000F
+        );
+}
 
-    for (ULONG i = 0; i < stringIndex; i++)
+PPH_STRING PhLoadUiString(
+    _In_ PVOID DllBase,
+    _In_ ULONG ResourceId,
+    _Out_opt_ PBOOLEAN FallbackToEnglish
+    )
+{
+    ULONG resourceId = (LOWORD(ResourceId) >> 4) + 1;
+    ULONG resourceLength;
+    PVOID resourceBuffer;
+    PPH_STRING string;
+    BOOLEAN fallbackToEnglish = FALSE;
+    LANGID languageId = PhGetApplicationUiLanguage();
+    LANGID englishLanguageId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+
+    if (FallbackToEnglish)
+        *FallbackToEnglish = FALSE;
+
+    if (!NT_SUCCESS(PhLoadUiResource(
+        DllBase,
+        MAKEINTRESOURCE(resourceId),
+        RT_STRING,
+        &resourceLength,
+        &resourceBuffer,
+        &fallbackToEnglish
+        )))
     {
-        stringBuffer = PTR_ADD_OFFSET(stringBuffer, (stringBuffer->Length + sizeof(ANSI_NULL)) * sizeof(WCHAR)); // ANSI_NULL required (dmex)
+        return NULL;
     }
 
-    if (
-        stringBuffer->Length > 0 && // sizeof(UNICODE_NULL) || resourceLength
-        stringBuffer->Length < UNICODE_STRING_MAX_BYTES
-        )
+    if (!resourceBuffer)
+        return NULL;
+
+    string = PhpCreateStringFromResource(
+        resourceBuffer,
+        resourceLength,
+        ResourceId & 0x000F
+        );
+
+    // A STRINGTABLE block contains 16 slots. The selected language can contain
+    // the block while leaving this specific slot empty, so block-level fallback
+    // alone is insufficient.
+    if (!string && !fallbackToEnglish && languageId != englishLanguageId)
     {
-        string = PhCreateStringEx(
-            stringBuffer->NameString,
-            stringBuffer->Length * sizeof(WCHAR) - sizeof(UNICODE_NULL)
-            );
+        if (NT_SUCCESS(PhLoadResourceForLanguage(
+            DllBase,
+            MAKEINTRESOURCE(resourceId),
+            RT_STRING,
+            englishLanguageId,
+            &resourceLength,
+            &resourceBuffer
+            )))
+        {
+            string = PhpCreateStringFromResource(
+                resourceBuffer,
+                resourceLength,
+                ResourceId & 0x000F
+                );
+
+            if (string)
+                fallbackToEnglish = TRUE;
+        }
     }
+
+    if (FallbackToEnglish)
+        *FallbackToEnglish = fallbackToEnglish;
 
     return string;
 }

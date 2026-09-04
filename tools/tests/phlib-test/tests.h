@@ -30,4 +30,8 @@ VOID Test_util(
     VOID
     );
 
+VOID Test_resource(
+    VOID
+    );
+
 #endif

@@ -1,0 +1,15 @@
+SystemInformer/SystemInformer.rc
+plugins/DotNetTools/DotNetTools.rc
+plugins/ExtendedNotifications/ExtendedNotifications.rc
+plugins/ExtendedServices/ExtendedServices.rc
+plugins/ExtendedTools/ExtendedTools.rc
+plugins/HardwareDevices/HardwareDevices.rc
+plugins/NetworkTools/NetworkTools.rc
+plugins/OnlineChecks/OnlineChecks.rc
+plugins/ToolStatus/ToolStatus.rc
+plugins/Updater/Updater.rc
+plugins/UserNotes/UserNotes.rc
+plugins/WindowExplorer/WindowExplorer.rc
+tools/CustomSetupTool/resource.rc
+tools/CustomSignTool/resource.rc
+tools/peview/peview.rc

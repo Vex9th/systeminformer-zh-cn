@@ -126,6 +126,44 @@ PhLoadResource(
 PHLIBAPI
 NTSTATUS
 NTAPI
+PhLoadResourceForLanguage(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _In_ LANGID LanguageId,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer
+    );
+
+PHLIBAPI
+VOID
+NTAPI
+PhSetApplicationUiLanguage(
+    _In_ LANGID LanguageId
+    );
+
+PHLIBAPI
+LANGID
+NTAPI
+PhGetApplicationUiLanguage(
+    VOID
+    );
+
+PHLIBAPI
+NTSTATUS
+NTAPI
+PhLoadUiResource(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer,
+    _Out_opt_ PBOOLEAN FallbackToEnglish
+    );
+
+PHLIBAPI
+NTSTATUS
+NTAPI
 PhLoadResourceCopy(
     _In_ PVOID DllBase,
     _In_ PCWSTR Name,
@@ -135,11 +173,44 @@ PhLoadResourceCopy(
     );
 
 PHLIBAPI
+NTSTATUS
+NTAPI
+PhLoadResourceCopyForLanguage(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _In_ LANGID LanguageId,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer
+    );
+
+PHLIBAPI
+NTSTATUS
+NTAPI
+PhLoadUiResourceCopy(
+    _In_ PVOID DllBase,
+    _In_ PCWSTR Name,
+    _In_ PCWSTR Type,
+    _Out_opt_ ULONG *ResourceLength,
+    _Out_opt_ PVOID *ResourceBuffer,
+    _Out_opt_ PBOOLEAN FallbackToEnglish
+    );
+
+PHLIBAPI
 PPH_STRING
 NTAPI
 PhLoadString(
     _In_ PVOID DllBase,
     _In_ ULONG ResourceId
+    );
+
+PHLIBAPI
+PPH_STRING
+NTAPI
+PhLoadUiString(
+    _In_ PVOID DllBase,
+    _In_ ULONG ResourceId,
+    _Out_opt_ PBOOLEAN FallbackToEnglish
     );
 
 PHLIBAPI

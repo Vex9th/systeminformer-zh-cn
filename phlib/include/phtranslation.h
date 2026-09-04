@@ -25,8 +25,8 @@ typedef struct _PH_TRANSLATION_ENTRY
 } PH_TRANSLATION_ENTRY, *PPH_TRANSLATION_ENTRY;
 
 /**
- * Controls dictionary lookups. TRUE by default; the application sets it to
- * FALSE after loading settings when the user language is English.
+ * Controls dictionary lookups. FALSE until the application explicitly
+ * selects zh-CN after loading settings.
  */
 extern BOOLEAN PhTranslationEnabled;
 
@@ -41,25 +41,6 @@ extern BOOLEAN PhTranslationEnabled;
 PHLIBAPI PCWSTR PhTranslateString(
     _In_opt_ PCWSTR English
     );
-
-/**
- * Translates the caption and all child control texts of a window when they
- * are present in the translation table (second dialog translation layer).
- *
- * \param WindowHandle The dialog or container window.
- */
-PHLIBAPI VOID PhTranslateWindowTree(
-    _In_ HWND WindowHandle
-    );
-
-/**
- * Installs a thread CBT hook that translates a modal dialog when it
- * activates. Call PhTranslateModalDialogBegin before DialogBoxIndirectParam
- * and PhTranslateModalDialogEnd after it returns.
- */
-PHLIBAPI VOID PhTranslateModalDialogBegin(VOID);
-
-PHLIBAPI VOID PhTranslateModalDialogEnd(VOID);
 
 /**
  * Rebuilds a dialog template with the caption and control texts translated.
@@ -81,13 +62,16 @@ PHLIBAPI PVOID PhTranslateDialogTemplateCopy(
  * \param Template The dialog resource name.
  * \param Translated Receives TRUE when the returned buffer is a translated
  * copy rather than the original resource pointer.
+ * \param NativeLocalized Receives TRUE when the selected native-language
+ * resource was returned without runtime rewriting.
  * \return A DLGTEMPLATE pointer valid for the lifetime of the process, or
  * NULL when the resource could not be loaded.
  */
 PHLIBAPI PVOID PhTranslateDialogTemplateCached(
     _In_ PVOID Instance,
     _In_ PCWSTR Template,
-    _Out_opt_ PBOOLEAN Translated
+    _Out_opt_ PBOOLEAN Translated,
+    _Out_opt_ PBOOLEAN NativeLocalized
     );
 
 #ifdef __cplusplus

@@ -16,12 +16,14 @@ int __cdecl wmain(int argc, wchar_t *argv[])
     NTSTATUS status;
 
     status = PhInitializePhLib(L"phlib-test");
-    assert(NT_SUCCESS(status));
+    if (!NT_SUCCESS(status))
+        return 1;
 
     Test_basesup();
     Test_avltree();
     Test_format();
     Test_util();
+    Test_resource();
 
     return 0;
 }

@@ -12,7 +12,7 @@
 
 #include <wchar.h>
 
-BOOLEAN PhTranslationEnabled = TRUE;
+BOOLEAN PhTranslationEnabled = FALSE;
 
 extern const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[];
 extern const ULONG PhTranslationTableZhCnCount;
@@ -292,7 +292,6 @@ PVOID PhTranslateDialogTemplateCopy(
 
             PhTlpWrite(&writer, (PVOID)zhCnFont, (wcslen(zhCnFont) + 1) * sizeof(WCHAR));
         }
-        PhTlpWriteWord(&writer, 0);
         changed = TRUE;
     }
 
@@ -334,99 +333,6 @@ PVOID PhTranslateDialogTemplateCopy(
     return writer.Buffer;
 }
 
-/**
- * Translates the caption and child control texts of a window when they have
- * dictionary entries. This is the second translation layer for dialogs: it
- * runs on the created window, so static texts are localized even when the
- * translated dialog-template path is bypassed or rejected. Controls holding
- * dynamic data never match the dictionary and keep their text.
- */
-static BOOL CALLBACK PhTlpEnumChildProc(
-    _In_ HWND WindowHandle,
-    _In_ LPARAM UnusedParameter
-    )
-{
-    WCHAR buffer[256];
-    PCWSTR translated;
-
-    UNREFERENCED_PARAMETER(UnusedParameter);
-
-    if (GetWindowText(WindowHandle, buffer, ARRAYSIZE(buffer)))
-    {
-        translated = PhTranslateString(buffer);
-
-        if (translated != buffer)
-            SetWindowText(WindowHandle, translated);
-    }
-
-    return TRUE;
-}
-
-VOID PhTranslateWindowTree(
-    _In_ HWND WindowHandle
-    )
-{
-    WCHAR buffer[256];
-    PCWSTR translated;
-
-    if (!PhTranslationEnabled)
-        return;
-
-    if (GetWindowText(WindowHandle, buffer, ARRAYSIZE(buffer)))
-    {
-        translated = PhTranslateString(buffer);
-
-        if (translated != buffer)
-            SetWindowText(WindowHandle, translated);
-    }
-
-    EnumChildWindows(WindowHandle, PhTlpEnumChildProc, 0);
-}
-
-static HHOOK PhTlModalDialogHook;
-
-/**
- * CBT hook installed around DialogBoxIndirectParam: translates the modal
- * dialog when it is first activated, covering texts set after creation as
- * well as template texts.
- */
-static LRESULT CALLBACK PhTlpModalDialogCbtProc(
-    _In_ INT Code,
-    _In_ WPARAM WParam,
-    _In_ LPARAM LParam
-    )
-{
-    if (Code == HCBT_ACTIVATE)
-    {
-        PhTranslateWindowTree((HWND)WParam);
-        return CallNextHookEx(NULL, Code, WParam, LParam);
-    }
-
-    return CallNextHookEx(NULL, Code, WParam, LParam);
-}
-
-VOID PhTranslateModalDialogBegin(VOID)
-{
-    if (!PhTranslationEnabled)
-        return;
-
-    PhTlModalDialogHook = SetWindowsHookEx(
-        WH_CBT,
-        PhTlpModalDialogCbtProc,
-        NULL,
-        GetCurrentThreadId()
-        );
-}
-
-VOID PhTranslateModalDialogEnd(VOID)
-{
-    if (PhTlModalDialogHook)
-    {
-        UnhookWindowsHookEx(PhTlModalDialogHook);
-        PhTlModalDialogHook = NULL;
-    }
-}
-
 //
 // Process-lifetime cache of translated templates, keyed by module and
 // resource name. Property sheet pages reference the cached copy via
@@ -453,30 +359,54 @@ static PH_QUEUED_LOCK PhTlTemplateCacheLock = PH_QUEUED_LOCK_INIT;
  * \param Instance The module containing the template.
  * \param Template The dialog resource name.
  * \param Translated Receives TRUE when a translated copy was produced.
+ * \param NativeLocalized Receives TRUE when the selected native-language
+ * resource was found.
  * \return The translated copy, or the original resource pointer when the
  * template has nothing to translate.
  */
 PVOID PhTranslateDialogTemplateCached(
     _In_ PVOID Instance,
     _In_ PCWSTR Template,
-    _Out_opt_ PBOOLEAN Translated
+    _Out_opt_ PBOOLEAN Translated,
+    _Out_opt_ PBOOLEAN NativeLocalized
     )
 {
     PVOID resource;
     PPH_TL_CACHE_ENTRY entry;
     PVOID result;
+    BOOLEAN fallbackToEnglish;
     ULONG i;
 
     if (Translated)
         *Translated = FALSE;
+    if (NativeLocalized)
+        *NativeLocalized = FALSE;
 
-    if (!PhTranslationEnabled)
+    if (!NT_SUCCESS(PhLoadUiResource(
+        Instance,
+        Template,
+        RT_DIALOG,
+        NULL,
+        &resource,
+        &fallbackToEnglish
+        )))
     {
-        if (NT_SUCCESS(PhLoadResource(Instance, Template, RT_DIALOG, NULL, &resource)))
-            return resource;
-
         return NULL;
     }
+
+    if (
+        !fallbackToEnglish &&
+        PhGetApplicationUiLanguage() != MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)
+        )
+    {
+        if (NativeLocalized)
+            *NativeLocalized = TRUE;
+
+        return resource;
+    }
+
+    if (!PhTranslationEnabled)
+        return resource;
 
     PhAcquireQueuedLockExclusive(&PhTlTemplateCacheLock);
 
@@ -497,9 +427,6 @@ PVOID PhTranslateDialogTemplateCached(
     }
 
     PhReleaseQueuedLockExclusive(&PhTlTemplateCacheLock);
-
-    if (!NT_SUCCESS(PhLoadResource(Instance, Template, RT_DIALOG, NULL, &resource)))
-        return NULL;
 
     result = PhTranslateDialogTemplateCopy(resource);
 

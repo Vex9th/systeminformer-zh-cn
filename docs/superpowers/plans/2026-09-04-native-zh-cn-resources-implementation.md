@@ -60,7 +60,7 @@ PhGenerateRandomAlphaString(&serviceName[9], ARRAYSIZE(serviceName) - 9);
 
 并保留 `RunAsOldServiceName` 的互斥缓存逻辑。
 
-- [ ] **步骤 3：本地静态审计这两处**
+- [x] **步骤 3：本地静态审计这两处**
 
 ```bash
 cd /Users/r2/Developer/Sys_Info/systeminformer-zh-cn
@@ -69,7 +69,7 @@ rg -n "PhTlpWrite\\(&writer, \\(PVOID\\)L\"Microsoft YaHei UI\"|PhGenerateRandom
 
 预期：仅命中新修正片段；无额外遗留旧逻辑。
 
-- [ ] **步骤 4：提交分支提交**
+- [x] **步骤 4：提交分支提交**
 
 ```bash
 cd /Users/r2/Developer/Sys_Info/systeminformer-zh-cn
@@ -85,17 +85,17 @@ git commit -m "fix: 修正中文字体写入截断与runas临时服务名"
 - 修改：`SystemInformer/main.c`
 - 修改：`phlib/guisup.c`
 
-- [ ] **步骤 1：保留接口但引入语言开关与回退**
+- [x] **步骤 1：保留接口但引入语言开关与回退**
 
 先将 `PhTranslationEnabled` 的默认行为从“全局字典翻译”改为“兼容开关型”，并保证 `en` 与 `zh-CN` 均可稳定运行。
 
 测试文件建议：`SystemInformer/main.c` 内新增一段日志或诊断输出，打印当前 `SETTING_LANGUAGE` 与 `PhTranslationEnabled` 决策是否一致。
 
-- [ ] **步骤 2：在 `main.c` 记录语言决策用于回归**
+- [x] **步骤 2：在 `main.c` 记录语言决策用于回归**
 
 将当前语言配置读取代码段转为显式状态映射（仅在开发构建开启诊断时输出），后续可用于判断原生资源接管是否完全成功。
 
-- [ ] **步骤 3：保留构建通过**
+- [x] **步骤 3：保留构建通过**
 
 运行：
 
@@ -108,7 +108,7 @@ python3 tools/zhcn/generate_translation.py --check
 
 预期：脚本全部成功（若当前资源与字典不一致仍按回退路径记录，而不是构建中断）。
 
-- [ ] **步骤 4：提交**
+- [x] **步骤 4：提交**
 
 ```bash
 git add phlib/include/phtranslation.h phlib/phtranslation.c SystemInformer/main.c phlib/guisup.c
@@ -167,7 +167,7 @@ git commit -m "i18n(main): 增加主程序 zh-CN 资源容器"
 
 生成发布说明时不再写“翻译覆盖率 100%”，改为结构校验通过率 + 运行 smoke 通过率 + 视觉验收通过率。
 
-- [ ] **步骤 3：提交**
+- [x] **步骤 3：提交**
 
 ```bash
 git add README.md tools/zhcn/README.md .github/workflows/zh-cn-build.yml docs/superpowers/specs/2026-09-04-native-zh-cn-resources-design.md
