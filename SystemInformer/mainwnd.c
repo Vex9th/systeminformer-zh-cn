@@ -1715,7 +1715,7 @@ VOID PhMwpOnCommand(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(WindowHandle, L"Unable to shutdown WSL instances.", status, 0);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SHUTDOWN_WSL), status, 0);
             }
         }
         break;
@@ -3324,7 +3324,7 @@ VOID PhMwpSaveSettings(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(NULL, L"Unable to save application settings.", status, 0);
+        PhShowStatus(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_SAVE_APPLICATION_SETTINGS), status, 0);
     }
 }
 

@@ -1039,8 +1039,38 @@
 #define IDS_PH_UNABLE_DUPLICATE_TOKEN                  2042
 #define IDS_PH_UNABLE_CHANGE_MEMORY_PROTECTION         2043
 #define IDS_PH_UNABLE_CLOSE_WINDOW                     2044
+#define IDS_PH_UNABLE_QUERY_HEAP_INFORMATION            2045
+#define IDS_PH_UNABLE_QUERY_LOCK_INFORMATION            2046
+#define IDS_PH_UNABLE_SEARCH_FOR_STRINGS                2047
+#define IDS_PH_UNABLE_CREATE_SEARCH_THREAD              2048
+#define IDS_PH_UNABLE_ANALYZE_THREAD                    2049
+#define IDS_PH_UNABLE_SHOW_PROCESS_PROPERTIES           2050
+#define IDS_PH_UNABLE_CHANGE_SERVICE_CONFIGURATION      2051
+#define IDS_PH_UNABLE_CREATE_SERVICE                    2052
+#define IDS_PH_UNABLE_SHUTDOWN_WSL                      2053
+#define IDS_PH_UNABLE_SAVE_APPLICATION_SETTINGS         2054
+#define IDS_PH_UNABLE_FIND_MEMORY_REGION                2055
+#define IDS_PH_UNABLE_OPEN_FILE_LOCATION                2056
+#define IDS_PH_UNABLE_OPEN_FILE_PROPERTIES              2057
+#define IDS_PH_UNABLE_LOAD_STACK                        2058
+#define IDS_PH_UNABLE_REFRESH_STACK                     2059
+#define IDS_PH_UNABLE_QUERY_PAGEFILE_INFORMATION        2060
+#define IDS_PH_MINIMUM_STRING_LENGTH                    2061
+#define IDS_PH_MEMORY_TYPE_REQUIRED                     2062
+#define IDS_PH_THREAD_NOT_WAITING                       2063
+#define IDS_PH_PROCESS_RECORD_ONLY                      2064
+#define IDS_PH_BINARY_PATH_EMPTY                        2065
+#define IDS_PH_OBJECT_UNNAMED                           2066
+#define IDS_PH_UNABLE_OPEN_KEY                          2067
+#define IDS_PH_UNABLE_QUERY_32BIT_HEAP_INFORMATION      2068
+#define IDS_PH_32BIT_VERSION_NOT_FOUND                  2069
+#define IDS_PH_UNABLE_OPEN_THREAD                       2070
+#define IDS_PH_UNABLE_MAP_SECTION_VIEW                  2071
+#define IDS_PH_SECTION_VIEW_TRUNCATED                   2072
+#define IDS_PH_UNABLE_QUERY_SECTION                     2073
+#define IDS_PH_64BIT_DUMP_FALLBACK                      2074
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_UNABLE_CLOSE_WINDOW
+#define IDS_PH_LAST                                  IDS_PH_64BIT_DUMP_FALLBACK
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1052,6 +1082,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2045
+#define _APS_NEXT_SYMED_VALUE           2075
 #endif
 #endif

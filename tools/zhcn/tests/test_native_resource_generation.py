@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("249 strings", result.stdout)
+        self.assertIn("279 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 45)
+        self.assertEqual(len(stringtable_ids(resource_script)), 75)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2045)))
+        self.assertEqual(numeric_ids, list(range(2000, 2075)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1018,6 +1018,49 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     [],
                     f"raw UI literal remains: {literal}",
                 )
+
+    def test_main_runtime_operation_errors_use_native_resources(self) -> None:
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
+        literals = (
+            "Unable to query heap information.",
+            "Unable to query 32bit heap information.",
+            "Unable to query lock information.",
+            "Unable to search for strings.",
+            "Unable to create the search thread",
+            "Unable to analyze the thread.",
+            "Unable to show the process properties.",
+            "Unable to change service configuration.",
+            "Unable to create the service.",
+            "Unable to shutdown WSL instances.",
+            "Unable to save application settings.",
+            "Unable to find the memory region for the selected address.",
+            "Unable to open the file location.",
+            "Unable to open the file properties.",
+            "Unable to open key.",
+            "Unable to open the thread.",
+            "Unable to map a view of the section.",
+            "Unable to query the section.",
+            "Unable to load the stack.",
+            "Unable to refresh the stack.",
+            "Unable to query pagefile information.",
+            "The minimum length must be at least 4.",
+            "At least one memory type (Private, Image, or Mapped) must be selected.",
+            "The thread does not appear to be waiting.",
+            "The process has already terminated; only the process record is available.",
+            "The binary path is empty.",
+            "The object is unnamed.",
+            "The 32-bit version of System Informer could not be located.",
+            "The section size is greater than 32 MB. Only the first 32 MB will be available.",
+            "A 64-bit dump will be created instead. Do you want to continue?",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                stem = re.escape(literal.removesuffix("."))
+                self.assertNotRegex(source, rf'L"{stem}\.?' + '"')
 
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
@@ -1212,7 +1255,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 45): 2,
+                    (r"bin\Release64\sys_info.exe", 75): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

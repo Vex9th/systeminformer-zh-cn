@@ -229,7 +229,7 @@ INT_PTR CALLBACK PhpPagefilesDlgProc(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(hwndDlg, L"Unable to query pagefile information.", status, 0);
+                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_PAGEFILE_INFORMATION), status, 0);
                 DestroyWindow(hwndDlg);
             }
 
@@ -294,7 +294,7 @@ INT_PTR CALLBACK PhpPagefilesDlgProc(
 
                     if (!NT_SUCCESS(status))
                     {
-                        PhShowStatus(hwndDlg, L"Unable to query pagefile information.", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_PAGEFILE_INFORMATION), status, 0);
                     }
                 }
                 break;
@@ -379,4 +379,3 @@ INT_PTR CALLBACK PhpPagefilesDlgProc(
 
     return FALSE;
 }
-

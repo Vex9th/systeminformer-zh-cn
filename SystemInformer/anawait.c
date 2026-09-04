@@ -131,7 +131,7 @@ VOID PhUiAnalyzeWaitThread(
         ThreadId
         )))
     {
-        PhShowStatus(WindowHandle, L"Unable to open the thread.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_THREAD), status, 0);
         NtClose(processHandle);
         return;
     }
@@ -166,7 +166,7 @@ VOID PhUiAnalyzeWaitThread(
     }
     else
     {
-        PhShowInformation2(WindowHandle, L"Unable to analyze the thread.", L"%s", L"The thread does not appear to be waiting.");
+        PhShowInformation2(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_ANALYZE_THREAD), L"%s", PhGetApplicationUiString(IDS_PH_THREAD_NOT_WAITING));
     }
 
     PhDeleteStringBuilder(&context.StringBuilder);
@@ -194,7 +194,7 @@ VOID PhpAnalyzeWaitPassive(
 
     if (!NT_SUCCESS(status = PhOpenThread(&threadHandle, THREAD_GET_CONTEXT, ThreadId)))
     {
-        PhShowStatus(WindowHandle, L"Unable to open the thread.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_THREAD), status, 0);
         goto CleanupExit;
     }
 

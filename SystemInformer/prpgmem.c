@@ -1071,7 +1071,7 @@ INT_PTR CALLBACK PhpProcessMemoryDlgProc(
                                     }
                                     else
                                     {
-                                        PhShowStatus(hwndDlg, L"Unable to find the memory region for the selected address.", STATUS_UNSUCCESSFUL, 0);
+                                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_FIND_MEMORY_REGION), STATUS_UNSUCCESSFUL, 0);
                                     }
                                 }
                             }

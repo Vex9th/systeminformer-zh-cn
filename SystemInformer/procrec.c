@@ -304,9 +304,9 @@ INT_PTR CALLBACK PhpProcessRecordDlgProc(
                     {
                         PhShowError2(
                             hwndDlg,
-                            L"Unable to show the process properties.",
+                            PhGetApplicationUiString(IDS_PH_UNABLE_SHOW_PROCESS_PROPERTIES),
                             L"%s",
-                            L"The process has already terminated; only the process record is available."
+                            PhGetApplicationUiString(IDS_PH_PROCESS_RECORD_ONLY)
                             );
                     }
                 }

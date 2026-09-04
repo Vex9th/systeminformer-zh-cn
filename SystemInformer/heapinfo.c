@@ -471,7 +471,7 @@ VOID PhpEnumerateProcessHeaps(
             {
                 PhUiDisconnectFromPhSvc();
 
-                PhShowStatus(Context->WindowHandle, L"Unable to query heap information.", status, 0);
+                PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_HEAP_INFORMATION), status, 0);
                 goto CleanupExit;
             }
 
@@ -552,9 +552,9 @@ VOID PhpEnumerateProcessHeaps(
         {
             PhShowError2(
                 Context->WindowHandle,
-                L"Unable to query 32bit heap information.",
+                PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_32BIT_HEAP_INFORMATION),
                 L"%s",
-                L"The 32-bit version of System Informer could not be located."
+                PhGetApplicationUiString(IDS_PH_32BIT_VERSION_NOT_FOUND)
                 );
             goto CleanupExit;
         }
@@ -571,7 +571,7 @@ VOID PhpEnumerateProcessHeaps(
 
         if (!NT_SUCCESS(status))
         {
-            PhShowStatus(Context->WindowHandle, L"Unable to query heap information.", status, 0);
+            PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_HEAP_INFORMATION), status, 0);
             goto CleanupExit;
         }
 
@@ -1440,7 +1440,7 @@ VOID PhEnumerateProcessLocks(
     if (!NT_SUCCESS(status))
     {
         ExtendedListView_SetRedraw(Context->ListViewHandle, TRUE);
-        PhShowStatus(Context->WindowHandle, L"Unable to query lock information.", status, 0);
+        PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_LOCK_INFORMATION), status, 0);
         return;
     }
 

@@ -135,14 +135,14 @@ VOID PhShowHandleObjectProperties1(
                 );
         }
         else
-            PhShowError2(hWnd, L"Unable to open the file location.", L"%s", L"The object is unnamed.");
+            PhShowError2(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_FILE_LOCATION), L"%s", PhGetApplicationUiString(IDS_PH_OBJECT_UNNAMED));
     }
     else if (PhEqualString2(Info->TypeName, L"Key", TRUE))
     {
         if (Info->BestObjectName)
             PhShellOpenKey2(hWnd, Info->BestObjectName);
         else
-            PhShowError2(hWnd, L"Unable to open key.", L"%s", L"The object is unnamed.");
+            PhShowError2(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_KEY), L"%s", PhGetApplicationUiString(IDS_PH_OBJECT_UNNAMED));
     }
     else if (PhEqualString2(Info->TypeName, L"Process", TRUE))
     {
@@ -227,7 +227,7 @@ VOID PhShowHandleObjectProperties1(
             }
             else
             {
-                PhShowError2(hWnd, L"Unable to show the process properties.", L"%s", PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST));
+                PhShowError2(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_SHOW_PROCESS_PROPERTIES), L"%s", PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST));
             }
         }
     }
@@ -303,7 +303,7 @@ VOID PhShowHandleObjectProperties1(
 
                     if (tooBig)
                     {
-                        PhShowWarning2(hWnd, L"Unable to map a view of the section.", L"%s", L"The section size is greater than 32 MB. Only the first 32 MB will be available.");
+                        PhShowWarning2(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_MAP_SECTION_VIEW), L"%s", PhGetApplicationUiString(IDS_PH_SECTION_VIEW_TRUNCATED));
                     }
 
                     memset(showMemoryEditor, 0, sizeof(PH_SHOW_MEMORY_EDITOR));
@@ -318,12 +318,12 @@ VOID PhShowHandleObjectProperties1(
                 }
                 else
                 {
-                    PhShowStatus(hWnd, L"Unable to map a view of the section.", status, 0);
+                    PhShowStatus(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_MAP_SECTION_VIEW), status, 0);
                 }
             }
             else
             {
-                PhShowStatus(hWnd, L"Unable to query the section.", status, 0);
+                PhShowStatus(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_SECTION), status, 0);
             }
 
             PhClearReference(&sectionName);
@@ -332,7 +332,7 @@ VOID PhShowHandleObjectProperties1(
         }
         else
         {
-            PhShowStatus(hWnd, L"Unable to query the section.", status, 0);
+            PhShowStatus(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_SECTION), status, 0);
         }
     }
     else if (PhEqualString2(Info->TypeName, L"Thread", TRUE))
@@ -422,7 +422,7 @@ VOID PhShowHandleObjectProperties1(
             }
             else
             {
-                PhShowError2(hWnd, L"Unable to show the process properties.", L"%s", PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST));
+                PhShowError2(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_SHOW_PROCESS_PROPERTIES), L"%s", PhGetApplicationUiString(IDS_PH_PROCESS_DOES_NOT_EXIST));
             }
         }
     }
@@ -442,6 +442,6 @@ VOID PhShowHandleObjectProperties2(
         if (Info->BestObjectName)
             PhShellProperties(hWnd, Info->BestObjectName->Buffer);
         else
-            PhShowError2(hWnd, L"Unable to open the file properties.", L"%s", L"The object is unnamed.");
+            PhShowError2(hWnd, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_FILE_PROPERTIES), L"%s", PhGetApplicationUiString(IDS_PH_OBJECT_UNNAMED));
     }
 }

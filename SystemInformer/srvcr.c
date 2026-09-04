@@ -95,7 +95,7 @@ INT_PTR CALLBACK PhpCreateServiceDlgProc(
 
                     if (PhIsNullOrEmptyString(serviceBinaryPath))
                     {
-                        PhShowError2(hwndDlg, L"Unable to create the service.", L"%s", L"The binary path is empty.");
+                        PhShowError2(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_SERVICE), L"%s", PhGetApplicationUiString(IDS_PH_BINARY_PATH_EMPTY));
                         break;
                     }
 
@@ -162,7 +162,7 @@ INT_PTR CALLBACK PhpCreateServiceDlgProc(
                     }
 
                     if (!NT_SUCCESS(status))
-                        PhShowStatus(hwndDlg, L"Unable to create the service.", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_SERVICE), status, 0);
                 }
                 break;
             case IDC_BROWSE:

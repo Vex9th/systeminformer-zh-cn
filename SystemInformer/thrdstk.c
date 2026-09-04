@@ -900,7 +900,7 @@ VOID PhShowThreadStackDialog(
     if (ProcessId == SYSTEM_IDLE_PROCESS_ID &&
         HandleToUlong(ThreadId) < PhSystemProcessorInformation.NumberOfProcessors)
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to open the thread.", STATUS_UNSUCCESSFUL, 0);
+        PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_THREAD), STATUS_UNSUCCESSFUL, 0);
         return;
     }
 
@@ -919,7 +919,7 @@ VOID PhShowThreadStackDialog(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to open the thread.", status, 0);
+        PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_THREAD), status, 0);
         return;
     }
 
@@ -1044,7 +1044,7 @@ INT_PTR CALLBACK PhpThreadStackDlgProc(
             else if (!NT_SUCCESS(status))
             {
                 // HACK: Show error dialog on the parent window.
-                PhShowStatus(GetParent(hwndDlg), L"Unable to load the stack.", status, 0);
+                PhShowStatus(GetParent(hwndDlg), PhGetApplicationUiString(IDS_PH_UNABLE_LOAD_STACK), status, 0);
                 EndDialog(hwndDlg, IDCANCEL);
             }
         }
@@ -1088,7 +1088,7 @@ INT_PTR CALLBACK PhpThreadStackDlgProc(
 
                     if (!NT_SUCCESS(status = PhpRefreshThreadStack(hwndDlg, context)))
                     {
-                        PhShowStatus(hwndDlg, L"Unable to refresh the stack.", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_REFRESH_STACK), status, 0);
                     }
                 }
                 break;

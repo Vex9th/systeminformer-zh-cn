@@ -2273,6 +2273,27 @@
     "Unable to enumerate process handles": "无法枚举进程句柄",
     "Unable to duplicate the token.": "无法复制令牌。",
     "Unable to change memory protection": "无法更改内存保护",
-    "Unable to close the window.": "无法关闭窗口。"
+    "Unable to close the window.": "无法关闭窗口。",
+    "Unable to query heap information.": "无法查询堆信息。",
+    "Unable to query lock information.": "无法查询锁信息。",
+    "Unable to search for strings.": "无法搜索字符串。",
+    "Unable to create the search thread": "无法创建搜索线程",
+    "Unable to analyze the thread.": "无法分析线程。",
+    "Unable to show the process properties.": "无法显示进程属性。",
+    "Unable to change service configuration.": "无法更改服务配置。",
+    "Unable to create the service.": "无法创建服务。",
+    "Unable to shutdown WSL instances.": "无法关闭 WSL 实例。",
+    "Unable to save application settings.": "无法保存应用程序设置。",
+    "Unable to find the memory region for the selected address.": "无法查找所选地址对应的内存区域。",
+    "Unable to open the file location.": "无法打开文件位置。",
+    "Unable to open the file properties.": "无法打开文件属性。",
+    "Unable to load the stack.": "无法加载堆栈。",
+    "Unable to refresh the stack.": "无法刷新堆栈。",
+    "Unable to query pagefile information.": "无法查询页面文件信息。",
+    "Unable to open key.": "无法打开注册表项。",
+    "Unable to query 32bit heap information.": "无法查询 32 位堆信息。",
+    "Unable to open the thread.": "无法打开线程。",
+    "Unable to map a view of the section.": "无法映射节视图。",
+    "Unable to query the section.": "无法查询节。"
   }
 }

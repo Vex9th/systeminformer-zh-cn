@@ -753,7 +753,7 @@ INT_PTR CALLBACK PhpMemoryStringDlgProc(
 
                     if (minimumLength < 4)
                     {
-                        PhShowError2(hwndDlg, L"Unable to search for strings.", L"%s", L"The minimum length must be at least 4.");
+                        PhShowError2(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_SEARCH_FOR_STRINGS), L"%s", PhGetApplicationUiString(IDS_PH_MINIMUM_STRING_LENGTH));
                         break;
                     }
 
@@ -766,7 +766,7 @@ INT_PTR CALLBACK PhpMemoryStringDlgProc(
 
                     if (!context->Private && !context->Image && !context->Mapped)
                     {
-                        PhShowError2(hwndDlg, L"Unable to search for strings.", L"%s", L"At least one memory type (Private, Image, or Mapped) must be selected.");
+                        PhShowError2(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_SEARCH_FOR_STRINGS), L"%s", PhGetApplicationUiString(IDS_PH_MEMORY_TYPE_REQUIRED));
                         break;
                     }
 
@@ -959,7 +959,7 @@ HRESULT CALLBACK PhpMemoryStringTaskDialogCallback(
 
                 if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(hwndDlg, L"Unable to create the search thread", status, 0);
+                    PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_SEARCH_THREAD), status, 0);
                     SendMessage(hwndDlg, TDM_CLICK_BUTTON, IDCANCEL, 0);
                 }
             }
