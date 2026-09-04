@@ -181,8 +181,8 @@ INT_PTR CALLBACK PvpPeVolatileDlgProc(
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PvConfigListViewFont(hwndDlg, context->ListViewHandle);
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 150, L"RVA");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 250, L"Symbol");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 150, PvpLoadUiString(IDS_PV_COLUMN_RVA));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 250, PvpLoadUiString(IDS_PV_COLUMN_SYMBOL));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(L"ImageVolatileListViewColumns", context->ListViewHandle);
             PvConfigTreeBorders(context->ListViewHandle);

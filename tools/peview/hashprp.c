@@ -1421,8 +1421,8 @@ INT_PTR CALLBACK PvpPeHashesDlgProc(
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PvConfigListViewFont(hwndDlg, context->ListViewHandle);
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 250, L"Hash");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, PvpLoadUiString(IDS_PV_COLUMN_NAME));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 250, PvpLoadUiString(IDS_PV_COLUMN_HASH));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(L"ImageHashesListViewColumns", context->ListViewHandle);
             PvConfigTreeBorders(context->ListViewHandle);

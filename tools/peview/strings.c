@@ -867,11 +867,11 @@ VOID PvpInitializeStringsTree(
     TreeNew_SetRedraw(TreeNewHandle, FALSE);
 
     PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_INDEX, TRUE, L"#", 40, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_INDEX, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_SECTION, TRUE, L"Section", 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_SECTION, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_RVA, TRUE, L"RVA", 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_RVA, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_TYPE, TRUE, L"Type", 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_TYPE, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_LENGTH, TRUE, L"Length", 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_LENGTH, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_STRING, TRUE, L"String", 600, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_STRING, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_SECTION, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SECTION), 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_SECTION, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_RVA, TRUE, PvpLoadUiString(IDS_PV_COLUMN_RVA), 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_RVA, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_TYPE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_TYPE), 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_TYPE, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_LENGTH, TRUE, PvpLoadUiString(IDS_PV_COLUMN_LENGTH), 80, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_LENGTH, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_STRING, TRUE, PvpLoadUiString(IDS_PV_COLUMN_STRING), 600, PH_ALIGN_LEFT, PV_STRINGS_TREE_COLUMN_ITEM_STRING, 0, 0);
 
     TreeNew_SetRedraw(TreeNewHandle, TRUE);
     TreeNew_SetSort(TreeNewHandle, PV_STRINGS_TREE_COLUMN_ITEM_INDEX, AscendingSortOrder);
@@ -942,7 +942,7 @@ INT_PTR CALLBACK PvpStringsMinimumLengthDlgProc(
 
                     if (!minimumLength || minimumLength > MAXULONG32)
                     {
-                        PhShowError2(hwndDlg, L"Invalid minimum length", L"%s", L"");
+                        PhShowError2(hwndDlg, PvpLoadUiString(IDS_PV_INVALID_MINIMUM_LENGTH), L"%s", L"");
                         break;
                     }
 
@@ -1105,7 +1105,7 @@ INT_PTR CALLBACK PvStringsDlgProc(
             if (numberOfNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PvpLoadUiString(IDS_PV_MENU_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, 1, context->TreeNewHandle, contextMenuEvent->Column);
 
                 selectedItem = PhShowEMenu(
@@ -1160,16 +1160,16 @@ INT_PTR CALLBACK PvStringsDlgProc(
 
                     GetWindowRect(GetDlgItem(hwndDlg, IDC_SETTINGS), &rect);
 
-                    ansi = PhCreateEMenuItem(0, 1, L"ANSI", NULL, NULL);
-                    utf8 = PhCreateEMenuItem(0, 2, L"UTF-8", NULL, NULL);
-                    unicode = PhCreateEMenuItem(0, 3, L"UTF-16", NULL, NULL);
-                    extendedUnicode = PhCreateEMenuItem(0, 4, L"Extended character set", NULL, NULL);
-                    skipExecutableSection = PhCreateEMenuItem(0, 5, L"Skip .text section", NULL, NULL);
-                    skipHighEntropySections = PhCreateEMenuItem(0, 6, L"Skip high entropy sections", NULL, NULL);
-                    skipStringsWithNumbers = PhCreateEMenuItem(0, 7, L"Skip strings with numbers", NULL, NULL);
-                    skipStringsWithSymbols = PhCreateEMenuItem(0, 8, L"Skip strings with symbols", NULL, NULL);
-                    minimumLength = PhCreateEMenuItem(0, 9, L"Minimum length...", NULL, NULL);
-                    refresh = PhCreateEMenuItem(0, 10, L"Refresh", NULL, NULL);
+                    ansi = PhCreateEMenuItem(0, 1, PvpLoadUiString(IDS_PV_MENU_ANSI), NULL, NULL);
+                    utf8 = PhCreateEMenuItem(0, 2, PvpLoadUiString(IDS_PV_MENU_UTF8), NULL, NULL);
+                    unicode = PhCreateEMenuItem(0, 3, PvpLoadUiString(IDS_PV_MENU_UTF16), NULL, NULL);
+                    extendedUnicode = PhCreateEMenuItem(0, 4, PvpLoadUiString(IDS_PV_MENU_EXTENDED_CHARACTER_SET), NULL, NULL);
+                    skipExecutableSection = PhCreateEMenuItem(0, 5, PvpLoadUiString(IDS_PV_MENU_SKIP_TEXT_SECTION), NULL, NULL);
+                    skipHighEntropySections = PhCreateEMenuItem(0, 6, PvpLoadUiString(IDS_PV_MENU_SKIP_HIGH_ENTROPY), NULL, NULL);
+                    skipStringsWithNumbers = PhCreateEMenuItem(0, 7, PvpLoadUiString(IDS_PV_MENU_SKIP_NUMBERS), NULL, NULL);
+                    skipStringsWithSymbols = PhCreateEMenuItem(0, 8, PvpLoadUiString(IDS_PV_MENU_SKIP_SYMBOLS), NULL, NULL);
+                    minimumLength = PhCreateEMenuItem(0, 9, PvpLoadUiString(IDS_PV_MENU_MINIMUM_LENGTH), NULL, NULL);
+                    refresh = PhCreateEMenuItem(0, 10, PvpLoadUiString(IDS_PV_MENU_REFRESH), NULL, NULL);
 
                     menu = PhCreateEMenu();
                     PhInsertEMenuItem(menu, ansi, ULONG_MAX);

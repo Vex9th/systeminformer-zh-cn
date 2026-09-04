@@ -14,6 +14,45 @@
 #include <phtranslation.h>
 
 PPH_STRING PvFileName = NULL;
+static PPH_STRING PvpUiStrings[IDS_PV_LAST - IDS_PV_FIRST + 1] = { 0 };
+
+static BOOLEAN PvpInitializeUiStrings(
+    VOID
+    )
+{
+    ULONG resourceId;
+
+    for (resourceId = IDS_PV_FIRST; resourceId <= IDS_PV_LAST; resourceId++)
+    {
+        PPH_STRING string;
+
+        if (!(string = PhLoadUiString(PhInstanceHandle, resourceId, NULL)))
+        {
+            ULONG cleanupId;
+
+            for (cleanupId = IDS_PV_FIRST; cleanupId < resourceId; cleanupId++)
+                PhClearReference(&PvpUiStrings[cleanupId - IDS_PV_FIRST]);
+
+            return FALSE;
+        }
+
+        PvpUiStrings[resourceId - IDS_PV_FIRST] = string;
+    }
+
+    return TRUE;
+}
+
+PCWSTR PvpLoadUiString(
+    _In_ ULONG ResourceId
+    )
+{
+    assert(ResourceId >= IDS_PV_FIRST && ResourceId <= IDS_PV_LAST);
+
+    if (ResourceId < IDS_PV_FIRST || ResourceId > IDS_PV_LAST)
+        return L"";
+
+    return PhGetString(PvpUiStrings[ResourceId - IDS_PV_FIRST]);
+}
 
 BOOLEAN PvInitializeExceptionPolicy(
     VOID
@@ -128,6 +167,9 @@ INT WINAPI wWinMain(
         );
     PhTranslationEnabled = TRUE;
 
+    if (!PvpInitializeUiStrings())
+        return 1;
+
     if (!PvInitializeExceptionPolicy())
         return 1;
 
@@ -142,11 +184,9 @@ INT WINAPI wWinMain(
         PvInitializeSuperclassControls();
         PhShowWarning2(
             NULL,
-            L"Warning.",
+            PvpLoadUiString(IDS_PV_WARNING_TITLE),
             L"%s",
-            L"You are attempting to run the 32-bit version of PE Viewer on 64-bit Windows. "
-            L"Most features will not work correctly.\n\n"
-            L"Please run the 64-bit version of PE Viewer instead."
+            PvpLoadUiString(IDS_PV_WOW64_WARNING)
             );
         PhExitApplication(STATUS_IMAGE_SUBSYSTEM_NOT_PRESENT);
     }
@@ -331,9 +371,9 @@ INT WINAPI wWinMain(
         if (!NT_SUCCESS(status))
         {
             if (status == STATUS_IMAGE_SUBSYSTEM_NOT_PRESENT)
-                PhShowError2(NULL, L"Unable to load the file.", L"%s", L"PE Viewer does not support this image type.");
+                PhShowError2(NULL, PvpLoadUiString(IDS_PV_UNABLE_LOAD_FILE), L"%s", PvpLoadUiString(IDS_PV_UNSUPPORTED_IMAGE));
             else
-                PhShowStatus(NULL, L"Unable to load the file.", status, 0);
+                PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_LOAD_FILE), status, 0);
         }
     }
 
@@ -364,7 +404,7 @@ ULONG CALLBACK PvUnhandledExceptionCallback(
     PhShowMessage(
         NULL,
         MB_OK | MB_ICONWARNING,
-        L"PE Viewer has crashed :(\r\n\r\n%s",
+        PvpLoadUiString(IDS_PV_CRASH_MESSAGE),
         PhGetStringOrEmpty(message)
         );
 

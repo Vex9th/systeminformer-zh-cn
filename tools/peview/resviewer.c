@@ -726,7 +726,7 @@ VOID PvShowResourceViewerDialog(
 
     if (!NT_SUCCESS(PhGetMappedImageResources(&resources, MappedImage)))
     {
-        PhShowError(ParentWindowHandle, L"%s", L"Unable to enumerate the image resources.");
+        PhShowError(ParentWindowHandle, L"%s", PvpLoadUiString(IDS_PV_RESOURCE_ENUM_FAILED));
         return;
     }
 
@@ -743,7 +743,7 @@ VOID PvShowResourceViewerDialog(
     if (!found || entry.Size == 0 || !NT_SUCCESS(PhMappedImageRvaToVa(MappedImage, entry.Offset, &data)) || !data)
     {
         PhFree(resources.ResourceEntries);
-        PhShowError(ParentWindowHandle, L"%s", L"Unable to locate the resource data.");
+        PhShowError(ParentWindowHandle, L"%s", PvpLoadUiString(IDS_PV_RESOURCE_DATA_NOT_FOUND));
         return;
     }
 

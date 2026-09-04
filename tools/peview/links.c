@@ -189,7 +189,7 @@ INT_PTR CALLBACK PvpPeLinksDlgProc(
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PvConfigListViewFont(hwndDlg, context->ListViewHandle);
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 250, L"Name");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 250, PvpLoadUiString(IDS_PV_COLUMN_NAME));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(L"ImageHardLinksListViewColumns", context->ListViewHandle);
             PvConfigTreeBorders(context->ListViewHandle);

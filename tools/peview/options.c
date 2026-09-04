@@ -130,15 +130,10 @@ VOID PvLoadGeneralPage(
 {
     PhSetDialogItemText(Context->WindowHandle, IDC_DBGHELPSEARCHPATH, PhaGetStringSetting(L"DbgHelpSearchPath")->Buffer);
 
-    //PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_WARNINGS, L"Enable warnings", NULL);
-    //PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_PLUGINS, L"Enable plugins", NULL);
-    //PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_UNDECORATE_SYMBOLS, L"Enable undecorated symbols", NULL);
-    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_THEME_SUPPORT, L"Enable theme support", NULL);
-    //PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_START_ASADMIN, L"Enable start as admin", NULL);
-    //PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_SHOW_ADVANCED_OPTIONS, L"Show advanced options", NULL);
-    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_LEGACY_TABS, L"Enable legacy properties window", NULL);
-    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_THEME_BORDER, L"Enable view borders", NULL);
-    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_LASTTAB_SUPPORT, L"Remember last selected window", NULL);
+    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_THEME_SUPPORT, PvpLoadUiString(IDS_PV_OPTION_THEME_SUPPORT), NULL);
+    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_LEGACY_TABS, PvpLoadUiString(IDS_PV_OPTION_LEGACY_PROPERTIES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_THEME_BORDER, PvpLoadUiString(IDS_PV_OPTION_VIEW_BORDERS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_LASTTAB_SUPPORT, PvpLoadUiString(IDS_PV_OPTION_REMEMBER_LAST_WINDOW), NULL);
 
     //SetLvItemCheckForSetting(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_WARNINGS, L"EnableWarnings");
     //SetLvItemCheckForSetting(Context->ListViewHandle, PHP_OPTIONS_INDEX_ENABLE_PLUGINS, L"EnablePlugins");
@@ -186,8 +181,8 @@ VOID PvGeneralPageSave(
             Context->WindowHandle,
             TD_YES_BUTTON | TD_NO_BUTTON,
             TD_INFORMATION_ICON,
-            L"One or more options you have changed requires a restart of PE Viewer.",
-            L"Do you want to restart PE Viewer now?"
+            PvpLoadUiString(IDS_PV_RESTART_REQUIRED),
+            PvpLoadUiString(IDS_PV_RESTART_PROMPT)
             ) == IDYES)
         {
             if (PvShellExecuteRestart(Context->WindowHandle))
@@ -294,7 +289,7 @@ INT_PTR CALLBACK PvOptionsWndProc(
                         hwndDlg,
                         TD_YES_BUTTON | TD_NO_BUTTON,
                         TD_WARNING_ICON,
-                        L"Do you want to reset all settings and restart PE Viewer?",
+                        PvpLoadUiString(IDS_PV_RESET_ALL_SETTINGS),
                         L""
                         ) == IDYES)
                     {
@@ -315,7 +310,7 @@ INT_PTR CALLBACK PvOptionsWndProc(
                         hwndDlg,
                         TD_YES_BUTTON | TD_NO_BUTTON,
                         TD_INFORMATION_ICON,
-                        L"Do you want to clean up unused settings?",
+                        PvpLoadUiString(IDS_PV_CLEAN_UNUSED_SETTINGS),
                         L""
                         ) == IDYES)
                     {

@@ -180,15 +180,15 @@ VOID PvInitializeCertificateTree(
     TreeNew_SetCallback(Context->TreeNewHandle, PvCertificateTreeNewCallback, Context);
     TreeNew_SetRedraw(Context->TreeNewHandle, FALSE);
 
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_NAME, TRUE, L"Name", 200, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_NAME, TRUE, PvpLoadUiString(IDS_PV_COLUMN_NAME), 200, PH_ALIGN_LEFT, 0, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_INDEX, TRUE, L"#", 25, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_TYPE, TRUE, L"Type", 50, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_ISSUER, TRUE, L"Issuer", 100, PH_ALIGN_LEFT, 3, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_DATEFROM, TRUE, L"From", 100, PH_ALIGN_LEFT, 4, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_DATETO, TRUE, L"To", 100, PH_ALIGN_LEFT, 5, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_THUMBPRINT, TRUE, L"Thumbprint", 100, PH_ALIGN_LEFT, 6, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_SIZE, TRUE, L"Size", 50, PH_ALIGN_LEFT, 7, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_ALG, TRUE, L"Algorithm", 50, PH_ALIGN_LEFT, 8, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_TYPE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_TYPE), 50, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_ISSUER, TRUE, PvpLoadUiString(IDS_PV_COLUMN_ISSUER), 100, PH_ALIGN_LEFT, 3, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_DATEFROM, TRUE, PvpLoadUiString(IDS_PV_COLUMN_FROM), 100, PH_ALIGN_LEFT, 4, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_DATETO, TRUE, PvpLoadUiString(IDS_PV_COLUMN_TO), 100, PH_ALIGN_LEFT, 5, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_THUMBPRINT, TRUE, PvpLoadUiString(IDS_PV_COLUMN_THUMBPRINT), 100, PH_ALIGN_LEFT, 6, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_SIZE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SIZE), 50, PH_ALIGN_LEFT, 7, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_CERTIFICATE_TREE_COLUMN_NAME_ALG, TRUE, PvpLoadUiString(IDS_PV_COLUMN_ALGORITHM), 50, PH_ALIGN_LEFT, 8, 0);
 
     TreeNew_SetRedraw(Context->TreeNewHandle, TRUE);
     TreeNew_SetTriState(Context->TreeNewHandle, TRUE);
@@ -1561,10 +1561,10 @@ INT_PTR CALLBACK PvpPeSecurityDlgProc(
                     if (numberOfNodes != 0)
                     {
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"View certificate...", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"Save certificate...", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PvpLoadUiString(IDS_PV_MENU_VIEW_CERTIFICATE), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, PvpLoadUiString(IDS_PV_MENU_SAVE_CERTIFICATE), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"Copy", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, PvpLoadUiString(IDS_PV_MENU_COPY), NULL, NULL), ULONG_MAX);
                         PhInsertCopyCellEMenuItem(menu, USHRT_MAX, context->TreeNewHandle, contextMenuEvent->Column);
 
                         selectedItem = PhShowEMenu(

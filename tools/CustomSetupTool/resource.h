@@ -72,6 +72,41 @@
 #define IDS_SETUP_UNINSTALLING                          2038
 #define IDS_SETUP_UNINSTALLING_CONTENT                  2039
 #define IDS_SETUP_UNKNOWN_ERROR                         2040
+#define IDS_SETUP_LEGACY_PROMPT_TITLE                   2041
+#define IDS_SETUP_LEGACY_PROMPT_CONTENT                 2042
+#define IDS_SETUP_INITIALIZING                          2043
+#define IDS_SETUP_FAILED                                2044
+#define IDS_SETUP_CLOSE_EXIT                            2045
+#define IDS_SETUP_ERROR_STATUS_FORMAT                   2046
+#define IDS_SETUP_BUTTON_INSTALL                        2047
+#define IDS_SETUP_PRODUCT_DESCRIPTION                   2048
+#define IDS_SETUP_COMPLETE_FORMAT                       2049
+#define IDS_SETUP_START_PROGRAM_ON_EXIT                 2050
+#define IDS_SETUP_BUTTON_BROWSE                         2051
+#define IDS_SETUP_BUTTON_NEXT_PLAIN                     2052
+#define IDS_SETUP_OPTIONS_TITLE                         2053
+#define IDS_SETUP_INSTALLATION_FOLDER                   2054
+#define IDS_SETUP_BUTTON_CHANGE_DIRECTORY               2055
+#define IDS_SETUP_BUTTON_CONTINUE                       2056
+#define IDS_SETUP_WARNING                               2057
+#define IDS_SETUP_DIRECTORY_NOT_EMPTY                   2058
+#define IDS_SETUP_PREPARING_INSTALL                     2059
+#define IDS_SETUP_UNINSTALLED                           2060
+#define IDS_SETUP_REBOOT_REQUIRED                       2061
+#define IDS_SETUP_CLICK_CLOSE                           2062
+#define IDS_SETUP_UNINSTALLING_APP                      2063
+#define IDS_SETUP_UNINSTALL_FAILED_ERROR                2064
+#define IDS_SETUP_RETRY_OR_CLOSE                        2065
+#define IDS_SETUP_BUTTON_UNINSTALL_PLAIN                2066
+#define IDS_SETUP_UNINSTALL_CONFIRM                     2067
+#define IDS_SETUP_REMOVE_SETTINGS                       2068
+#define IDS_SETUP_UPDATING_VERSION_FORMAT               2069
+#define IDS_SETUP_SELECT_CLOSE                          2070
+#define IDS_SETUP_BUTTON_CLOSE                          2071
+#define IDS_SETUP_UPDATE_ERROR                          2072
+#define IDS_SETUP_INSTALLATION_FOLDER_FORMAT            2073
+#define IDS_SETUP_FIRST                                 IDS_SETUP_UNINSTALL_COMPLETE
+#define IDS_SETUP_LAST                                  IDS_SETUP_INSTALLATION_FOLDER_FORMAT
 
 // Next default values for new objects
 // 
@@ -81,6 +116,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40002
 #define _APS_NEXT_CONTROL_VALUE         1016
-#define _APS_NEXT_SYMED_VALUE           2041
+#define _APS_NEXT_SYMED_VALUE           2074
 #endif
 #endif

@@ -2252,10 +2252,10 @@ VOID PvInitCommonListView(
     PhSetExtendedListView(Context->ListViewHandle);
     PvConfigTreeBorders(Context->ListViewHandle);
 
-    PhAddListViewColumn(Context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, L"Call VA");
-    PhAddListViewColumn(Context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 240, L"Target");
-    PhAddListViewColumn(Context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 280, L"String/Ordinal");
-    PhAddListViewColumn(Context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 120, L"IAT Slot");
+    PhAddListViewColumn(Context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, PvpLoadUiString(IDS_PV_COLUMN_CALL_VA));
+    PhAddListViewColumn(Context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 240, PvpLoadUiString(IDS_PV_COLUMN_TARGET));
+    PhAddListViewColumn(Context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 280, PvpLoadUiString(IDS_PV_COLUMN_STRING_ORDINAL));
+    PhAddListViewColumn(Context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 120, PvpLoadUiString(IDS_PV_COLUMN_IAT_SLOT));
 
     PhInitializeLayoutManager(&Context->LayoutManager, WindowHandle);
     PhAddLayoutItem(&Context->LayoutManager, Context->ListViewHandle, NULL, PH_ANCHOR_ALL);

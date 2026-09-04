@@ -1048,7 +1048,7 @@ VOID PhRegisterDialogSuperClass(
     UnregisterClass(L"#32770", NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -1068,7 +1068,7 @@ VOID PhRegisterMenuSuperClass(
     UnregisterClass(L"#32768", NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -1088,7 +1088,7 @@ VOID PhRegisterRebarSuperClass(
     UnregisterClass(REBARCLASSNAME, NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -1108,7 +1108,7 @@ VOID PhRegisterComboBoxSuperClass(
     UnregisterClass(WC_COMBOBOX, NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -1128,7 +1128,7 @@ VOID PhRegisterStaticSuperClass(
     UnregisterClass(WC_STATIC, NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -1148,7 +1148,7 @@ VOID PhRegisterStatusBarSuperClass(
     UnregisterClass(STATUSCLASSNAME, NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -1168,7 +1168,7 @@ VOID PhRegisterEditSuperClass(
     UnregisterClass(WC_EDIT, NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -1188,7 +1188,7 @@ VOID PhRegisterHeaderSuperClass(
     UnregisterClass(WC_HEADER, NULL);
     if (RegisterClassEx(&wcex) == INVALID_ATOM)
     {
-        PhShowStatus(NULL, L"Unable to register window class.", 0, GetLastError());
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_REGISTER_WINDOW_CLASS), 0, GetLastError());
     }
 }
 
@@ -2028,7 +2028,7 @@ CleanupExit:
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(NULL, L"Unable to commit detours transaction.", status, 0);
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_COMMIT_DETOURS_TRANSACTION), status, 0);
     }
 }
 

@@ -134,8 +134,8 @@ INT_PTR CALLBACK PvpPeExtendedAttributesDlgProc(
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PvConfigListViewFont(hwndDlg, context->ListViewHandle);
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 150, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 200, L"Value");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 150, PvpLoadUiString(IDS_PV_COLUMN_NAME));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 200, PvpLoadUiString(IDS_PV_COLUMN_VALUE));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(L"ImageAttributesListViewColumns", context->ListViewHandle);
             PvConfigTreeBorders(context->ListViewHandle);
@@ -199,9 +199,9 @@ INT_PTR CALLBACK PvpPeExtendedAttributesDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Delete", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PvpLoadUiString(IDS_PV_MENU_DELETE), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, PvpLoadUiString(IDS_PV_MENU_COPY_ACCELERATED), NULL, NULL), ULONG_MAX);
                     PvInsertCopyListViewEMenuItem(menu, USHRT_MAX, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -257,7 +257,7 @@ INT_PTR CALLBACK PvpPeExtendedAttributesDlgProc(
                                     }
                                     else
                                     {
-                                        PhShowStatus(hwndDlg, L"Unable to remove attribute.", status, 0);
+                                        PhShowStatus(hwndDlg, PvpLoadUiString(IDS_PV_UNABLE_REMOVE_ATTRIBUTE), status, 0);
                                     }
 
                                     PhClearReference(&nameUtf);

@@ -163,8 +163,8 @@ VOID PvInitializeSettings(
                 NULL,
                 TDCBF_YES_BUTTON | TDCBF_NO_BUTTON,
                 TD_WARNING_ICON,
-                L"PE View's settings file is corrupt. Do you want to reset it?",
-                L"If you select No, the settings system will not function properly."
+                PvpLoadUiString(IDS_PV_CORRUPT_SETTINGS),
+                PvpLoadUiString(IDS_PV_CORRUPT_SETTINGS_CONTENT)
                 ) == IDYES)
             {
                 PhResetSettingsFile(&PvSettingsFileName->sr);

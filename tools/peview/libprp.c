@@ -32,7 +32,7 @@ VOID PvLibProperties(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(NULL, L"Unable to load the archive file", status, 0);
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_LOAD_ARCHIVE), status, 0);
         return;
     }
 
@@ -81,11 +81,11 @@ INT_PTR CALLBACK PvpLibExportsDlgProc(
             lvHandle = GetDlgItem(hwndDlg, IDC_LIST);
             PhSetListViewStyle(lvHandle, TRUE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
-            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 60, L"DLL");
-            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Name");
-            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 40, L"Ordinal/Hint");
-            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 40, L"Type");
-            PhAddListViewColumn(lvHandle, 4, 4, 4, LVCFMT_LEFT, 60, L"Name type");
+            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 60, PvpLoadUiString(IDS_PV_COLUMN_DLL));
+            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 200, PvpLoadUiString(IDS_PV_COLUMN_NAME));
+            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 40, PvpLoadUiString(IDS_PV_COLUMN_ORDINAL_HINT));
+            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 40, PvpLoadUiString(IDS_PV_COLUMN_TYPE));
+            PhAddListViewColumn(lvHandle, 4, 4, 4, LVCFMT_LEFT, 60, PvpLoadUiString(IDS_PV_COLUMN_NAME_TYPE));
             PhSetExtendedListView(lvHandle);
             ExtendedListView_AddFallbackColumns(lvHandle, 4, fallbackColumns);
             PhLoadListViewColumnsFromSetting(L"LibListViewColumns", lvHandle);

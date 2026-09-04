@@ -669,14 +669,14 @@ VOID PvInitializeSymbolTree(
     TreeNew_SetRedraw(TreeNewHandle, FALSE);
 
     PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_INDEX, TRUE, L"#", 80, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_INDEX, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_TYPE, TRUE, L"Type", 80, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_TYPE, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_VA, TRUE, L"RVA", 80, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_VA, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_NAME, TRUE, L"Symbol", 150, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_NAME, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_SYMBOL, TRUE, L"Tag", 150, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_SYMBOL, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_SIZE, TRUE, L"Size", 60, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_SIZE, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_OFFSET, TRUE, L"Offset", 140, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_OFFSET, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_VALUE, TRUE, L"Value", 80, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_VALUE, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_SECTION, TRUE, L"Section", 60, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_SECTION, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_TYPE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_TYPE), 80, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_TYPE, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_VA, TRUE, PvpLoadUiString(IDS_PV_COLUMN_RVA), 80, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_VA, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_NAME, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SYMBOL), 150, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_NAME, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_SYMBOL, TRUE, PvpLoadUiString(IDS_PV_COLUMN_TAG), 150, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_SYMBOL, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_SIZE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SIZE), 60, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_SIZE, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_OFFSET, TRUE, PvpLoadUiString(IDS_PV_COLUMN_OFFSET), 140, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_OFFSET, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_VALUE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_VALUE), 80, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_VALUE, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, TREE_COLUMN_ITEM_SECTION, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SECTION), 60, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_SECTION, 0, 0);
 
     TreeNew_SetRedraw(TreeNewHandle, TRUE);
     TreeNew_SetSort(TreeNewHandle, TREE_COLUMN_ITEM_INDEX, NoSortOrder);
@@ -1009,16 +1009,16 @@ INT_PTR CALLBACK PvpSymbolsDlgProc(
                     if (!PhGetWindowRect(GetDlgItem(hwndDlg, IDC_SETTINGS), &rect))
                         break;
 
-                    writableMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_WRITE, L"Hide writable", NULL, NULL);
-                    executableMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_EXECUTE, L"Hide executable", NULL, NULL);
-                    codeMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_CODE, L"Hide code", NULL, NULL);
-                    readMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_READ, L"Hide readable", NULL, NULL);
-                    parametersMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_PARAMETERS, L"Hide parameters", NULL, NULL);
-                    filterWriteMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_FILTER_WRITE, L"Filter non-writable", NULL, NULL);
-                    highlightWriteMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_WRITE, L"Highlight writable", NULL, NULL);
-                    highlightExecuteMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_EXECUTE, L"Highlight executable", NULL, NULL);
-                    highlightCodeMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_CODE, L"Highlight code", NULL, NULL);
-                    highlightReadMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_READ, L"Highlight readable", NULL, NULL);
+                    writableMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_WRITE, PvpLoadUiString(IDS_PV_MENU_HIDE_WRITABLE), NULL, NULL);
+                    executableMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_EXECUTE, PvpLoadUiString(IDS_PV_MENU_HIDE_EXECUTABLE), NULL, NULL);
+                    codeMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_CODE, PvpLoadUiString(IDS_PV_MENU_HIDE_CODE), NULL, NULL);
+                    readMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_READ, PvpLoadUiString(IDS_PV_MENU_HIDE_READABLE), NULL, NULL);
+                    parametersMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIDE_PARAMETERS, PvpLoadUiString(IDS_PV_MENU_HIDE_PARAMETERS), NULL, NULL);
+                    filterWriteMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_FILTER_WRITE, PvpLoadUiString(IDS_PV_MENU_FILTER_NON_WRITABLE), NULL, NULL);
+                    highlightWriteMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_WRITE, PvpLoadUiString(IDS_PV_MENU_HIGHLIGHT_WRITABLE), NULL, NULL);
+                    highlightExecuteMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_EXECUTE, PvpLoadUiString(IDS_PV_MENU_HIGHLIGHT_EXECUTABLE), NULL, NULL);
+                    highlightCodeMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_CODE, PvpLoadUiString(IDS_PV_MENU_HIGHLIGHT_CODE), NULL, NULL);
+                    highlightReadMenuItem = PhCreateEMenuItem(0, PV_SYMBOL_TREE_MENU_ITEM_HIGHLIGHT_READ, PvpLoadUiString(IDS_PV_MENU_HIGHLIGHT_READABLE), NULL, NULL);
 
                     menu = PhCreateEMenu();
                     PhInsertEMenuItem(menu, writableMenuItem, ULONG_MAX);
@@ -1117,7 +1117,7 @@ INT_PTR CALLBACK PvpSymbolsDlgProc(
             if (numberOfNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PvpLoadUiString(IDS_PV_MENU_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, 1, context->TreeNewHandle, contextMenuEvent->Column);
 
                 selectedItem = PhShowEMenu(
@@ -1187,7 +1187,7 @@ VOID PvPdbProperties(
 
     if (!PhDoesFileExistWin32(PhGetString(PvFileName)))
     {
-        PhShowStatus(NULL, L"Unable to load the pdb file", STATUS_FILE_NOT_AVAILABLE, 0);
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_LOAD_PDB), STATUS_FILE_NOT_AVAILABLE, 0);
         return;
     }
 

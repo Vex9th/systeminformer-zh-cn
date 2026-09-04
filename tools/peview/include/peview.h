@@ -46,6 +46,10 @@ extern HICON PvImageSmallIcon;
 extern HICON PvImageLargeIcon;
 extern PH_IMAGE_VERSION_INFO PvImageVersionInfo;
 
+PCWSTR PvpLoadUiString(
+    _In_ ULONG ResourceId
+    );
+
 FORCEINLINE PCWSTR PvpGetStringOrNa(
     _In_ PPH_STRING String
     )

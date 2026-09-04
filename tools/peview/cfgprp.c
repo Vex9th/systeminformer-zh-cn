@@ -217,11 +217,11 @@ INT_PTR CALLBACK PvpPeCgfDlgProc(
             PvConfigListViewFont(hwndDlg, context->ListViewHandle);
 
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_RIGHT, 80, L"RVA");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 50, L"Type");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 250, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, L"Flags");
-            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, L"XFG Hash");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_RIGHT, 80, PvpLoadUiString(IDS_PV_COLUMN_RVA));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 50, PvpLoadUiString(IDS_PV_COLUMN_TYPE));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 250, PvpLoadUiString(IDS_PV_COLUMN_NAME));
+            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, PvpLoadUiString(IDS_PV_COLUMN_FLAGS));
+            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, PvpLoadUiString(IDS_PV_COLUMN_XFG_HASH));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(L"ImageCfgListViewColumns", context->ListViewHandle);
             PvConfigTreeBorders(context->ListViewHandle);

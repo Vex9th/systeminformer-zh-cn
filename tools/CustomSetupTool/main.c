@@ -20,7 +20,45 @@
 #define SETUP_CMD_NOSTART    6
 #define SETUP_CMD_HIDE       7
 
-static PPH_STRING SetupApplicationName = NULL;
+static PPH_STRING SetupUiStrings[IDS_SETUP_LAST - IDS_SETUP_FIRST + 1] = { 0 };
+
+static BOOLEAN SetupInitializeUiStrings(
+    VOID
+    )
+{
+    ULONG resourceId;
+
+    for (resourceId = IDS_SETUP_FIRST; resourceId <= IDS_SETUP_LAST; resourceId++)
+    {
+        PPH_STRING string;
+
+        if (!(string = PhLoadUiString(PhInstanceHandle, resourceId, NULL)))
+        {
+            ULONG cleanupId;
+
+            for (cleanupId = IDS_SETUP_FIRST; cleanupId < resourceId; cleanupId++)
+                PhClearReference(&SetupUiStrings[cleanupId - IDS_SETUP_FIRST]);
+
+            return FALSE;
+        }
+
+        SetupUiStrings[resourceId - IDS_SETUP_FIRST] = string;
+    }
+
+    return TRUE;
+}
+
+PCWSTR SetupGetUiString(
+    _In_ ULONG ResourceId
+    )
+{
+    assert(ResourceId >= IDS_SETUP_FIRST && ResourceId <= IDS_SETUP_LAST);
+
+    if (ResourceId < IDS_SETUP_FIRST || ResourceId > IDS_SETUP_LAST)
+        return L"";
+
+    return PhGetString(SetupUiStrings[ResourceId - IDS_SETUP_FIRST]);
+}
 
 /**
  * Subclass procedure for the setup task dialog.
@@ -205,23 +243,9 @@ LONG SetupShowMessagePromptForLegacyVersion(
     config.dwCommonButtons = TDCBF_OK_BUTTON;
     config.pszWindowTitle = PhApplicationName;
     config.pszMainIcon = TD_INFORMATION_ICON;
-    config.pszMainInstruction = L"Hey there, before we continue...";
-    config.pszContent =
-        L"- Process Hacker was renamed System Informer.\n"
-        L"- Process Hacker does not support Windows 10 or 11.\n"
-        L"- Process Hacker will not be updated.\n"
-        L"- Process Hacker will not be uninstalled.\n\n"
-        L"This update will now install System Informer.\n\nPlease remember to uninstall Process Hacker. Thanks <3";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_LEGACY_PROMPT_TITLE);
+    config.pszContent = SetupGetUiString(IDS_SETUP_LEGACY_PROMPT_CONTENT);
     config.cxWidth = 200;
-
-    //PhShowInformation2(
-    //    NULL,
-    //    L"Process Hacker",
-    //    L"%s",
-    //    L"Process Hacker was renamed System Informer.\n"
-    //    L"The legacy version of Process Hacker is no longer maintained and will not receive updates.\r\n\r\n"
-    //    L"The updater is now installing System Informer. The Process Hacker installation must be manually uninstalled"
-    //    );
 
     if (SUCCEEDED(TaskDialogIndirect(
         &config,
@@ -264,7 +288,7 @@ VOID SetupShowDialog(
     config.cbSize = sizeof(TASKDIALOGCONFIG);
     config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED;
     config.hInstance = PhInstanceHandle;
-    config.pszContent = L"Initializing...";
+    config.pszContent = SetupGetUiString(IDS_SETUP_INITIALIZING);
     config.pfCallback = SetupTaskDialogBootstrapCallback;
     config.lpCallbackData = (LONG_PTR)Context;
 
@@ -598,16 +622,10 @@ INT WINAPI wWinMain(
         );
     PhTranslationEnabled = TRUE;
 
-    if (!(SetupApplicationName = PhLoadUiString(
-        PhInstanceHandle,
-        IDS_SETUP_WINDOW_TITLE,
-        NULL
-        )))
-    {
+    if (!SetupInitializeUiStrings())
         return EXIT_FAILURE;
-    }
 
-    PhApplicationName = SetupApplicationName->Buffer;
+    PhApplicationName = SetupGetUiString(IDS_SETUP_WINDOW_TITLE);
 
     if (!HR_SUCCESS(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)))
         return EXIT_FAILURE;

@@ -110,15 +110,6 @@ BOOLEAN SetupShowDirectoryWarningPrompt(
 
         if (count != 0)
         {
-            //PhShowMessage2(
-            //    Context->DialogHandle,
-            //    TDCBF_YES_BUTTON | TDCBF_NO_BUTTON,
-            //    TD_WARNING_ICON,
-            //    L"WARNING",
-            //    L"The installation directory already contains files and data. Please select a different directory"
-            //    L" or click Yes to delete the files and data and continue. Are you sure you want to continue?"
-            //    );
-
             return TRUE;
         }
     }
@@ -144,13 +135,13 @@ VOID ShowErrorPageDialog(
     config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
     config.hMainIcon = Context->IconLargeHandle;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Setup failed with an error.";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_FAILED);
     config.cxWidth = 200;
 
     if (string = PhGetStatusMessage(Context->LastStatus, 0))
-        config.pszContent = PhaFormatString(L"%s\r\n\r\nSelect Close to exit setup.", PhGetString(string))->Buffer;
+        config.pszContent = PhaFormatString(SetupGetUiString(IDS_SETUP_ERROR_STATUS_FORMAT), PhGetString(string))->Buffer;
     else
-        config.pszContent = L"Select Close to exit setup.";
+        config.pszContent = SetupGetUiString(IDS_SETUP_CLOSE_EXIT);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -269,7 +260,7 @@ VOID ShowWelcomePageDialog(
 {
     TASKDIALOG_BUTTON buttonArray[] =
     {
-        { IDCONTINUE, L"Install" }
+        { IDCONTINUE, SetupGetUiString(IDS_SETUP_BUTTON_INSTALL) }
     };
     TASKDIALOGCONFIG config;
 
@@ -284,7 +275,7 @@ VOID ShowWelcomePageDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.pszWindowTitle = PhApplicationName;
     config.pszMainInstruction = PhApplicationName;
-    config.pszContent = L"A free, powerful, multi-purpose tool that helps you monitor system resources, debug software and detect malware.";
+    config.pszContent = SetupGetUiString(IDS_SETUP_PRODUCT_DESCRIPTION);
     config.cxWidth = 200;
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
@@ -338,9 +329,9 @@ VOID ShowCompletedPageDialog(
     config.pfCallback = SetupCompletePageCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = PhaConcatStrings2(PhApplicationName, L" complete.")->Buffer;
-    config.pszContent = L"Select Close to exit setup.";
-    config.pszVerificationText = L"Start program when setup exits";
+    config.pszMainInstruction = PhaFormatString(SetupGetUiString(IDS_SETUP_COMPLETE_FORMAT), PhApplicationName)->Buffer;
+    config.pszContent = SetupGetUiString(IDS_SETUP_CLOSE_EXIT);
+    config.pszVerificationText = SetupGetUiString(IDS_SETUP_START_PROGRAM_ON_EXIT);
     config.cxWidth = 200;
 
 #ifdef FORCE_TEST_UPDATE_LOCAL_INSTALL
@@ -377,7 +368,7 @@ HRESULT CALLBACK SetupConfigPageCallbackProc(
             PPH_STRING status;
 
             status = PhFormatString(
-                L"Installation Folder:\r\n\r\n%s",
+                SetupGetUiString(IDS_SETUP_INSTALLATION_FOLDER_FORMAT),
                 PhGetStringOrEmpty(context->SetupInstallPath)
                 );
             SendMessage(hwndDlg, TDM_UPDATE_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)status->Buffer);
@@ -393,7 +384,7 @@ HRESULT CALLBACK SetupConfigPageCallbackProc(
                 SetupShowBrowseDialog(context);
 
                 status = PhFormatString(
-                    L"Installation Folder:\r\n\r\n%s",
+                    SetupGetUiString(IDS_SETUP_INSTALLATION_FOLDER_FORMAT),
                     PhGetStringOrEmpty(context->SetupInstallPath)
                     );
                 SendMessage(hwndDlg, TDM_UPDATE_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)status->Buffer);
@@ -437,8 +428,8 @@ VOID ShowConfigPageDialog(
 {
     TASKDIALOG_BUTTON buttonConfig[] =
     {
-        { IDYES, L"Browse" },
-        { IDOK, L"Next" },
+        { IDYES, SetupGetUiString(IDS_SETUP_BUTTON_BROWSE) },
+        { IDOK, SetupGetUiString(IDS_SETUP_BUTTON_NEXT_PLAIN) },
     };
     TASKDIALOGCONFIG config;
 
@@ -453,8 +444,8 @@ VOID ShowConfigPageDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Setup Options";
-    config.pszContent = L"Installation Folder:\r\n\r\nSelect \"Browse\" to continue.";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_OPTIONS_TITLE);
+    config.pszContent = SetupGetUiString(IDS_SETUP_INSTALLATION_FOLDER);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -512,8 +503,8 @@ VOID ShowConfigDirectoryNonEmptyDialog(
 {
     TASKDIALOG_BUTTON buttonConfig[] =
     {
-        { IDYES, L"Change directory" },
-        { IDNO, L"Continue" },
+        { IDYES, SetupGetUiString(IDS_SETUP_BUTTON_CHANGE_DIRECTORY) },
+        { IDNO, SetupGetUiString(IDS_SETUP_BUTTON_CONTINUE) },
     };
     TASKDIALOGCONFIG config;
 
@@ -528,9 +519,8 @@ VOID ShowConfigDirectoryNonEmptyDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"WARNING";
-    config.pszContent = L"The selected installation directory already contains files and data. "
-        L"If you continue this directory and files will be deleted.\r\n\r\nDo you want to change the directory?";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_WARNING);
+    config.pszContent = SetupGetUiString(IDS_SETUP_DIRECTORY_NOT_EMPTY);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -596,7 +586,7 @@ VOID ShowInstallPageDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Preparing to install...";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_PREPARING_INSTALL);
     config.pszContent = L" ";
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);

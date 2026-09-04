@@ -63,7 +63,7 @@ static VOID PvpPeClrTablePreviewAddColumns(
     _In_ PPVP_PE_CLR_TABLE_PREVIEW_CONTEXT Context
     )
 {
-    PhAddListViewColumn(Context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 60, L"RID");
+    PhAddListViewColumn(Context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 60, PvpLoadUiString(IDS_PV_COLUMN_RID));
 
     for (ULONG i = 0; i < Context->ColumnCount; i++)
     {
@@ -116,7 +116,7 @@ static VOID PvpPeClrTablePreviewAddColumns(
                 i + 1,
                 LVCFMT_LEFT,
                 110,
-                PhaFormatString(L"Column %lu (%s)", i, typeName)->Buffer
+                PhaFormatString(PvpLoadUiString(IDS_PV_COLUMN_FORMAT), i, typeName)->Buffer
                 );
         }
     }
@@ -313,7 +313,7 @@ static VOID PvpPeClrShowTablePreview(
 
     if (!Context->ClrMetadataInitialized)
     {
-        PhShowError(Context->WindowHandle, L"%s", L"Unable to preview CLR table rows because CLR metadata is unavailable.");
+        PhShowError(Context->WindowHandle, L"%s", PvpLoadUiString(IDS_PV_CLR_METADATA_UNAVAILABLE));
         return;
     }
 
@@ -334,7 +334,7 @@ static VOID PvpPeClrShowTablePreview(
     if (!NT_SUCCESS(status))
     {
         PhFree(previewContext);
-        PhShowStatus(Context->WindowHandle, L"Unable to preview CLR table rows", status, 0);
+        PhShowStatus(Context->WindowHandle, PvpLoadUiString(IDS_PV_CLR_PREVIEW_FAILED), status, 0);
         return;
     }
 
@@ -349,7 +349,7 @@ static VOID PvpPeClrShowTablePreview(
     if (!dialogHandle)
     {
         PhFree(previewContext);
-        PhShowError(Context->WindowHandle, L"%s", L"Unable to create the CLR table preview window.");
+        PhShowError(Context->WindowHandle, L"%s", PvpLoadUiString(IDS_PV_CLR_PREVIEW_CREATE_FAILED));
         return;
     }
 
@@ -519,12 +519,12 @@ INT_PTR CALLBACK PvpPeClrTablesDlgProc(
             PvSetListViewImageList(context->WindowHandle, context->ListViewHandle);
 
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 50, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, L"Count");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, L"Size");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 120, L"RVA (start)");
-            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 120, L"RVA (end)");
-            PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 200, L"Hash");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, PvpLoadUiString(IDS_PV_COLUMN_NAME));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, PvpLoadUiString(IDS_PV_COLUMN_COUNT));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, PvpLoadUiString(IDS_PV_COLUMN_SIZE));
+            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 120, PvpLoadUiString(IDS_PV_COLUMN_RVA_START));
+            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 120, PvpLoadUiString(IDS_PV_COLUMN_RVA_END));
+            PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 200, PvpLoadUiString(IDS_PV_COLUMN_HASH));
             PhLoadListViewColumnsFromSetting(L"ImageClrTablesListViewColumns", context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(L"ImageClrTablePreviewListViewColumns", context->ListViewHandle);
 

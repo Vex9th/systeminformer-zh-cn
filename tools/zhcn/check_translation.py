@@ -36,7 +36,7 @@ FORMAT_SPEC_RE = re.compile(r"%(?:%|[0-9]*(?:\.[0-9]+)?(?:I64|ll|l|L|h|hh|w|I)?[
 # separately in the report so the exclusion stays transparent.
 KEEP_ENGLISH_RULES = [
     r"CPU \d+",
-    r"^(Alt|Ctrl|Shift|CPU|I/O|WMI|NTVDM|ANSI|Unicode|DPI|Ping|PCR|PID|SID|SDDL|MVID|TTL|ASLR|CET|DEP|TID|PnP|DRAM|FPS|GPU|NPU|RAPL|SMART|SMBIOS)$",
+    r"^(Alt|Ctrl|Shift|CPU|I/O|WMI|NTVDM|ANSI|UTF-8|UTF-16|Unicode|DPI|Ping|PCR|PID|RID|RVA|VA|SID|SDDL|MVID|TTL|ASLR|CET|DEP|TID|PnP|DRAM|FPS|GPU|NPU|RAPL|SMART|SMBIOS|SSDEEP|TLSH|DLL|CFG|CLR|CRT|POGO|ProdID|GetProcAddress|SearchControlRegex|SearchControlCaseSensitive)$",
     r"^(PID|TID|MVID|TTL) \(LXSS\)$",
     r"^(Dialog|Static|\(Repurposed\)|<a href=.*|<section placeholder>)$",
     r"^System Informer$",

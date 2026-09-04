@@ -345,7 +345,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("41 strings", result.stdout)
+        self.assertIn("202 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -561,6 +561,131 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('PvpCreateFont(L"Microsoft Sans Serif"', peview)
         self.assertNotIn('PvpCreateFont(L"Tahoma"', peview)
 
+    def test_peview_context_menus_use_native_string_resources(self) -> None:
+        peview_header = (
+            REPO_ROOT / "tools" / "peview" / "include" / "peview.h"
+        ).read_text(encoding="utf-8-sig")
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "tools" / "peview").glob("*.c")
+        )
+        resource_header = (
+            REPO_ROOT / "tools" / "peview" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "tools" / "peview" / "peview.rc"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertIn("PvpLoadUiString", peview_header)
+        self.assertIn("IDS_PV_MENU_DISPLAY_RESOURCE", resource_header)
+        self.assertIn("IDS_PV_MENU_SAVE_CERTIFICATE", resource_header)
+        self.assertEqual(len(stringtable_ids(resource_script)), 128)
+
+        migrated_labels = (
+            "ANSI",
+            "UTF-8",
+            "UTF-16",
+            "Extended character set",
+            "Skip .text section",
+            "Skip high entropy sections",
+            "Skip strings with numbers",
+            "Skip strings with symbols",
+            "Minimum length...",
+            "Refresh",
+            "Hide writable",
+            "Hide executable",
+            "Hide code",
+            "Hide readable",
+            "Hide parameters",
+            "Filter non-writable",
+            "Highlight writable",
+            "Highlight executable",
+            "Highlight code",
+            "Highlight readable",
+            "Display resource...",
+            "Save resource...",
+            "Copy",
+            "View certificate...",
+            "Save certificate...",
+            "&Copy",
+            "Delete",
+            "Size column to fit",
+            "Size all columns to fit",
+            "Hide column",
+            "Choose columns...",
+            "Reset sort",
+        )
+        for label in migrated_labels:
+            self.assertNotRegex(
+                source,
+                rf"PhCreateEMenuItem\([^\n]*L\"{re.escape(label)}\"",
+            )
+
+    def test_peview_column_labels_use_native_string_resources(self) -> None:
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "tools" / "peview").glob("*.c")
+        )
+
+        for function_name in ("PhAddListViewColumn", "PhAddTreeNewColumn"):
+            calls = re.findall(
+                rf"{function_name}\((.*?)\);",
+                source,
+                re.DOTALL,
+            )
+            self.assertTrue(calls)
+            for call in calls:
+                self.assertLessEqual(
+                    set(re.findall(r'L"([^"\r\n]+)"', call)),
+                    {"#"},
+                )
+
+    def test_peview_options_and_error_messages_use_native_string_resources(self) -> None:
+        source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "tools" / "peview").glob("*.c")
+        )
+        migrated_labels = (
+            "Enable theme support",
+            "Enable legacy properties window",
+            "Enable view borders",
+            "Remember last selected window",
+            "Do you want to reset all settings and restart PE Viewer?",
+            "Do you want to restart PE Viewer now?",
+            "One or more options you have changed requires a restart of PE Viewer.",
+            "PE View's settings file is corrupt. Do you want to reset it?",
+            "PE Viewer does not support this image type.",
+            "PE Viewer has crashed :(",
+            "Unable to create the CLR table preview window.",
+            "Unable to enumerate the image resources.",
+            "Unable to locate the resource data.",
+            "Unable to preview CLR table rows because CLR metadata is unavailable.",
+            "You are attempting to run the 32-bit version of PE Viewer on 64-bit Windows.",
+        )
+
+        for label in migrated_labels:
+            self.assertNotIn(f'L"{label}', source)
+
+        for function_name in (
+            "PhShowError",
+            "PhShowError2",
+            "PhShowMessage",
+            "PhShowMessage2",
+            "PhShowStatus",
+            "PhShowWarning2",
+        ):
+            calls = re.findall(
+                rf"{function_name}\s*\((.*?)\);",
+                source,
+                re.DOTALL,
+            )
+            for call in calls:
+                with self.subTest(function=function_name, call=call):
+                    self.assertLessEqual(
+                        set(re.findall(r'L"(?:[^"\\]|\\.)*"', call)),
+                        {'L""', 'L"%s"'},
+                    )
+
     def test_setup_progress_and_wizard_buttons_use_string_resources(self) -> None:
         setup_sources = {
             path.name: path.read_text(encoding="utf-8-sig")
@@ -576,6 +701,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         wizard = setup_sources["wizard.c"]
         main = setup_sources["main.c"]
+        all_setup_source = "\n".join(setup_sources.values())
+        setup_resource = (
+            REPO_ROOT / "tools" / "CustomSetupTool" / "resource.rc"
+        ).read_text(encoding="utf-8-sig")
+        self.assertEqual(len(stringtable_ids(setup_resource)), 74)
         self.assertNotRegex(
             wizard,
             r"SetupSetWizardButtonText\([^,]+,\s*[^,]+,\s*L\"",
@@ -590,17 +720,63 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotRegex(wizard, r"PhSetDialogItemText\([^,]+,\s*[^,]+,\s*L\"")
         self.assertNotIn('header.pszCaption = L"', wizard)
         self.assertIn("header.pszCaption = PhApplicationName;", wizard)
-        self.assertRegex(
+        self.assertIn(
+            "static PPH_STRING SetupUiStrings[IDS_SETUP_LAST - IDS_SETUP_FIRST + 1]",
             main,
-            r"SetupApplicationName\s*=\s*PhLoadUiString\(\s*"
-            r"PhInstanceHandle,\s*IDS_SETUP_WINDOW_TITLE,\s*NULL\s*\)",
         )
-        self.assertIn("PhApplicationName = SetupApplicationName->Buffer;", main)
+        self.assertIn("if (!SetupInitializeUiStrings())", main)
+        self.assertIn(
+            "PhApplicationName = SetupGetUiString(IDS_SETUP_WINDOW_TITLE);",
+            main,
+        )
+        resource_header = (
+            REPO_ROOT / "tools" / "CustomSetupTool" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        self.assertIn(
+            "#define IDS_SETUP_FIRST                                 IDS_SETUP_UNINSTALL_COMPLETE",
+            resource_header,
+        )
+        self.assertIn(
+            "#define IDS_SETUP_LAST                                  IDS_SETUP_INSTALLATION_FOLDER_FORMAT",
+            resource_header,
+        )
+        numeric_ids = {
+            name: int(value)
+            for name, value in re.findall(
+                r"^#define\s+(IDS_SETUP_[A-Z0-9_]+)\s+(\d+)\s*$",
+                resource_header,
+                re.MULTILINE,
+            )
+        }
+        first_id = numeric_ids["IDS_SETUP_UNINSTALL_COMPLETE"]
+        last_id = numeric_ids["IDS_SETUP_INSTALLATION_FOLDER_FORMAT"]
+        loaded_ids = set(re.findall(r"SetupGetUiString\((IDS_SETUP_[A-Z0-9_]+)\)", all_setup_source))
+        self.assertTrue(loaded_ids)
+        for resource_name in loaded_ids:
+            self.assertIn(resource_name, numeric_ids)
+            self.assertLessEqual(first_id, numeric_ids[resource_name])
+            self.assertLessEqual(numeric_ids[resource_name], last_id)
         self.assertIn("PhLoadUiString(PhInstanceHandle, ResourceId, NULL)", wizard)
         self.assertRegex(
             wizard,
             r"title->Buffer,\s*L\"%s\",\s*content->Buffer",
         )
+
+        for literal in (
+            "Hey there, before we continue...",
+            "Initializing...",
+            "Setup failed with an error.",
+            "A free, powerful, multi-purpose tool",
+            "Installation Folder:",
+            "Preparing to install...",
+            "System Informer has been uninstalled.",
+            "A reboot is required to complete the uninstall.",
+            "Uninstalling System Informer...",
+            "Uninstall failed with an error.",
+            "Are you sure you want to uninstall System Informer?",
+            "Error updating to the latest version.",
+        ):
+            self.assertNotIn(f'L"{literal}', all_setup_source)
 
     def test_ci_validates_all_built_plugin_resources(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
@@ -642,8 +818,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 )
             ),
             {
-                r"build\output\systeminformer-build-release-setup.exe": 41,
-                r"build\output\systeminformer-build-canary-setup.exe": 41,
+                r"bin\Release64\peview.exe": 128,
+                r"build\output\systeminformer-build-release-setup.exe": 74,
+                r"build\output\systeminformer-build-canary-setup.exe": 74,
             },
         )
 

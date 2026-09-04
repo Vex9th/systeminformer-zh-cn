@@ -86,15 +86,15 @@ VOID PvAddMappingsEntry(
     }
     else if (Entry->ViewMapType == VIEW_MAP_TYPE_SESSION)
     {
-        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, L"Session", NULL);
+        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, PvpLoadUiString(IDS_PV_MAPPING_SESSION), NULL);
     }
     else if (Entry->ViewMapType == VIEW_MAP_TYPE_SYSTEM_CACHE)
     {
-        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, L"System", NULL);
+        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, PvpLoadUiString(IDS_PV_MAPPING_SYSTEM), NULL);
     }
     else
     {
-        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, L"Unknown", NULL);
+        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN), NULL);
     }
 
     PhSetListViewSubItem(ListViewHandle, lvItemIndex, 1, Type);
@@ -191,10 +191,10 @@ INT_PTR CALLBACK PvpMappingsDlgProc(
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PvConfigListViewFont(WindowHandle, context->ListViewHandle);
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 200, L"View");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 60, L"Type");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"Start");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, L"End");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 200, PvpLoadUiString(IDS_PV_COLUMN_VIEW));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 60, PvpLoadUiString(IDS_PV_COLUMN_TYPE));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, PvpLoadUiString(IDS_PV_COLUMN_START));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, PvpLoadUiString(IDS_PV_COLUMN_END));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(L"ImageMappingsListViewColumns", context->ListViewHandle);
             PvConfigTreeBorders(context->ListViewHandle);

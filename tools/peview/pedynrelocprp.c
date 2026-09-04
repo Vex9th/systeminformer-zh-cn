@@ -1153,11 +1153,11 @@ VOID PvInitializeDynRelocTree(
     PhSetControlTheme(Context->TreeNewHandle, L"explorer");
     TreeNew_SetCallback(Context->TreeNewHandle, PvDynRelocTreeNewCallback, Context);
 
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_RVA, TRUE, L"RVA", 140, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_TYPE, TRUE, L"Type", 110, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_INFO, TRUE, L"Info", 260, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_SECTION, TRUE, L"Section", 80, PH_ALIGN_LEFT, 3, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_SYMBOL, TRUE, L"Symbol", 260, PH_ALIGN_LEFT, 4, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_RVA, TRUE, PvpLoadUiString(IDS_PV_COLUMN_RVA), 140, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_TYPE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_TYPE), 110, PH_ALIGN_LEFT, 1, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_INFO, TRUE, PvpLoadUiString(IDS_PV_COLUMN_INFO), 260, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_SECTION, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SECTION), 80, PH_ALIGN_LEFT, 3, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_DYNRELOC_TREE_COLUMN_SYMBOL, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SYMBOL), 260, PH_ALIGN_LEFT, 4, 0);
 
     settings = PhGetStringSetting(L"ImageDynamicRelocationsTreeColumns");
     PhCmLoadSettings(Context->TreeNewHandle, &settings->sr);
@@ -1628,7 +1628,7 @@ INT_PTR CALLBACK PvpPeDynamicRelocationDlgProc(
                     PPH_EMENU_ITEM selectedItem;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, PvpLoadUiString(IDS_PV_MENU_COPY), NULL, NULL), ULONG_MAX);
                     PhInsertCopyCellEMenuItem(menu, USHRT_MAX, context->TreeNewHandle, contextMenuEvent->Column);
 
                     selectedItem = PhShowEMenu(

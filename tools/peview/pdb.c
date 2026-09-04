@@ -2457,7 +2457,7 @@ NTSTATUS PeDumpFileSymbols(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(NULL, L"Unable to load the file.", status, 0);
+                PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_LOAD_FILE), status, 0);
                 return status;
             }
 
@@ -2479,7 +2479,7 @@ NTSTATUS PeDumpFileSymbols(
 
         if (!NT_SUCCESS(status))
         {
-            PhShowStatus(NULL, L"Unable to load the file.", status, 0);
+            PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_LOAD_FILE), status, 0);
             return status;
         }
     }
@@ -2487,7 +2487,7 @@ NTSTATUS PeDumpFileSymbols(
     if (!baseOfDll)
     {
         PostMessage(Context->WindowHandle, WM_PV_SEARCH_FINISHED, 0, 0);
-        PhShowStatus(NULL, L"Unable to load the file.", STATUS_UNSUCCESSFUL, 0);
+        PhShowStatus(NULL, PvpLoadUiString(IDS_PV_UNABLE_LOAD_FILE), STATUS_UNSUCCESSFUL, 0);
         return STATUS_UNSUCCESSFUL;
     }
 

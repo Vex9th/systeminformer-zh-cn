@@ -345,11 +345,11 @@ VOID ShowUninstallCompletedPageDialog(
 
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"System Informer has been uninstalled.";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_UNINSTALLED);
     if (Context->NeedsReboot)
-        config.pszContent = L"A reboot is required to complete the uninstall.";
+        config.pszContent = SetupGetUiString(IDS_SETUP_REBOOT_REQUIRED);
     else
-        config.pszContent = L"Click close to exit setup.";
+        config.pszContent = SetupGetUiString(IDS_SETUP_CLICK_CLOSE);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -375,7 +375,7 @@ VOID ShowUninstallingPageDialog(
 
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Uninstalling System Informer...";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_UNINSTALLING_APP);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -408,8 +408,8 @@ VOID ShowUninstallErrorPageDialog(
     if (statusMessage)
         config.pszMainInstruction = statusMessage->Buffer;
     else
-        config.pszMainInstruction = L"Uninstall failed with an error.";
-    config.pszContent = L"Click retry to try again or close to exit setup.";
+        config.pszMainInstruction = SetupGetUiString(IDS_SETUP_UNINSTALL_FAILED_ERROR);
+    config.pszContent = SetupGetUiString(IDS_SETUP_RETRY_OR_CLOSE);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -425,7 +425,7 @@ VOID ShowUninstallPageDialog(
 {
     TASKDIALOG_BUTTON buttonArray[] =
     {
-        { IDYES, L"Uninstall" }
+        { IDYES, SetupGetUiString(IDS_SETUP_BUTTON_UNINSTALL_PLAIN) }
     };
     TASKDIALOGCONFIG config;
 
@@ -441,9 +441,9 @@ VOID ShowUninstallPageDialog(
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
     config.pszMainInstruction = PhApplicationName;
-    config.pszContent = L"Are you sure you want to uninstall System Informer?";
+    config.pszContent = SetupGetUiString(IDS_SETUP_UNINSTALL_CONFIRM);
     if (PhGetOwnTokenAttributes().Elevated)
-        config.pszVerificationText = L"Remove application settings";
+        config.pszVerificationText = SetupGetUiString(IDS_SETUP_REMOVE_SETTINGS);
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
     config.nDefaultButton = IDCANCEL;
 

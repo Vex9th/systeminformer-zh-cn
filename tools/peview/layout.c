@@ -93,8 +93,8 @@ VOID PvInitializeLayoutTree(
     PhSetControlTheme(Context->TreeNewHandle, L"explorer");
     TreeNew_SetCallback(Context->TreeNewHandle, PvLayoutTreeNewCallback, Context);
 
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_LAYOUT_TREE_COLUMN_NAME_NAME, TRUE, L"Name", 200, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PV_LAYOUT_TREE_COLUMN_NAME_VALUE, TRUE, L"Value", 800, PH_ALIGN_LEFT, 1, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_LAYOUT_TREE_COLUMN_NAME_NAME, TRUE, PvpLoadUiString(IDS_PV_COLUMN_NAME), 200, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PV_LAYOUT_TREE_COLUMN_NAME_VALUE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_VALUE), 800, PH_ALIGN_LEFT, 1, 0);
 
     //TreeNew_SetTriState(Context->TreeNewHandle, TRUE);
     //TreeNew_SetSort(Context->TreeNewHandle, PV_LAYOUT_TREE_COLUMN_NAME_NAME, NoSortOrder);
@@ -1384,7 +1384,7 @@ INT_PTR CALLBACK PvpPeLayoutDlgProc(
                     if (numberOfNodes != 0)
                     {
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"Copy", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, PvpLoadUiString(IDS_PV_MENU_COPY), NULL, NULL), ULONG_MAX);
                         PhInsertCopyCellEMenuItem(menu, USHRT_MAX, context->TreeNewHandle, contextMenuEvent->Column);
 
                         selectedItem = PhShowEMenu(

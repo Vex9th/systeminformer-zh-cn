@@ -108,6 +108,10 @@ typedef struct _PH_SETUP_CONTEXT
     PPH_STRING SetupBuildZipPath;
 } PH_SETUP_CONTEXT, *PPH_SETUP_CONTEXT;
 
+PCWSTR SetupGetUiString(
+    _In_ ULONG ResourceId
+    );
+
 VOID SetupParseCommandLine(
     _In_ PPH_SETUP_CONTEXT Context
     );

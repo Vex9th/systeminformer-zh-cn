@@ -321,7 +321,7 @@ VOID PvpPeResourceSaveToFile(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(WindowHandle, L"Unable to save resource.", status, 0);
+                PhShowStatus(WindowHandle, PvpLoadUiString(IDS_PV_UNABLE_SAVE_RESOURCE), status, 0);
             }
         }
     }
@@ -686,10 +686,10 @@ INT_PTR CALLBACK PvPeResourcesDlgProc(
             if (numberOfNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"Display resource...", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Save resource...", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, PvpLoadUiString(IDS_PV_MENU_DISPLAY_RESOURCE), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PvpLoadUiString(IDS_PV_MENU_SAVE_RESOURCE), NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, PvpLoadUiString(IDS_PV_MENU_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, USHRT_MAX, context->TreeNewHandle, contextMenuEvent->Column);
 
                 selectedItem = PhShowEMenu(
@@ -1234,14 +1234,14 @@ VOID PvInitializeResourcesTree(
     TreeNew_SetRedraw(TreeNewHandle, FALSE);
 
     PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_INDEX, TRUE, L"#", 40, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_INDEX, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_TYPE, TRUE, L"Type", 150, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_TYPE, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_NAME, TRUE, L"Name", 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_NAME, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_START, TRUE, L"RVA (start)", 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_START, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_END, TRUE, L"RVA (end)", 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_END, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_SIZE, TRUE, L"Size", 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_SIZE, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_LCID, TRUE, L"Language", 100, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_LCID, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_HASH, TRUE, L"Hash", 100, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_HASH, 0, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_ENTROPY, TRUE, L"Entropy", 100, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_ENTROPY, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_TYPE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_TYPE), 150, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_TYPE, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_NAME, TRUE, PvpLoadUiString(IDS_PV_COLUMN_NAME), 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_NAME, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_START, TRUE, PvpLoadUiString(IDS_PV_COLUMN_RVA_START), 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_START, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_END, TRUE, PvpLoadUiString(IDS_PV_COLUMN_RVA_END), 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_END, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_SIZE, TRUE, PvpLoadUiString(IDS_PV_COLUMN_SIZE), 80, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_RVA_SIZE, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_LCID, TRUE, PvpLoadUiString(IDS_PV_COLUMN_LANGUAGE), 100, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_LCID, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_HASH, TRUE, PvpLoadUiString(IDS_PV_COLUMN_HASH), 100, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_HASH, 0, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, PV_RESOURCES_TREE_COLUMN_ITEM_ENTROPY, TRUE, PvpLoadUiString(IDS_PV_COLUMN_ENTROPY), 100, PH_ALIGN_LEFT, PV_RESOURCES_TREE_COLUMN_ITEM_ENTROPY, 0, 0);
 
     //TreeNew_SetRowHeight(TreeNewHandle, 22);
 

@@ -275,7 +275,7 @@ VOID ShowUpdatePageDialog(
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
     config.pszMainInstruction = PhaFormatString(
-        L"Updating to version %lu.%lu.%lu.%lu...",
+        SetupGetUiString(IDS_SETUP_UPDATING_VERSION_FORMAT),
         PHAPP_VERSION_MAJOR,
         PHAPP_VERSION_MINOR,
         PHAPP_VERSION_BUILD,
@@ -307,8 +307,8 @@ VOID ShowUpdateCompletedPageDialog(
 
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Update complete.";
-    config.pszContent = L"Select Close to exit.";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_UPDATE_COMPLETE);
+    config.pszContent = SetupGetUiString(IDS_SETUP_SELECT_CLOSE);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -322,10 +322,10 @@ VOID ShowUpdateErrorPageDialog(
     _In_ PPH_SETUP_CONTEXT Context
     )
 {
-    static TASKDIALOG_BUTTON TaskDialogButtonArray[] =
+    TASKDIALOG_BUTTON TaskDialogButtonArray[] =
     {
-        { IDYES, L"Retry" },
-        { IDCLOSE, L"Close" },
+        { IDYES, SetupGetUiString(IDS_SETUP_BUTTON_RETRY) },
+        { IDCLOSE, SetupGetUiString(IDS_SETUP_BUTTON_CLOSE) },
     };
     TASKDIALOGCONFIG config;
 
@@ -340,7 +340,7 @@ VOID ShowUpdateErrorPageDialog(
     config.cButtons = ARRAYSIZE(TaskDialogButtonArray);
     config.cxWidth = 200;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Error updating to the latest version.";
+    config.pszMainInstruction = SetupGetUiString(IDS_SETUP_UPDATE_ERROR);
 
     if (Context->LastStatus)
     {

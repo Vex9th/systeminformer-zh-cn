@@ -66,12 +66,12 @@ INT_PTR CALLBACK PvpExlfImportsDlgProc(
             PhSetListViewStyle(lvHandle, TRUE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
             PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 130, L"Module");
-            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 210, L"Name");
-            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 100, L"Type");
-            PhAddListViewColumn(lvHandle, 4, 4, 4, LVCFMT_LEFT, 80, L"Binding");
-            PhAddListViewColumn(lvHandle, 5, 5, 5, LVCFMT_LEFT, 80, L"Visibility");
-            PhAddListViewColumn(lvHandle, 6, 6, 6, LVCFMT_LEFT, 80, L"Section");
+            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 130, PvpLoadUiString(IDS_PV_COLUMN_MODULE));
+            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 210, PvpLoadUiString(IDS_PV_COLUMN_NAME));
+            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 100, PvpLoadUiString(IDS_PV_COLUMN_TYPE));
+            PhAddListViewColumn(lvHandle, 4, 4, 4, LVCFMT_LEFT, 80, PvpLoadUiString(IDS_PV_COLUMN_BINDING));
+            PhAddListViewColumn(lvHandle, 5, 5, 5, LVCFMT_LEFT, 80, PvpLoadUiString(IDS_PV_COLUMN_VISIBILITY));
+            PhAddListViewColumn(lvHandle, 6, 6, 6, LVCFMT_LEFT, 80, PvpLoadUiString(IDS_PV_COLUMN_SECTION));
             PhSetExtendedListView(lvHandle);
             PhLoadListViewColumnsFromSetting(L"ImportsWslListViewColumns", lvHandle);
 
