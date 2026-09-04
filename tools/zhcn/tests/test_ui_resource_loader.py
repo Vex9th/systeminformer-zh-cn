@@ -147,10 +147,12 @@ class UiResourceLoaderContractTests(unittest.TestCase):
         project = read_source("tools/tests/phlib-test/phlib-test.vcxproj")
         main = read_source("tools/tests/phlib-test/main.c")
         probe = read_source("tools/tests/phlib-test/t_resource.c")
+        resources = read_source("tools/tests/phlib-test/phlib-test.rc")
         workflow = read_source(".github/workflows/zh-cn-build.yml")
 
         self.assertIn('<ClCompile Include="t_resource.c" />', project)
         self.assertIn('<ResourceCompile Include="phlib-test.rc" />', project)
+        self.assertNotIn("#pragma code_page", resources)
         self.assertNotIn("<PlatformToolset>v143</PlatformToolset>", project)
         self.assertEqual(project.count("$(DefaultPlatformToolset)"), 6)
         self.assertIn("Test_resource();", main)
