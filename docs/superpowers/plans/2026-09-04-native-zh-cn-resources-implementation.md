@@ -15,14 +15,14 @@
 - 修改：`docs/superpowers/plans/2026-09-04-native-zh-cn-resources-implementation.md`
 - 修改：`docs/superpowers/specs/2026-09-04-native-zh-cn-resources-design.md`
 
-- [ ] **步骤 1：确认要迁移的模块与可执行目标**
+- [x] **步骤 1：确认要迁移的模块与可执行目标**
 
 将以下模块列为第一阶段支持对象（并在说明里标注理由）：
 - `SystemInformer`、`plugins/{UserNotes,ExtendedTools,ExtendedNotifications,DotNetTools,OnlineChecks,Updater,NetworkTools,HardwareDevices,WindowExplorer,ToolStatus,ExtendedServices}`、`tools/peview`、`tools/CustomSetupTool`、`tools/CustomSignTool`。
 
 目标产出：一个可复用的模块列表（含资源文件路径 + RC 文件）供后续脚本/审计使用。
 
-- [ ] **步骤 2：建立初始资源契约清单**
+- [x] **步骤 2：建立初始资源契约清单**
 
 命令：
 
@@ -40,7 +40,7 @@ rg --files -g '*.rc' | sort > docs/superpowers/plan-assets-rc-modules.txt
 - 修改：`phlib/phtranslation.c`
 - 修改：`SystemInformer/runas.c`
 
-- [ ] **步骤 1：修复中文字体写入截断（当前模糊/裁切触发点）**
+- [x] **步骤 1：修复中文字体写入截断（当前模糊/裁切触发点）**
 
 在 `PhTranslateDialogTemplateCopy()` 的字体写入处，将 `Microsoft YaHei UI` 按字符串长度写入，去掉固定字节写入长度导致的截断：
 
@@ -49,7 +49,7 @@ static const WCHAR zhCnFont[] = L"Microsoft YaHei UI";
 PhTlpWrite(&writer, (PVOID)zhCnFont, (wcslen(zhCnFont) + 1) * sizeof(WCHAR));
 ```
 
-- [ ] **步骤 2：修复 Run As 随机服务名拼接**
+- [x] **步骤 2：修复 Run As 随机服务名拼接**
 
 在 `PhExecuteRunAsCommand3()` 里改为：
 
@@ -159,11 +159,11 @@ git commit -m "i18n(main): 增加主程序 zh-CN 资源容器"
 - 修改：`.github/workflows/zh-cn-build.yml`
 - 修改：`docs/superpowers/specs/2026-09-04-native-zh-cn-resources-design.md`
 
-- [ ] **步骤 1：移除 100%/百分比导向结论**
+- [x] **步骤 1：移除 100%/百分比导向结论**
 
 将覆盖率字段替换为：已覆盖模块、未覆盖路径、人工验证状态、运行测试类型。
 
-- [ ] **步骤 2：CI 产物只上报可验证层级**
+- [x] **步骤 2：CI 产物只上报可验证层级**
 
 生成发布说明时不再写“翻译覆盖率 100%”，改为结构校验通过率 + 运行 smoke 通过率 + 视觉验收通过率。
 

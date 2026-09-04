@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 check_translation.py - Validate the zh-CN translation table against the
-string manifest and emit a coverage report.
+string manifest and emit an audit report.
 
 Checks performed (exit code 1 on structural failure, 0 otherwise):
   1. manifest freshness is the caller's responsibility; here we join the
@@ -12,10 +12,10 @@ Checks performed (exit code 1 on structural failure, 0 otherwise):
   3. format specifier consistency between English and Chinese
      (the multiset of printf-style conversions must match)
   4. accelerator-key (\t) consistency for menu-style strings
-  5. coverage percentage per category / per module
+  5. translated / untranslated counts per category and module
 
-Structural failures (1-4) must be fixed before shipping; coverage is
-reported, not enforced.
+Structural failures (1-4) must be fixed before shipping; this report is
+audit-oriented and is not a release-level quality guarantee.
 """
 
 import argparse
@@ -174,32 +174,31 @@ def main():
     # ---- report -----------------------------------------------------------
     total_t = sum(v[0] for v in per_cat.values())
     total_a = sum(v[1] for v in per_cat.values())
-    overall = 100.0 * total_t / total_a if total_a else 0.0
     untranslated = [e for e in untranslated if not is_keep_english(e["english"])]
 
     lines = []
-    lines.append("# 翻译覆盖率报告 / Translation Coverage Report")
+    lines.append("# 翻译审计报告 / Translation Audit Report")
     lines.append("")
     lines.append(f"- 清单唯一字符串（不含约定保留英文项）：{total_a}")
     lines.append(f"- 已翻译：{total_t}")
-    lines.append(f"- 有效覆盖率：**{overall:.1f}%**")
+    lines.append(f"- 未翻译：{total_a - total_t}")
     lines.append(f"- 约定保留英文（技术缩写/键名/占位符等）：{len(keep_english)} 项")
     lines.append("")
     lines.append("## 按类别 / By category")
     lines.append("")
-    lines.append("| 类别 | 已翻译 | 总数 | 覆盖率 |")
+    lines.append("| 类别 | 已翻译 | 总数 | 未翻译 |")
     lines.append("|---|---|---|---|")
     for cat in sorted(per_cat):
         t, a = per_cat[cat]
-        lines.append(f"| {cat} | {t} | {a} | {100.0 * t / a:.1f}% |")
+        lines.append(f"| {cat} | {t} | {a} | {a - t} |")
     lines.append("")
     lines.append("## 按模块 / By module")
     lines.append("")
-    lines.append("| 模块 | 已翻译 | 总数 | 覆盖率 |")
+    lines.append("| 模块 | 已翻译 | 总数 | 未翻译 |")
     lines.append("|---|---|---|---|")
     for mod in sorted(per_mod):
         t, a = per_mod[mod]
-        lines.append(f"| {mod} | {t} | {a} | {100.0 * t / a:.1f}% |")
+        lines.append(f"| {mod} | {t} | {a} | {a - t} |")
     lines.append("")
     if keep_english:
         lines.append("## 约定保留英文 / Kept in English by design")
@@ -231,8 +230,7 @@ def main():
     with open(args.report, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    print(f"effective coverage: {total_t}/{total_a} = {overall:.1f}% "
-          f"(kept-english: {len(keep_english)})")
+    print(f"translation audit: translated {total_t}/{total_a}, untranslated {total_a - total_t}")
     print(f"untranslated: {len(untranslated)}, unused keys: {len(unused)}, "
           f"placeholder errors: {len(errors)}")
     print(f"report written to {args.report}")
