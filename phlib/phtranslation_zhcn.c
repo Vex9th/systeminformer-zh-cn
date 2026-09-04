@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2131] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2132] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -1885,6 +1885,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2131] =
     { L"Un&load", L"卸载(&L)", },
     { L"Unable to close the TCP connection.", L"无法关闭该 TCP 连接。", },
     { L"Unable to commit detours transaction.", L"无法提交 Detours 事务。", },
+    { L"Unable to configure termination policy.", L"无法配置终止策略。", },
     { L"Unable to configure this option.", L"无法配置此选项。", },
     { L"Unable to create the CLR table preview window.", L"无法创建 CLR 表预览窗口。", },
     { L"Unable to create the minidump.", L"无法创建小型转储。", },
@@ -2072,7 +2073,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2131] =
     { L"You are about to ", L"你即将", },
     { L"You are about to close one or more handles for a critical process with strict handle checks enabled. This will shut down the operating system immediately.\r\n\r\n", L"你即将关闭一个或多个关键进程的句柄，而该进程已启用严格句柄检查。这将导致操作系统立即关机。\r\n\r\n", },
     { L"You are attempting to run the 32-bit version of PE Viewer on 64-bit Windows. Most features will not work correctly.\n\nPlease run the 64-bit version of PE Viewer instead.", L"你正在 64 位 Windows 上运行 32 位 PE Viewer，大多数功能将无法正常工作。\n\n请改用 64 位 PE Viewer。", },
-    { L"You are attempting to run the 32-bit version of System Informer on 64-bit Windows. ", L"你正在尝试在 64 位 Windows 上运行 32 位版本的 sys_info。", },
+    { L"You are attempting to run the 32-bit version of System Informer on 64-bit Windows. Most features will not work correctly.\n\nPlease run the 64-bit version of System Informer instead.", L"你正在 64 位 Windows 上运行 32 位版本的 sys_info，大多数功能将无法正常工作。\n\n请改用 64 位版本的 sys_info。", },
     { L"You can choose from the installed debugging tools below.", L"你可以从下方已安装的调试工具中进行选择。", },
     { L"You can configure devices for which notifications are displayed. Wildcards can be used, and ordering is considered.", L"你可以配置要显示通知的设备。可使用通配符，且顺序会影响匹配。", },
     { L"You can configure processes for which notifications are displayed. Wildcards can be used, and ordering is considered.", L"你可以配置要显示通知的进程。可使用通配符，且顺序会影响匹配。", },

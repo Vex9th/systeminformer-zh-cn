@@ -1012,8 +1012,12 @@
 #define IDS_PH_MAKE_DEFAULT_TASK_MANAGER              2015
 #define IDS_PH_CHANGE_DEFAULT_TASK_MANAGER_ACTION     2016
 #define IDS_PH_ENABLE_START_AS_ADMIN_ACTION           2017
+#define IDS_PH_WARNING_TITLE                          2018
+#define IDS_PH_WOW64_WARNING                          2019
+#define IDS_PH_UNABLE_CREATE_WINDOW                   2020
+#define IDS_PH_UNABLE_CONFIGURE_TERMINATION_POLICY    2021
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_ENABLE_START_AS_ADMIN_ACTION
+#define IDS_PH_LAST                                  IDS_PH_UNABLE_CONFIGURE_TERMINATION_POLICY
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1025,6 +1029,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2018
+#define _APS_NEXT_SYMED_VALUE           2022
 #endif
 #endif

@@ -192,11 +192,9 @@ INT WINAPI wWinMain(
     {
         PhShowWarning2(
             NULL,
-            L"Warning.",
+            PhGetApplicationUiString(IDS_PH_WARNING_TITLE),
             L"%s",
-            L"You are attempting to run the 32-bit version of System Informer on 64-bit Windows. "
-            L"Most features will not work correctly.\n\n"
-            L"Please run the 64-bit version of System Informer instead."
+            PhGetApplicationUiString(IDS_PH_WOW64_WARNING)
             );
         PhExitApplication(STATUS_IMAGE_SUBSYSTEM_NOT_PRESENT);
     }
@@ -231,7 +229,7 @@ INT WINAPI wWinMain(
 
     if (!PhMainWndInitialization(CmdShow))
     {
-        PhShowStatus(NULL, L"Unable to create the window.", 0, ERROR_OUTOFMEMORY);
+        PhShowStatus(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), 0, ERROR_OUTOFMEMORY);
         return 1;
     }
 
@@ -1466,7 +1464,7 @@ VOID PhEnableTerminationPolicy(
 
         if (!NT_SUCCESS(status))
         {
-            PhShowStatus(NULL, L"Unable to configure termination policy.", status, 0);
+            PhShowStatus(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_TERMINATION_POLICY), status, 0);
         }
     }
 }

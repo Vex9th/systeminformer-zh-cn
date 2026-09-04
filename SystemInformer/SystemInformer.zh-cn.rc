@@ -1796,4 +1796,8 @@ BEGIN
     IDS_PH_MAKE_DEFAULT_TASK_MANAGER              "要将 sys_info 设为默认的 Windows 任务管理器吗？"
     IDS_PH_CHANGE_DEFAULT_TASK_MANAGER_ACTION     "更改默认任务管理器"
     IDS_PH_ENABLE_START_AS_ADMIN_ACTION           "启用“以管理员身份启动”选项"
+    IDS_PH_WARNING_TITLE                          "警告。"
+    IDS_PH_WOW64_WARNING                          "你正在 64 位 Windows 上运行 32 位版本的 sys_info，大多数功能将无法正常工作。\n\n请改用 64 位版本的 sys_info。"
+    IDS_PH_UNABLE_CREATE_WINDOW                   "无法创建窗口。"
+    IDS_PH_UNABLE_CONFIGURE_TERMINATION_POLICY    "无法配置终止策略。"
 END

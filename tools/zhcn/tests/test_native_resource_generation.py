@@ -391,7 +391,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("220 strings", result.stdout)
+        self.assertIn("224 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -741,7 +741,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 18)
+        self.assertEqual(len(stringtable_ids(resource_script)), 22)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -752,7 +752,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         used_ids = set(
             re.findall(
                 r"PhGetApplicationUiString\((IDS_PH_[A-Z0-9_]+)\)",
-                options,
+                options + "\n" + main,
             )
         )
         self.assertEqual(used_ids, resource_ids)
@@ -768,7 +768,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2018)))
+        self.assertEqual(numeric_ids, list(range(2000, 2022)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -929,7 +929,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 18): 2,
+                    (r"bin\Release64\sys_info.exe", 22): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
