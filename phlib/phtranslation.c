@@ -285,7 +285,11 @@ PVOID PhTranslateDialogTemplateCopy(
         while (*(PUSHORT)cursor != 0)
             cursor += sizeof(WCHAR);
         cursor += sizeof(WCHAR);
-        PhTlpWrite(&writer, (PVOID)L"Microsoft YaHei UI", 20);
+        {
+            static const WCHAR zhCnFont[] = L"Microsoft YaHei UI";
+
+            PhTlpWrite(&writer, (PVOID)zhCnFont, (wcslen(zhCnFont) + 1) * sizeof(WCHAR));
+        }
         PhTlpWriteWord(&writer, 0);
         changed = TRUE;
     }
