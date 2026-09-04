@@ -203,6 +203,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
+        localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
+
+        self.assertTrue(ZH_CN_RC.read_bytes().startswith(b"\xef\xbb\xbf"))
+        self.assertNotIn("#pragma code_page", localized)
+
     def test_main_dialog_resource_ids_match_english_source(self) -> None:
         source = SOURCE_RC.read_text(encoding="utf-8-sig")
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")

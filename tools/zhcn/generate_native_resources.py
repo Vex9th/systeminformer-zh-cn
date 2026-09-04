@@ -139,8 +139,6 @@ def build(source_path: pathlib.Path, translation_path: pathlib.Path) -> str:
         "// Translations: tools/zhcn/zh-CN.json",
         "// Generator: tools/zhcn/generate_native_resources.py",
         "",
-        "#pragma code_page(65001)",
-        "",
         '#include "resource.h"',
         '#include "winres.h"',
         '#include "include/phappres.h"',
