@@ -2454,8 +2454,10 @@ VOID SetupShowWizard(
     )
 {
     LONG dpiValue;
-    PROPSHEETPAGE pages[7];
+    PROPSHEETPAGE pageDefinitions[7];
+    HPROPSHEETPAGE pages[7] = { 0 };
     PROPSHEETHEADER header;
+    ULONG pageIndex;
 
     dpiValue = PhGetMonitorDpi(NULL, NULL);
 
@@ -2476,65 +2478,81 @@ VOID SetupShowWizard(
         dpiValue
         );
 
-    pages[0].dwSize = sizeof(PROPSHEETPAGE);
-    pages[0].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
-    pages[0].hInstance = PhInstanceHandle;
-    pages[0].pszTemplate = MAKEINTRESOURCE(IDD_WELCOME);
-    pages[0].pfnDlgProc = SetupWelcomePageDlgProc;
-    pages[0].lParam = (LPARAM)Context;
+    memset(pageDefinitions, 0, sizeof(pageDefinitions));
 
-    pages[1].dwSize = sizeof(PROPSHEETPAGE);
-    pages[1].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
-    pages[1].hInstance = PhInstanceHandle;
-    pages[1].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG);
-    pages[1].pfnDlgProc = SetupConfigPageDlgProc;
-    pages[1].lParam = (LPARAM)Context;
+    pageDefinitions[0].dwSize = sizeof(PROPSHEETPAGE);
+    pageDefinitions[0].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
+    pageDefinitions[0].hInstance = PhInstanceHandle;
+    pageDefinitions[0].pszTemplate = MAKEINTRESOURCE(IDD_WELCOME);
+    pageDefinitions[0].pfnDlgProc = SetupWelcomePageDlgProc;
+    pageDefinitions[0].lParam = (LPARAM)Context;
 
-    pages[2].dwSize = sizeof(PROPSHEETPAGE);
-    pages[2].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
-    pages[2].hInstance = PhInstanceHandle;
-    pages[2].pszTemplate = MAKEINTRESOURCE(IDD_SHORTCUTS);
-    pages[2].pfnDlgProc = SetupShortcutsPageDlgProc;
-    pages[2].lParam = (LPARAM)Context;
+    pageDefinitions[1].dwSize = sizeof(PROPSHEETPAGE);
+    pageDefinitions[1].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
+    pageDefinitions[1].hInstance = PhInstanceHandle;
+    pageDefinitions[1].pszTemplate = MAKEINTRESOURCE(IDD_CONFIG);
+    pageDefinitions[1].pfnDlgProc = SetupConfigPageDlgProc;
+    pageDefinitions[1].lParam = (LPARAM)Context;
 
-    pages[3].dwSize = sizeof(PROPSHEETPAGE);
-    pages[3].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
-    pages[3].hInstance = PhInstanceHandle;
-    pages[3].pszTemplate = MAKEINTRESOURCE(IDD_UNINSTALL);
-    pages[3].pfnDlgProc = SetupUninstallPageDlgProc;
-    pages[3].lParam = (LPARAM)Context;
+    pageDefinitions[2].dwSize = sizeof(PROPSHEETPAGE);
+    pageDefinitions[2].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
+    pageDefinitions[2].hInstance = PhInstanceHandle;
+    pageDefinitions[2].pszTemplate = MAKEINTRESOURCE(IDD_SHORTCUTS);
+    pageDefinitions[2].pfnDlgProc = SetupShortcutsPageDlgProc;
+    pageDefinitions[2].lParam = (LPARAM)Context;
 
-    pages[4].dwSize = sizeof(PROPSHEETPAGE);
-    pages[4].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
-    pages[4].hInstance = PhInstanceHandle;
-    pages[4].pszTemplate = MAKEINTRESOURCE(IDD_INSTALL);
-    pages[4].pfnDlgProc = SetupInstallPageDlgProc;
-    pages[4].lParam = (LPARAM)Context;
+    pageDefinitions[3].dwSize = sizeof(PROPSHEETPAGE);
+    pageDefinitions[3].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
+    pageDefinitions[3].hInstance = PhInstanceHandle;
+    pageDefinitions[3].pszTemplate = MAKEINTRESOURCE(IDD_UNINSTALL);
+    pageDefinitions[3].pfnDlgProc = SetupUninstallPageDlgProc;
+    pageDefinitions[3].lParam = (LPARAM)Context;
 
-    pages[5].dwSize = sizeof(PROPSHEETPAGE);
-    pages[5].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
-    pages[5].hInstance = PhInstanceHandle;
-    pages[5].pszTemplate = MAKEINTRESOURCE(IDD_COMPLETED);
-    pages[5].pfnDlgProc = SetupCompletedPageDlgProc;
-    pages[5].lParam = (LPARAM)Context;
+    pageDefinitions[4].dwSize = sizeof(PROPSHEETPAGE);
+    pageDefinitions[4].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
+    pageDefinitions[4].hInstance = PhInstanceHandle;
+    pageDefinitions[4].pszTemplate = MAKEINTRESOURCE(IDD_INSTALL);
+    pageDefinitions[4].pfnDlgProc = SetupInstallPageDlgProc;
+    pageDefinitions[4].lParam = (LPARAM)Context;
 
-    pages[6].dwSize = sizeof(PROPSHEETPAGE);
-    pages[6].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
-    pages[6].hInstance = PhInstanceHandle;
-    pages[6].pszTemplate = MAKEINTRESOURCE(IDD_ERROR);
-    pages[6].pfnDlgProc = SetupErrorPageDlgProc;
-    pages[6].lParam = (LPARAM)Context;
+    pageDefinitions[5].dwSize = sizeof(PROPSHEETPAGE);
+    pageDefinitions[5].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
+    pageDefinitions[5].hInstance = PhInstanceHandle;
+    pageDefinitions[5].pszTemplate = MAKEINTRESOURCE(IDD_COMPLETED);
+    pageDefinitions[5].pfnDlgProc = SetupCompletedPageDlgProc;
+    pageDefinitions[5].lParam = (LPARAM)Context;
+
+    pageDefinitions[6].dwSize = sizeof(PROPSHEETPAGE);
+    pageDefinitions[6].dwFlags = PSP_DEFAULT | PSP_PREMATURE;
+    pageDefinitions[6].hInstance = PhInstanceHandle;
+    pageDefinitions[6].pszTemplate = MAKEINTRESOURCE(IDD_ERROR);
+    pageDefinitions[6].pfnDlgProc = SetupErrorPageDlgProc;
+    pageDefinitions[6].lParam = (LPARAM)Context;
+
+    for (pageIndex = 0; pageIndex < ARRAYSIZE(pageDefinitions); pageIndex++)
+    {
+        pages[pageIndex] = PhCreatePropertySheetPage(&pageDefinitions[pageIndex]);
+
+        if (!pages[pageIndex])
+        {
+            while (pageIndex != 0)
+                DestroyPropertySheetPage(pages[--pageIndex]);
+
+            Context->LastStatus = STATUS_UNSUCCESSFUL;
+            return;
+        }
+    }
 
     memset(&header, 0, sizeof(PROPSHEETHEADER));
     header.dwSize = sizeof(PROPSHEETHEADER);
-    header.dwFlags = PSH_MODELESS | PSH_PROPSHEETPAGE | PSH_WIZARD | PSH_USEHICON | PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP | PSH_PROPTITLE | PSH_USECALLBACK;
+    header.dwFlags = PSH_MODELESS | PSH_WIZARD | PSH_USEHICON | PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP | PSH_PROPTITLE | PSH_USECALLBACK;
     header.hwndParent = NULL;
     header.hInstance = PhInstanceHandle;
     header.hIcon = Context->IconLargeHandle;
     header.pfnCallback = SetupPropSheetProc;
     header.pszCaption = L"System Informer Setup";
     header.nPages = ARRAYSIZE(pages);
-    header.ppsp = pages;
+    header.phpage = pages;
 
     if (Context->SetupMode == SetupCommandUninstall)
     {

@@ -42,6 +42,14 @@ RESOURCE_MODULES = (
         )
         for name in PLUGIN_NAMES
     ),
+    (
+        REPO_ROOT / "tools" / "peview" / "peview.rc",
+        REPO_ROOT / "tools" / "peview" / "peview.zh-cn.rc",
+    ),
+    (
+        REPO_ROOT / "tools" / "CustomSetupTool" / "resource.rc",
+        REPO_ROOT / "tools" / "CustomSetupTool" / "resource.zh-cn.rc",
+    ),
 )
 
 DIALOG_HEADER_RE = re.compile(r"^([A-Z][A-Z0-9_]*)\s+DIALOG(?:EX)?\b")
@@ -55,7 +63,7 @@ CONTROL_RE = re.compile(
     r"CONTROL_MS)\b"
 )
 FIRST_STRING_RE = re.compile(r'"((?:""|[^"\\]|\\.)*)"')
-INCLUDE_RE = re.compile(r'^#include\s+"[^"]+"\s*$')
+INCLUDE_RE = re.compile(r'^#include\s+"([^"]+)"\s*$')
 
 
 def extract_dialog_blocks(source: str) -> list[list[str]]:
@@ -159,7 +167,16 @@ def source_includes(source: str) -> list[str]:
     includes = []
 
     for line in source.splitlines():
-        if INCLUDE_RE.match(line) and line not in includes:
+        match = INCLUDE_RE.match(line)
+
+        if not match:
+            continue
+
+        include_path = match.group(1).lower()
+        if include_path.endswith((".rc", ".rc2")):
+            raise ValueError(f"nested resource script include is not allowed: {match.group(1)}")
+
+        if line not in includes:
             includes.append(line)
 
     if not includes:

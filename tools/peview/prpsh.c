@@ -227,36 +227,10 @@ static HWND PvpCreateSecurityButton(
     return SecurityButton;
 }
 
-static HFONT PvpCreateFont(
-    _In_ PWSTR Name,
-    _In_ LONG Size,
-    _In_ LONG Weight,
-    _In_ LONG Dpi
-    )
-{
-    return CreateFont(
-        PhMultiplyDivideSigned(-Size, Dpi, 72),
-        0,
-        0,
-        0,
-        Weight,
-        FALSE,
-        FALSE,
-        FALSE,
-        ANSI_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH,
-        Name
-        );
-}
-
 VOID PvpInitializeFont(
     _In_ HWND hwnd
 )
 {
-    NONCLIENTMETRICS metrics = { sizeof(metrics) };
     LONG dpiValue;
 
     dpiValue = PhGetWindowDpi(hwnd);
@@ -264,16 +238,7 @@ VOID PvpInitializeFont(
     if (PhApplicationFont)
         DeleteFont(PhApplicationFont);
 
-    if (
-        !(PhApplicationFont = PvpCreateFont(L"Microsoft Sans Serif", 8, FW_NORMAL, dpiValue)) &&
-        !(PhApplicationFont = PvpCreateFont(L"Tahoma", 8, FW_NORMAL, dpiValue))
-        )
-    {
-        if (PhGetSystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, dpiValue))
-            PhApplicationFont = CreateFontIndirect(&metrics.lfMessageFont);
-        else
-            PhApplicationFont = NULL;
-    }
+    PhApplicationFont = PhCreateMessageFont(dpiValue);
 }
 
 INT CALLBACK PvpPropSheetProc(
@@ -510,10 +475,17 @@ BOOLEAN PvAddPropPage(
     if (PropContext->PropSheetHeader.nPages == PV_PROPCONTEXT_MAXPAGES)
         return FALSE;
 
-    propSheetPageHandle = CreatePropertySheetPage(
+    propSheetPageHandle = PhCreatePropertySheetPage(
         &PropPageContext->PropSheetPage
         );
-    // CreatePropertySheetPage would have sent PSPCB_ADDREF,
+
+    if (!propSheetPageHandle)
+    {
+        PhDereferenceObject(PropPageContext);
+        return FALSE;
+    }
+
+    // Successful property page creation sends PSPCB_ADDREF,
     // which would have added a reference.
     PhDereferenceObject(PropPageContext);
 
@@ -546,7 +518,7 @@ PPV_PROPPAGECONTEXT PvCreatePropPageContext(
     _In_opt_ PVOID Context
     )
 {
-    return PvCreatePropPageContextEx(NULL, Template, DlgProc, Context);
+    return PvCreatePropPageContextEx(PhInstanceHandle, Template, DlgProc, Context);
 }
 
 PPV_PROPPAGECONTEXT PvCreatePropPageContextEx(

@@ -10,6 +10,7 @@
  */
 
 #include "setup.h"
+#include <phtranslation.h>
 
 #define SETUP_CMD_INSTALL    1
 #define SETUP_CMD_UNINSTALL  2
@@ -589,6 +590,12 @@ INT WINAPI wWinMain(
 
     if (!NT_SUCCESS(PhInitializePhLib(L"System Informer - Setup")))
         return EXIT_FAILURE;
+
+    PhSetApplicationUiLanguage(
+        MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
+        );
+    PhTranslationEnabled = TRUE;
+
     if (!HR_SUCCESS(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)))
         return EXIT_FAILURE;
 

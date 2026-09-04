@@ -214,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
+    <ResourceCompile Include="resource.zh-cn.rc" />
     <ResourceCompile Include="version.rc" />
   </ItemGroup>
   <ItemGroup>

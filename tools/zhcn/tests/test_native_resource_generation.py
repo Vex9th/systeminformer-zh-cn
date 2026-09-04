@@ -27,7 +27,23 @@ PLUGIN_MODULES = (
     "UserNotes",
     "WindowExplorer",
 )
-DIALOG_RE = re.compile(r"(?m)^([A-Z][A-Z0-9_]*)\s+DIALOG(?:EX)?\b")
+TOOL_MODULES = (
+    (
+        "peview",
+        REPO_ROOT / "tools" / "peview" / "peview.rc",
+        REPO_ROOT / "tools" / "peview" / "peview.zh-cn.rc",
+        REPO_ROOT / "tools" / "peview" / "peview.vcxproj",
+        REPO_ROOT / "tools" / "peview" / "peview.vcxproj.filters",
+    ),
+    (
+        "CustomSetupTool",
+        REPO_ROOT / "tools" / "CustomSetupTool" / "resource.rc",
+        REPO_ROOT / "tools" / "CustomSetupTool" / "resource.zh-cn.rc",
+        REPO_ROOT / "tools" / "CustomSetupTool" / "CustomSetupTool.vcxproj",
+        REPO_ROOT / "tools" / "CustomSetupTool" / "CustomSetupTool.vcxproj.filters",
+    ),
+)
+DIALOG_RE = re.compile(r"(?m)^([A-Z][A-Z0-9_]*|\d+)\s+DIALOG(?:EX)?\b")
 FONT_RE = re.compile(r'(?m)^\s*FONT\s+(\d+)\s*,\s*"([^"]+)"')
 
 
@@ -140,6 +156,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing translation decision"):
             generator.replace_first_string('CAPTION "New upstream dialog"', {})
 
+    def test_generator_rejects_nested_resource_script_includes(self) -> None:
+        generator = load_generator_module()
+
+        with self.assertRaisesRegex(ValueError, "nested resource script"):
+            generator.source_includes(
+                '#include "resource.h"\n#include "upstream-resources.rc2"'
+            )
+
     def test_compiled_dialog_parser_separates_structure_text_and_font(self) -> None:
         validator = load_validator_module()
         english = validator.parse_dialog_template(
@@ -216,7 +240,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("12 modules", result.stdout)
+        self.assertIn("14 modules", result.stdout)
+        self.assertIn("270 dialogs", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -316,6 +341,116 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     all(typeface == "Microsoft YaHei UI" for _, typeface in fonts)
                 )
 
+    def test_tool_native_resources_match_sources_and_projects(self) -> None:
+        for module_name, source_path, localized_path, project_path, filters_path in TOOL_MODULES:
+            with self.subTest(module=module_name):
+                source = source_path.read_text(encoding="utf-8-sig")
+                localized = localized_path.read_text(encoding="utf-8-sig")
+                source_ids = DIALOG_RE.findall(source)
+                localized_ids = DIALOG_RE.findall(localized)
+                fonts = FONT_RE.findall(localized)
+                localized_name = localized_path.name
+                project_root = ET.parse(project_path).getroot()
+                filters_root = ET.parse(filters_path).getroot()
+                project_resources = [
+                    element.attrib.get("Include")
+                    for element in project_root.iter()
+                    if element.tag.endswith("ResourceCompile")
+                ]
+                filter_resources = [
+                    element
+                    for element in filters_root.iter()
+                    if element.tag.endswith("ResourceCompile")
+                    and element.attrib.get("Include") == localized_name
+                ]
+
+                self.assertGreater(len(source_ids), 0)
+                self.assertEqual(localized_ids, source_ids)
+                self.assertEqual(len(fonts), len(source_ids))
+                self.assertTrue(localized_path.read_bytes().startswith(b"\xef\xbb\xbf"))
+                self.assertIn(
+                    "LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED",
+                    localized,
+                )
+                self.assertTrue(
+                    all(int(point_size) >= 9 for point_size, _ in fonts)
+                )
+                self.assertTrue(
+                    all(typeface == "Microsoft YaHei UI" for _, typeface in fonts)
+                )
+                self.assertEqual(project_resources.count(localized_name), 1)
+                self.assertEqual(len(filter_resources), 1)
+                self.assertEqual(
+                    [
+                        child.text
+                        for child in filter_resources[0]
+                        if child.tag.endswith("Filter")
+                    ],
+                    ["Resource Files"],
+                )
+
+    def test_custom_sign_tool_has_no_localizable_ui_resources(self) -> None:
+        source = (
+            REPO_ROOT / "tools" / "CustomSignTool" / "resource.rc"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertIsNone(DIALOG_RE.search(source))
+        self.assertIsNone(
+            re.search(
+                r"(?m)^\s*(?:(?:[A-Z][A-Z0-9_]*|\d+)\s+)?"
+                r"(?:MENU(?:EX)?|STRINGTABLE)\b",
+                source,
+            )
+        )
+
+    def test_localized_tools_select_zh_cn_ui_language(self) -> None:
+        for relative_path in (
+            "tools/peview/main.c",
+            "tools/CustomSetupTool/main.c",
+        ):
+            with self.subTest(source=relative_path):
+                source = (REPO_ROOT / relative_path).read_text(encoding="utf-8-sig")
+
+                self.assertRegex(
+                    source,
+                    r"PhSetApplicationUiLanguage\(\s*"
+                    r"MAKELANGID\(LANG_CHINESE,\s*SUBLANG_CHINESE_SIMPLIFIED\)",
+                )
+                self.assertIn("PhTranslationEnabled = TRUE;", source)
+
+    def test_tool_property_pages_use_language_aware_resource_loader(self) -> None:
+        peview = (REPO_ROOT / "tools" / "peview" / "prpsh.c").read_text(
+            encoding="utf-8-sig"
+        )
+        setup = (
+            REPO_ROOT / "tools" / "CustomSetupTool" / "wizard.c"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertNotRegex(peview, r"(?<!Ph)CreatePropertySheetPage\s*\(")
+        self.assertRegex(
+            peview,
+            r"if \(!propSheetPageHandle\)\s*\{\s*"
+            r"PhDereferenceObject\(PropPageContext\);\s*return FALSE;",
+        )
+        self.assertRegex(
+            peview,
+            r"return PvCreatePropPageContextEx\(\s*"
+            r"PhInstanceHandle,\s*Template,\s*DlgProc,\s*Context\s*\);",
+        )
+        self.assertIn("PhCreatePropertySheetPage(&pageDefinitions[pageIndex])", setup)
+        self.assertIn("header.phpage = pages;", setup)
+        self.assertNotIn("PSH_PROPSHEETPAGE", setup)
+        self.assertNotIn("header.ppsp = pages;", setup)
+
+    def test_peview_uses_dpi_aware_system_message_font(self) -> None:
+        peview = (REPO_ROOT / "tools" / "peview" / "prpsh.c").read_text(
+            encoding="utf-8-sig"
+        )
+
+        self.assertIn("PhApplicationFont = PhCreateMessageFont(dpiValue);", peview)
+        self.assertNotIn('PvpCreateFont(L"Microsoft Sans Serif"', peview)
+        self.assertNotIn('PvpCreateFont(L"Tahoma"', peview)
+
     def test_ci_validates_all_built_plugin_resources(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8-sig"
@@ -327,14 +462,19 @@ class NativeResourceGenerationTests(unittest.TestCase):
             re.DOTALL,
         )
 
+        expected_branch_targets = {
+            r"bin\Release64\sys_info.exe",
+            r"bin\Release64\peview.exe",
+            *(rf"bin\Release64\plugins\{module_name}.dll" for module_name in PLUGIN_MODULES),
+        }
+        expected_release_targets = expected_branch_targets | {
+            r"build\output\systeminformer-build-release-setup.exe",
+            r"build\output\systeminformer-build-canary-setup.exe",
+        }
+
         self.assertEqual(len(target_blocks), 2)
-        for target_block in target_blocks:
-            self.assertIn(r"bin\Release64\sys_info.exe", target_block)
-            for module_name in PLUGIN_MODULES:
-                self.assertIn(
-                    rf"bin\Release64\plugins\{module_name}.dll",
-                    target_block,
-                )
+        self.assertEqual(set(re.findall(r"'([^']+)'", target_blocks[0])), expected_branch_targets)
+        self.assertEqual(set(re.findall(r"'([^']+)'", target_blocks[1])), expected_release_targets)
 
     def test_english_manifest_ignores_generated_localized_resources(self) -> None:
         audit = (REPO_ROOT / "tools" / "zhcn" / "audit.py").read_text(encoding="utf-8")

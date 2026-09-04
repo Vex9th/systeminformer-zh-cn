@@ -141,6 +141,7 @@ jobs:
       run: |
         $resourceTargets = @(
           'bin\Release64\sys_info.exe',
+          'bin\Release64\peview.exe',
           'bin\Release64\plugins\DotNetTools.dll',
           'bin\Release64\plugins\ExtendedNotifications.dll',
           'bin\Release64\plugins\ExtendedServices.dll',
@@ -287,6 +288,7 @@ jobs:
       run: |
         $resourceTargets = @(
           'bin\Release64\sys_info.exe',
+          'bin\Release64\peview.exe',
           'bin\Release64\plugins\DotNetTools.dll',
           'bin\Release64\plugins\ExtendedNotifications.dll',
           'bin\Release64\plugins\ExtendedServices.dll',
@@ -297,7 +299,9 @@ jobs:
           'bin\Release64\plugins\ToolStatus.dll',
           'bin\Release64\plugins\Updater.dll',
           'bin\Release64\plugins\UserNotes.dll',
-          'bin\Release64\plugins\WindowExplorer.dll'
+          'bin\Release64\plugins\WindowExplorer.dll',
+          'build\output\systeminformer-build-release-setup.exe',
+          'build\output\systeminformer-build-canary-setup.exe'
         )
         python tools\zhcn\validate_templates.py @resourceTargets
 

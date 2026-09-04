@@ -11,6 +11,7 @@
  */
 
 #include <peview.h>
+#include <phtranslation.h>
 
 PPH_STRING PvFileName = NULL;
 
@@ -121,6 +122,12 @@ INT WINAPI wWinMain(
 
     if (!NT_SUCCESS(PhInitializePhLib(L"PE Viewer")))
         return 1;
+
+    PhSetApplicationUiLanguage(
+        MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
+        );
+    PhTranslationEnabled = TRUE;
+
     if (!PvInitializeExceptionPolicy())
         return 1;
 

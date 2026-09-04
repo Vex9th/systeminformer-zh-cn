@@ -1,0 +1,134 @@
+﻿// GENERATED FILE - DO NOT EDIT MANUALLY
+// Source: tools/CustomSetupTool/resource.rc
+// Translations: tools/zhcn/zh-CN.json
+// Generator: tools/zhcn/generate_native_resources.py
+
+#include "resource.h"
+#include "winres.h"
+#include "../../SystemInformer/include/phappres.h"
+
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+
+IDD_WELCOME DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "sys_info 安装程序"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SIDEBAR,"Static",SS_BITMAP,21,20,140,212
+    LTEXT           "欢迎使用 sys_info 安装向导",IDC_TITLE,148,4,250,34
+    LTEXT           "此向导将在电脑上安装 sys_info。sys_info 可用于监控系统资源、调试软件和检测恶意软件。",IDC_STATIC,148,55,240,30
+    LTEXT           "建议先关闭其他应用，再继续。",IDC_STATIC,148,94,240,18
+    LTEXT           "单击“下一步”继续，或单击“取消”退出安装。",IDC_STATIC,148,126,240,14
+END
+
+IDD_UNINSTALL_WELCOME DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "sys_info 卸载程序"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SIDEBAR,"Static",SS_BITMAP,21,20,140,212
+    LTEXT           "欢迎使用 sys_info 卸载向导",IDC_TITLE,148,4,250,34
+    LTEXT           "此向导将从电脑中卸载 sys_info。sys_info 可用于监控系统资源、调试软件和检测恶意软件。",IDC_STATIC,148,55,240,30
+    LTEXT           "建议先关闭其他应用，再继续。",IDC_STATIC,148,94,240,18
+    LTEXT           "单击“下一步”继续，或单击“取消”退出卸载。",IDC_STATIC,148,126,240,14
+END
+
+IDD_CONFIG DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "安装选项"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    LTEXT           "选择安装位置",IDC_TITLE,15,0,338,10
+    LTEXT           "sys_info 要安装到哪里？",IDC_SUBTITLE,25,11,338,10
+    ICON            IDI_ICON,IDC_PAGEICON,378,0,20,20
+    LTEXT           "sys_info 将安装到以下文件夹。",IDC_STATIC,25,40,358,10
+    LTEXT           "单击“下一步”继续；如需更换文件夹，请单击“浏览”。",IDC_STATIC,25,64,358,10
+    EDITTEXT        IDC_PATH,25,78,301,14,ES_AUTOHSCROLL,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "浏览...",IDC_BROWSE,334,77,49,16
+END
+
+IDD_SHORTCUTS DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "快捷方式"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    LTEXT           "选择开始菜单文件夹",IDC_TITLE,15,0,338,10
+    LTEXT           "选择用于存放 sys_info 快捷方式的开始菜单文件夹。",IDC_SUBTITLE,25,11,338,10
+    ICON            IDI_ICON,IDC_PAGEICON,378,0,20,20
+    LTEXT           "选择现有文件夹，或输入名称创建新文件夹。",IDC_STATIC,25,40,358,18
+    EDITTEXT        IDC_STARTMENUFOLDER,25,65,358,14,ES_AUTOHSCROLL,WS_EX_CLIENTEDGE
+    LISTBOX         IDC_STARTMENUFOLDERLIST,25,83,358,91,LBS_NOTIFY | LBS_SORT | WS_VSCROLL | WS_TABSTOP,WS_EX_CLIENTEDGE
+    CONTROL         "不创建开始菜单快捷方式",IDC_NOSTARTMENUSHORTCUTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,181,200,12
+    CONTROL         "创建桌面快捷方式",IDC_DESKTOPSHORTCUT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,200,180,12
+END
+
+IDD_INSTALL DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "正在安装"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    LTEXT           "正在安装",IDC_TITLE,15,0,338,10
+    LTEXT           "正在安装 sys_info，请稍候。",IDC_SUBTITLE,25,11,338,10
+    ICON            IDI_ICON,IDC_PAGEICON,378,0,20,20
+    LTEXT           "状态：",IDC_STATIC,25,40,358,10
+    LTEXT           "",IDC_STATUS,25,52,358,10
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",PBS_MARQUEE,25,70,358,13
+END
+
+IDD_COMPLETED DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "安装完成"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SIDEBAR,"Static",SS_BITMAP,21,20,140,212
+    LTEXT           "正在完成 sys_info 安装向导",IDC_TITLE,148,4,250,34
+    LTEXT           "sys_info 已安装完成，可通过已创建的快捷方式启动。",IDC_STATIC,148,55,240,30
+    LTEXT           "单击“完成”退出安装程序。",IDC_STATIC,148,88,240,14
+    CONTROL         "启动 sys_info",IDC_STARTAPP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,112,240,12
+END
+
+IDD_ERROR DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "安装失败"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SIDEBAR,"Static",SS_BITMAP,21,20,15,13
+    LTEXT           "sys_info 安装失败",IDC_TITLE,148,4,250,34
+    LTEXT           "安装程序无法完成此操作。",IDC_STATIC,148,55,240,14
+    LTEXT           "",IDC_STATUS,148,78,240,42
+    LTEXT           "单击“重试”再次尝试，或单击“取消”退出安装程序。",IDC_STATIC,148,130,240,14
+END
+
+IDD_UNINSTALL DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "卸载"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    LTEXT           "准备卸载",IDC_TITLE,15,0,338,10
+    LTEXT           "即将从电脑中卸载 sys_info。",IDC_SUBTITLE,25,11,338,10
+    ICON            IDI_ICON,IDC_PAGEICON,378,0,20,20
+    LTEXT           "单击“卸载”继续；如需检查或更改设置，请单击“上一步”。",IDC_STATIC,25,40,358,18
+    CONTROL         "删除应用设置",IDC_REMOVESETTINGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,70,358,12
+END
+
+IDD_UPDATE DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "更新"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    LTEXT           "准备更新",IDC_TITLE,15,0,338,10
+    LTEXT           "即将更新电脑上的 sys_info。",IDC_SUBTITLE,25,11,338,10
+    ICON            IDI_ICON,IDC_PAGEICON,378,0,20,20
+    LTEXT           "单击“更新”继续；如需检查或更改设置，请单击“上一步”。",IDC_STATIC,25,40,358,18
+END
+
+IDD_REPAIR DIALOGEX 0, 0, 408, 234
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "修复"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x0
+BEGIN
+    LTEXT           "准备修复",IDC_TITLE,15,0,338,10
+    LTEXT           "即将修复电脑上的 sys_info。",IDC_SUBTITLE,25,11,338,10
+    ICON            IDI_ICON,IDC_PAGEICON,378,0,20,20
+    LTEXT           "单击“修复”继续；如需检查或更改设置，请单击“上一步”。",IDC_STATIC,25,40,358,18
+END

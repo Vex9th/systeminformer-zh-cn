@@ -279,6 +279,7 @@
   <ItemGroup>
     <ResourceCompile Include="$(SystemInformerRoot)kphlib\bin\$(Configuration)$(PlatformArchitecture)\sistatus.rc" />
     <ResourceCompile Include="peview.rc" />
+    <ResourceCompile Include="peview.zh-cn.rc" />
     <ResourceCompile Include="version.rc" />
   </ItemGroup>
   <ItemGroup>
