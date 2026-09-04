@@ -70,7 +70,7 @@ VOID PhShowHandleStatisticsDialog(
     if (!NT_SUCCESS(status))
     {
         NtClose(processHandle);
-        PhShowStatus(ParentWindowHandle, L"Unable to enumerate process handles", status, 0);
+        PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_ENUMERATE_PROCESS_HANDLES), status, 0);
         return;
     }
 

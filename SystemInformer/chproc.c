@@ -74,7 +74,7 @@ static VOID PhpRefreshProcessList(
 
     if (!NT_SUCCESS(status = PhEnumProcesses(&processes)))
     {
-        PhShowStatus(hwndDlg, L"Unable to enumerate processes", status, 0);
+        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_ENUMERATE_PROCESSES), status, 0);
         return;
     }
 

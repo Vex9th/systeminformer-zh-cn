@@ -137,7 +137,7 @@ INT_PTR CALLBACK PhpMemoryProtectDlgProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to change memory protection", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CHANGE_MEMORY_PROTECTION), status, 0);
                         PhSetDialogFocus(hwndDlg, GetDlgItem(hwndDlg, IDC_VALUE));
                         Edit_SetSel(GetDlgItem(hwndDlg, IDC_VALUE), 0, -1);
                     }

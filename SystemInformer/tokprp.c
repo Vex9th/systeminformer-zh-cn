@@ -306,7 +306,7 @@ VOID PhCreateTokenDialog(
         DUPLICATE_SAME_ACCESS | DUPLICATE_SAME_ATTRIBUTES
         )))
     {
-        PhShowStatus(NULL, L"Unable to duplicate the token.", status, 0);
+        PhShowStatus(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_DUPLICATE_TOKEN), status, 0);
         return;
     }
 
@@ -6218,4 +6218,3 @@ INT_PTR CALLBACK PhpTokenAppPolicyPageProc(
 
     return FALSE;
 }
-

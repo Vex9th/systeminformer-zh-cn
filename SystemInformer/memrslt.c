@@ -601,7 +601,7 @@ INT_PTR CALLBACK PhpMemoryResultsDlgProc(
 
                             if (!NT_SUCCESS(status))
                             {
-                                PhShowStatus(hwndDlg, L"Unable to edit memory", status, 0);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_EDIT_MEMORY), status, 0);
                             }
                         }
                     }
@@ -681,7 +681,7 @@ INT_PTR CALLBACK PhpMemoryResultsDlgProc(
 
                                             if (!NT_SUCCESS(status))
                                             {
-                                                PhShowStatus(hwndDlg, L"Unable to edit memory", status, 0);
+                                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_EDIT_MEMORY), status, 0);
                                             }
                                         }
                                     }

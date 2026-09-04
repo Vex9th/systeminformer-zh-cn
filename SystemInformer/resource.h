@@ -1028,8 +1028,19 @@
 #define IDS_PH_UNKNOWN_ERROR_OCCURRED                  2031
 #define IDS_PH_ENABLE_SIGNATURE_CHECKING               2032
 #define IDS_PH_UNKNOWN_ERROR                           2033
+#define IDS_PH_UNABLE_ENUMERATE_PROCESSES              2034
+#define IDS_PH_UNABLE_CLOSE_TCP_CONNECTION             2035
+#define IDS_PH_UNABLE_EDIT_MEMORY                      2036
+#define IDS_PH_UNABLE_EDIT_MEMORY_REGION               2037
+#define IDS_PH_UNABLE_DETERMINE_THREAD_WAIT            2038
+#define IDS_PH_UNABLE_EMPTY_MEMORY_LIST                2039
+#define IDS_PH_UNABLE_EMPTY_REGION_WORKING_SET         2040
+#define IDS_PH_UNABLE_ENUMERATE_PROCESS_HANDLES        2041
+#define IDS_PH_UNABLE_DUPLICATE_TOKEN                  2042
+#define IDS_PH_UNABLE_CHANGE_MEMORY_PROTECTION         2043
+#define IDS_PH_UNABLE_CLOSE_WINDOW                     2044
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_UNKNOWN_ERROR
+#define IDS_PH_LAST                                  IDS_PH_UNABLE_CLOSE_WINDOW
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1041,6 +1052,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2034
+#define _APS_NEXT_SYMED_VALUE           2045
 #endif
 #endif

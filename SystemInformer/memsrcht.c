@@ -1519,7 +1519,7 @@ VOID PhpShowMemoryEditor(
     }
     else
     {
-        PhShowStatus(context->WindowHandle, L"Unable to edit memory", status, 0);
+        PhShowStatus(context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_EDIT_MEMORY), status, 0);
     }
 }
 

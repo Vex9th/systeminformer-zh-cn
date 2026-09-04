@@ -88,7 +88,7 @@ VOID PhShowMemoryEditorDialog(
 
         if (RegionSize > 1024ULL * 1024ULL * 1024ULL) // 1 GB
         {
-            PhShowStatus(OwnerWindow, L"Unable to edit the memory region.", 0, MEM_E_INVALID_SIZE);
+            PhShowStatus(OwnerWindow, PhGetApplicationUiString(IDS_PH_UNABLE_EDIT_MEMORY_REGION), 0, MEM_E_INVALID_SIZE);
             return;
         }
 
@@ -96,7 +96,7 @@ VOID PhShowMemoryEditorDialog(
 
         if (!NT_SUCCESS(status))
         {
-            PhShowStatus(OwnerWindow, L"Unable to edit the memory region.", status, 0);
+            PhShowStatus(OwnerWindow, PhGetApplicationUiString(IDS_PH_UNABLE_EDIT_MEMORY_REGION), status, 0);
             return;
         }
 
@@ -439,7 +439,7 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
                         {
                             if (offset >= context->RegionSize)
                             {
-                                PhShowStatus(hwndDlg, L"Unable to edit the memory region.", 0, MEM_E_INVALID_SIZE);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_EDIT_MEMORY_REGION), 0, MEM_E_INVALID_SIZE);
                                 continue;
                             }
 

@@ -2632,6 +2632,17 @@ BEGIN
     IDS_PH_UNKNOWN_ERROR_OCCURRED                  "An unknown error occurred."
     IDS_PH_ENABLE_SIGNATURE_CHECKING               "Enable it in Options > General and restart System Informer."
     IDS_PH_UNKNOWN_ERROR                           "Unknown error"
+    IDS_PH_UNABLE_ENUMERATE_PROCESSES              "Unable to enumerate processes"
+    IDS_PH_UNABLE_CLOSE_TCP_CONNECTION             "Unable to close the TCP connection"
+    IDS_PH_UNABLE_EDIT_MEMORY                      "Unable to edit memory"
+    IDS_PH_UNABLE_EDIT_MEMORY_REGION               "Unable to edit the memory region."
+    IDS_PH_UNABLE_DETERMINE_THREAD_WAIT            "Unable to determine whether the thread is waiting."
+    IDS_PH_UNABLE_EMPTY_MEMORY_LIST                "Unable to empty the memory list."
+    IDS_PH_UNABLE_EMPTY_REGION_WORKING_SET         "Unable to empty the region working set."
+    IDS_PH_UNABLE_ENUMERATE_PROCESS_HANDLES        "Unable to enumerate process handles"
+    IDS_PH_UNABLE_DUPLICATE_TOKEN                  "Unable to duplicate the token."
+    IDS_PH_UNABLE_CHANGE_MEMORY_PROTECTION         "Unable to change memory protection"
+    IDS_PH_UNABLE_CLOSE_WINDOW                     "Unable to close the window."
 END
 
 /////////////////////////////////////////////////////////////////////////////

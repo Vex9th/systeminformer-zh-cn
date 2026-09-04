@@ -2014,7 +2014,7 @@ BOOLEAN PhUiTerminateTreeProcess(
 
     if (!NT_SUCCESS(status = PhEnumProcesses(&processes)))
     {
-        PhShowStatus(WindowHandle, L"Unable to enumerate processes", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_ENUMERATE_PROCESSES), status, 0);
         return FALSE;
     }
 
@@ -2235,7 +2235,7 @@ BOOLEAN PhUiSuspendTreeProcess(
 
     if (!NT_SUCCESS(status = PhEnumProcesses(&processes)))
     {
-        PhShowStatus(WindowHandle, L"Unable to enumerate processes", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_ENUMERATE_PROCESSES), status, 0);
         return FALSE;
     }
 
@@ -2456,7 +2456,7 @@ BOOLEAN PhUiResumeTreeProcess(
 
     if (!NT_SUCCESS(status = PhEnumProcesses(&processes)))
     {
-        PhShowStatus(WindowHandle, L"Unable to enumerate processes", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_ENUMERATE_PROCESSES), status, 0);
         return FALSE;
     }
 
@@ -6304,7 +6304,7 @@ BOOLEAN PhUiCloseConnections(
 
     if (!SetTcpEntry_I)
     {
-        PhShowStatus(WindowHandle, L"Unable to close the TCP connection", STATUS_NOT_SUPPORTED, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CLOSE_TCP_CONNECTION), STATUS_NOT_SUPPORTED, 0);
         return FALSE;
     }
 
@@ -6340,7 +6340,7 @@ BOOLEAN PhUiCloseConnections(
 
             if (!cancelled && PhpShowErrorAndConnectToPhSvc(
                 WindowHandle,
-                L"Unable to close the TCP connection",
+                PhGetApplicationUiString(IDS_PH_UNABLE_CLOSE_TCP_CONNECTION),
                 PhDosErrorToNtStatus(result),
                 &connected,
                 &cancelled
@@ -6351,7 +6351,7 @@ BOOLEAN PhUiCloseConnections(
                     if (NT_SUCCESS(status = PhSvcCallSetTcpEntry(&tcpRow)))
                         success = TRUE;
                     else
-                        PhShowStatus(WindowHandle, L"Unable to close the TCP connection", status, 0);
+                        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CLOSE_TCP_CONNECTION), status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -6369,7 +6369,7 @@ BOOLEAN PhUiCloseConnections(
                     WindowHandle,
                     TD_OK_BUTTON,
                     TD_ERROR_ICON,
-                    L"Unable to close the TCP connection.",
+                    PhGetApplicationUiString(IDS_PH_UNABLE_CLOSE_TCP_CONNECTION),
                     L"Make sure System Informer is running with administrative privileges."
                     ) != IDOK)
                     break;
@@ -7320,7 +7320,7 @@ BOOLEAN PhUiEmptyProcessMemoryWorkingSet(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(WindowHandle, L"Unable to empty the region working set.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_EMPTY_REGION_WORKING_SET), status, 0);
         return FALSE;
     }
 

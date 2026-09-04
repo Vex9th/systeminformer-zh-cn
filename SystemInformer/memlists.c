@@ -712,7 +712,7 @@ VOID PhShowMemoryListCommand(
         }
         else if (!PhGetOwnTokenAttributes().Elevated)
         {
-            PhShowStatus(ParentWindow, L"Unable to empty the memory list.", 0, ERROR_ELEVATION_REQUIRED);
+            PhShowStatus(ParentWindow, PhGetApplicationUiString(IDS_PH_UNABLE_EMPTY_MEMORY_LIST), 0, ERROR_ELEVATION_REQUIRED);
         }
         else
         {

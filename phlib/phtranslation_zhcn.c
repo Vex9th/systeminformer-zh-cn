@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2139] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2149] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -1884,7 +1884,9 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2139] =
     { L"URL:", L"URL：", },
     { L"USER handles", L"USER 句柄", },
     { L"Un&load", L"卸载(&L)", },
-    { L"Unable to close the TCP connection.", L"无法关闭该 TCP 连接。", },
+    { L"Unable to change memory protection", L"无法更改内存保护", },
+    { L"Unable to close the TCP connection", L"无法关闭 TCP 连接", },
+    { L"Unable to close the window.", L"无法关闭窗口。", },
     { L"Unable to commit detours transaction.", L"无法提交 Detours 事务。", },
     { L"Unable to configure termination policy.", L"无法配置终止策略。", },
     { L"Unable to configure this option.", L"无法配置此选项。", },
@@ -1893,10 +1895,18 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2139] =
     { L"Unable to create the minidump.", L"无法创建小型转储。", },
     { L"Unable to create the window.", L"无法创建窗口。", },
     { L"Unable to decommit the memory region", L"无法取消提交内存区域", },
+    { L"Unable to determine whether the thread is waiting.", L"无法确定线程是否正在等待。", },
     { L"Unable to download GeoLite database updates.", L"无法下载 GeoLite 数据库更新。", },
     { L"Unable to download GeoLite update.", L"无法下载 GeoLite 更新。", },
+    { L"Unable to duplicate the token.", L"无法复制令牌。", },
+    { L"Unable to edit memory", L"无法编辑内存", },
+    { L"Unable to edit the memory region.", L"无法编辑内存区域。", },
+    { L"Unable to empty the memory list.", L"无法清空内存列表。", },
+    { L"Unable to empty the region working set.", L"无法清空区域工作集。", },
     { L"Unable to enable option start as admin.", L"无法启用以管理员身份启动选项。", },
     { L"Unable to enable start as admin.", L"无法启用以管理员身份启动。", },
+    { L"Unable to enumerate process handles", L"无法枚举进程句柄", },
+    { L"Unable to enumerate processes", L"无法枚举进程", },
     { L"Unable to enumerate the image resources.", L"无法枚举映像资源。", },
     { L"Unable to free the memory region", L"无法释放内存区域", },
     { L"Unable to load the archive file", L"无法加载归档文件", },

@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("238 strings", result.stdout)
+        self.assertIn("249 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 34)
+        self.assertEqual(len(stringtable_ids(resource_script)), 45)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2034)))
+        self.assertEqual(numeric_ids, list(range(2000, 2045)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -983,6 +983,41 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_PH_UNABLE_UNMAP_SECTION_VIEW",
         ):
             self.assertEqual(source.count(resource_id), 1)
+
+    def test_main_memory_and_enumeration_errors_use_native_resources(self) -> None:
+        sources = {
+            path.name: path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        }
+        literals = (
+            "Unable to enumerate processes",
+            "Unable to close the TCP connection",
+            "Unable to edit memory",
+            "Unable to edit the memory region.",
+            "Unable to determine whether the thread is waiting.",
+            "Unable to empty the memory list.",
+            "Unable to empty the region working set.",
+            "Unable to enumerate process handles",
+            "Unable to duplicate the token.",
+            "Unable to change memory protection",
+            "Unable to close the window.",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                pattern = re.compile(
+                    rf'L"{re.escape(literal.removesuffix("."))}\.?' + '"'
+                )
+                remaining_files = [
+                    name
+                    for name, source in sources.items()
+                    if pattern.search(source)
+                ]
+                self.assertEqual(
+                    remaining_files,
+                    [],
+                    f"raw UI literal remains: {literal}",
+                )
 
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
@@ -1177,7 +1212,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 34): 2,
+                    (r"bin\Release64\sys_info.exe", 45): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

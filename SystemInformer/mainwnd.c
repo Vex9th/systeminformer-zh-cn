@@ -2391,7 +2391,7 @@ VOID PhMwpOnCommand(
 
                 if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(WindowHandle, L"Unable to close the window.", status, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CLOSE_WINDOW), status, 0);
                 }
             }
         }

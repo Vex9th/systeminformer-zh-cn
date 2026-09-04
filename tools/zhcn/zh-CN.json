@@ -1784,7 +1784,6 @@
     "URL:": "URL：",
     "USER handles": "USER 句柄",
     "Un&load": "卸载(&L)",
-    "Unable to close the TCP connection.": "无法关闭该 TCP 连接。",
     "Unable to create the minidump.": "无法创建小型转储。",
     "Unable to create the window.": "无法创建窗口。",
     "Unable to download GeoLite database updates.": "无法下载 GeoLite 数据库更新。",
@@ -2263,6 +2262,17 @@
     "Updating to version %lu.%lu.%lu.%lu...": "正在更新到版本 %lu.%lu.%lu.%lu...",
     "Select Close to exit.": "选择“关闭”退出。",
     "Error updating to the latest version.": "更新到最新版本时出错。",
-    "Installation Folder:\r\n\r\n%s": "安装文件夹：\r\n\r\n%s"
+    "Installation Folder:\r\n\r\n%s": "安装文件夹：\r\n\r\n%s",
+    "Unable to enumerate processes": "无法枚举进程",
+    "Unable to close the TCP connection": "无法关闭 TCP 连接",
+    "Unable to edit memory": "无法编辑内存",
+    "Unable to edit the memory region.": "无法编辑内存区域。",
+    "Unable to determine whether the thread is waiting.": "无法确定线程是否正在等待。",
+    "Unable to empty the memory list.": "无法清空内存列表。",
+    "Unable to empty the region working set.": "无法清空区域工作集。",
+    "Unable to enumerate process handles": "无法枚举进程句柄",
+    "Unable to duplicate the token.": "无法复制令牌。",
+    "Unable to change memory protection": "无法更改内存保护",
+    "Unable to close the window.": "无法关闭窗口。"
   }
 }

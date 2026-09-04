@@ -200,7 +200,7 @@ VOID PhpAnalyzeWaitPassive(
 
     if (!NT_SUCCESS(status = PhGetThreadLastSystemCall(threadHandle, &lastSystemCall)))
     {
-        PhShowStatus(WindowHandle, L"Unable to determine whether the thread is waiting.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_DETERMINE_THREAD_WAIT), status, 0);
         goto CleanupExit;
     }
 
