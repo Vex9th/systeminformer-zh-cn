@@ -133,7 +133,7 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 
 当前主程序 `.rc` 没有 `MENU` 或 `STRINGTABLE` 块；先复制全部对话框 ID 并逐条替换文案。动态菜单和 C 代码字符串继续走英文回退兼容层，后续迁移到 `IDS_*`。
 
-- [ ] **步骤 2：构建资源可达性校验**
+- [x] **步骤 2：构建资源可达性校验**
 
 ```bash
 cd /Users/r2/Developer/Sys_Info/systeminformer-zh-cn
@@ -142,6 +142,8 @@ python3 tools/zhcn/validate_templates.py bin/Release64/sys_info.exe
 ```
 
 预期：可见模板与字符串 ID 与英文版保持一一映射（控件 ID/文本 ID 不缺失）。
+
+验证记录（2026-09-05）：[Windows CI 33898026678](https://github.com/Vex9th/systeminformer-zh-cn/actions/runs/33898026678) 通过；构建后 PE 包含 en-US 106 个、zh-CN 106 个对话框，结构失败 0；原生资源加载探针、11 个插件加载和主界面响应冒烟测试通过。
 
 - [x] **步骤 3：提交**
 
