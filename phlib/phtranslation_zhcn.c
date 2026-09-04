@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1890] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1892] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -154,6 +154,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1890] =
     { L".NET performance", L".NET 性能", },
     { L"< Hide", L"< 隐藏", },
     { L"< Remove", L"< 移除", },
+    { L"<a href=\"https://systeminformer.sourceforge.io\">System Informer on SourceForge.net</a>", L"<a href=\"https://systeminformer.sourceforge.io\">System Informer 的 SourceForge 页面</a>", },
     { L"<a>Company name link</a>", L"<a>公司名称链接</a>", },
     { L"<a>Open</a>", L"<a>打开</a>", },
     { L"A 64-bit dump will be created instead. Do you want to continue?", L"将改为创建 64 位转储。要继续吗？", },
@@ -307,7 +308,8 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1890] =
     { L"Checking the developer channel...", L"正在检查 Developer 通道...", },
     { L"Checking the preview channel...", L"正在检查 Preview 通道...", },
     { L"Checking the release channel...", L"正在检查 Release 通道...", },
-    { L"Checkout <a href=", L"查看 <a href=", },
+    { L"Checkout <a href=\"\">How-to-generate-a-license-key</a>", L"查看<a href=\"\">许可证密钥生成教程</a>", },
+    { L"Checkout <a href=\"https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key\">How-to-generate-a-license-key</a>", L"查看<a href=\"https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key\">许可证密钥生成教程</a>", },
     { L"Checksum", L"校验和", },
     { L"Choose Columns", L"选择列", },
     { L"Choose columns...", L"选择列...", },
@@ -1023,7 +1025,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1890] =
     { L"None", L"无", },
     { L"Nonpaged size", L"非分页大小", },
     { L"Normal", L"正常", },
-    { L"Note: FPS monitoring requires either administrative privileges or the current user a member of the ", L"注意：FPS 监控需要管理员权限，或当前用户是 ", },
+    { L"Note: FPS monitoring requires either administrative privileges or the current user a member of the \"Performance Log Users\" group.", L"注意：FPS 监控需要管理员权限，或当前用户属于“Performance Log Users”组。", },
     { L"Note: Realtime priority requires the User has the SeIncreaseBasePriorityPrivilege or the process running as Administrator.", L"注意：实时优先级要求用户拥有 SeIncreaseBasePriorityPrivilege 特权，或者进程以管理员身份运行。", },
     { L"Note: Right-click the toolbar on the main window to customize the icons and graphs.", L"注意：右键点击主窗口中的工具栏可自定义图标和图表。", },
     { L"Note: You can also download GeoLite updates from the Main menu > Tools > Network Tools > Update GeoLite...", L"注意：你也可以通过主菜单 > 工具 > 网络工具 > 更新 GeoLite... 下载 GeoLite 更新。", },
@@ -1323,7 +1325,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1890] =
     { L"Restore", L"还原", },
     { L"Result", L"结果", },
     { L"Results", L"结果", },
-    { L"Results appear in the Hybrid-Analysis column. To show it, right-click any column header and select ", L"结果显示在 Hybrid-Analysis 列中。要显示该列，请右键点击任意列标题并选择 ", },
+    { L"Results appear in the Hybrid-Analysis column. To show it, right-click any column header and select \"Choose columns...\".", L"结果显示在 Hybrid-Analysis 列中。要显示该列，请右键点击任意列标题并选择“选择列...”。", },
     { L"Results.", L"结果。", },
     { L"Resume tree", L"恢复进程树", },
     { L"Resuming a process tree will cause the process and its descendants to be resumed.", L"恢复进程树将使该进程及其子进程一并恢复。", },

@@ -558,6 +558,9 @@
     <ResourceCompile Include="SystemInformer.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="SystemInformer.zh-cn.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
     <ResourceCompile Include="version.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>

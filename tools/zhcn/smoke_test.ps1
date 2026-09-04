@@ -1,9 +1,9 @@
 # Runtime smoke test for the zh-CN community edition: launches the built
 # sys_info.exe, verifies the main window title and that every plugin is
 # loaded (plugin imports resolve against the renamed module), then exits.
-# Menu and dialog text are validated separately at the byte level by
-# validate_templates.py, because an interactive desktop is not available in
-# this environment. Run from the repository root with the exe path argument.
+# Embedded dialog structure and language IDs are validated separately by
+# validate_templates.py. That check is not a visual or interactive UI test.
+# Run from the repository root with the exe path argument.
 param(
     [Parameter(Mandatory = $true)]
     [string]$ExePath

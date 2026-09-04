@@ -254,7 +254,7 @@ PVOID PhTranslateDialogTemplateCopy(
     PhTlpCopyTemplateString(&writer, &cursor);
     PhTlpWriteTemplateString(&writer, &cursor, TRUE, &changed);
 
-    if (*(PULONG)((PBYTE)Template + (extended ? 12 : 0)) & (DS_SETFONT | DS_SHELLFONT))
+    if (*(PULONG)((PBYTE)Template + (extended ? 12 : 0)) & DS_SETFONT)
     {
         if (extended)
         {
@@ -312,11 +312,13 @@ PVOID PhTranslateDialogTemplateCopy(
         PhTlpCopyTemplateString(&writer, &cursor); // class
         PhTlpWriteTemplateString(&writer, &cursor, TRUE, &changed); // text
 
-        // creation data: size WORD followed by that many bytes
+        // A nonzero creation-data size includes the size WORD itself.
         {
             USHORT creationSize = *(PUSHORT)cursor;
-            PhTlpWrite(&writer, (PVOID)cursor, sizeof(USHORT) + creationSize);
-            cursor += sizeof(USHORT) + creationSize;
+            SIZE_T creationBytes = creationSize ? creationSize : sizeof(USHORT);
+
+            PhTlpWrite(&writer, (PVOID)cursor, creationBytes);
+            cursor += creationBytes;
         }
 
         PhTlpPadToDword(&writer);

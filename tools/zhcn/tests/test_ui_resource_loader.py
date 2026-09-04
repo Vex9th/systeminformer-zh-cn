@@ -101,6 +101,12 @@ class UiResourceLoaderContractTests(unittest.TestCase):
         self.assertIn("(wcslen(zhCnFont) + 1) * sizeof(WCHAR)", font_write)
         self.assertNotIn("PhTlpWriteWord(&writer, 0)", font_write)
 
+    def test_legacy_template_font_check_uses_setfont_bit(self) -> None:
+        source = read_source("phlib/phtranslation.c")
+
+        self.assertIn("& DS_SETFONT)", source)
+        self.assertNotIn("& (DS_SETFONT | DS_SHELLFONT)", source)
+
     def test_missing_string_slot_falls_back_to_english(self) -> None:
         source = read_source("phlib/mapldr.c")
         probe = read_source("tools/tests/phlib-test/t_resource.c")

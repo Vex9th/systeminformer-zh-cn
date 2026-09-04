@@ -119,6 +119,7 @@ jobs:
         python tools\zhcn\audit.py
         python tools\zhcn\check_translation.py
         python tools\zhcn\generate_translation.py --check
+        python tools\zhcn\generate_native_resources.py --check
         python -m unittest discover -s tools\zhcn\tests -v
 
     - name: Native UI resource loader test
@@ -134,7 +135,7 @@ jobs:
         & tools\tests\phlib-test\bin\Release64\phlib-test.exe
         exit $LASTEXITCODE
 
-    - name: Validate dialog template translation in built exe
+    - name: Validate embedded en-US and zh-CN dialog resources
       shell: pwsh
       working-directory: ${{github.workspace}}
       run: python tools\zhcn\validate_templates.py bin\Release64\sys_info.exe
@@ -249,6 +250,7 @@ jobs:
         python tools\zhcn\audit.py
         python tools\zhcn\check_translation.py
         python tools\zhcn\generate_translation.py --check
+        python tools\zhcn\generate_native_resources.py --check
         python -m unittest discover -s tools\zhcn\tests -v
 
     - name: Native UI resource loader test
@@ -264,7 +266,7 @@ jobs:
         & tools\tests\phlib-test\bin\Release64\phlib-test.exe
         exit $LASTEXITCODE
 
-    - name: Validate dialog template translation in built exe
+    - name: Validate embedded en-US and zh-CN dialog resources
       shell: pwsh
       working-directory: ${{github.workspace}}
       run: python tools\zhcn\validate_templates.py bin\Release64\sys_info.exe

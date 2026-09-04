@@ -379,15 +379,15 @@ def scan_tabnew(path: str, entries):
 # .rc resource scanning
 # ---------------------------------------------------------------------------
 
-RC_COMMENT_RE = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
-RC_CAPTION_RE = re.compile(r'\bCAPTION\s+"((?:[^"\\]|\\.)*)"')
+RC_STRING_BODY = r'(?:(?:"")|[^"\\]|\\.)*'
+RC_CAPTION_RE = re.compile(rf'\bCAPTION\s+"({RC_STRING_BODY})"')
 RC_CONTROL_LINE_RE = re.compile(
     r"^\s*(LTEXT|RTEXT|CTEXT|PUSHBUTTON|DEFPUSHBUTTON|GROUPBOX|CONTROL|"
     r"AUTOCHECKBOX|AUTORADIOBUTTON|AUTO3STATE|CHECKBOX|RADIOBUTTON|"
     r"EDITTEXT|COMBOBOX|LISTBOX|SCROLLBAR|ICON|PROGRESS_MS|CONTROL_MS)\b",
     re.M)
-RC_QUOTED_RE = re.compile(r'"((?:[^"\\]|\\.)*)"')
-RC_MENUITEM_RE = re.compile(r'\b(MENUITEM|POPUP)\s+"((?:[^"\\]|\\.)*)"')
+RC_QUOTED_RE = re.compile(rf'"({RC_STRING_BODY})"')
+RC_MENUITEM_RE = re.compile(rf'\b(MENUITEM|POPUP)\s+"({RC_STRING_BODY})"')
 RC_MENU_BLOCK_RE = re.compile(r"\b(MENU|MENUEX)\b")
 
 RC_CONTROL_CLASSES_WITH_TEXT = {
@@ -402,14 +402,61 @@ def rc_unescape(body: str) -> str:
     return body.replace('""', '"')
 
 
+def mask_rc_comments(source: str) -> str:
+    """Mask comments without treating URLs inside RC strings as comments."""
+    result = list(source)
+    index = 0
+    in_string = False
+
+    while index < len(source):
+        if in_string:
+            if source[index] == '"':
+                if index + 1 < len(source) and source[index + 1] == '"':
+                    index += 2
+                    continue
+                in_string = False
+            elif source[index] == "\\" and index + 1 < len(source):
+                index += 2
+                continue
+            index += 1
+            continue
+
+        if source[index] == '"':
+            in_string = True
+            index += 1
+            continue
+
+        if source.startswith("//", index):
+            end = source.find("\n", index)
+            if end == -1:
+                end = len(source)
+            for position in range(index, end):
+                result[position] = " "
+            index = end
+            continue
+
+        if source.startswith("/*", index):
+            end = source.find("*/", index + 2)
+            end = len(source) if end == -1 else end + 2
+            for position in range(index, end):
+                if result[position] not in "\r\n":
+                    result[position] = " "
+            index = end
+            continue
+
+        index += 1
+
+    return "".join(result)
+
+
 def scan_rc_file(path: str, entries):
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     base = os.path.basename(path).lower()
-    if base in ("version.rc",):
+    if base == "version.rc" or base.endswith(".zh-cn.rc"):
         return
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         raw = f.read()
-    text = RC_COMMENT_RE.sub(lambda m: " " * len(m.group(0)), raw)
+    text = mask_rc_comments(raw)
     has_menu = RC_MENU_BLOCK_RE.search(text)
 
     for m in RC_CAPTION_RE.finditer(text):
