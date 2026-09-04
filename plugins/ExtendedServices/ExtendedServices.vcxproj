@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExtendedServices.rc" />
+    <ResourceCompile Include="ExtendedServices.zh-cn.rc" />
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

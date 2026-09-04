@@ -1,0 +1,36 @@
+﻿// GENERATED FILE - DO NOT EDIT MANUALLY
+// Source: plugins/Updater/Updater.rc
+// Translations: tools/zhcn/zh-CN.json
+// Generator: tools/zhcn/generate_native_resources.py
+
+#include "resource.h"
+#include "winres.h"
+
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+
+IDD_OPTIONS DIALOGEX 0, 0, 288, 93
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "更新程序选项"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x1
+BEGIN
+    CONTROL         "自动检查更新",IDC_AUTOCHECKBOX,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,37,142,10
+    COMBOBOX        IDC_UPDATE_INTERVAL,153,35,55,14,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "上次检查更新：不可用",IDC_TEXT,7,7,276,8
+    LTEXT           "下次检查更新：不可用",IDC_TEXT2,7,21,276,8
+    CONTROL         "在主窗口之前显示更新提示",IDC_SHOWSTARTPROMPTCHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,51,160,10
+    CONTROL         "跳过更新检查询问并自动搜索",IDC_SKIPWELCOMEPAGECHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,65,169,10
+    CONTROL         "显示更新通知而非更新提示",IDC_SHOWUPDATENOTIFICATION,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,78,182,10
+END
+
+IDD_TEXT DIALOGEX 0, 0, 309, 176
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "更新日志"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDCANCEL,258,159,50,14
+    CONTROL         "",IDC_COMMITS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,1,1,307,156
+END

@@ -73,6 +73,9 @@
     <ResourceCompile Include="ToolStatus.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="ToolStatus.zh-cn.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

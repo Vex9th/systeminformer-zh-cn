@@ -73,6 +73,9 @@
     <ResourceCompile Include="Updater.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="Updater.zh-cn.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

@@ -138,7 +138,22 @@ jobs:
     - name: Validate embedded en-US and zh-CN dialog resources
       shell: pwsh
       working-directory: ${{github.workspace}}
-      run: python tools\zhcn\validate_templates.py bin\Release64\sys_info.exe
+      run: |
+        $resourceTargets = @(
+          'bin\Release64\sys_info.exe',
+          'bin\Release64\plugins\DotNetTools.dll',
+          'bin\Release64\plugins\ExtendedNotifications.dll',
+          'bin\Release64\plugins\ExtendedServices.dll',
+          'bin\Release64\plugins\ExtendedTools.dll',
+          'bin\Release64\plugins\HardwareDevices.dll',
+          'bin\Release64\plugins\NetworkTools.dll',
+          'bin\Release64\plugins\OnlineChecks.dll',
+          'bin\Release64\plugins\ToolStatus.dll',
+          'bin\Release64\plugins\Updater.dll',
+          'bin\Release64\plugins\UserNotes.dll',
+          'bin\Release64\plugins\WindowExplorer.dll'
+        )
+        python tools\zhcn\validate_templates.py @resourceTargets
 
     - name: Assert driverless output (no .sys / .inf)
       shell: pwsh
@@ -269,7 +284,22 @@ jobs:
     - name: Validate embedded en-US and zh-CN dialog resources
       shell: pwsh
       working-directory: ${{github.workspace}}
-      run: python tools\zhcn\validate_templates.py bin\Release64\sys_info.exe
+      run: |
+        $resourceTargets = @(
+          'bin\Release64\sys_info.exe',
+          'bin\Release64\plugins\DotNetTools.dll',
+          'bin\Release64\plugins\ExtendedNotifications.dll',
+          'bin\Release64\plugins\ExtendedServices.dll',
+          'bin\Release64\plugins\ExtendedTools.dll',
+          'bin\Release64\plugins\HardwareDevices.dll',
+          'bin\Release64\plugins\NetworkTools.dll',
+          'bin\Release64\plugins\OnlineChecks.dll',
+          'bin\Release64\plugins\ToolStatus.dll',
+          'bin\Release64\plugins\Updater.dll',
+          'bin\Release64\plugins\UserNotes.dll',
+          'bin\Release64\plugins\WindowExplorer.dll'
+        )
+        python tools\zhcn\validate_templates.py @resourceTargets
 
     - name: Assert driverless output (no .sys / .inf)
       shell: pwsh

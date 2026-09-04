@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Validate embedded en-US and zh-CN dialog resources in a built PE file.
+"""Validate embedded en-US and zh-CN dialogs in built PE files.
 
 This checks the compiled resource tree rather than replaying the retired
 runtime text-rewrite algorithm. Every en-US dialog must have a zh-CN resource
@@ -190,13 +190,10 @@ def contains_han(text: str) -> bool:
     return any("\u3400" <= character <= "\u9fff" for character in text)
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("exe")
-    args = parser.parse_args()
-
+def validate_pe(path: str) -> int:
+    print(f"validating native dialogs: {path}")
     try:
-        with open(args.exe, "rb") as file:
+        with open(path, "rb") as file:
             resources = parse_pe_resources(file.read())
     except (OSError, ValueError, struct.error, UnicodeDecodeError) as exc:
         print(f"error: {exc}")
@@ -259,6 +256,16 @@ def main() -> int:
         f"native dialogs: en-US {len(english_ids)}, zh-CN {len(chinese_ids)}, "
         f"zh-CN dialogs with Chinese text {chinese_dialogs_with_han}, failures {failures}"
     )
+    return 1 if failures else 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("pe", nargs="+")
+    args = parser.parse_args()
+    failures = sum(validate_pe(path) for path in args.pe)
+
+    print(f"validated PE files: {len(args.pe)}, failed files: {failures}")
     return 1 if failures else 0
 
 

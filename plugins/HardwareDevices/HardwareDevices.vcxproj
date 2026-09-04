@@ -136,6 +136,7 @@
     <ResourceCompile Include="HardwareDevices.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="HardwareDevices.zh-cn.rc" />
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

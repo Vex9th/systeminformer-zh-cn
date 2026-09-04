@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UserNotes.rc" />
+    <ResourceCompile Include="UserNotes.zh-cn.rc" />
     <ResourceCompile Include="version.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

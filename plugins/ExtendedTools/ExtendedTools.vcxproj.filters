@@ -271,6 +271,9 @@
     <ResourceCompile Include="ExtendedTools.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="ExtendedTools.zh-cn.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

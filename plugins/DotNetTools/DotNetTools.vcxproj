@@ -125,6 +125,7 @@
     <ResourceCompile Include="DotNetTools.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="DotNetTools.zh-cn.rc" />
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ToolStatus.rc" />
+    <ResourceCompile Include="ToolStatus.zh-cn.rc" />
     <ResourceCompile Include="version.rc" />
   </ItemGroup>
   <ItemGroup>

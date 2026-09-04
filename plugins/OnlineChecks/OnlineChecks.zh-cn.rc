@@ -1,0 +1,66 @@
+﻿// GENERATED FILE - DO NOT EDIT MANUALLY
+// Source: plugins/OnlineChecks/OnlineChecks.rc
+// Translations: tools/zhcn/zh-CN.json
+// Generator: tools/zhcn/generate_native_resources.py
+
+#include "resource.h"
+#include "winres.h"
+
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+
+IDD_OPTIONS DIALOGEX 0, 0, 313, 229
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "设置"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x1
+BEGIN
+    CONTROL         "启用扫描",IDC_ENABLE_SCANNING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,120,10
+    RTEXT           "启动延迟（秒）：",IDC_SCAN_DELAY_LABEL,176,8,104,8
+    EDITTEXT        IDC_SCAN_DELAY,282,6,24,12,ES_AUTOHSCROLL | ES_NUMBER
+    GROUPBOX        "Hybrid-Analysis",IDC_HA_GROUP,7,19,300,44
+    CONTROL         "自动扫描",IDC_HA_LOOKUPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,31,100,10
+    CONTROL         "自动提交",IDC_HA_SUBMIT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,31,110,10
+    PUSHBUTTON      "更改",IDC_APIKEYIDBTN,16,45,50,14
+    LTEXT           "API 密钥：",IDC_STATIC,72,48,30,8
+    LTEXT           "",IDC_HA_KEY_STATUS,103,48,199,8
+    GROUPBOX        "VirusTotal",IDC_VT_GROUP,7,67,300,44
+    CONTROL         "自动扫描",IDC_VT_LOOKUPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,79,130,10
+    PUSHBUTTON      "更改",IDC_VTKEYIDBTN,16,93,50,14
+    LTEXT           "API 密钥：",IDC_STATIC,72,96,30,8
+    LTEXT           "",IDC_VT_KEY_STATUS,103,96,199,8
+    GROUPBOX        "扫描排除项",IDC_EXCLUDE_GROUP,7,115,300,111
+    LTEXT           "正则表达式将匹配完整文件路径；仅用于自动扫描。",IDC_STATIC,16,126,284,8
+    LISTBOX         IDC_EXCLUDE_LIST,16,138,224,66,LBS_NOINTEGRALHEIGHT | LBS_NOTIFY | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "移除",IDC_EXCLUDE_REMOVE,246,138,54,14
+    EDITTEXT        IDC_EXCLUDE_TEXT,16,208,224,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "添加",IDC_EXCLUDE_ADD,246,208,54,14
+END
+
+IDD_OPTIONSKEY DIALOGEX 0, 0, 309, 68
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "更新密钥"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "保存",IDYES,198,47,50,14
+    PUSHBUTTON      "取消",IDCANCEL,252,47,50,14
+    EDITTEXT        IDC_KEY_EDIT,7,24,295,14,ES_AUTOHSCROLL
+    LTEXT           "将密钥粘贴到下方：",IDC_KEYTEXT_L,7,7,172,8
+    CONTROL         "查看<a href="""">许可证密钥生成教程</a>",IDC_HELPLINK,
+                    "SysLink",WS_TABSTOP,7,47,136,14
+END
+
+IDD_PARTNER DIALOGEX 0, 0, 320, 205
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "sys_info"
+FONT 9, "Microsoft YaHei UI", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_PARTNER_BANNER,"Static",SS_OWNERDRAW,70,10,180,50
+    LTEXT           "文件信誉分析",IDC_PARTNER_TITLE,7,66,306,12,SS_CENTER
+    LTEXT           "sys_info 已与 Hybrid-Analysis 展开合作，为进程、已加载的模块和服务提供自动信誉分析。",IDC_STATIC,30,84,260,20
+    GROUPBOX        "与 Hybrid-Analysis 共享的内容",IDC_STATIC,30,110,260,42
+    LTEXT           "•  已扫描映像的 SHA-256 哈希，用于信誉查询",IDC_STATIC,38,124,244,9
+    LTEXT           "•  Hybrid-Analysis 未知的文件将被上传以进行完整分析",IDC_STATIC,38,138,244,9
+    LTEXT           "结果显示在 Hybrid-Analysis 列中。要显示该列，请右键点击任意列标题并选择“选择列...”。",IDC_STATIC,30,159,260,18
+    CONTROL         "Hybrid-Analysis",IDC_PARTNER_LINK,"SysLink",WS_TABSTOP,7,187,90,10
+    PUSHBUTTON      "配置",IDC_PARTNER_CONFIGURE,189,184,58,14
+    DEFPUSHBUTTON   "保持启用",IDOK,251,184,62,14
+END

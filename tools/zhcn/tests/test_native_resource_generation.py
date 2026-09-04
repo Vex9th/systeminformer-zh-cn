@@ -7,12 +7,26 @@ import struct
 import subprocess
 import sys
 import unittest
+import xml.etree.ElementTree as ET
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 GENERATOR = REPO_ROOT / "tools" / "zhcn" / "generate_native_resources.py"
 SOURCE_RC = REPO_ROOT / "SystemInformer" / "SystemInformer.rc"
 ZH_CN_RC = REPO_ROOT / "SystemInformer" / "SystemInformer.zh-cn.rc"
+PLUGIN_MODULES = (
+    "DotNetTools",
+    "ExtendedNotifications",
+    "ExtendedServices",
+    "ExtendedTools",
+    "HardwareDevices",
+    "NetworkTools",
+    "OnlineChecks",
+    "ToolStatus",
+    "Updater",
+    "UserNotes",
+    "WindowExplorer",
+)
 DIALOG_RE = re.compile(r"(?m)^([A-Z][A-Z0-9_]*)\s+DIALOG(?:EX)?\b")
 FONT_RE = re.compile(r'(?m)^\s*FONT\s+(\d+)\s*,\s*"([^"]+)"')
 
@@ -193,7 +207,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             validator.dialog_font_attributes(changed_weight["font"]),
         )
 
-    def test_generated_resource_is_current(self) -> None:
+    def test_all_generated_resources_are_current(self) -> None:
         result = subprocess.run(
             [sys.executable, str(GENERATOR), "--check"],
             cwd=REPO_ROOT,
@@ -202,6 +216,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("12 modules", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -237,6 +252,89 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertIn('<ResourceCompile Include="SystemInformer.zh-cn.rc" />', project)
         self.assertIn("generate_native_resources.py --check", workflow)
+
+    def test_plugin_native_resources_are_compiled_by_their_projects(self) -> None:
+        for module_name in PLUGIN_MODULES:
+            with self.subTest(module=module_name):
+                module_dir = REPO_ROOT / "plugins" / module_name
+                localized_name = f"{module_name}.zh-cn.rc"
+                localized = module_dir / localized_name
+                project_root = ET.parse(
+                    module_dir / f"{module_name}.vcxproj"
+                ).getroot()
+                filters_root = ET.parse(
+                    module_dir / f"{module_name}.vcxproj.filters"
+                ).getroot()
+                project_resources = [
+                    element.attrib.get("Include")
+                    for element in project_root.iter()
+                    if element.tag.endswith("ResourceCompile")
+                ]
+                filter_resources = [
+                    element
+                    for element in filters_root.iter()
+                    if element.tag.endswith("ResourceCompile")
+                    and element.attrib.get("Include") == localized_name
+                ]
+
+                self.assertTrue(localized.is_file())
+                self.assertTrue(localized.read_bytes().startswith(b"\xef\xbb\xbf"))
+                self.assertEqual(project_resources.count(localized_name), 1)
+                self.assertEqual(len(filter_resources), 1)
+                filter_names = [
+                    child.text
+                    for child in filter_resources[0]
+                    if child.tag.endswith("Filter")
+                ]
+                self.assertEqual(filter_names, ["Resource Files"])
+
+    def test_plugin_dialog_resource_ids_and_fonts_match_english_sources(self) -> None:
+        for module_name in PLUGIN_MODULES:
+            with self.subTest(module=module_name):
+                module_dir = REPO_ROOT / "plugins" / module_name
+                source = (module_dir / f"{module_name}.rc").read_text(
+                    encoding="utf-8-sig"
+                )
+                localized = (module_dir / f"{module_name}.zh-cn.rc").read_text(
+                    encoding="utf-8-sig"
+                )
+                source_ids = DIALOG_RE.findall(source)
+                localized_ids = DIALOG_RE.findall(localized)
+                fonts = FONT_RE.findall(localized)
+
+                self.assertGreater(len(source_ids), 0)
+                self.assertEqual(localized_ids, source_ids)
+                self.assertEqual(len(fonts), len(source_ids))
+                self.assertIn(
+                    "LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED",
+                    localized,
+                )
+                self.assertTrue(
+                    all(int(point_size) >= 9 for point_size, _ in fonts)
+                )
+                self.assertTrue(
+                    all(typeface == "Microsoft YaHei UI" for _, typeface in fonts)
+                )
+
+    def test_ci_validates_all_built_plugin_resources(self) -> None:
+        workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
+            encoding="utf-8-sig"
+        )
+        target_blocks = re.findall(
+            r"\$resourceTargets = @\((.*?)\)\s+"
+            r"python tools\\zhcn\\validate_templates\.py @resourceTargets",
+            workflow,
+            re.DOTALL,
+        )
+
+        self.assertEqual(len(target_blocks), 2)
+        for target_block in target_blocks:
+            self.assertIn(r"bin\Release64\sys_info.exe", target_block)
+            for module_name in PLUGIN_MODULES:
+                self.assertIn(
+                    rf"bin\Release64\plugins\{module_name}.dll",
+                    target_block,
+                )
 
     def test_english_manifest_ignores_generated_localized_resources(self) -> None:
         audit = (REPO_ROOT / "tools" / "zhcn" / "audit.py").read_text(encoding="utf-8")

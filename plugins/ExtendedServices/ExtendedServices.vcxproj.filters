@@ -55,6 +55,9 @@
     <ResourceCompile Include="ExtendedServices.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="ExtendedServices.zh-cn.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

@@ -64,6 +64,9 @@
     <ResourceCompile Include="NetworkTools.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="NetworkTools.zh-cn.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

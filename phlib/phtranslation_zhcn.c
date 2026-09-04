@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1892] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1895] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -440,6 +440,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1892] =
     { L"Device ID", L"设备 ID", },
     { L"Devices", L"设备", },
     { L"Diagnostics", L"诊断", },
+    { L"Dialog", L"对话框", },
     { L"Digest", L"摘要", },
     { L"Digest value", L"摘要值", },
     { L"Direction", L"方向", },
@@ -1270,6 +1271,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1892] =
     { L"Refresh a&utomaticallyF6", L"自动刷新(&U)F6", },
     { L"Refresh i&nterval", L"刷新间隔(&N)", },
     { L"Regex (case-insensitive)...", L"正则表达式（不区分大小写）...", },
+    { L"Regex matched against the full file path; automatic scanning only.", L"正则表达式将匹配完整文件路径；仅用于自动扫描。", },
     { L"Regex...", L"正则表达式...", },
     { L"Region type", L"区域类型", },
     { L"Relative start time", L"相对启动时间", },
@@ -1813,6 +1815,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1892] =
     { L"With unloaded modules", L"附带已卸载的模块", },
     { L"Without auxiliary state", L"不含辅助状态", },
     { L"Without optional data", L"不含可选数据", },
+    { L"Worker Factory", L"工作线程工厂", },
     { L"Worker thread context: Unknown", L"工作线程上下文：未知", },
     { L"Worker thread start: Unknown", L"工作线程起始地址：未知", },
     { L"Working set", L"工作集", },

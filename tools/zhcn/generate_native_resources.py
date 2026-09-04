@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Generate the main executable's native zh-CN dialog resources.
+"""Generate native zh-CN dialog resources for the executable and plugins.
 
 The English resource script remains the structural source of truth. This
 generator copies every DIALOG/DIALOGEX block, replaces only user-visible text,
@@ -20,6 +20,29 @@ REPO_ROOT = HERE.parents[1]
 SOURCE_RC = REPO_ROOT / "SystemInformer" / "SystemInformer.rc"
 OUTPUT_RC = REPO_ROOT / "SystemInformer" / "SystemInformer.zh-cn.rc"
 TRANSLATIONS = HERE / "zh-CN.json"
+PLUGIN_NAMES = (
+    "DotNetTools",
+    "ExtendedNotifications",
+    "ExtendedServices",
+    "ExtendedTools",
+    "HardwareDevices",
+    "NetworkTools",
+    "OnlineChecks",
+    "ToolStatus",
+    "Updater",
+    "UserNotes",
+    "WindowExplorer",
+)
+RESOURCE_MODULES = (
+    (SOURCE_RC, OUTPUT_RC),
+    *(
+        (
+            REPO_ROOT / "plugins" / name / f"{name}.rc",
+            REPO_ROOT / "plugins" / name / f"{name}.zh-cn.rc",
+        )
+        for name in PLUGIN_NAMES
+    ),
+)
 
 DIALOG_HEADER_RE = re.compile(r"^([A-Z][A-Z0-9_]*)\s+DIALOG(?:EX)?\b")
 FONT_RE = re.compile(
@@ -32,6 +55,7 @@ CONTROL_RE = re.compile(
     r"CONTROL_MS)\b"
 )
 FIRST_STRING_RE = re.compile(r'"((?:""|[^"\\]|\\.)*)"')
+INCLUDE_RE = re.compile(r'^#include\s+"[^"]+"\s*$')
 
 
 def extract_dialog_blocks(source: str) -> list[list[str]]:
@@ -124,6 +148,26 @@ def localize_dialog_block(
     return localized
 
 
+def source_label(path: pathlib.Path) -> str:
+    try:
+        return path.resolve().relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def source_includes(source: str) -> list[str]:
+    includes = []
+
+    for line in source.splitlines():
+        if INCLUDE_RE.match(line) and line not in includes:
+            includes.append(line)
+
+    if not includes:
+        raise ValueError("resource source contains no direct #include directives")
+
+    return includes
+
+
 def build(source_path: pathlib.Path, translation_path: pathlib.Path) -> str:
     source = source_path.read_text(encoding="utf-8-sig")
     translation_data = json.loads(translation_path.read_text(encoding="utf-8"))
@@ -135,13 +179,11 @@ def build(source_path: pathlib.Path, translation_path: pathlib.Path) -> str:
 
     lines = [
         "// GENERATED FILE - DO NOT EDIT MANUALLY",
-        "// Source: SystemInformer/SystemInformer.rc",
+        f"// Source: {source_label(source_path)}",
         "// Translations: tools/zhcn/zh-CN.json",
         "// Generator: tools/zhcn/generate_native_resources.py",
         "",
-        '#include "resource.h"',
-        '#include "winres.h"',
-        '#include "include/phappres.h"',
+        *source_includes(source),
         "",
         "LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED",
         "",
@@ -154,36 +196,67 @@ def build(source_path: pathlib.Path, translation_path: pathlib.Path) -> str:
     return "\n".join(lines)
 
 
+def process_module(
+    source: pathlib.Path,
+    output: pathlib.Path,
+    translation: pathlib.Path,
+    check: bool,
+) -> tuple[int, int]:
+    content = build(source, translation)
+    dialog_count = len(extract_dialog_blocks(content))
+
+    if check:
+        current = output.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+
+        if current != content:
+            raise ValueError(f"{output} is stale; regenerate it")
+    else:
+        output.write_bytes(b"\xef\xbb\xbf" + content.encode("utf-8"))
+
+    return 1, dialog_count
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=pathlib.Path, default=SOURCE_RC)
+    parser.add_argument("--source", type=pathlib.Path)
     parser.add_argument("--translation", type=pathlib.Path, default=TRANSLATIONS)
-    parser.add_argument("--output", type=pathlib.Path, default=OUTPUT_RC)
+    parser.add_argument("--output", type=pathlib.Path)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
 
+    if bool(args.source) != bool(args.output):
+        parser.error("--source and --output must be used together")
+
+    modules = (
+        ((args.source, args.output),)
+        if args.source
+        else RESOURCE_MODULES
+    )
+    module_count = 0
+    dialog_count = 0
+
     try:
-        content = build(args.source, args.translation)
+        for source, output in modules:
+            processed_modules, processed_dialogs = process_module(
+                source,
+                output,
+                args.translation,
+                args.check,
+            )
+            module_count += processed_modules
+            dialog_count += processed_dialogs
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
         print(f"error: {exc}")
         return 1
 
     if args.check:
-        try:
-            current = args.output.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
-        except OSError as exc:
-            print(f"error: {exc}")
-            return 1
-
-        if current != content:
-            print(f"error: {args.output} is stale; regenerate it")
-            return 1
-
-        print(f"native zh-CN resources are current ({len(extract_dialog_blocks(content))} dialogs)")
+        print(
+            f"native zh-CN resources are current "
+            f"({module_count} modules, {dialog_count} dialogs)"
+        )
         return 0
 
-    args.output.write_bytes(b"\xef\xbb\xbf" + content.encode("utf-8"))
-    print(f"wrote {args.output} ({len(extract_dialog_blocks(content))} dialogs)")
+    print(f"wrote {module_count} modules ({dialog_count} dialogs)")
     return 0
 
 

@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExtendedNotifications.rc" />
+    <ResourceCompile Include="ExtendedNotifications.zh-cn.rc" />
     <ResourceCompile Include="version.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

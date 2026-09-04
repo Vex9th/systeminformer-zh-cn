@@ -118,6 +118,7 @@
   <ItemGroup>
     <ResourceCompile Include="version.rc" />
     <ResourceCompile Include="WindowExplorer.rc" />
+    <ResourceCompile Include="WindowExplorer.zh-cn.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
