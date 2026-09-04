@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Generate native zh-CN dialog resources for the executable and plugins.
+"""Generate native zh-CN UI resources for the executable, plugins and tools.
 
 The English resource script remains the structural source of truth. This
-generator copies every DIALOG/DIALOGEX block, replaces only user-visible text,
-and assigns an explicit zh-CN language. CI uses --check so an upstream dialog
-change cannot silently leave the localized resource stale.
+generator copies every DIALOG/DIALOGEX and STRINGTABLE block, replaces only
+user-visible text, and assigns an explicit zh-CN language. CI uses --check so
+an upstream UI resource change cannot silently leave the localized resource
+stale.
 """
 
 import argparse
@@ -53,6 +54,8 @@ RESOURCE_MODULES = (
 )
 
 DIALOG_HEADER_RE = re.compile(r"^([A-Z][A-Z0-9_]*)\s+DIALOG(?:EX)?\b")
+STRINGTABLE_HEADER_RE = re.compile(r"^\s*STRINGTABLE\b")
+STRING_ENTRY_RE = re.compile(r'^\s*(?:[A-Z][A-Z0-9_]*|\d+)\s+"')
 FONT_RE = re.compile(
     r'^(\s*FONT\s+)(\d+)(\s*,\s*)"[^"]+"(.*)$'
 )
@@ -64,6 +67,49 @@ CONTROL_RE = re.compile(
 )
 FIRST_STRING_RE = re.compile(r'"((?:""|[^"\\]|\\.)*)"')
 INCLUDE_RE = re.compile(r'^#include\s+"([^"]+)"\s*$')
+RC_ESCAPES = {
+    "a": "\a",
+    "b": "\b",
+    "f": "\f",
+    "n": "\n",
+    "r": "\r",
+    "t": "\t",
+    "v": "\v",
+    "\\": "\\",
+}
+
+
+def decode_rc_string(value: str) -> str:
+    value = value.replace('""', '"')
+    decoded: list[str] = []
+    index = 0
+
+    while index < len(value):
+        if value[index] == "\\" and index + 1 < len(value):
+            escaped = RC_ESCAPES.get(value[index + 1])
+            if escaped is not None:
+                decoded.append(escaped)
+                index += 2
+                continue
+
+        decoded.append(value[index])
+        index += 1
+
+    return "".join(decoded)
+
+
+def encode_rc_string(value: str) -> str:
+    return (
+        value.replace("\\", "\\\\")
+        .replace("\a", "\\a")
+        .replace("\b", "\\b")
+        .replace("\f", "\\f")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+        .replace("\v", "\\v")
+        .replace('"', '""')
+    )
 
 
 def extract_dialog_blocks(source: str) -> list[list[str]]:
@@ -100,28 +146,70 @@ def extract_dialog_blocks(source: str) -> list[list[str]]:
     return blocks
 
 
-def replace_first_string(line: str, translations: dict[str, str]) -> str:
+def extract_stringtable_blocks(source: str) -> list[list[str]]:
+    lines = source.splitlines()
+    blocks: list[list[str]] = []
+    index = 0
+
+    while index < len(lines):
+        if not STRINGTABLE_HEADER_RE.match(lines[index]):
+            index += 1
+            continue
+
+        start = index
+        found_begin = False
+
+        while index < len(lines):
+            token = lines[index].strip()
+
+            if token == "BEGIN":
+                found_begin = True
+            elif token == "END" and found_begin:
+                blocks.append(lines[start:index + 1])
+                index += 1
+                break
+
+            index += 1
+        else:
+            raise ValueError(f"unterminated string table block at line {start + 1}")
+
+    return blocks
+
+
+def replace_first_string(
+    line: str,
+    translations: dict[str, str],
+    decode_escapes: bool = False,
+) -> str:
     match = FIRST_STRING_RE.search(line)
 
     if not match:
         return line
 
-    english = match.group(1).replace('""', '"')
+    english = (
+        decode_rc_string(match.group(1))
+        if decode_escapes
+        else match.group(1).replace('""', '"')
+    )
     if not english:
         return line
 
     if english not in translations:
-        raise ValueError(f"missing translation decision for dialog text: {english!r}")
+        raise ValueError(f"missing translation decision for UI resource text: {english!r}")
 
     chinese = translations[english]
 
     if not chinese:
-        raise ValueError(f"empty translation decision for dialog text: {english!r}")
+        raise ValueError(f"empty translation decision for UI resource text: {english!r}")
 
     if chinese == english:
         return line
 
-    chinese = chinese.replace('"', '""')
+    chinese = (
+        encode_rc_string(chinese)
+        if decode_escapes
+        else chinese.replace('"', '""')
+    )
     return line[:match.start(1)] + chinese + line[match.end(1):]
 
 
@@ -152,6 +240,21 @@ def localize_dialog_block(
             continue
 
         localized.append(line)
+
+    return localized
+
+
+def localize_stringtable_block(
+    block: list[str],
+    translations: dict[str, str],
+) -> list[str]:
+    localized: list[str] = []
+
+    for line in block:
+        if STRING_ENTRY_RE.match(line):
+            localized.append(replace_first_string(line, translations, decode_escapes=True))
+        else:
+            localized.append(line)
 
     return localized
 
@@ -190,6 +293,7 @@ def build(source_path: pathlib.Path, translation_path: pathlib.Path) -> str:
     translation_data = json.loads(translation_path.read_text(encoding="utf-8"))
     translations = translation_data["strings"]
     blocks = extract_dialog_blocks(source)
+    stringtable_blocks = extract_stringtable_blocks(source)
 
     if not blocks:
         raise ValueError(f"no dialog resources found in {source_path}")
@@ -210,6 +314,10 @@ def build(source_path: pathlib.Path, translation_path: pathlib.Path) -> str:
         lines.extend(localize_dialog_block(block, translations))
         lines.append("")
 
+    for block in stringtable_blocks:
+        lines.extend(localize_stringtable_block(block, translations))
+        lines.append("")
+
     return "\n".join(lines)
 
 
@@ -218,9 +326,13 @@ def process_module(
     output: pathlib.Path,
     translation: pathlib.Path,
     check: bool,
-) -> tuple[int, int]:
+) -> tuple[int, int, int]:
     content = build(source, translation)
     dialog_count = len(extract_dialog_blocks(content))
+    string_count = sum(
+        sum(1 for line in block if STRING_ENTRY_RE.match(line))
+        for block in extract_stringtable_blocks(content)
+    )
 
     if check:
         current = output.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
@@ -230,7 +342,7 @@ def process_module(
     else:
         output.write_bytes(b"\xef\xbb\xbf" + content.encode("utf-8"))
 
-    return 1, dialog_count
+    return 1, dialog_count, string_count
 
 
 def main() -> int:
@@ -251,10 +363,11 @@ def main() -> int:
     )
     module_count = 0
     dialog_count = 0
+    string_count = 0
 
     try:
         for source, output in modules:
-            processed_modules, processed_dialogs = process_module(
+            processed_modules, processed_dialogs, processed_strings = process_module(
                 source,
                 output,
                 args.translation,
@@ -262,6 +375,7 @@ def main() -> int:
             )
             module_count += processed_modules
             dialog_count += processed_dialogs
+            string_count += processed_strings
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
         print(f"error: {exc}")
         return 1
@@ -269,11 +383,15 @@ def main() -> int:
     if args.check:
         print(
             f"native zh-CN resources are current "
-            f"({module_count} modules, {dialog_count} dialogs)"
+            f"({module_count} modules, {dialog_count} dialogs, "
+            f"{string_count} strings)"
         )
         return 0
 
-    print(f"wrote {module_count} modules ({dialog_count} dialogs)")
+    print(
+        f"wrote {module_count} modules "
+        f"({dialog_count} dialogs, {string_count} strings)"
+    )
     return 0
 
 

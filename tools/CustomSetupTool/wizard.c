@@ -1103,17 +1103,85 @@ VOID SetupEnableWizardButton(
     }
 }
 
-VOID SetupSetWizardButtonText(
+static VOID SetupSetWizardButtonText(
     _In_ HWND ParentWindowHandle,
     _In_ INT ControlId,
-    _In_ PCWSTR Text
+    _In_ ULONG ResourceId
     )
 {
     HWND buttonHandle;
+    PPH_STRING text;
 
     if (buttonHandle = GetDlgItem(ParentWindowHandle, ControlId))
     {
-        SetWindowText(buttonHandle, Text);
+        if (text = PhLoadUiString(PhInstanceHandle, ResourceId, NULL))
+        {
+            SetWindowText(buttonHandle, text->Buffer);
+            PhDereferenceObject(text);
+        }
+    }
+}
+
+static LONG SetupShowResourceMessage(
+    _In_opt_ HWND WindowHandle,
+    _In_ ULONG Buttons,
+    _In_opt_ PCWSTR Icon,
+    _In_ ULONG TitleResourceId,
+    _In_ ULONG ContentResourceId
+    )
+{
+    LONG result = IDCANCEL;
+    PPH_STRING title;
+    PPH_STRING content;
+
+    title = PhLoadUiString(PhInstanceHandle, TitleResourceId, NULL);
+    content = PhLoadUiString(PhInstanceHandle, ContentResourceId, NULL);
+
+    if (title && content)
+    {
+        result = PhShowMessage2(
+            WindowHandle,
+            Buttons,
+            Icon,
+            title->Buffer,
+            L"%s",
+            content->Buffer
+            );
+    }
+
+    PhClearReference(&title);
+    PhClearReference(&content);
+
+    return result;
+}
+
+static VOID SetupShowResourceStatus(
+    _In_opt_ HWND WindowHandle,
+    _In_ ULONG ResourceId,
+    _In_ NTSTATUS Status
+    )
+{
+    PPH_STRING message;
+
+    if (message = PhLoadUiString(PhInstanceHandle, ResourceId, NULL))
+    {
+        PhShowStatus(WindowHandle, message->Buffer, Status, 0);
+        PhDereferenceObject(message);
+    }
+}
+
+static VOID SetupSetDialogItemTextResource(
+    _In_ HWND WindowHandle,
+    _In_ INT ControlId,
+    _In_ ULONG ResourceId
+    )
+{
+    PPH_STRING text;
+
+    if (text = PhLoadUiString(PhInstanceHandle, ResourceId, NULL))
+    {
+        PhSetDialogItemText(WindowHandle, ControlId, text->Buffer);
+        PhDereferenceObject(text);
     }
 }
 
@@ -1125,12 +1193,12 @@ BOOLEAN SetupCancelWizard(
     if (!Context->SetupProgressActive)
         return TRUE;
 
-    if (PhShowMessage2(
+    if (SetupShowResourceMessage(
         Context->ParentWindowHandle,
         TD_YES_BUTTON | TD_NO_BUTTON,
         TD_WARNING_ICON,
-        L"Cancel Setup?",
-        L"Setup is currently in progress. Cancelling now may leave System Informer partially installed or updated.\r\n\r\nAre you sure you want to cancel?"
+        IDS_SETUP_CANCEL_TITLE,
+        IDS_SETUP_CANCEL_CONTENT
         ) == IDYES)
     {
         return TRUE;
@@ -1163,10 +1231,10 @@ VOID SetupSetWizardButtons(
 
     parentWindowHandle = GetParent(WindowHandle);
     PropSheet_SetWizButtons(parentWindowHandle, Buttons);
-    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_BACK, L"< &Back");
-    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_NEXT, L"&Next >");
-    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_FINISH, L"&Finish");
-    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_CANCEL, L"Cancel");
+    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_BACK, IDS_SETUP_BUTTON_BACK);
+    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_NEXT, IDS_SETUP_BUTTON_NEXT);
+    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_FINISH, IDS_SETUP_BUTTON_FINISH);
+    SetupSetWizardButtonText(parentWindowHandle, IDC_PROPSHEET_CANCEL, IDS_SETUP_BUTTON_CANCEL);
     SetupEnableWizardButton(parentWindowHandle, IDC_PROPSHEET_BACK, ShowBack);
     SetupEnableWizardButton(parentWindowHandle, IDC_PROPSHEET_NEXT, ShowNext);
     SetupEnableWizardButton(parentWindowHandle, IDC_PROPSHEET_FINISH, ShowFinish);
@@ -1306,7 +1374,7 @@ INT_PTR CALLBACK SetupWelcomePageDlgProc(
                                 }
                                 else
                                 {
-                                    PhShowStatus(WindowHandle, L"Unable to restart the application.", status, 0);
+                                    SetupShowResourceStatus(WindowHandle, IDS_SETUP_RESTART_FAILED, status);
                                 }
 
                                 PhDereferenceObject(applicationFileName);
@@ -1674,12 +1742,12 @@ INT_PTR CALLBACK SetupShortcutsPageDlgProc(
                         PhFindCharInStringRef(&folderNameSr, L'>', FALSE) != SIZE_MAX ||
                         PhFindCharInStringRef(&folderNameSr, L'|', FALSE) != SIZE_MAX))
                     {
-                        PhShowMessage2(
+                        SetupShowResourceMessage(
                             WindowHandle,
                             TD_OK_BUTTON,
                             TD_WARNING_ICON,
-                            L"Invalid Start Menu folder",
-                            L"Enter a valid Start Menu folder name."
+                            IDS_SETUP_INVALID_START_MENU_TITLE,
+                            IDS_SETUP_INVALID_START_MENU_CONTENT
                             );
                         SetWindowLongPtr(WindowHandle, DWLP_MSGRESULT, -1);
                         return TRUE;
@@ -1782,7 +1850,7 @@ INT_PTR CALLBACK SetupUninstallPageDlgProc(
             case PSN_SETACTIVE:
                 {
                     SetupSetWizardButtons(WindowHandle, PSWIZB_BACK | PSWIZB_NEXT, TRUE, TRUE, FALSE, TRUE);
-                    SetupSetWizardButtonText(context->ParentWindowHandle, IDC_PROPSHEET_NEXT, L"&Uninstall");
+                    SetupSetWizardButtonText(context->ParentWindowHandle, IDC_PROPSHEET_NEXT, IDS_SETUP_BUTTON_UNINSTALL);
 
                     if (!PhGetOwnTokenAttributes().Elevated)
                     {
@@ -1829,7 +1897,7 @@ INT_PTR CALLBACK SetupUninstallPageDlgProc(
                                 }
                                 else
                                 {
-                                    PhShowStatus(NULL, L"Unable to restart the application.", status, 0);
+                                    SetupShowResourceStatus(NULL, IDS_SETUP_RESTART_FAILED, status);
                                 }
 
                                 PhDereferenceObject(applicationFileName);
@@ -1949,8 +2017,8 @@ INT_PTR CALLBACK SetupInstallPageDlgProc(
 
         if (context->SetupMode == SetupCommandUninstall)
         {
-            PhSetDialogItemText(WindowHandle, IDC_TITLE, L"Uninstalling");
-            PhSetDialogItemText(WindowHandle, IDC_SUBTITLE, L"Please wait while Setup removes System Informer from your computer.");
+            SetupSetDialogItemTextResource(WindowHandle, IDC_TITLE, IDS_SETUP_UNINSTALLING);
+            SetupSetDialogItemTextResource(WindowHandle, IDC_SUBTITLE, IDS_SETUP_UNINSTALLING_CONTENT);
         }
 
         if (context->SetupMode == SetupCommandUpdate)
@@ -2215,11 +2283,11 @@ INT_PTR CALLBACK SetupErrorPageDlgProc(
                     }
                     else
                     {
-                        PhSetDialogItemText(WindowHandle, IDC_STATUS, L"An unknown error occurred.");
+                        SetupSetDialogItemTextResource(WindowHandle, IDC_STATUS, IDS_SETUP_UNKNOWN_ERROR);
                     }
 
                     SetupSetWizardButtons(WindowHandle, PSWIZB_BACK, TRUE, FALSE, FALSE, TRUE);
-                    SetupSetWizardButtonText(context->ParentWindowHandle, IDC_PROPSHEET_BACK, L"Retry");
+                    SetupSetWizardButtonText(context->ParentWindowHandle, IDC_PROPSHEET_BACK, IDS_SETUP_BUTTON_RETRY);
                 }
                 break;
             case PSN_QUERYCANCEL:
@@ -2550,7 +2618,7 @@ VOID SetupShowWizard(
     header.hInstance = PhInstanceHandle;
     header.hIcon = Context->IconLargeHandle;
     header.pfnCallback = SetupPropSheetProc;
-    header.pszCaption = L"System Informer Setup";
+    header.pszCaption = PhApplicationName;
     header.nPages = ARRAYSIZE(pages);
     header.phpage = pages;
 

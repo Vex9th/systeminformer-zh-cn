@@ -45,6 +45,7 @@ TOOL_MODULES = (
 )
 DIALOG_RE = re.compile(r"(?m)^([A-Z][A-Z0-9_]*|\d+)\s+DIALOG(?:EX)?\b")
 FONT_RE = re.compile(r'(?m)^\s*FONT\s+(\d+)\s*,\s*"([^"]+)"')
+STRING_ENTRY_RE = re.compile(r'(?m)^\s*([A-Z][A-Z0-9_]*|\d+)\s+"')
 
 
 def load_validator_module():
@@ -70,8 +71,29 @@ def load_audit_module():
     return module
 
 
+def stringtable_ids(source: str) -> list[str]:
+    generator = load_generator_module()
+    return [
+        resource_id
+        for block in generator.extract_stringtable_blocks(source)
+        for resource_id in STRING_ENTRY_RE.findall("\n".join(block))
+    ]
+
+
 def wide_string(value: str) -> bytes:
     return value.encode("utf-16-le") + b"\0\0"
+
+
+def make_stringtable_block(values: dict[int, str]) -> bytes:
+    data = bytearray()
+
+    for index in range(16):
+        value = values.get(index, "")
+        encoded = value.encode("utf-16-le")
+        data += struct.pack("<H", len(encoded) // 2)
+        data += encoded
+
+    return bytes(data)
 
 
 def make_dialog_template(
@@ -131,6 +153,29 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         self.assertNotIn("Ignored", masked)
 
+    def test_audit_scans_tool_resources_and_stringtables(self) -> None:
+        audit = load_audit_module()
+        source_files = {
+            pathlib.Path(path).resolve().relative_to(REPO_ROOT).as_posix()
+            for path in audit.iter_source_files()
+        }
+        entries = []
+
+        audit.scan_rc_file(
+            str(REPO_ROOT / "tools" / "CustomSetupTool" / "resource.rc"),
+            entries,
+        )
+
+        self.assertIn("tools/peview/peview.rc", source_files)
+        self.assertIn("tools/CustomSetupTool/resource.rc", source_files)
+        self.assertTrue(
+            any(
+                entry["category"] == "rc_stringtable"
+                and entry["english"] == "Downloading update..."
+                for entry in entries
+            )
+        )
+
     def test_generator_parses_rc_doubled_quotes_as_one_string(self):
         generator = load_generator_module()
         line = (
@@ -164,6 +209,34 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 '#include "resource.h"\n#include "upstream-resources.rc2"'
             )
 
+    def test_generator_localizes_stringtable_entries(self) -> None:
+        generator = load_generator_module()
+        block = [
+            "STRINGTABLE",
+            "BEGIN",
+            '    IDS_SETUP_NEXT "&Next >"',
+            "END",
+        ]
+
+        localized = generator.localize_stringtable_block(
+            block,
+            {"&Next >": "下一步(&N) >"},
+        )
+
+        self.assertEqual(localized[2], '    IDS_SETUP_NEXT "下一步(&N) >"')
+
+    def test_generator_preserves_stringtable_line_break_escapes(self) -> None:
+        generator = load_generator_module()
+        line = r'    IDS_SETUP_MESSAGE "First\r\nSecond"'
+
+        localized = generator.replace_first_string(
+            line,
+            {"First\r\nSecond": "第一行\r\n第二行"},
+            decode_escapes=True,
+        )
+
+        self.assertEqual(localized, r'    IDS_SETUP_MESSAGE "第一行\r\n第二行"')
+
     def test_compiled_dialog_parser_separates_structure_text_and_font(self) -> None:
         validator = load_validator_module()
         english = validator.parse_dialog_template(
@@ -177,6 +250,36 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(chinese["font"][0], 9)
         self.assertEqual(chinese["font"][-1], "Microsoft YaHei UI")
         self.assertEqual(chinese["strings"], ["常规", "设置", "Tail"])
+
+    def test_compiled_stringtable_parser_preserves_slots(self) -> None:
+        validator = load_validator_module()
+        strings = validator.parse_stringtable_block(
+            make_stringtable_block({0: "Back", 3: "完成", 8: "😀", 15: "Retry"})
+        )
+
+        self.assertEqual(strings[0], "Back")
+        self.assertEqual(strings[3], "完成")
+        self.assertEqual(strings[8], "😀")
+        self.assertEqual(strings[15], "Retry")
+        self.assertEqual(len(strings), 16)
+        self.assertEqual(
+            validator.format_specifiers("Error %lu: %s"),
+            validator.format_specifiers("错误 %lu：%s"),
+        )
+        self.assertNotEqual(
+            validator.format_specifiers("Error %s: %lu"),
+            validator.format_specifiers("错误 %lu：%s"),
+        )
+        self.assertEqual(
+            validator.format_specifiers("%.*s / %-08I64u"),
+            ["%.*s", "%-08I64u"],
+        )
+        self.assertTrue(validator.required_string_resources_missing(set(), True))
+        self.assertFalse(validator.required_string_resources_missing(set(), False))
+        self.assertFalse(validator.required_string_resources_missing({2000}, True))
+        self.assertTrue(validator.string_resource_count_mismatch({2000}, 41))
+        self.assertFalse(validator.string_resource_count_mismatch(set(range(41)), 41))
+        self.assertFalse(validator.string_resource_count_mismatch({2000}, None))
 
     def test_compiled_dialog_parser_keeps_control_ordinals_in_structure(self) -> None:
         validator = load_validator_module()
@@ -242,6 +345,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
+        self.assertIn("41 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -325,10 +429,13 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 )
                 source_ids = DIALOG_RE.findall(source)
                 localized_ids = DIALOG_RE.findall(localized)
+                source_string_ids = stringtable_ids(source)
+                localized_string_ids = stringtable_ids(localized)
                 fonts = FONT_RE.findall(localized)
 
                 self.assertGreater(len(source_ids), 0)
                 self.assertEqual(localized_ids, source_ids)
+                self.assertEqual(localized_string_ids, source_string_ids)
                 self.assertEqual(len(fonts), len(source_ids))
                 self.assertIn(
                     "LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED",
@@ -348,6 +455,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 localized = localized_path.read_text(encoding="utf-8-sig")
                 source_ids = DIALOG_RE.findall(source)
                 localized_ids = DIALOG_RE.findall(localized)
+                source_string_ids = stringtable_ids(source)
+                localized_string_ids = stringtable_ids(localized)
                 fonts = FONT_RE.findall(localized)
                 localized_name = localized_path.name
                 project_root = ET.parse(project_path).getroot()
@@ -366,6 +475,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
                 self.assertGreater(len(source_ids), 0)
                 self.assertEqual(localized_ids, source_ids)
+                self.assertEqual(localized_string_ids, source_string_ids)
                 self.assertEqual(len(fonts), len(source_ids))
                 self.assertTrue(localized_path.read_bytes().startswith(b"\xef\xbb\xbf"))
                 self.assertIn(
@@ -451,6 +561,47 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('PvpCreateFont(L"Microsoft Sans Serif"', peview)
         self.assertNotIn('PvpCreateFont(L"Tahoma"', peview)
 
+    def test_setup_progress_and_wizard_buttons_use_string_resources(self) -> None:
+        setup_sources = {
+            path.name: path.read_text(encoding="utf-8-sig")
+            for path in (REPO_ROOT / "tools" / "CustomSetupTool").glob("*.c")
+        }
+
+        for name in ("install.c", "update.c", "uninstall.c"):
+            with self.subTest(source=name):
+                self.assertNotRegex(
+                    setup_sources[name],
+                    r"SetupSetProgressText\([^,]+,\s*L\"",
+                )
+
+        wizard = setup_sources["wizard.c"]
+        main = setup_sources["main.c"]
+        self.assertNotRegex(
+            wizard,
+            r"SetupSetWizardButtonText\([^,]+,\s*[^,]+,\s*L\"",
+        )
+        for literal in (
+            'L"Cancel Setup?"',
+            'L"Invalid Start Menu folder"',
+            'L"Enter a valid Start Menu folder name."',
+        ):
+            self.assertNotIn(literal, wizard)
+        self.assertNotRegex(wizard, r"PhShowStatus\([^,]+,\s*L\"")
+        self.assertNotRegex(wizard, r"PhSetDialogItemText\([^,]+,\s*[^,]+,\s*L\"")
+        self.assertNotIn('header.pszCaption = L"', wizard)
+        self.assertIn("header.pszCaption = PhApplicationName;", wizard)
+        self.assertRegex(
+            main,
+            r"SetupApplicationName\s*=\s*PhLoadUiString\(\s*"
+            r"PhInstanceHandle,\s*IDS_SETUP_WINDOW_TITLE,\s*NULL\s*\)",
+        )
+        self.assertIn("PhApplicationName = SetupApplicationName->Buffer;", main)
+        self.assertIn("PhLoadUiString(PhInstanceHandle, ResourceId, NULL)", wizard)
+        self.assertRegex(
+            wizard,
+            r"title->Buffer,\s*L\"%s\",\s*content->Buffer",
+        )
+
     def test_ci_validates_all_built_plugin_resources(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8-sig"
@@ -475,6 +626,26 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(len(target_blocks), 2)
         self.assertEqual(set(re.findall(r"'([^']+)'", target_blocks[0])), expected_branch_targets)
         self.assertEqual(set(re.findall(r"'([^']+)'", target_blocks[1])), expected_release_targets)
+        self.assertEqual(
+            set(re.findall(r"--require-strings-in\s+'([^']+)'", workflow)),
+            {
+                r"build\output\systeminformer-build-release-setup.exe",
+                r"build\output\systeminformer-build-canary-setup.exe",
+            },
+        )
+        self.assertEqual(
+            dict(
+                (path, int(count))
+                for path, count in re.findall(
+                    r"--expect-string-count-in\s+'([^'=]+)=(\d+)'",
+                    workflow,
+                )
+            ),
+            {
+                r"build\output\systeminformer-build-release-setup.exe": 41,
+                r"build\output\systeminformer-build-canary-setup.exe": 41,
+            },
+        )
 
     def test_english_manifest_ignores_generated_localized_resources(self) -> None:
         audit = (REPO_ROOT / "tools" / "zhcn" / "audit.py").read_text(encoding="utf-8")

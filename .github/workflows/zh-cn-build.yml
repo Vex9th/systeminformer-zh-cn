@@ -135,7 +135,7 @@ jobs:
         & tools\tests\phlib-test\bin\Release64\phlib-test.exe
         exit $LASTEXITCODE
 
-    - name: Validate embedded en-US and zh-CN dialog resources
+    - name: Validate embedded en-US and zh-CN UI resources
       shell: pwsh
       working-directory: ${{github.workspace}}
       run: |
@@ -282,7 +282,7 @@ jobs:
         & tools\tests\phlib-test\bin\Release64\phlib-test.exe
         exit $LASTEXITCODE
 
-    - name: Validate embedded en-US and zh-CN dialog resources
+    - name: Validate embedded en-US and zh-CN UI resources
       shell: pwsh
       working-directory: ${{github.workspace}}
       run: |
@@ -303,7 +303,11 @@ jobs:
           'build\output\systeminformer-build-release-setup.exe',
           'build\output\systeminformer-build-canary-setup.exe'
         )
-        python tools\zhcn\validate_templates.py @resourceTargets
+        python tools\zhcn\validate_templates.py @resourceTargets `
+          --require-strings-in 'build\output\systeminformer-build-release-setup.exe' `
+          --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
+          --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=41' `
+          --expect-string-count-in 'build\output\systeminformer-build-canary-setup.exe=41'
 
     - name: Assert driverless output (no .sys / .inf)
       shell: pwsh

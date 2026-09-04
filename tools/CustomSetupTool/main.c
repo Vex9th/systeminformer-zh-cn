@@ -20,6 +20,8 @@
 #define SETUP_CMD_NOSTART    6
 #define SETUP_CMD_HIDE       7
 
+static PPH_STRING SetupApplicationName = NULL;
+
 /**
  * Subclass procedure for the setup task dialog.
  *
@@ -595,6 +597,17 @@ INT WINAPI wWinMain(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
         );
     PhTranslationEnabled = TRUE;
+
+    if (!(SetupApplicationName = PhLoadUiString(
+        PhInstanceHandle,
+        IDS_SETUP_WINDOW_TITLE,
+        NULL
+        )))
+    {
+        return EXIT_FAILURE;
+    }
+
+    PhApplicationName = SetupApplicationName->Buffer;
 
     if (!HR_SUCCESS(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)))
         return EXIT_FAILURE;

@@ -81,7 +81,7 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 动态创建的菜单项、提示、状态栏、错误消息、搜索占位符等改用稳定资源 ID：
 
 ```cpp
-PhLoadString(moduleBase, IDS_EXAMPLE_TEXT);
+PhLoadUiString(moduleBase, IDS_EXAMPLE_TEXT, NULL);
 ```
 
 新增文本时先定义 `IDS_*`，再分别提供英文和中文 `STRINGTABLE`。技术标识、协议字段、文件路径或必须原样展示的第三方名称可以进入有理由的白名单，但不能靠宽泛目录或正则跳过检查。

@@ -60,6 +60,20 @@ VOID SetupSetProgressText(
     }
 }
 
+VOID SetupSetProgressTextResource(
+    _In_ PPH_SETUP_CONTEXT Context,
+    _In_ ULONG ResourceId
+    )
+{
+    PPH_STRING text;
+
+    if (text = PhLoadUiString(PhInstanceHandle, ResourceId, NULL))
+    {
+        SetupSetProgressText(Context, text->Buffer, NULL);
+        PhDereferenceObject(text);
+    }
+}
+
 VOID SetupSetProgressValue(
     _In_ PPH_SETUP_CONTEXT Context,
     _In_ ULONG Value

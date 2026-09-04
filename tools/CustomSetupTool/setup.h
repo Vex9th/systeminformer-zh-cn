@@ -372,6 +372,11 @@ VOID SetupSetProgressText(
     _In_opt_ PCWSTR Content
     );
 
+VOID SetupSetProgressTextResource(
+    _In_ PPH_SETUP_CONTEXT Context,
+    _In_ ULONG ResourceId
+    );
+
 VOID SetupSetProgressValue(
     _In_ PPH_SETUP_CONTEXT Context,
     _In_ ULONG Value

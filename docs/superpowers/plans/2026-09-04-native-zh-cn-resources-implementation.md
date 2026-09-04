@@ -235,6 +235,8 @@ CI 明确传入 `sys_info.exe` 和 11 个插件 DLL，逐文件比较 en-US 与 
 - [ ] **步骤 4：校验 en-US/zh-CN 字符串表 ID 和格式占位符一致**
 - [ ] **步骤 5：让新增未迁移 UI 英文字面量在 CI 中失败**
 
+进行中（2026-09-05）：审计范围已扩到 `peview`、`CustomSetupTool` 和 `CustomSignTool`，不再把独立工具排除在外；当前清单明确列出 115 个尚未迁移的动态 UI 字符串。安装向导实际使用的进度、导航按钮、取消确认、错误提示和窗口标题已先迁入 41 个 en-US/zh-CN `STRINGTABLE` 项，并改用 `PhLoadUiString`；其余 PE 查看器和旧 Task Dialog 路径仍未完成，不能据此勾选任务 8。
+
 ---
 
 ### 任务 9：移除旧运行时翻译层和百分比链路

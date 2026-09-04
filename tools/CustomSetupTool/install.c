@@ -63,7 +63,7 @@ NTSTATUS CALLBACK SetupProgressThread(
     //
 
     SetupSetProgressMarquee(context, TRUE);
-    SetupSetProgressText(context, L"Creating the installation directory...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CREATING_INSTALL_DIRECTORY);
 
     if (!NT_SUCCESS(status = PhCreateDirectoryWin32(&context->SetupInstallPath->sr)))
     {
@@ -77,7 +77,7 @@ NTSTATUS CALLBACK SetupProgressThread(
     // Stop the application.
     //
 
-    SetupSetProgressText(context, L"Stopping System Informer...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_STOPPING_APPLICATION);
 
     if (!NT_SUCCESS(status = SetupShutdownApplication(context)))
     {
@@ -89,7 +89,7 @@ NTSTATUS CALLBACK SetupProgressThread(
     // Stop the kernel driver.
     //
 
-    SetupSetProgressText(context, L"Stopping the kernel driver...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_STOPPING_DRIVER);
 
     if (!NT_SUCCESS(status = SetupUninstallDriver(context)))
     {
@@ -101,14 +101,14 @@ NTSTATUS CALLBACK SetupProgressThread(
     // Upgrade the settings file.
     //
 
-    SetupSetProgressText(context, L"Updating settings...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATING_SETTINGS);
     SetupUpgradeSettingsFile();
 
     //
     // Convert the settings file.
     //
 
-    SetupSetProgressText(context, L"Converting settings...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CONVERTING_SETTINGS);
     SetupConvertSettingsFile();
 
     // Remove the previous installation.
@@ -116,19 +116,19 @@ NTSTATUS CALLBACK SetupProgressThread(
     //    PhDeleteDirectory(Context->SetupInstallPath);
 
     // Perform Windows Options cleanup (registry)
-    SetupSetProgressText(context, L"Removing previous Windows integration...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_REMOVING_WINDOWS_INTEGRATION);
     SetupDeleteWindowsOptions(Context);
 
     // Delete all shortcuts for cleanup
 
-    SetupSetProgressText(context, L"Removing previous shortcuts...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_REMOVING_SHORTCUTS);
     SetupDeleteShortcuts(Context, updateDesktopShortcut, removeStartMenuFolder);
 
     //
     // Create the uninstaller.
     //
 
-    SetupSetProgressText(context, L"Creating the uninstaller...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CREATING_UNINSTALLER);
 
     if (!NT_SUCCESS(status = SetupCreateUninstallFile(context)))
     {
@@ -140,28 +140,28 @@ NTSTATUS CALLBACK SetupProgressThread(
     // Create the ARP uninstall entries.
     //
 
-    SetupSetProgressText(context, L"Creating uninstall registration...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CREATING_UNINSTALL_REGISTRATION);
     SetupCreateUninstallKey(Context);
 
     //
     // Create Windows Error Reporting LocalDumps key.
     //
 
-    SetupSetProgressText(context, L"Creating LocalDumps configuration...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CREATING_LOCALDUMPS);
     SetupCreateLocalDumpsKey();
 
     //
     // Create autorun.
     //
 
-    SetupSetProgressText(context, L"Creating Windows integration...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CREATING_WINDOWS_INTEGRATION);
     SetupCreateWindowsOptions(Context);
 
     //
     // Create shortcuts.
     //
 
-    SetupSetProgressText(context, L"Creating shortcuts...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CREATING_SHORTCUTS);
     SetupCreateShortcuts(Context, updateDesktopShortcut);
 
     // Set the default image execution options.
@@ -173,7 +173,7 @@ NTSTATUS CALLBACK SetupProgressThread(
     //
     // Extract the updated files.
     //
-    SetupSetProgressText(context, L"Extracting files...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_EXTRACTING_FILES);
 
     if (!NT_SUCCESS(status = SetupExtractBuild(Context)))
     {
@@ -181,7 +181,7 @@ NTSTATUS CALLBACK SetupProgressThread(
         goto CleanupExit;
     }
 
-    SetupSetProgressText(context, L"Installation complete.", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_INSTALLATION_COMPLETE);
     SetupSetProgressValue(context, 100);
     context->SetupProgressActive = FALSE;
     context->SetupCompleted = TRUE;
@@ -189,7 +189,7 @@ NTSTATUS CALLBACK SetupProgressThread(
     return STATUS_SUCCESS;
 
 CleanupExit:
-    SetupSetProgressText(context, L"Installation failed.", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_INSTALLATION_FAILED);
     context->SetupProgressActive = FALSE;
     PostMessage(context->DialogHandle, SETUP_SHOWERROR, 0, 0);
     return STATUS_UNSUCCESSFUL;

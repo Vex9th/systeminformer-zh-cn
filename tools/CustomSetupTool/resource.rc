@@ -160,6 +160,57 @@ BEGIN
 END
 
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_SETUP_UNINSTALL_COMPLETE                    "Uninstall complete."
+    IDS_SETUP_UNINSTALL_FAILED                      "Uninstall failed."
+    IDS_SETUP_DOWNLOADING_UPDATE                    "Downloading update..."
+    IDS_SETUP_PREPARING_UPDATE_DIRECTORY            "Preparing the update directory..."
+    IDS_SETUP_STOPPING_APPLICATION                  "Stopping System Informer..."
+    IDS_SETUP_STOPPING_DRIVER                       "Stopping the kernel driver..."
+    IDS_SETUP_UPDATING_UNINSTALLER                  "Updating the uninstaller..."
+    IDS_SETUP_EXTRACTING_UPDATED_FILES              "Extracting updated files..."
+    IDS_SETUP_UPDATING_SETTINGS                     "Updating settings..."
+    IDS_SETUP_CONVERTING_SETTINGS                   "Converting settings..."
+    IDS_SETUP_UPDATING_UNINSTALL_REGISTRATION       "Updating uninstall registration..."
+    IDS_SETUP_UPDATING_LOCALDUMPS                   "Updating LocalDumps configuration..."
+    IDS_SETUP_UPDATING_WINDOWS_INTEGRATION          "Updating Windows integration..."
+    IDS_SETUP_UPDATE_COMPLETE                       "Update complete."
+    IDS_SETUP_UPDATE_FAILED                         "Update failed."
+    IDS_SETUP_CREATING_INSTALL_DIRECTORY            "Creating the installation directory..."
+    IDS_SETUP_REMOVING_WINDOWS_INTEGRATION          "Removing previous Windows integration..."
+    IDS_SETUP_REMOVING_SHORTCUTS                    "Removing previous shortcuts..."
+    IDS_SETUP_CREATING_UNINSTALLER                  "Creating the uninstaller..."
+    IDS_SETUP_CREATING_UNINSTALL_REGISTRATION       "Creating uninstall registration..."
+    IDS_SETUP_CREATING_LOCALDUMPS                   "Creating LocalDumps configuration..."
+    IDS_SETUP_CREATING_WINDOWS_INTEGRATION          "Creating Windows integration..."
+    IDS_SETUP_CREATING_SHORTCUTS                    "Creating shortcuts..."
+    IDS_SETUP_EXTRACTING_FILES                      "Extracting files..."
+    IDS_SETUP_INSTALLATION_COMPLETE                 "Installation complete."
+    IDS_SETUP_INSTALLATION_FAILED                   "Installation failed."
+    IDS_SETUP_BUTTON_BACK                           "< &Back"
+    IDS_SETUP_BUTTON_NEXT                           "&Next >"
+    IDS_SETUP_BUTTON_FINISH                         "&Finish"
+    IDS_SETUP_BUTTON_CANCEL                         "Cancel"
+    IDS_SETUP_BUTTON_UNINSTALL                      "&Uninstall"
+    IDS_SETUP_BUTTON_RETRY                          "Retry"
+    IDS_SETUP_WINDOW_TITLE                          "System Informer Setup"
+    IDS_SETUP_CANCEL_TITLE                          "Cancel Setup?"
+    IDS_SETUP_CANCEL_CONTENT                        "Setup is currently in progress. Cancelling now may leave System Informer partially installed or updated.\r\n\r\nAre you sure you want to cancel?"
+    IDS_SETUP_RESTART_FAILED                        "Unable to restart the application."
+    IDS_SETUP_INVALID_START_MENU_TITLE              "Invalid Start Menu folder"
+    IDS_SETUP_INVALID_START_MENU_CONTENT            "Enter a valid Start Menu folder name."
+    IDS_SETUP_UNINSTALLING                          "Uninstalling"
+    IDS_SETUP_UNINSTALLING_CONTENT                  "Please wait while Setup removes System Informer from your computer."
+    IDS_SETUP_UNKNOWN_ERROR                         "An unknown error occurred."
+END
+
+
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -268,4 +319,3 @@ IDB_PNG1                PNG                     "../../SystemInformer/resources/
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

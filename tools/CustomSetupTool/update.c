@@ -28,7 +28,7 @@ NTSTATUS CALLBACK SetupUpdateBuild(
     context->SetupProgressActive = TRUE;
 
 #if !defined(PH_BUILD_API)
-    SetupSetProgressText(context, L"Downloading update...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_DOWNLOADING_UPDATE);
 
     if (!NT_SUCCESS(status = SetupDownloadBuildZip(context)))
     {
@@ -42,7 +42,7 @@ NTSTATUS CALLBACK SetupUpdateBuild(
     //
 
     SetupSetProgressMarquee(context, TRUE);
-    SetupSetProgressText(context, L"Preparing the update directory...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_PREPARING_UPDATE_DIRECTORY);
 
     if (!NT_SUCCESS(status = PhCreateDirectoryWin32(&context->SetupInstallPath->sr)))
     {
@@ -54,7 +54,7 @@ NTSTATUS CALLBACK SetupUpdateBuild(
     // Stop the application.
     //
 
-    SetupSetProgressText(context, L"Stopping System Informer...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_STOPPING_APPLICATION);
 
     if (!NT_SUCCESS(status = SetupShutdownApplication(context)))
     {
@@ -66,7 +66,7 @@ NTSTATUS CALLBACK SetupUpdateBuild(
     // Stop the kernel driver.
     //
 
-    SetupSetProgressText(context, L"Stopping the kernel driver...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_STOPPING_DRIVER);
 
     if (!NT_SUCCESS(status = SetupUninstallDriver(context)))
     {
@@ -78,7 +78,7 @@ NTSTATUS CALLBACK SetupUpdateBuild(
     // Create the uninstaller.
     //
 
-    SetupSetProgressText(context, L"Updating the uninstaller...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATING_UNINSTALLER);
 
     if (!NT_SUCCESS(status = SetupCreateUninstallFile(context)))
     {
@@ -90,7 +90,7 @@ NTSTATUS CALLBACK SetupUpdateBuild(
     // Extract the updated files.
     //
 
-    SetupSetProgressText(context, L"Extracting updated files...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_EXTRACTING_UPDATED_FILES);
 
     if (!NT_SUCCESS(status = SetupExtractBuild(context)))
     {
@@ -101,34 +101,34 @@ NTSTATUS CALLBACK SetupUpdateBuild(
     //
     // Upgrade the settings file.
     //
-    SetupSetProgressText(context, L"Updating settings...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATING_SETTINGS);
     SetupUpgradeSettingsFile();
 
     //
     // Convert the settings file.
     //
-    SetupSetProgressText(context, L"Converting settings...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_CONVERTING_SETTINGS);
     SetupConvertSettingsFile();
 
     //
     // Create the ARP uninstall config.
     //
-    SetupSetProgressText(context, L"Updating uninstall registration...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATING_UNINSTALL_REGISTRATION);
     SetupCreateUninstallKey(Context);
 
     //
     // Create Windows Error Reporting config.
     //
-    SetupSetProgressText(context, L"Updating LocalDumps configuration...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATING_LOCALDUMPS);
     SetupCreateLocalDumpsKey();
 
     //
     // Create the application path config.
     //
-    SetupSetProgressText(context, L"Updating Windows integration...", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATING_WINDOWS_INTEGRATION);
     SetupCreateWindowsOptions(Context);
 
-    SetupSetProgressText(context, L"Update complete.", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATE_COMPLETE);
     SetupSetProgressValue(context, 100);
     context->SetupProgressActive = FALSE;
     SetupDeleteBuildZip(context);
@@ -137,7 +137,7 @@ NTSTATUS CALLBACK SetupUpdateBuild(
 
 CleanupExit:
 
-    SetupSetProgressText(context, L"Update failed.", NULL);
+    SetupSetProgressTextResource(context, IDS_SETUP_UPDATE_FAILED);
     context->SetupProgressActive = FALSE;
     SetupDeleteBuildZip(context);
     PostMessage(context->DialogHandle, SETUP_SHOWUPDATEERROR, 0, 0);

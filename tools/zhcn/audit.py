@@ -11,6 +11,7 @@ regenerated on every check; it is derived data and must not be committed.
 Categories (each maps to a runtime translation hook in phlib or the exe):
   rc_dialog        dialog template controls and captions (.rc DIALOG/DIALOGEX)
   rc_menu          menu resources (.rc MENU/MENUEX)
+  rc_stringtable   dynamic UI text stored in .rc STRINGTABLE blocks
   c_emenu          PhCreateEMenuItem / PhCreateEMenuItemCallback text
   c_listview_col   PhAddListViewColumn* text
   c_treenew_col    PhAddTreeNewColumn* text
@@ -389,6 +390,13 @@ RC_CONTROL_LINE_RE = re.compile(
 RC_QUOTED_RE = re.compile(rf'"({RC_STRING_BODY})"')
 RC_MENUITEM_RE = re.compile(rf'\b(MENUITEM|POPUP)\s+"({RC_STRING_BODY})"')
 RC_MENU_BLOCK_RE = re.compile(r"\b(MENU|MENUEX)\b")
+RC_STRINGTABLE_BLOCK_RE = re.compile(
+    r"(?ms)^\s*STRINGTABLE\b[^\r\n]*\r?\n\s*BEGIN\s*\r?\n"
+    r"(.*?)^\s*END\s*$"
+)
+RC_STRINGTABLE_ENTRY_RE = re.compile(
+    rf'(?m)^\s*(?:[A-Z][A-Z0-9_]*|\d+)\s+"({RC_STRING_BODY})"'
+)
 
 RC_CONTROL_CLASSES_WITH_TEXT = {
     "LTEXT", "RTEXT", "CTEXT", "PUSHBUTTON", "DEFPUSHBUTTON", "GROUPBOX",
@@ -498,12 +506,35 @@ def scan_rc_file(path: str, entries):
                 "line": line_of_offset(raw, m.start()), "english": t,
             })
 
+    for block_match in RC_STRINGTABLE_BLOCK_RE.finditer(text):
+        block = block_match.group(1)
+
+        for entry_match in RC_STRINGTABLE_ENTRY_RE.finditer(block):
+            t = c_unescape(rc_unescape(entry_match.group(1)))
+
+            if is_noise(t):
+                continue
+
+            entries.append({
+                "category": "rc_stringtable",
+                "file": rel,
+                "line": line_of_offset(raw, block_match.start(1) + entry_match.start()),
+                "english": t,
+            })
+
 
 # ---------------------------------------------------------------------------
 # Walk
 # ---------------------------------------------------------------------------
 
-SCAN_DIRS = ["SystemInformer", "plugins", "phlib"]
+SCAN_DIRS = [
+    "SystemInformer",
+    "plugins",
+    "phlib",
+    "tools/peview",
+    "tools/CustomSetupTool",
+    "tools/CustomSignTool",
+]
 EXCLUDE_PATHS = {
     "SystemInformer/phsvc",       # headless service component, no UI
     "phlib/tests",
