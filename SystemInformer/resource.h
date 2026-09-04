@@ -994,6 +994,27 @@
 #define ID_HACKER_ATTACHTOPROCESS       10326
 #define ID_TOOLS_ENVIRONMENT_VARIABLES  10327
 
+#define IDS_PH_RESET_ALL_SETTINGS                    2000
+#define IDS_PH_CLEAN_UNUSED_SETTINGS                 2001
+#define IDS_PH_RESTART_REQUIRED                      2002
+#define IDS_PH_RESTART_PROMPT                        2003
+#define IDS_PH_UNABLE_REPLACE_TASK_MANAGER           2004
+#define IDS_PH_UNABLE_ENABLE_START_AS_ADMIN          2005
+#define IDS_PH_INSECURE_INSTALL_TITLE                2006
+#define IDS_PH_INSECURE_INSTALL_CONTENT              2007
+#define IDS_PH_UNABLE_CONFIGURE_OPTION               2008
+#define IDS_PH_TRAY_ICON_REQUIRED                    2009
+#define IDS_PH_UNABLE_ENABLE_START_AS_ADMIN_OPTION   2010
+#define IDS_PH_ADMIN_REQUIRED                        2011
+#define IDS_PH_UNSUPPORTED_SCHEMA_VALUE              2012
+#define IDS_PH_UNSUPPORTED_SCHEMA_VALUE_CONTENT      2013
+#define IDS_PH_RESTORE_DEFAULT_TASK_MANAGER           2014
+#define IDS_PH_MAKE_DEFAULT_TASK_MANAGER              2015
+#define IDS_PH_CHANGE_DEFAULT_TASK_MANAGER_ACTION     2016
+#define IDS_PH_ENABLE_START_AS_ADMIN_ACTION           2017
+#define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
+#define IDS_PH_LAST                                  IDS_PH_ENABLE_START_AS_ADMIN_ACTION
+
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
 
@@ -1004,6 +1025,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           170
+#define _APS_NEXT_SYMED_VALUE           2018
 #endif
 #endif

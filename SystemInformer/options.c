@@ -562,7 +562,7 @@ INT_PTR CALLBACK PhOptionsDialogProc(
                         hwndDlg,
                         TD_YES_BUTTON | TD_NO_BUTTON,
                         TD_WARNING_ICON,
-                        L"Do you want to reset all settings and restart System Informer?",
+                        PhGetApplicationUiString(IDS_PH_RESET_ALL_SETTINGS),
                         L""
                         ) == IDYES)
                     {
@@ -596,7 +596,7 @@ INT_PTR CALLBACK PhOptionsDialogProc(
                         hwndDlg,
                         TD_YES_BUTTON | TD_NO_BUTTON,
                         TD_INFORMATION_ICON,
-                        L"Do you want to clean up unused settings?",
+                        PhGetApplicationUiString(IDS_PH_CLEAN_UNUSED_SETTINGS),
                         L""
                         ) == IDYES)
                     {
@@ -1132,18 +1132,18 @@ VOID PhpSetDefaultTaskManager(
     _In_ HWND ParentWindowHandle
     )
 {
-    PWSTR message;
+    PCWSTR message;
 
     if (PhpIsDefaultTaskManager())
     {
-        message = L"Do you want to restore the default Windows Task Manager?";
+        message = PhGetApplicationUiString(IDS_PH_RESTORE_DEFAULT_TASK_MANAGER);
     }
     else
     {
-        message = L"Do you want to make System Informer the default Windows Task Manager?";
+        message = PhGetApplicationUiString(IDS_PH_MAKE_DEFAULT_TASK_MANAGER);
 
         // Warn the user when we're not installed into secure location. (dmex)
-        if (!PhShowOptionsDefaultInstallLocation(ParentWindowHandle, L"Changing the default Task Manager"))
+        if (!PhShowOptionsDefaultInstallLocation(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_CHANGE_DEFAULT_TASK_MANAGER_ACTION)))
         {
             return;
         }
@@ -1204,7 +1204,7 @@ VOID PhpSetDefaultTaskManager(
         }
 
         if (!NT_SUCCESS(status))
-            PhShowStatus(ParentWindowHandle, L"Unable to replace Task Manager", status, 0);
+            PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_REPLACE_TASK_MANAGER), status, 0);
 
         //PhSaveSettings2(PhSettingsFileName);
     }
@@ -1691,8 +1691,8 @@ static VOID PhpOptionsNotifyChangeCallback(
             PhMainWndHandle,
             TD_YES_BUTTON | TD_NO_BUTTON,
             TD_INFORMATION_ICON,
-            L"One or more options you have changed requires a restart of System Informer.",
-            L"Do you want to restart System Informer now?"
+            PhGetApplicationUiString(IDS_PH_RESTART_REQUIRED),
+            PhGetApplicationUiString(IDS_PH_RESTART_PROMPT)
             ) == IDYES)
         {
             SystemInformer_PrepareForEarlyShutdown();
@@ -1729,8 +1729,8 @@ VOID PhShowOptionsRestartRequired(
         ownerWindowHandle,
         TD_YES_BUTTON | TD_NO_BUTTON,
         TD_INFORMATION_ICON,
-        L"One or more options you have changed requires a restart of System Informer.",
-        L"Do you want to restart System Informer now?"
+        PhGetApplicationUiString(IDS_PH_RESTART_REQUIRED),
+        PhGetApplicationUiString(IDS_PH_RESTART_PROMPT)
         ) == IDYES)
     {
         SystemInformer_PrepareForEarlyShutdown();
@@ -1777,8 +1777,8 @@ BOOLEAN PhShowOptionsDefaultInstallLocation(
                         ParentWindowHandle,
                         TD_YES_BUTTON | TD_NO_BUTTON,
                         TD_WARNING_ICON,
-                        L"WARNING: You have not installed System Informer into a secure location.",
-                        L"%s is not recommended when running System Informer from outside a secure location (e.g. Program Files).\r\n\r\nAre you sure you want to continue?",
+                        PhGetApplicationUiString(IDS_PH_INSECURE_INSTALL_TITLE),
+                        PhGetApplicationUiString(IDS_PH_INSECURE_INSTALL_CONTENT),
                         Message
                         ) == IDNO)
                     {
@@ -2249,9 +2249,9 @@ INT_PTR CALLBACK PhpOptionsGeneralDlgProc(
                                         {
                                             PhShowInformation2(
                                                 PhOptionsWindowHandle,
-                                                L"Unable to configure this option.",
+                                                PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_OPTION),
                                                 L"%s",
-                                                L"You need to enable at minimum one tray icon (View menu > Tray Icons) before enabling the hide option."
+                                                PhGetApplicationUiString(IDS_PH_TRAY_ICON_REQUIRED)
                                                 );
                                             SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
                                             return TRUE;
@@ -2266,9 +2266,9 @@ INT_PTR CALLBACK PhpOptionsGeneralDlgProc(
                                         {
                                             PhShowInformation2(
                                                 PhOptionsWindowHandle,
-                                                L"Unable to enable option start as admin.",
+                                                PhGetApplicationUiString(IDS_PH_UNABLE_ENABLE_START_AS_ADMIN_OPTION),
                                                 L"%s",
-                                                L"You need to enable this option with administrative privileges."
+                                                PhGetApplicationUiString(IDS_PH_ADMIN_REQUIRED)
                                                 );
 
                                             SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
@@ -2281,7 +2281,7 @@ INT_PTR CALLBACK PhpOptionsGeneralDlgProc(
                                             HRESULT status;
                                             PPH_STRING quotedFileName;
 
-                                            if (!PhShowOptionsDefaultInstallLocation(PhOptionsWindowHandle, L"Enabling the 'start as admin' option"))
+                                            if (!PhShowOptionsDefaultInstallLocation(PhOptionsWindowHandle, PhGetApplicationUiString(IDS_PH_ENABLE_START_AS_ADMIN_ACTION)))
                                             {
                                                 SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
                                                 return TRUE;
@@ -2302,7 +2302,7 @@ INT_PTR CALLBACK PhpOptionsGeneralDlgProc(
                                             {
                                                 PhShowStatus(
                                                     PhOptionsWindowHandle,
-                                                    L"Unable to enable start as admin.",
+                                                    PhGetApplicationUiString(IDS_PH_UNABLE_ENABLE_START_AS_ADMIN),
                                                     0,
                                                     HRESULT_CODE(status)
                                                     );
@@ -2544,8 +2544,8 @@ static INT_PTR CALLBACK PhpOptionsAdvancedEditDlgProc(
                         {
                             PhShowWarning2(
                                 hwndDlg,
-                                L"The value is outside the schema's supported values.",
-                                L"\"%s\" is not one of the supported values (%s).\r\nThe value was applied anyway.",
+                                PhGetApplicationUiString(IDS_PH_UNSUPPORTED_SCHEMA_VALUE),
+                                PhGetApplicationUiString(IDS_PH_UNSUPPORTED_SCHEMA_VALUE_CONTENT),
                                 settingValue->Buffer,
                                 PhGetString(warning)
                                 );

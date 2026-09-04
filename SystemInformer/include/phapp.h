@@ -99,6 +99,11 @@ extern RTL_ATOM PhHexEditWindowAtom;
 extern RTL_ATOM PhColorBoxWindowAtom;
 extern RTL_ATOM PhTabNewWindowAtom;
 
+PCWSTR
+PhGetApplicationUiString(
+    _In_ ULONG ResourceId
+    );
+
 // begin_phapppub
 FORCEINLINE
 PPH_LIST

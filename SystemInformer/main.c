@@ -52,6 +52,41 @@ RTL_ATOM PhTabNewWindowAtom = RTL_ATOM_INVALID_ATOM;
 static PPH_LIST DialogList = NULL;
 static PPH_LIST FilterList = NULL;
 static PH_AUTO_POOL BaseAutoPool;
+static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1] = { 0 };
+
+static BOOLEAN PhpInitializeApplicationUiStrings(
+    VOID
+    )
+{
+    for (ULONG resourceId = IDS_PH_FIRST; resourceId <= IDS_PH_LAST; resourceId++)
+    {
+        PPH_STRING string;
+
+        if (!(string = PhLoadUiString(PhInstanceHandle, resourceId, NULL)))
+        {
+            for (ULONG clearId = IDS_PH_FIRST; clearId < resourceId; clearId++)
+                PhClearReference(&PhApplicationUiStrings[clearId - IDS_PH_FIRST]);
+
+            return FALSE;
+        }
+
+        PhApplicationUiStrings[resourceId - IDS_PH_FIRST] = string;
+    }
+
+    return TRUE;
+}
+
+PCWSTR PhGetApplicationUiString(
+    _In_ ULONG ResourceId
+    )
+{
+    assert(ResourceId >= IDS_PH_FIRST && ResourceId <= IDS_PH_LAST);
+
+    if (ResourceId < IDS_PH_FIRST || ResourceId > IDS_PH_LAST)
+        return L"";
+
+    return PhGetString(PhApplicationUiStrings[ResourceId - IDS_PH_FIRST]);
+}
 
 INT WINAPI wWinMain(
     _In_ HINSTANCE Instance,
@@ -89,6 +124,10 @@ INT WINAPI wWinMain(
     PhGuiSupportInitialization();
 
     PhInitializeAppSettings();
+
+    if (!PhpInitializeApplicationUiStrings())
+        return 1;
+
     PhInitializeCallbacks();
 
     if (PhStartupParameters.Debug)

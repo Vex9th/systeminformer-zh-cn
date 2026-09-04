@@ -162,6 +162,17 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         self.assertNotIn("Ignored", masked)
 
+    def test_audit_keeps_visible_sentences_that_start_with_placeholder(self) -> None:
+        audit = load_audit_module()
+
+        self.assertTrue(audit.is_noise("%s"))
+        self.assertTrue(audit.is_noise("%lu"))
+        self.assertTrue(audit.is_noise("%lu|"))
+        self.assertFalse(audit.is_noise("%s complete."))
+        self.assertFalse(
+            audit.is_noise("%s is not recommended when running this program.")
+        )
+
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
         audit = load_audit_module()
         source_files = {
@@ -380,7 +391,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("202 strings", result.stdout)
+        self.assertIn("220 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -721,6 +732,70 @@ class NativeResourceGenerationTests(unittest.TestCase):
                         {'L""', 'L"%s"'},
                     )
 
+    def test_main_options_messages_use_native_string_resources(self) -> None:
+        options = (REPO_ROOT / "SystemInformer" / "options.c").read_text(
+            encoding="utf-8-sig"
+        )
+        main = (REPO_ROOT / "SystemInformer" / "main.c").read_text(
+            encoding="utf-8-sig"
+        )
+        resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
+
+        self.assertEqual(len(stringtable_ids(resource_script)), 18)
+        self.assertIn(
+            "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
+            main,
+        )
+        self.assertIn("if (!PhpInitializeApplicationUiStrings())", main)
+
+        resource_ids = set(stringtable_ids(resource_script))
+        used_ids = set(
+            re.findall(
+                r"PhGetApplicationUiString\((IDS_PH_[A-Z0-9_]+)\)",
+                options,
+            )
+        )
+        self.assertEqual(used_ids, resource_ids)
+
+        resource_header = (
+            REPO_ROOT / "SystemInformer" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        numeric_ids = [
+            int(value)
+            for _, value in re.findall(
+                r"^#define\s+(IDS_PH_[A-Z0-9_]+)\s+(\d+)$",
+                resource_header,
+                re.MULTILINE,
+            )
+        ]
+        self.assertEqual(numeric_ids, list(range(2000, 2018)))
+        self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
+        self.assertNotRegex(
+            options,
+            r"PhShowOptionsDefaultInstallLocation\([^;]*L\"",
+        )
+
+        for function_name in (
+            "PhShowError",
+            "PhShowError2",
+            "PhShowInformation2",
+            "PhShowMessage",
+            "PhShowMessage2",
+            "PhShowStatus",
+            "PhShowWarning2",
+        ):
+            calls = re.findall(
+                rf"{function_name}\s*\((.*?)\);",
+                options,
+                re.DOTALL,
+            )
+            for call in calls:
+                with self.subTest(function=function_name, call=call):
+                    self.assertLessEqual(
+                        set(re.findall(r'L"(?:[^"\\]|\\.)*"', call)),
+                        {'L""', 'L"%s"'},
+                    )
+
     def test_setup_progress_and_wizard_buttons_use_string_resources(self) -> None:
         setup_sources = {
             path.name: path.read_text(encoding="utf-8-sig")
@@ -854,6 +929,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
+                    (r"bin\Release64\sys_info.exe", 18): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,

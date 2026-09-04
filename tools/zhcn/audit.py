@@ -89,7 +89,14 @@ def is_noise(s: str) -> bool:
     if not stripped:
         return True
     # Registry paths, URLs, format-only fragments, single characters
-    if re.match(r"^(\\\\|https?://|www\.|%[sdluxX]|\*)", stripped):
+    if re.match(r"^(\\\\|https?://|www\.|\*)", stripped):
+        return True
+    if re.fullmatch(
+        r"%[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?"
+        r"(?:I64|I32|ll|hh|[hlLwIjzt])?[diuoxXfFeEgGaAcCsSpn]"
+        r"[\s|,.;:/-]*",
+        stripped,
+    ):
         return True
     if len(stripped) == 1 and not stripped.isalpha():
         return True

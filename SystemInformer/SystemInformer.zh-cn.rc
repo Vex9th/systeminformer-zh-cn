@@ -1775,3 +1775,25 @@ BEGIN
     PUSHBUTTON      "视图",IDC_SHOW,103,160,47,14,NOT WS_VISIBLE
     CONTROL         "",IDC_SETTINGS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_TABSTOP,0,2,260,46
 END
+
+STRINGTABLE
+BEGIN
+    IDS_PH_RESET_ALL_SETTINGS                    "要重置所有设置并重启 sys_info 吗？"
+    IDS_PH_CLEAN_UNUSED_SETTINGS                 "要清理未使用的设置吗？"
+    IDS_PH_RESTART_REQUIRED                      "你更改的一个或多个选项需要重启 sys_info。"
+    IDS_PH_RESTART_PROMPT                        "要立即重启 sys_info 吗？"
+    IDS_PH_UNABLE_REPLACE_TASK_MANAGER           "无法替换任务管理器"
+    IDS_PH_UNABLE_ENABLE_START_AS_ADMIN          "无法启用以管理员身份启动。"
+    IDS_PH_INSECURE_INSTALL_TITLE                "警告：你尚未将 sys_info 安装到安全位置。"
+    IDS_PH_INSECURE_INSTALL_CONTENT              "从非安全位置（例如 Program Files）运行 sys_info 时，不建议%s。\r\n\r\n确定要继续吗？"
+    IDS_PH_UNABLE_CONFIGURE_OPTION               "无法配置此选项。"
+    IDS_PH_TRAY_ICON_REQUIRED                    "你需要先启用至少一个托盘图标（“查看”菜单 > “托盘图标”），然后才能启用隐藏选项。"
+    IDS_PH_UNABLE_ENABLE_START_AS_ADMIN_OPTION   "无法启用以管理员身份启动选项。"
+    IDS_PH_ADMIN_REQUIRED                        "你需要使用管理员权限启用此选项。"
+    IDS_PH_UNSUPPORTED_SCHEMA_VALUE              "此值不在架构支持的取值范围内。"
+    IDS_PH_UNSUPPORTED_SCHEMA_VALUE_CONTENT      """%s"" 不是受支持的值之一（%s）。\r\n仍已应用该值。"
+    IDS_PH_RESTORE_DEFAULT_TASK_MANAGER           "要恢复默认的 Windows 任务管理器吗？"
+    IDS_PH_MAKE_DEFAULT_TASK_MANAGER              "要将 sys_info 设为默认的 Windows 任务管理器吗？"
+    IDS_PH_CHANGE_DEFAULT_TASK_MANAGER_ACTION     "更改默认任务管理器"
+    IDS_PH_ENABLE_START_AS_ADMIN_ACTION           "启用“以管理员身份启动”选项"
+END

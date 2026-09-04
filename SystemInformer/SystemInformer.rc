@@ -2593,6 +2593,33 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_PH_RESET_ALL_SETTINGS                    "Do you want to reset all settings and restart System Informer?"
+    IDS_PH_CLEAN_UNUSED_SETTINGS                 "Do you want to clean up unused settings?"
+    IDS_PH_RESTART_REQUIRED                      "One or more options you have changed requires a restart of System Informer."
+    IDS_PH_RESTART_PROMPT                        "Do you want to restart System Informer now?"
+    IDS_PH_UNABLE_REPLACE_TASK_MANAGER           "Unable to replace Task Manager"
+    IDS_PH_UNABLE_ENABLE_START_AS_ADMIN          "Unable to enable start as admin."
+    IDS_PH_INSECURE_INSTALL_TITLE                "WARNING: You have not installed System Informer into a secure location."
+    IDS_PH_INSECURE_INSTALL_CONTENT              "%s is not recommended when running System Informer from outside a secure location (e.g. Program Files).\r\n\r\nAre you sure you want to continue?"
+    IDS_PH_UNABLE_CONFIGURE_OPTION               "Unable to configure this option."
+    IDS_PH_TRAY_ICON_REQUIRED                    "You need to enable at minimum one tray icon (View menu > Tray Icons) before enabling the hide option."
+    IDS_PH_UNABLE_ENABLE_START_AS_ADMIN_OPTION   "Unable to enable option start as admin."
+    IDS_PH_ADMIN_REQUIRED                        "You need to enable this option with administrative privileges."
+    IDS_PH_UNSUPPORTED_SCHEMA_VALUE              "The value is outside the schema's supported values."
+    IDS_PH_UNSUPPORTED_SCHEMA_VALUE_CONTENT      """%s"" is not one of the supported values (%s).\r\nThe value was applied anyway."
+    IDS_PH_RESTORE_DEFAULT_TASK_MANAGER           "Do you want to restore the default Windows Task Manager?"
+    IDS_PH_MAKE_DEFAULT_TASK_MANAGER              "Do you want to make System Informer the default Windows Task Manager?"
+    IDS_PH_CHANGE_DEFAULT_TASK_MANAGER_ACTION     "Changing the default Task Manager"
+    IDS_PH_ENABLE_START_AS_ADMIN_ACTION           "Enabling the 'start as admin' option"
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Bitmap
 //
 
@@ -2628,5 +2655,3 @@ END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
-
-
