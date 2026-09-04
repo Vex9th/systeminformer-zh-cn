@@ -151,6 +151,8 @@ class UiResourceLoaderContractTests(unittest.TestCase):
 
         self.assertIn('<ClCompile Include="t_resource.c" />', project)
         self.assertIn('<ResourceCompile Include="phlib-test.rc" />', project)
+        self.assertNotIn("<PlatformToolset>v143</PlatformToolset>", project)
+        self.assertEqual(project.count("$(DefaultPlatformToolset)"), 6)
         self.assertIn("Test_resource();", main)
         self.assertIn("if (!NT_SUCCESS(status))", main)
         self.assertNotIn("assert(", probe)
