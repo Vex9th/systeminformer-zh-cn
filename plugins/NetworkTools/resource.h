@@ -284,6 +284,8 @@
 #define IDC_KEYTEXT_L                   1042
 #define IDC_KEY_EDIT                    1043
 #define IDC_PING_CONTINUOUS             1044
+#define IDS_NT_GEOLITE_LEGACY_WINDOWS  12000
+#define IDS_NT_UNABLE_DISPLAY_WHOIS    12001
 
 // Next default values for new objects
 // 
@@ -292,6 +294,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        112
 #define _APS_NEXT_COMMAND_VALUE         40006
 #define _APS_NEXT_CONTROL_VALUE         1045
-#define _APS_NEXT_SYMED_VALUE           104
+#define _APS_NEXT_SYMED_VALUE           12002
 #endif
 #endif

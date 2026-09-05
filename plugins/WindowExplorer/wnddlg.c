@@ -776,7 +776,7 @@ BOOLEAN WepExecuteWindowCommand(
             status = WeDestroyRemoteWindow(WindowHandle, clientId.UniqueProcess);
 
             if (!NT_SUCCESS(status))
-                PhShowStatus(ParentWindowHandle, L"Unable to destroy the window.", status, 0);
+                PhShowStatus(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_DESTROY_WINDOW, NULL))), status, 0);
         }
         break;
     case ID_WINDOW_VISIBLE:
@@ -2838,7 +2838,7 @@ INT_PTR CALLBACK WepWindowsPageProc(
                             );
 
                         if (!NT_SUCCESS(status))
-                            PhShowStatus(WindowHandle, L"Unable to destroy the window.", status, 0);
+                            PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_DESTROY_WINDOW, NULL))), status, 0);
                     }
                 }
                 break;
@@ -3014,7 +3014,7 @@ INT_PTR CALLBACK WepWindowsPageProc(
                         }
                         else
                         {
-                            PhShowError2(WindowHandle, L"The window does not exist.", L"%s", L"");
+                            PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_WINDOW_NOT_FOUND, NULL))), L"%s", L"");
                         }
                     }
                 }
@@ -3071,7 +3071,7 @@ INT_PTR CALLBACK WepWindowsPageProc(
                     {
                         if (!WeShowWindowProperties(WindowHandle, selectedNode->WindowHandle))
                         {
-                            PhShowError2(WindowHandle, L"The window does not exist.", L"%s", L"");
+                            PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_WINDOW_NOT_FOUND, NULL))), L"%s", L"");
                         }
                     }
                 }

@@ -102,6 +102,10 @@ VOID UpdaterLaunchInstaller(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
+    PH_AUTO_POOL autoPool;
+
+    PhInitializeAutoPool(&autoPool);
+
     // Launch the cached installer; mirrors the IDYES path in
     // FinalTaskDialogCallbackProc (page5.c). NULL parent because there is
     // no active dialog window in the toast flow.
@@ -116,6 +120,8 @@ VOID UpdaterLaunchInstaller(
         // Re-emit the ready-to-install toast on failure so the user can
         // try again. UpdateShellExecute already surfaces UAC errors.
     }
+
+    PhDeleteAutoPool(&autoPool);
 }
 
 _Function_class_(USER_THREAD_START_ROUTINE)

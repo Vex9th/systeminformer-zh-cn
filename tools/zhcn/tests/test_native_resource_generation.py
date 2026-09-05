@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("434 strings", result.stdout)
+        self.assertIn("449 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1557,6 +1557,126 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     expected_count,
                 )
 
+    def test_remaining_plugin_errors_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        files = {
+            "HardwareDevices": ("gpunodes.c",),
+            "NetworkTools": ("update.c", "whois.c"),
+            "OnlineChecks": ("exclude.c", "upload.c"),
+            "ToolStatus": ("find.c", "main.c"),
+            "Updater": ("utils.c",),
+            "WindowExplorer": ("wnddlg.c", "wndprp.c"),
+        }
+        source = "\n".join(
+            audit.mask_c_comments(
+                (REPO_ROOT / "plugins" / plugin / name).read_text(
+                    encoding="utf-8-sig"
+                )
+            )
+            for plugin, names in files.items()
+            for name in names
+        )
+        literals = (
+            "There are no graphics nodes to display.",
+            "The GeoLite updater doesn't support legacy versions of Windows.",
+            "Unable to display the whois window.",
+            "The regular expression could not be compiled.",
+            "Unable to query the service.",
+            "The process (PID %lu) does not exist.",
+            "Unable to display Find dialog.",
+            "Unable to execute the setup.",
+            "Unable to add window property.",
+            "Unable to create the window property.",
+            "Unable to destroy the window.",
+            "Unable to display window properties.",
+            "Unable to remove the window property.",
+            "Unable to update the window property.",
+            "The window does not exist.",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}', source)
+
+        expected_ids = {
+            "IDS_HD_NO_GRAPHICS_NODES": 1,
+            "IDS_NT_GEOLITE_LEGACY_WINDOWS": 1,
+            "IDS_NT_UNABLE_DISPLAY_WHOIS": 1,
+            "IDS_OC_REGEX_COMPILE_FAILED": 1,
+            "IDS_OC_UNABLE_QUERY_SERVICE": 1,
+            "IDS_TS_PROCESS_NOT_FOUND": 2,
+            "IDS_TS_UNABLE_DISPLAY_FIND": 1,
+            "IDS_UP_UNABLE_EXECUTE_SETUP": 1,
+            "IDS_WE_UNABLE_ADD_WINDOW_PROPERTY": 1,
+            "IDS_WE_UNABLE_CREATE_WINDOW_PROPERTY": 1,
+            "IDS_WE_UNABLE_DESTROY_WINDOW": 2,
+            "IDS_WE_UNABLE_DISPLAY_WINDOW_PROPERTIES": 2,
+            "IDS_WE_UNABLE_REMOVE_WINDOW_PROPERTY": 1,
+            "IDS_WE_UNABLE_UPDATE_WINDOW_PROPERTY": 1,
+            "IDS_WE_WINDOW_NOT_FOUND": 2,
+        }
+
+        for resource_id, expected_count in expected_ids.items():
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", source)),
+                    expected_count,
+                )
+
+        resource_ids_by_plugin = {
+            "HardwareDevices": ("IDS_HD_NO_GRAPHICS_NODES",),
+            "NetworkTools": (
+                "IDS_NT_GEOLITE_LEGACY_WINDOWS",
+                "IDS_NT_UNABLE_DISPLAY_WHOIS",
+            ),
+            "OnlineChecks": (
+                "IDS_OC_REGEX_COMPILE_FAILED",
+                "IDS_OC_UNABLE_QUERY_SERVICE",
+            ),
+            "ToolStatus": (
+                "IDS_TS_PROCESS_NOT_FOUND",
+                "IDS_TS_UNABLE_DISPLAY_FIND",
+            ),
+            "Updater": ("IDS_UP_UNABLE_EXECUTE_SETUP",),
+            "WindowExplorer": (
+                "IDS_WE_UNABLE_ADD_WINDOW_PROPERTY",
+                "IDS_WE_UNABLE_CREATE_WINDOW_PROPERTY",
+                "IDS_WE_UNABLE_DESTROY_WINDOW",
+                "IDS_WE_UNABLE_DISPLAY_WINDOW_PROPERTIES",
+                "IDS_WE_UNABLE_REMOVE_WINDOW_PROPERTY",
+                "IDS_WE_UNABLE_UPDATE_WINDOW_PROPERTY",
+                "IDS_WE_WINDOW_NOT_FOUND",
+            ),
+        }
+
+        for plugin, resource_ids in resource_ids_by_plugin.items():
+            header = (
+                REPO_ROOT / "plugins" / plugin / "resource.h"
+            ).read_text(encoding="utf-8-sig")
+            compiled_definitions = header.split("#ifdef APSTUDIO_INVOKED", 1)[0]
+
+            for resource_id in resource_ids:
+                with self.subTest(plugin=plugin, resource_id=resource_id):
+                    self.assertRegex(
+                        compiled_definitions,
+                        rf"(?m)^#define\s+{re.escape(resource_id)}\s+\d+$",
+                    )
+
+    def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
+        ).read_text(encoding="utf-8-sig")
+        launch_body = source.split("VOID UpdaterLaunchInstaller", 1)[1].split(
+            "NTSTATUS NTAPI UpdaterToastInstallThread", 1
+        )[0]
+
+        initialize = launch_body.index("PhInitializeAutoPool")
+        execute = launch_body.index("UpdateShellExecute")
+        cleanup = launch_body.index("PhDeleteAutoPool")
+
+        self.assertLess(initialize, execute)
+        self.assertLess(execute, cleanup)
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -1753,7 +1873,13 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\sys_info.exe", 177): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
+                    (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
+                    (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
+                    (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
+                    (r"bin\Release64\plugins\ToolStatus.dll", 2): 2,
+                    (r"bin\Release64\plugins\Updater.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 7): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,

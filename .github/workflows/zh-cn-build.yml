@@ -158,7 +158,13 @@ jobs:
           --expect-string-count-in 'bin\Release64\sys_info.exe=177' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=15' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=25' `
+          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=1' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=2' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=2' `
+          --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=2' `
+          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=1' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=15' `
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=7' `
           --expect-string-count-in 'bin\Release64\peview.exe=128'
 
     - name: Assert driverless output (no .sys / .inf)
@@ -314,7 +320,13 @@ jobs:
           --expect-string-count-in 'bin\Release64\sys_info.exe=177' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=15' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=25' `
+          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=1' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=2' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=2' `
+          --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=2' `
+          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=1' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=15' `
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=7' `
           --expect-string-count-in 'bin\Release64\peview.exe=128' `
           --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=74' `
           --expect-string-count-in 'build\output\systeminformer-build-canary-setup.exe=74'

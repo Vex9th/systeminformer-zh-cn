@@ -88,7 +88,7 @@ VOID GraphicsDeviceShowNodesDialog(
 {
     if (Context->DeviceEntry->NumberOfNodes == 0)
     {
-        PhShowError2(ParentWindowHandle, L"There are no graphics nodes to display.", L"%s", L"");
+        PhShowError2(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_NO_GRAPHICS_NODES, NULL))), L"%s", L"");
         return;
     }
 

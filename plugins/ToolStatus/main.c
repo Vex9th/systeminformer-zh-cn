@@ -804,7 +804,7 @@ static VOID ToolStatusHandleTargetingResult(
                 }
                 else
                 {
-                    PhShowError2(WindowHandle, SystemInformer_GetWindowName(), L"The process (PID %lu) does not exist.", HandleToUlong(clientId.UniqueProcess));
+                    PhShowError2(WindowHandle, SystemInformer_GetWindowName(), PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_TS_PROCESS_NOT_FOUND, NULL))), HandleToUlong(clientId.UniqueProcess));
                 }
             }
             break;
@@ -819,7 +819,7 @@ static VOID ToolStatusHandleTargetingResult(
                 }
                 else
                 {
-                    PhShowError2(WindowHandle, SystemInformer_GetWindowName(), L"The process (PID %lu) does not exist.", HandleToUlong(clientId.UniqueProcess));
+                    PhShowError2(WindowHandle, SystemInformer_GetWindowName(), PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_TS_PROCESS_NOT_FOUND, NULL))), HandleToUlong(clientId.UniqueProcess));
                 }
             }
             break;

@@ -152,6 +152,12 @@ BEGIN
     0
 END
 
+STRINGTABLE
+BEGIN
+    IDS_OC_REGEX_COMPILE_FAILED     "The regular expression could not be compiled."
+    IDS_OC_UNABLE_QUERY_SERVICE     "Unable to query the service."
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

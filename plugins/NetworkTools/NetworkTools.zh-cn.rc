@@ -85,3 +85,9 @@ BEGIN
     CONTROL         "查看<a href=""https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key"">许可证密钥生成教程</a>",IDC_HELPLINK,
                     "SysLink",WS_TABSTOP,7,47,136,14
 END
+
+STRINGTABLE
+BEGIN
+    IDS_NT_GEOLITE_LEGACY_WINDOWS  "GeoLite 更新程序不支持旧版 Windows。"
+    IDS_NT_UNABLE_DISPLAY_WHOIS    "无法显示 WHOIS 窗口。"
+END

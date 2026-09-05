@@ -674,6 +674,12 @@ END
 #endif    // APSTUDIO_INVOKED
 
 
+STRINGTABLE
+BEGIN
+    IDS_NT_GEOLITE_LEGACY_WINDOWS  "The GeoLite updater doesn't support legacy versions of Windows."
+    IDS_NT_UNABLE_DISPLAY_WHOIS    "Unable to display the whois window."
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -688,4 +694,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

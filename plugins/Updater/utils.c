@@ -73,7 +73,7 @@ NTSTATUS UpdateShellExecute(
 
         if (status != STATUS_CANCELLED) // Ignore UAC decline.
         {
-            PhShowStatus(WindowHandle, L"Unable to execute the setup.", status, 0);
+            PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_UNABLE_EXECUTE_SETUP, NULL))), status, 0);
 
             if (Context->StartupCheck)
                 ShowAvailableDialog(Context);

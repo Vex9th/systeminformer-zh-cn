@@ -838,7 +838,7 @@ VOID ShowGeoLiteUpdateDialog(
 {
     if (!GeoLiteCheckUpdatePlatformSupported())
     {
-        PhShowError2(ParentWindowHandle, L"The GeoLite updater doesn't support legacy versions of Windows.", L"%s", L"");
+        PhShowError2(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_GEOLITE_LEGACY_WINDOWS, NULL))), L"%s", L"");
         return;
     }
 

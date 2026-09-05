@@ -235,7 +235,7 @@ CI 明确传入 `sys_info.exe` 和 11 个插件 DLL，逐文件比较 en-US 与 
 - [ ] **步骤 4：校验 en-US/zh-CN 字符串表 ID 和格式占位符一致**
 - [ ] **步骤 5：让新增未迁移 UI 英文字面量在 CI 中失败**
 
-进行中（2026-09-05）：审计范围已覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。当前共 434 条 en-US/zh-CN `STRINGTABLE` 项：PE Viewer 128 条，安装器 74 条，主程序 177 条，ExtendedServices 15 条，ExtendedTools 25 条，UserNotes 15 条；PE Viewer 的菜单、列表列名、选项和弹窗提示，以及主程序选项/启动/公共错误提示已迁移，并新增扫描式守卫防止英文提示回流。审计现已修正消息宏参数位置，排除注释死代码，并按 C 编译语义合并相邻字符串、检查格式化后续参数和未解析变量；旧字典无法可靠接管的后续参数已迁移调用点，早期崩溃提示保留不依赖缓存的静态后备。当前仍有 29 条已识别动态提示未作翻译决定，PE Viewer 其余动态字段、主程序其余动态文字和插件动态文字仍使用旧兼容字典，因此任务 8 仍不能勾选完成。
+进行中（2026-09-05）：审计范围已覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。当前共 449 条 en-US/zh-CN `STRINGTABLE` 项：PE Viewer 128 条，安装器 74 条，主程序 177 条，ExtendedServices 15 条，ExtendedTools 25 条，UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、ToolStatus、Updater、WindowExplorer 合计 15 条；PE Viewer 的菜单、列表列名、选项和弹窗提示，以及主程序选项/启动/公共错误提示已迁移，并新增扫描式守卫防止英文提示回流。审计现已修正消息宏参数位置，排除注释死代码，并按 C 编译语义合并相邻字符串、检查格式化后续参数和未解析变量；旧字典无法可靠接管的后续参数已迁移调用点，早期崩溃提示保留不依赖缓存的静态后备。当前仍有 14 条已识别动态提示未作翻译决定，主程序和 phlib 的少量动态文字仍使用旧兼容字典，因此任务 8 仍不能勾选完成。
 
 ---
 

@@ -321,7 +321,7 @@ VOID ScanExclusionsAddFromEdit(
     }
     else
     {
-        PhShowError2(WindowHandle, L"The regular expression could not be compiled.", L"%s", message);
+        PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_REGEX_COMPILE_FAILED, NULL))), L"%s", message);
     }
 
     PhDereferenceObject(pattern);

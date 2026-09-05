@@ -157,6 +157,17 @@ END
 
 
 
+STRINGTABLE
+BEGIN
+    IDS_WE_UNABLE_ADD_WINDOW_PROPERTY "Unable to add window property."
+    IDS_WE_UNABLE_CREATE_WINDOW_PROPERTY "Unable to create the window property."
+    IDS_WE_UNABLE_DESTROY_WINDOW    "Unable to destroy the window."
+    IDS_WE_UNABLE_DISPLAY_WINDOW_PROPERTIES "Unable to display window properties."
+    IDS_WE_UNABLE_REMOVE_WINDOW_PROPERTY "Unable to remove the window property."
+    IDS_WE_UNABLE_UPDATE_WINDOW_PROPERTY "Unable to update the window property."
+    IDS_WE_WINDOW_NOT_FOUND         "The window does not exist."
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -171,4 +182,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

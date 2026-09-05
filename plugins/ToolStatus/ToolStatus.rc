@@ -231,6 +231,12 @@ IDI_LIGHTBULB_OFF       ICON                    "resources\\lightbulb_off.ico"
 
 
 
+STRINGTABLE
+BEGIN
+    IDS_TS_PROCESS_NOT_FOUND        "The process (PID %lu) does not exist."
+    IDS_TS_UNABLE_DISPLAY_FIND      "Unable to display Find dialog."
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -245,4 +251,3 @@ IDI_LIGHTBULB_OFF       ICON                    "resources\\lightbulb_off.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

@@ -83,6 +83,7 @@
 #define IDC_DEVICE_INTERFACES_INFO      1109
 #define IDD_DEVICE_RESOURCES            1110
 #define IDC_DEVICE_RESOURCES_INFO       1111
+#define IDS_HD_NO_GRAPHICS_NODES        12000
 
 // Next default values for new objects
 //
@@ -91,6 +92,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        118
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1045
-#define _APS_NEXT_SYMED_VALUE           109
+#define _APS_NEXT_SYMED_VALUE           12001
 #endif
 #endif

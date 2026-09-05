@@ -359,7 +359,7 @@ BOOLEAN WeShowWindowProperties(
 
     if (!IsWindow(WindowHandle))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to display window properties.", STATUS_GRAPHICS_PRESENT_INVALID_WINDOW, 0);
+        PhShowStatus(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_DISPLAY_WINDOW_PROPERTIES, NULL))), STATUS_GRAPHICS_PRESENT_INVALID_WINDOW, 0);
         return FALSE;
     }
 
@@ -367,7 +367,7 @@ BOOLEAN WeShowWindowProperties(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to display window properties.", status, 0);
+        PhShowStatus(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_DISPLAY_WINDOW_PROPERTIES, NULL))), status, 0);
         return FALSE;
     }
 
@@ -2032,7 +2032,7 @@ static INT_PTR CALLBACK WepWindowPropEditDlgProc(
 
                     if (!context->WindowPropCreate && PhIsNullOrEmptyString(windowPropName))
                     {
-                        PhShowError2(WindowHandle, L"Unable to add window property.", L"%s", L"The property name is empty.");
+                        PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_ADD_WINDOW_PROPERTY, NULL))), L"%s", L"The property name is empty.");
                         break;
                     }
 
@@ -2040,7 +2040,7 @@ static INT_PTR CALLBACK WepWindowPropEditDlgProc(
                     {
                         if (!SetProp(context->TargetWindowHandle, PhGetString(windowPropName), (HANDLE)value))
                         {
-                            PhShowStatus(WindowHandle, L"Unable to create the window property.", 0, GetLastError());
+                            PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_CREATE_WINDOW_PROPERTY, NULL))), 0, GetLastError());
                             break;
                         }
                     }
@@ -2048,7 +2048,7 @@ static INT_PTR CALLBACK WepWindowPropEditDlgProc(
                     {
                         if (!SetProp(context->TargetWindowHandle, PhGetString(context->WindowPropString), (HANDLE)value))
                         {
-                            PhShowStatus(WindowHandle, L"Unable to update the window property.", 0, GetLastError());
+                            PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_UPDATE_WINDOW_PROPERTY, NULL))), 0, GetLastError());
                             break;
                         }
                     }
@@ -2329,7 +2329,7 @@ INT_PTR CALLBACK WepWindowPropListDlgProc(
 
                                 status = PhGetLastWin32ErrorAsNtStatus();
                                 if (status != STATUS_CANCELLED)
-                                    PhShowStatus(WindowHandle, L"Unable to remove the window property.", status, 0);
+                                    PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_REMOVE_WINDOW_PROPERTY, NULL))), status, 0);
 
                                 //WepRefreshWindowProps(context);
                                 PvRefreshChildWindows(WindowHandle);

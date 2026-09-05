@@ -1922,6 +1922,6 @@ VOID UploadServiceToOnlineService(
     }
     else
     {
-        PhShowStatus(WindowHandle, L"Unable to query the service.", STATUS_OBJECT_NAME_NOT_FOUND, 0);
+        PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_UNABLE_QUERY_SERVICE, NULL))), STATUS_OBJECT_NAME_NOT_FOUND, 0);
     }
 }

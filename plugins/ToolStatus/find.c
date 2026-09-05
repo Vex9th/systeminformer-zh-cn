@@ -484,7 +484,7 @@ VOID ShowFindDialog(
 
     if (!FindText_I)
     {
-        PhShowStatus(OwnerWindow, L"Unable to display Find dialog.", 0, ERROR_PROC_NOT_FOUND);
+        PhShowStatus(OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_TS_UNABLE_DISPLAY_FIND, NULL))), 0, ERROR_PROC_NOT_FOUND);
         return;
     }
 
@@ -506,4 +506,3 @@ VOID ShowFindDialog(
     if (FindDialogHandle)
         PhRegisterDialog(FindDialogHandle);
 }
-
