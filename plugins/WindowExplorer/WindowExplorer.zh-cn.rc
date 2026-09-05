@@ -161,4 +161,7 @@ BEGIN
     IDS_WE_UIA_PROPERTY_TRANSFORM_PATTERN "变换模式可用"
     IDS_WE_UIA_PROPERTY_VALUE_PATTERN "值模式可用"
     IDS_WE_UIA_PROPERTY_WINDOW_PATTERN "窗口模式可用"
+    IDS_WE_PAUSE                    "暂停"
+    IDS_WE_RESUME                   "恢复"
+    IDS_WE_PROPERTY_EDITOR          "属性编辑器"
 END

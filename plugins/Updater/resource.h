@@ -16,6 +16,9 @@
 #define IDS_UP_INTERVAL_ONE_DAY         12001
 #define IDS_UP_INTERVAL_ONE_WEEK        12002
 #define IDS_UP_INTERVAL_ONE_MONTH       12003
+#define IDS_UP_LAST_UPDATE_CHECK_FORMAT 12004
+#define IDS_UP_NEXT_UPDATE_CHECK_RELATIVE_FORMAT 12005
+#define IDS_UP_NEXT_UPDATE_CHECK_FORMAT 12006
 
 // Next default values for new objects
 // 
@@ -24,6 +27,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1009
-#define _APS_NEXT_SYMED_VALUE           12004
+#define _APS_NEXT_SYMED_VALUE           12007
 #endif
 #endif

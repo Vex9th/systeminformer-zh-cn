@@ -249,6 +249,9 @@ BEGIN
     IDS_WE_UIA_PROPERTY_TRANSFORM_PATTERN "Is Transform Pattern Available"
     IDS_WE_UIA_PROPERTY_VALUE_PATTERN "Is Value Pattern Available"
     IDS_WE_UIA_PROPERTY_WINDOW_PATTERN "Is Window Pattern Available"
+    IDS_WE_PAUSE                    "Pause"
+    IDS_WE_RESUME                   "Resume"
+    IDS_WE_PROPERTY_EDITOR          "Property Editor"
 END
 
 #endif    // English (United States) resources

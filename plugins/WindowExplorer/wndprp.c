@@ -2389,7 +2389,14 @@ static INT_PTR CALLBACK WepWindowPropEditDlgProc(
 
             PhSetApplicationWindowIcon(WindowHandle);
 
-            PhSetWindowText(WindowHandle, L"Property Editor");
+            PhSetWindowText(
+                WindowHandle,
+                PhGetString(PH_AUTO(PhLoadUiString(
+                    PluginInstance->DllBase,
+                    IDS_WE_PROPERTY_EDITOR,
+                    NULL
+                    )))
+                );
             PhCenterWindow(WindowHandle, GetParent(WindowHandle));
 
             PhSetWindowContext(WindowHandle, PH_WINDOW_CONTEXT_DEFAULT, context);

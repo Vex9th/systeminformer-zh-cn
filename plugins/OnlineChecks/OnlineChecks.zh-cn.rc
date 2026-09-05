@@ -69,4 +69,7 @@ STRINGTABLE
 BEGIN
     IDS_OC_REGEX_COMPILE_FAILED     "无法编译正则表达式。"
     IDS_OC_UNABLE_QUERY_SERVICE     "无法查询服务。"
+    IDS_OC_KEY_STATUS_SET           "已设置 - 使用你的密钥"
+    IDS_OC_KEY_STATUS_UNSET         "未设置 - 可选"
+    IDS_OC_PASTE_LICENSE_KEY_HERE   "在此粘贴许可证密钥："
 END

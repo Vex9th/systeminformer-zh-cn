@@ -151,6 +151,9 @@
 #define IDS_WE_UIA_PROPERTY_TRANSFORM_PATTERN 12087
 #define IDS_WE_UIA_PROPERTY_VALUE_PATTERN 12088
 #define IDS_WE_UIA_PROPERTY_WINDOW_PATTERN 12089
+#define IDS_WE_PAUSE                    12090
+#define IDS_WE_RESUME                   12091
+#define IDS_WE_PROPERTY_EDITOR          12092
 
 // Next default values for new objects
 //
@@ -159,6 +162,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40039
 #define _APS_NEXT_CONTROL_VALUE         1037
-#define _APS_NEXT_SYMED_VALUE           12090
+#define _APS_NEXT_SYMED_VALUE           12093
 #endif
 #endif

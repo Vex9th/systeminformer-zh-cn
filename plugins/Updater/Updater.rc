@@ -112,6 +112,9 @@ BEGIN
     IDS_UP_INTERVAL_ONE_DAY         "1 day"
     IDS_UP_INTERVAL_ONE_WEEK        "1 week"
     IDS_UP_INTERVAL_ONE_MONTH       "1 month"
+    IDS_UP_LAST_UPDATE_CHECK_FORMAT "Last update check: %s (%s ago)"
+    IDS_UP_NEXT_UPDATE_CHECK_RELATIVE_FORMAT "Next update check: %s (%s)"
+    IDS_UP_NEXT_UPDATE_CHECK_FORMAT "Next update check: %s"
 END
 
 #endif    // English (United States) resources

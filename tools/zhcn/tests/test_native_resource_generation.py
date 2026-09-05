@@ -422,7 +422,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ],
         )
 
-    def test_audit_finds_both_online_checks_key_status_branches(self) -> None:
+    def test_audit_does_not_count_migrated_online_checks_key_status_branches(self) -> None:
         audit = load_audit_module()
         source_path = REPO_ROOT / "plugins" / "OnlineChecks" / "options.c"
         entries = []
@@ -439,10 +439,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 "Unset - optional",
             }
         )
-        self.assertEqual(
-            status_entries,
-            Counter({"Set - using your key": 1, "Unset - optional": 1}),
-        )
+        self.assertEqual(status_entries, Counter())
 
     def test_audit_scans_qualified_macro_struct_combobox_arrays(self) -> None:
         audit = load_audit_module()
@@ -1162,7 +1159,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("879 strings", result.stdout)
+        self.assertIn("888 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3061,6 +3058,184 @@ class NativeResourceGenerationTests(unittest.TestCase):
                         rf"(?m)^#define\s+{re.escape(resource_id)}\s+\d+$",
                     )
 
+    def test_small_plugin_window_texts_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        source_paths = {
+            "WindowExplorer": (
+                REPO_ROOT / "plugins" / "WindowExplorer" / "wnddlg.c",
+                REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c",
+            ),
+            "OnlineChecks": (
+                REPO_ROOT / "plugins" / "OnlineChecks" / "options.c",
+            ),
+            "Updater": (
+                REPO_ROOT / "plugins" / "Updater" / "options.c",
+            ),
+        }
+        sources = {
+            plugin: "\n".join(
+                audit.mask_c_comments(path.read_text(encoding="utf-8-sig"))
+                for path in paths
+            )
+            for plugin, paths in source_paths.items()
+        }
+        headers = {
+            plugin: (
+                REPO_ROOT / "plugins" / plugin / "resource.h"
+            ).read_text(encoding="utf-8-sig")
+            for plugin in source_paths
+        }
+        english_resources = {
+            plugin: (
+                REPO_ROOT / "plugins" / plugin / f"{plugin}.rc"
+            ).read_text(encoding="utf-8-sig")
+            for plugin in source_paths
+        }
+        chinese_resources = {
+            plugin: (
+                REPO_ROOT / "plugins" / plugin / f"{plugin}.zh-cn.rc"
+            ).read_text(encoding="utf-8-sig")
+            for plugin in source_paths
+        }
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_resources = {
+            "WindowExplorer": {
+                "IDS_WE_PAUSE": (12090, "Pause", "暂停", "strings"),
+                "IDS_WE_RESUME": (12091, "Resume", "恢复", "native_strings"),
+                "IDS_WE_PROPERTY_EDITOR": (12092, "Property Editor", "属性编辑器", "native_strings"),
+            },
+            "OnlineChecks": {
+                "IDS_OC_KEY_STATUS_SET": (12002, "Set - using your key", "已设置 - 使用你的密钥", "native_strings"),
+                "IDS_OC_KEY_STATUS_UNSET": (12003, "Unset - optional", "未设置 - 可选", "native_strings"),
+                "IDS_OC_PASTE_LICENSE_KEY_HERE": (12004, "Paste the license key here:", "在此粘贴许可证密钥：", "native_strings"),
+            },
+            "Updater": {
+                "IDS_UP_LAST_UPDATE_CHECK_FORMAT": (12004, "Last update check: %s (%s ago)", "上次检查更新：%s（%s 前）", "native_strings"),
+                "IDS_UP_NEXT_UPDATE_CHECK_RELATIVE_FORMAT": (12005, "Next update check: %s (%s)", "下次检查更新：%s（%s）", "native_strings"),
+                "IDS_UP_NEXT_UPDATE_CHECK_FORMAT": (12006, "Next update check: %s", "下次检查更新：%s", "native_strings"),
+            },
+        }
+        expected_aps = {
+            "WindowExplorer": 12093,
+            "OnlineChecks": 12005,
+            "Updater": 12007,
+        }
+
+        for plugin, resources in expected_resources.items():
+            for resource_id, (numeric_id, english_text, chinese_text, table_name) in resources.items():
+                with self.subTest(plugin=plugin, window_text_resource=resource_id):
+                    self.assertRegex(
+                        headers[plugin],
+                        rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                    )
+                    self.assertRegex(
+                        english_resources[plugin],
+                        rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                    )
+                    self.assertRegex(
+                        chinese_resources[plugin],
+                        rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                    )
+                    other_table = "strings" if table_name == "native_strings" else "native_strings"
+                    self.assertEqual(
+                        translation_data[table_name].get(english_text),
+                        chinese_text,
+                    )
+                    self.assertNotIn(english_text, translation_data[other_table])
+
+            self.assertRegex(
+                headers[plugin],
+                rf"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+{expected_aps[plugin]}$",
+            )
+
+        window_source = sources["WindowExplorer"]
+        for resource_id, sink in (
+            ("IDS_WE_RESUME", "SetWindowText"),
+            ("IDS_WE_PAUSE", "SetWindowText"),
+            ("IDS_WE_PROPERTY_EDITOR", "PhSetWindowText"),
+        ):
+            with self.subTest(window_explorer_route=resource_id):
+                self.assertRegex(
+                    window_source,
+                    rf"{sink}\([^;]*?PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
+                    rf"PluginInstance->DllBase,\s*{resource_id},\s*NULL\s*\)\)\)[^;]*?\);",
+                )
+
+        online_source = sources["OnlineChecks"]
+        self.assertRegex(
+            online_source,
+            r"\*Configured\s*\?\s*PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
+            r"PluginInstance->DllBase,\s*IDS_OC_KEY_STATUS_SET,\s*NULL\s*\)\)\)\s*"
+            r":\s*PhGetString\(PH_AUTO\(PhLoadUiString\(\s*PluginInstance->DllBase,\s*"
+            r"IDS_OC_KEY_STATUS_UNSET,\s*NULL\s*\)\)\)",
+        )
+        paste_route = (
+            r"PhSetDialogItemText\(\s*WindowHandle,\s*IDC_KEYTEXT_L,\s*"
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\(\s*PluginInstance->DllBase,\s*"
+            r"IDS_OC_PASTE_LICENSE_KEY_HERE,\s*NULL\s*\)\)\)\s*\);"
+        )
+        self.assertEqual(len(re.findall(paste_route, online_source)), 2)
+
+        updater_routes = []
+        for name, args, _, _ in audit.find_calls(
+            sources["Updater"], {"PhaFormatString"}
+        ):
+            resource_match = re.search(
+                r"PhLoadUiString\(\s*PluginInstance->DllBase,\s*"
+                r"(IDS_UP_[A-Z0-9_]+),\s*NULL\s*\)",
+                args[0],
+            )
+            if resource_match:
+                updater_routes.append((
+                    resource_match.group(1),
+                    tuple(re.sub(r"\s+", "", arg) for arg in args[1:]),
+                ))
+        self.assertEqual(
+            updater_routes,
+            [
+                (
+                    "IDS_UP_LAST_UPDATE_CHECK_FORMAT",
+                    (
+                        "PhGetStringOrEmpty(timeString)",
+                        "PhGetStringOrEmpty(timeRelativeString)",
+                    ),
+                ),
+                (
+                    "IDS_UP_NEXT_UPDATE_CHECK_RELATIVE_FORMAT",
+                    (
+                        "PhGetStringOrEmpty(timeString)",
+                        "PhGetStringOrEmpty(timeRelativeString)",
+                    ),
+                ),
+                (
+                    "IDS_UP_NEXT_UPDATE_CHECK_FORMAT",
+                    ("PhGetStringOrEmpty(timeString)",),
+                ),
+            ],
+        )
+
+        migrated_texts = {
+            english_text
+            for resources in expected_resources.values()
+            for _, english_text, _, _ in resources.values()
+        }
+        entries = []
+        for paths in source_paths.values():
+            for path in paths:
+                audit.scan_c_file(str(path), entries)
+        self.assertEqual(
+            [
+                entry
+                for entry in entries
+                if entry["english"] in migrated_texts
+            ],
+            [],
+        )
+
     def test_extended_tools_and_updater_combo_labels_use_native_resources(self) -> None:
         firmware_editor = (
             REPO_ROOT / "plugins" / "ExtendedTools" / "firmware_editor.c"
@@ -3864,7 +4039,6 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "static WND_UIA_PROPERTY WndUiaProperties[] = {", 1
         )[1].split("\n};", 1)[0]
         self.assertNotIn('L"', uia_array)
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12090$")
 
     def test_dotnet_performance_groups_use_native_resources(self) -> None:
         source = (
@@ -5142,10 +5316,10 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 9): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
-                    (r"bin\Release64\plugins\WindowExplorer.dll", 90): 2,
-                    (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 93): 2,
+                    (r"bin\Release64\plugins\OnlineChecks.dll", 5): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
-                    (r"bin\Release64\plugins\Updater.dll", 4): 2,
+                    (r"bin\Release64\plugins\Updater.dll", 7): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
                     (r"bin\Release64\peview.exe", 134): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,

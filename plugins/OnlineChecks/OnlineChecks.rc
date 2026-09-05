@@ -156,6 +156,9 @@ STRINGTABLE
 BEGIN
     IDS_OC_REGEX_COMPILE_FAILED     "The regular expression could not be compiled."
     IDS_OC_UNABLE_QUERY_SERVICE     "Unable to query the service."
+    IDS_OC_KEY_STATUS_SET           "Set - using your key"
+    IDS_OC_KEY_STATUS_UNSET         "Unset - optional"
+    IDS_OC_PASTE_LICENSE_KEY_HERE   "Paste the license key here:"
 END
 
 #endif    // English (United States) resources

@@ -177,11 +177,25 @@ VOID WepToggleProviderPaused(
 
     if (Context->ProviderPaused)
     {
-        SetWindowText(Context->PauseResumeButtonHandle, L"Resume");
+        SetWindowText(
+            Context->PauseResumeButtonHandle,
+            PhGetString(PH_AUTO(PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_WE_RESUME,
+                NULL
+                )))
+            );
     }
     else
     {
-        SetWindowText(Context->PauseResumeButtonHandle, L"Pause");
+        SetWindowText(
+            Context->PauseResumeButtonHandle,
+            PhGetString(PH_AUTO(PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_WE_PAUSE,
+                NULL
+                )))
+            );
     }
 }
 

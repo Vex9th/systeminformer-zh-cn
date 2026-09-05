@@ -31,8 +31,21 @@ static VOID OptionsRefreshKeyStatus(
     *Configured = !PhIsNullOrEmptyString(key);
     PhDereferenceObject(key);
 
-    PhSetDialogItemText(WindowHandle, LabelId,
-        *Configured ? L"Set - using your key" : L"Unset - optional");
+    PhSetDialogItemText(
+        WindowHandle,
+        LabelId,
+        *Configured
+            ? PhGetString(PH_AUTO(PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_OC_KEY_STATUS_SET,
+                NULL
+                )))
+            : PhGetString(PH_AUTO(PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_OC_KEY_STATUS_UNSET,
+                NULL
+                )))
+        );
     InvalidateRect(GetDlgItem(WindowHandle, LabelId), NULL, TRUE);
 }
 
@@ -213,12 +226,28 @@ INT_PTR CALLBACK OptionsGeoLiteDlgProc(
 
             if (id == IDC_APIKEYIDBTN)
             {
-                PhSetDialogItemText(WindowHandle, IDC_KEYTEXT_L, L"Paste the license key here:");
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_KEYTEXT_L,
+                    PhGetString(PH_AUTO(PhLoadUiString(
+                        PluginInstance->DllBase,
+                        IDS_OC_PASTE_LICENSE_KEY_HERE,
+                        NULL
+                        )))
+                    );
                 PhSetDialogItemText(WindowHandle, IDC_KEY_EDIT, PhaGetStringSetting(SETTING_NAME_HYBRIDANALYSIS_DEFAULT_PAT)->Buffer);
             }
             else
             {
-                PhSetDialogItemText(WindowHandle, IDC_KEYTEXT_L, L"Paste the license key here:");
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_KEYTEXT_L,
+                    PhGetString(PH_AUTO(PhLoadUiString(
+                        PluginInstance->DllBase,
+                        IDS_OC_PASTE_LICENSE_KEY_HERE,
+                        NULL
+                        )))
+                    );
                 PhSetDialogItemText(WindowHandle, IDC_KEY_EDIT, PhaGetStringSetting(SETTING_NAME_VIRUSTOTAL_DEFAULT_PAT)->Buffer);
             }
 

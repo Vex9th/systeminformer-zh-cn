@@ -101,7 +101,11 @@ INT_PTR CALLBACK OptionsDlgProc(
                     timeRelativeString = PH_AUTO(PhFormatTimeSpanRelative(currentTime.QuadPart - lastTimeUpdateTicks.QuadPart));
 
                     PhSetDialogItemText(WindowHandle, IDC_TEXT, PhaFormatString(
-                        L"Last update check: %s (%s ago)",
+                        PhGetString(PH_AUTO(PhLoadUiString(
+                            PluginInstance->DllBase,
+                            IDS_UP_LAST_UPDATE_CHECK_FORMAT,
+                            NULL
+                            ))),
                         PhGetStringOrEmpty(timeString),
                         PhGetStringOrEmpty(timeRelativeString)
                         )->Buffer);
@@ -118,7 +122,11 @@ INT_PTR CALLBACK OptionsDlgProc(
                     {
                         timeRelativeString = PH_AUTO(PhFormatTimeSpanRelative(time.QuadPart));
                         PhSetDialogItemText(WindowHandle, IDC_TEXT2, PhaFormatString(
-                            L"Next update check: %s (%s)",
+                            PhGetString(PH_AUTO(PhLoadUiString(
+                                PluginInstance->DllBase,
+                                IDS_UP_NEXT_UPDATE_CHECK_RELATIVE_FORMAT,
+                                NULL
+                                ))),
                             PhGetStringOrEmpty(timeString),
                             PhGetStringOrEmpty(timeRelativeString)
                             )->Buffer);
@@ -126,7 +134,11 @@ INT_PTR CALLBACK OptionsDlgProc(
                     else
                     {
                         PhSetDialogItemText(WindowHandle, IDC_TEXT2, PhaFormatString(
-                            L"Next update check: %s",
+                            PhGetString(PH_AUTO(PhLoadUiString(
+                                PluginInstance->DllBase,
+                                IDS_UP_NEXT_UPDATE_CHECK_FORMAT,
+                                NULL
+                                ))),
                             PhGetStringOrEmpty(timeString)
                             )->Buffer);
                     }
