@@ -913,7 +913,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("771 strings", result.stdout)
+        self.assertIn("777 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1147,7 +1147,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertIn("PvpLoadUiString", peview_header)
         self.assertIn("IDS_PV_MENU_DISPLAY_RESOURCE", resource_header)
         self.assertIn("IDS_PV_MENU_SAVE_CERTIFICATE", resource_header)
-        self.assertEqual(len(stringtable_ids(resource_script)), 128)
+        self.assertEqual(len(stringtable_ids(resource_script)), 134)
 
         migrated_labels = (
             "ANSI",
@@ -1207,6 +1207,106 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     set(re.findall(r'L"([^"\r\n]+)"', call)),
                     {"#"},
                 )
+
+    def test_peview_hash_groups_use_native_string_resources(self) -> None:
+        source = (REPO_ROOT / "tools" / "peview" / "hashprp.c").read_text(
+            encoding="utf-8-sig"
+        )
+        resource_header = (
+            REPO_ROOT / "tools" / "peview" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_rc = (
+            REPO_ROOT / "tools" / "peview" / "peview.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_rc = (
+            REPO_ROOT / "tools" / "peview" / "peview.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_groups = (
+            (
+                "IDS_PV_GROUP_FILE_HASHES",
+                3128,
+                "PV_HASHLIST_CATEGORY_FILEHASH",
+                "File hashes",
+                "文件哈希",
+            ),
+            (
+                "IDS_PV_GROUP_IMPORT_HASHES",
+                3129,
+                "PV_HASHLIST_CATEGORY_IMPORTHASH",
+                "Import hashes",
+                "导入哈希",
+            ),
+            (
+                "IDS_PV_GROUP_FUZZY_HASHES",
+                3130,
+                "PV_HASHLIST_CATEGORY_FUZZYHASH",
+                "Fuzzy hashes",
+                "模糊哈希",
+            ),
+            (
+                "IDS_PV_GROUP_AUTHENTICODE_HASHES",
+                3131,
+                "PV_HASHLIST_CATEGORY_AUTHENTIHASH",
+                "Authenticode hashes",
+                "Authenticode 哈希",
+            ),
+            (
+                "IDS_PV_GROUP_WDAC_PAGE_HASHES",
+                3132,
+                "PV_HASHLIST_CATEGORY_WDACPAGEHASH",
+                "Page hashes (WDAC)",
+                "页哈希（WDAC）",
+            ),
+            (
+                "IDS_PV_GROUP_AUTHENTICODE_PAGE_HASHES",
+                3133,
+                "PV_HASHLIST_CATEGORY_PAGEHASH",
+                "Page hashes (Authenticode)",
+                "页哈希（Authenticode）",
+            ),
+        )
+
+        for resource_id, numeric_id, group_id, english_text, chinese_text in expected_groups:
+            with self.subTest(hash_group=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_rc,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_rc,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                )
+                self.assertEqual(
+                    translation_data["native_strings"].get(english_text),
+                    chinese_text,
+                )
+                self.assertNotIn(english_text, translation_data["strings"])
+                self.assertNotIn(f'L"{english_text}"', source)
+                self.assertRegex(
+                    source,
+                    rf"PhAddListViewGroup\(\s*context->ListViewHandle,\s*"
+                    rf"{group_id},\s*PvpLoadUiString\({resource_id}\)\s*\);",
+                )
+
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+IDS_PV_LAST\s+IDS_PV_GROUP_AUTHENTICODE_PAGE_HASHES$",
+        )
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3134$",
+        )
+        self.assertEqual(len(stringtable_ids(english_rc)), 134)
+        self.assertEqual(len(stringtable_ids(chinese_rc)), 134)
 
     def test_peview_options_and_error_messages_use_native_string_resources(self) -> None:
         source = "\n".join(
@@ -4380,7 +4480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 4): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
-                    (r"bin\Release64\peview.exe", 128): 2,
+                    (r"bin\Release64\peview.exe", 134): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
                 }

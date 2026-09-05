@@ -246,8 +246,14 @@
 #define IDS_PV_UNABLE_SAVE_RESOURCE                3125
 #define IDS_PV_UNABLE_REGISTER_WINDOW_CLASS         3126
 #define IDS_PV_UNABLE_COMMIT_DETOURS_TRANSACTION    3127
+#define IDS_PV_GROUP_FILE_HASHES                     3128
+#define IDS_PV_GROUP_IMPORT_HASHES                   3129
+#define IDS_PV_GROUP_FUZZY_HASHES                    3130
+#define IDS_PV_GROUP_AUTHENTICODE_HASHES             3131
+#define IDS_PV_GROUP_WDAC_PAGE_HASHES                3132
+#define IDS_PV_GROUP_AUTHENTICODE_PAGE_HASHES        3133
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_UNABLE_COMMIT_DETOURS_TRANSACTION
+#define IDS_PV_LAST                                IDS_PV_GROUP_AUTHENTICODE_PAGE_HASHES
 
 // Next default values for new objects
 //
@@ -256,6 +262,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3128
+#define _APS_NEXT_SYMED_VALUE           3134
 #endif
 #endif

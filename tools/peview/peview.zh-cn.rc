@@ -612,4 +612,10 @@ BEGIN
     IDS_PV_UNABLE_SAVE_RESOURCE                "无法保存资源。"
     IDS_PV_UNABLE_REGISTER_WINDOW_CLASS         "无法注册窗口类。"
     IDS_PV_UNABLE_COMMIT_DETOURS_TRANSACTION    "无法提交 Detours 事务。"
+    IDS_PV_GROUP_FILE_HASHES                    "文件哈希"
+    IDS_PV_GROUP_IMPORT_HASHES                  "导入哈希"
+    IDS_PV_GROUP_FUZZY_HASHES                   "模糊哈希"
+    IDS_PV_GROUP_AUTHENTICODE_HASHES            "Authenticode 哈希"
+    IDS_PV_GROUP_WDAC_PAGE_HASHES               "页哈希（WDAC）"
+    IDS_PV_GROUP_AUTHENTICODE_PAGE_HASHES       "页哈希（Authenticode）"
 END

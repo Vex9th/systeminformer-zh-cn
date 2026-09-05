@@ -1039,6 +1039,12 @@ BEGIN
     IDS_PV_UNABLE_SAVE_RESOURCE                "Unable to save resource."
     IDS_PV_UNABLE_REGISTER_WINDOW_CLASS         "Unable to register window class."
     IDS_PV_UNABLE_COMMIT_DETOURS_TRANSACTION    "Unable to commit detours transaction."
+    IDS_PV_GROUP_FILE_HASHES                    "File hashes"
+    IDS_PV_GROUP_IMPORT_HASHES                  "Import hashes"
+    IDS_PV_GROUP_FUZZY_HASHES                   "Fuzzy hashes"
+    IDS_PV_GROUP_AUTHENTICODE_HASHES            "Authenticode hashes"
+    IDS_PV_GROUP_WDAC_PAGE_HASHES               "Page hashes (WDAC)"
+    IDS_PV_GROUP_AUTHENTICODE_PAGE_HASHES       "Page hashes (Authenticode)"
 END
 
 

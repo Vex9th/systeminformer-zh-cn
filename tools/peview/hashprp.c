@@ -1432,12 +1432,12 @@ INT_PTR CALLBACK PvpPeHashesDlgProc(
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_FILEHASH, L"File hashes");
-            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_IMPORTHASH, L"Import hashes");
-            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_FUZZYHASH, L"Fuzzy hashes");
-            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_AUTHENTIHASH, L"Authenticode hashes");
-            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_WDACPAGEHASH, L"Page hashes (WDAC)");
-            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_PAGEHASH, L"Page hashes (Authenticode)");
+            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_FILEHASH, PvpLoadUiString(IDS_PV_GROUP_FILE_HASHES));
+            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_IMPORTHASH, PvpLoadUiString(IDS_PV_GROUP_IMPORT_HASHES));
+            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_FUZZYHASH, PvpLoadUiString(IDS_PV_GROUP_FUZZY_HASHES));
+            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_AUTHENTIHASH, PvpLoadUiString(IDS_PV_GROUP_AUTHENTICODE_HASHES));
+            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_WDACPAGEHASH, PvpLoadUiString(IDS_PV_GROUP_WDAC_PAGE_HASHES));
+            PhAddListViewGroup(context->ListViewHandle, PV_HASHLIST_CATEGORY_PAGEHASH, PvpLoadUiString(IDS_PV_GROUP_AUTHENTICODE_PAGE_HASHES));
 
             PhCreateThread2(PvPeFileHashThread, context);
 
@@ -1588,5 +1588,4 @@ INT_PTR CALLBACK PvpPeHashesDlgProc(
 
     return FALSE;
 }
-
 
