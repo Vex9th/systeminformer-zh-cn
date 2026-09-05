@@ -2901,6 +2901,15 @@ BEGIN
     IDS_PH_HANDLE_SECURITY_OWNER                         "Owner"
     IDS_PH_HANDLE_SECURITY_GROUP                         "Group"
     IDS_PH_HANDLE_SECURITY_INTEGRITY                     "Integrity"
+    IDS_PH_TRAY_NOTIFY_NEW_PROCESSES                     "New processes"
+    IDS_PH_TRAY_NOTIFY_TERMINATED_PROCESSES              "Terminated processes"
+    IDS_PH_TRAY_NOTIFY_NEW_SERVICES                      "New services"
+    IDS_PH_TRAY_NOTIFY_STARTED_SERVICES                  "Started services"
+    IDS_PH_TRAY_NOTIFY_STOPPED_SERVICES                  "Stopped services"
+    IDS_PH_TRAY_NOTIFY_DELETED_SERVICES                  "Deleted services"
+    IDS_PH_TRAY_NOTIFY_MODIFIED_SERVICES                 "Modified services"
+    IDS_PH_TRAY_NOTIFY_ARRIVED_DEVICES                   "Arrived devices"
+    IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES                   "Removed devices"
 END
 
 /////////////////////////////////////////////////////////////////////////////

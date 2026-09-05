@@ -4257,20 +4257,20 @@ INT_PTR CALLBACK PhpOptionsHighlightingDlgProc(
 typedef struct _PH_TRAYICON_NOTIFY_ITEM
 {
     ULONG Bit;
-    PWSTR Name;
+    ULONG NameResourceId;
 } PH_TRAYICON_NOTIFY_ITEM, *PPH_TRAYICON_NOTIFY_ITEM;
 
 static PH_TRAYICON_NOTIFY_ITEM TrayIconNotifyItems[] =
 {
-    { PH_NOTIFY_PROCESS_CREATE, L"New processes" },
-    { PH_NOTIFY_PROCESS_DELETE, L"Terminated processes" },
-    { PH_NOTIFY_SERVICE_CREATE, L"New services" },
-    { PH_NOTIFY_SERVICE_START, L"Started services" },
-    { PH_NOTIFY_SERVICE_STOP, L"Stopped services" },
-    { PH_NOTIFY_SERVICE_DELETE, L"Deleted services" },
-    { PH_NOTIFY_SERVICE_MODIFIED, L"Modified services" },
-    { PH_NOTIFY_DEVICE_ARRIVED, L"Arrived devices" },
-    { PH_NOTIFY_DEVICE_REMOVED, L"Removed devices" },
+    { PH_NOTIFY_PROCESS_CREATE, IDS_PH_TRAY_NOTIFY_NEW_PROCESSES },
+    { PH_NOTIFY_PROCESS_DELETE, IDS_PH_TRAY_NOTIFY_TERMINATED_PROCESSES },
+    { PH_NOTIFY_SERVICE_CREATE, IDS_PH_TRAY_NOTIFY_NEW_SERVICES },
+    { PH_NOTIFY_SERVICE_START, IDS_PH_TRAY_NOTIFY_STARTED_SERVICES },
+    { PH_NOTIFY_SERVICE_STOP, IDS_PH_TRAY_NOTIFY_STOPPED_SERVICES },
+    { PH_NOTIFY_SERVICE_DELETE, IDS_PH_TRAY_NOTIFY_DELETED_SERVICES },
+    { PH_NOTIFY_SERVICE_MODIFIED, IDS_PH_TRAY_NOTIFY_MODIFIED_SERVICES },
+    { PH_NOTIFY_DEVICE_ARRIVED, IDS_PH_TRAY_NOTIFY_ARRIVED_DEVICES },
+    { PH_NOTIFY_DEVICE_REMOVED, IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES },
 };
 
 #define PH_OPTIONS_TRAY_ICON_GROUP_NOTIFICATIONS 1
@@ -4333,7 +4333,7 @@ INT_PTR CALLBACK PhpOptionsTrayIconDlgProc(
                     IconListViewHandle,
                     PH_OPTIONS_TRAY_ICON_GROUP_NOTIFICATIONS,
                     MAXINT,
-                    TrayIconNotifyItems[i].Name,
+                    PhGetApplicationUiString(TrayIconNotifyItems[i].NameResourceId),
                     &TrayIconNotifyItems[i]
                     );
                 ListView_SetCheckState(IconListViewHandle, lvItemIndex, !!(notifyMask & TrayIconNotifyItems[i].Bit));

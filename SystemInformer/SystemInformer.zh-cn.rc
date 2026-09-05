@@ -2081,4 +2081,13 @@ BEGIN
     IDS_PH_HANDLE_SECURITY_OWNER                         "所有者"
     IDS_PH_HANDLE_SECURITY_GROUP                         "组"
     IDS_PH_HANDLE_SECURITY_INTEGRITY                     "完整性"
+    IDS_PH_TRAY_NOTIFY_NEW_PROCESSES                     "新进程"
+    IDS_PH_TRAY_NOTIFY_TERMINATED_PROCESSES              "已终止的进程"
+    IDS_PH_TRAY_NOTIFY_NEW_SERVICES                      "新服务"
+    IDS_PH_TRAY_NOTIFY_STARTED_SERVICES                  "已启动的服务"
+    IDS_PH_TRAY_NOTIFY_STOPPED_SERVICES                  "已停止的服务"
+    IDS_PH_TRAY_NOTIFY_DELETED_SERVICES                  "已删除的服务"
+    IDS_PH_TRAY_NOTIFY_MODIFIED_SERVICES                 "已修改的服务"
+    IDS_PH_TRAY_NOTIFY_ARRIVED_DEVICES                   "新到设备"
+    IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES                   "已移除的设备"
 END

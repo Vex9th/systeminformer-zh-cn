@@ -470,10 +470,43 @@ class NativeResourceGenerationTests(unittest.TestCase):
         ]
         self.assertEqual(uia_entries, [])
 
-    def test_audit_finds_all_main_tray_notification_names(self) -> None:
+    def test_main_tray_notification_items_use_native_resources(self) -> None:
         audit = load_audit_module()
         source_path = REPO_ROOT / "SystemInformer" / "options.c"
         source = source_path.read_text(encoding="utf-8")
+        masked_source = audit.mask_c_comments(source)
+        resource_header = (
+            REPO_ROOT / "SystemInformer" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = SOURCE_RC.read_text(encoding="utf-8-sig")
+        chinese_resource = ZH_CN_RC.read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_resources = {
+            "IDS_PH_TRAY_NOTIFY_NEW_PROCESSES": (2303, "New processes", "新进程"),
+            "IDS_PH_TRAY_NOTIFY_TERMINATED_PROCESSES": (2304, "Terminated processes", "已终止的进程"),
+            "IDS_PH_TRAY_NOTIFY_NEW_SERVICES": (2305, "New services", "新服务"),
+            "IDS_PH_TRAY_NOTIFY_STARTED_SERVICES": (2306, "Started services", "已启动的服务"),
+            "IDS_PH_TRAY_NOTIFY_STOPPED_SERVICES": (2307, "Stopped services", "已停止的服务"),
+            "IDS_PH_TRAY_NOTIFY_DELETED_SERVICES": (2308, "Deleted services", "已删除的服务"),
+            "IDS_PH_TRAY_NOTIFY_MODIFIED_SERVICES": (2309, "Modified services", "已修改的服务"),
+            "IDS_PH_TRAY_NOTIFY_ARRIVED_DEVICES": (2310, "Arrived devices", "新到设备"),
+            "IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES": (2311, "Removed devices", "已移除的设备"),
+        }
+        expected_routes = [
+            ("PH_NOTIFY_PROCESS_CREATE", "IDS_PH_TRAY_NOTIFY_NEW_PROCESSES"),
+            ("PH_NOTIFY_PROCESS_DELETE", "IDS_PH_TRAY_NOTIFY_TERMINATED_PROCESSES"),
+            ("PH_NOTIFY_SERVICE_CREATE", "IDS_PH_TRAY_NOTIFY_NEW_SERVICES"),
+            ("PH_NOTIFY_SERVICE_START", "IDS_PH_TRAY_NOTIFY_STARTED_SERVICES"),
+            ("PH_NOTIFY_SERVICE_STOP", "IDS_PH_TRAY_NOTIFY_STOPPED_SERVICES"),
+            ("PH_NOTIFY_SERVICE_DELETE", "IDS_PH_TRAY_NOTIFY_DELETED_SERVICES"),
+            ("PH_NOTIFY_SERVICE_MODIFIED", "IDS_PH_TRAY_NOTIFY_MODIFIED_SERVICES"),
+            ("PH_NOTIFY_DEVICE_ARRIVED", "IDS_PH_TRAY_NOTIFY_ARRIVED_DEVICES"),
+            ("PH_NOTIFY_DEVICE_REMOVED", "IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES"),
+        ]
         array_start = source.index("static PH_TRAYICON_NOTIFY_ITEM TrayIconNotifyItems[]")
         array_end = source.index("\n};", array_start)
         first_line = source.count("\n", 0, array_start) + 1
@@ -488,20 +521,55 @@ class NativeResourceGenerationTests(unittest.TestCase):
             if entry["category"] == "c_listview_group_item"
             and first_line <= entry["line"] <= last_line
         ]
-        self.assertEqual(len(tray_entries), 9)
-        self.assertEqual(
-            {entry["english"] for entry in tray_entries},
-            {
-                "New processes",
-                "Terminated processes",
-                "New services",
-                "Started services",
-                "Stopped services",
-                "Deleted services",
-                "Modified services",
-                "Arrived devices",
-                "Removed devices",
-            },
+        actual_routes = re.findall(
+            r"\{\s*(PH_NOTIFY_[A-Z_]+),\s*(IDS_PH_TRAY_NOTIFY_[A-Z_]+)\s*\}",
+            masked_source[array_start:array_end],
+        )
+
+        self.assertEqual(tray_entries, [])
+        self.assertEqual(actual_routes, expected_routes)
+        self.assertRegex(
+            masked_source,
+            r"typedef\s+struct\s+_PH_TRAYICON_NOTIFY_ITEM\s*\{\s*"
+            r"ULONG\s+Bit;\s*ULONG\s+NameResourceId;\s*\}",
+        )
+        self.assertRegex(
+            masked_source,
+            r"PhAddListViewGroupItem\(\s*IconListViewHandle,\s*"
+            r"PH_OPTIONS_TRAY_ICON_GROUP_NOTIFICATIONS,\s*MAXINT,\s*"
+            r"PhGetApplicationUiString\(TrayIconNotifyItems\[i\]\.NameResourceId\),\s*"
+            r"&TrayIconNotifyItems\[i\]\s*\);",
+        )
+
+        for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
+            with self.subTest(tray_notification_resource=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                )
+                self.assertEqual(
+                    translation_data["native_strings"].get(english_text),
+                    chinese_text,
+                )
+                self.assertNotIn(english_text, translation_data["strings"])
+
+        tray_array = masked_source[array_start:array_end]
+        self.assertNotIn('L"', tray_array)
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES$",
+        )
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2312$",
         )
 
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
@@ -1019,7 +1087,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("870 strings", result.stdout)
+        self.assertIn("879 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1469,7 +1537,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 303)
+        self.assertEqual(len(stringtable_ids(resource_script)), 312)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -1508,7 +1576,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2303)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2312)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -2001,11 +2069,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_SECURITY_INTEGRITY$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2303$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2312$",
         )
 
     def test_early_crash_prompt_does_not_depend_on_ui_string_cache(self) -> None:
@@ -4993,7 +5061,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 303): 2,
+                    (r"bin\Release64\sys_info.exe", 312): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 8): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,

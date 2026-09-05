@@ -1294,8 +1294,17 @@
 #define IDS_PH_HANDLE_SECURITY_OWNER                        2300
 #define IDS_PH_HANDLE_SECURITY_GROUP                        2301
 #define IDS_PH_HANDLE_SECURITY_INTEGRITY                    2302
+#define IDS_PH_TRAY_NOTIFY_NEW_PROCESSES                    2303
+#define IDS_PH_TRAY_NOTIFY_TERMINATED_PROCESSES             2304
+#define IDS_PH_TRAY_NOTIFY_NEW_SERVICES                     2305
+#define IDS_PH_TRAY_NOTIFY_STARTED_SERVICES                 2306
+#define IDS_PH_TRAY_NOTIFY_STOPPED_SERVICES                 2307
+#define IDS_PH_TRAY_NOTIFY_DELETED_SERVICES                 2308
+#define IDS_PH_TRAY_NOTIFY_MODIFIED_SERVICES                2309
+#define IDS_PH_TRAY_NOTIFY_ARRIVED_DEVICES                  2310
+#define IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES                  2311
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_HANDLE_SECURITY_INTEGRITY
+#define IDS_PH_LAST                                  IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1307,6 +1316,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2303
+#define _APS_NEXT_SYMED_VALUE           2312
 #endif
 #endif
