@@ -422,6 +422,47 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ],
         )
 
+    def test_audit_ignores_setting_keys_but_keeps_visible_surrounding_text(self) -> None:
+        audit = load_audit_module()
+        source = """
+            void update_setting_text(BOOLEAN configured) {
+                PhSetDialogItemText(
+                    hwnd,
+                    IDC_PATH,
+                    PhaGetStringSetting(L"DbgHelpSearchPath")->Buffer
+                );
+                PhSetWindowText(
+                    hwnd,
+                    configured
+                        ? PhGetStringSetting(L"ConfiguredPath")->Buffer
+                        : L"Visible fallback"
+                );
+                PhSetWindowText(
+                    hwnd,
+                    PhaFormatString(
+                        L"Configured path: %s",
+                        PhGetStringSetting(L"FormattedPath")->Buffer
+                    )->Buffer
+                );
+            }
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            [(entry["category"], entry["english"]) for entry in entries],
+            [
+                ("c_window_text", "Visible fallback"),
+                ("c_window_text", "Configured path: %s"),
+            ],
+        )
+
     def test_audit_merges_conditional_literal_sequences_and_tracks_lines(self) -> None:
         audit = load_audit_module()
         source = """

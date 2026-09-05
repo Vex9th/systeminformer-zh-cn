@@ -374,7 +374,12 @@ def literal_sequences_outside_ui_string_getters(expression: str):
         match.group(0)
         for match in IDENT_RE.finditer(expression)
         if match.group(0).endswith("GetUiString")
-        or match.group(0) == "PhLoadUiString"
+        or match.group(0)
+        in {
+            "PhLoadUiString",
+            "PhGetStringSetting",
+            "PhaGetStringSetting",
+        }
     }
     masked = list(expression)
 
