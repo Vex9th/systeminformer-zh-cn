@@ -49,6 +49,7 @@ KEEP_ENGLISH_RULES = [
 ]
 
 CALLSITE_MIGRATION_CATEGORIES = {
+    "c_balloon",
     "c_combobox",
     "c_listview_group_item",
     "c_msgbox_vararg",

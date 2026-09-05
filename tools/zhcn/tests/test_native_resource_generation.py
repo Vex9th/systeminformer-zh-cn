@@ -723,6 +723,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "c_listview_group_item",
             "c_msgbox_vararg",
             "c_window_text",
+            "c_balloon",
         )
         manifest = {
             "unique_strings": [
@@ -742,6 +743,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "native_strings": {
                 "Callsite text 3": "调用点文字 3",
                 "Callsite text 4": "调用点文字 4",
+                "Callsite text 5": "调用点文字 5",
             },
         }
 
@@ -775,7 +777,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn(
-                "translation audit: translated 0/4, untranslated 4",
+                "translation audit: translated 0/5, untranslated 5",
                 result.stdout,
             )
 
@@ -827,6 +829,25 @@ class NativeResourceGenerationTests(unittest.TestCase):
                         table, category, "Native text"
                     )
                 )
+
+    def test_checker_classifies_every_category_emitted_by_the_audit(self) -> None:
+        checker = load_translation_checker_module()
+        audit_source = (
+            REPO_ROOT / "tools" / "zhcn" / "audit.py"
+        ).read_text(encoding="utf-8")
+        audit_categories = set(
+            re.findall(r'"((?:rc|c|phlib)_[a-z_]+)"', audit_source)
+        )
+        category_sets = (
+            checker.NATIVE_RESOURCE_CATEGORIES,
+            checker.RUNTIME_DICTIONARY_CATEGORIES,
+            checker.CALLSITE_MIGRATION_CATEGORIES,
+        )
+
+        self.assertEqual(set().union(*category_sets), audit_categories)
+        for index, left in enumerate(category_sets):
+            for right in category_sets[index + 1:]:
+                self.assertTrue(left.isdisjoint(right))
 
     def test_compiled_dialog_parser_keeps_control_ordinals_in_structure(self) -> None:
         validator = load_validator_module()
