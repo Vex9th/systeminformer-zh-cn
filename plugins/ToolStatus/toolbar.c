@@ -350,7 +350,7 @@ VOID SearchBoxCreate(
     PhCreateSearchControl(
         MainWindowHandle,
         SearchboxHandle,
-        L"Search Processes (Ctrl+K)",
+        ToolStatusGetUiString(IDS_TS_SEARCH_PROCESSES, L"Search Processes (Ctrl+K)"),
         SearchControlCallback,
         NULL
         );

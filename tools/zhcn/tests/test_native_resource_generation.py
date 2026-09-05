@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import importlib.util
+import json
 import pathlib
 import re
 import struct
@@ -60,6 +61,22 @@ def load_validator_module():
 
 def load_generator_module():
     spec = importlib.util.spec_from_file_location("generate_native_resources", GENERATOR)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_runtime_translation_generator_module():
+    path = REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"
+    spec = importlib.util.spec_from_file_location("generate_translation", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_auto_translation_module():
+    path = REPO_ROOT / "tools" / "zhcn" / "auto_translate.py"
+    spec = importlib.util.spec_from_file_location("auto_translate", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -330,6 +347,69 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertEqual(localized[2], '    IDS_SETUP_NEXT "下一步(&N) >"')
 
+    def test_native_translation_decisions_are_separate_from_runtime_dictionary(self) -> None:
+        generator = load_generator_module()
+        runtime_generator = load_runtime_translation_generator_module()
+        auto_translator = load_auto_translation_module()
+        checker = load_translation_checker_module()
+        table = {
+            "strings": {"Runtime text": "运行时文字"},
+            "native_strings": {"Native text": "原生文字"},
+        }
+
+        self.assertEqual(
+            generator.translation_decisions(table),
+            {
+                "Runtime text": "运行时文字",
+                "Native text": "原生文字",
+            },
+        )
+        self.assertEqual(
+            checker.translation_decisions(table),
+            {
+                "Runtime text": "运行时文字",
+                "Native text": "原生文字",
+            },
+        )
+        conflicting_table = {
+            "strings": {"Same key": "运行时"},
+            "native_strings": {"Same key": "原生"},
+        }
+        with self.assertRaisesRegex(ValueError, "both strings and native_strings"):
+            generator.translation_decisions(conflicting_table)
+        with self.assertRaisesRegex(ValueError, "both strings and native_strings"):
+            checker.translation_decisions(conflicting_table)
+        self.assertTrue(
+            checker.is_reviewed_native_identity(
+                {"native_strings": {"R: ": "R: "}},
+                "R: ",
+            )
+        )
+        self.assertFalse(checker.is_reviewed_native_identity(table, "Native text"))
+        self.assertFalse(
+            auto_translator.needs_automatic_translation(
+                {"native_strings": {"R: ": "R: "}},
+                "R: ",
+            )
+        )
+        self.assertTrue(
+            auto_translator.needs_automatic_translation(
+                {"strings": {"Pending": "Pending"}},
+                "Pending",
+            )
+        )
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", encoding="utf-8"
+        ) as translation_file:
+            json.dump(table, translation_file, ensure_ascii=False)
+            translation_file.flush()
+            content, count = runtime_generator.build(translation_file.name)
+
+        self.assertEqual(count, 1)
+        self.assertIn('L"Runtime text", L"运行时文字"', content)
+        self.assertNotIn("Native text", content)
+
     def test_generator_preserves_stringtable_line_break_escapes(self) -> None:
         generator = load_generator_module()
         line = r'    IDS_SETUP_MESSAGE "First\r\nSecond"'
@@ -480,7 +560,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("549 strings", result.stdout)
+        self.assertIn("582 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1918,6 +1998,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
         toolbar = (
             REPO_ROOT / "plugins" / "ToolStatus" / "toolbar.c"
         ).read_text(encoding="utf-8-sig")
+        graph = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "graph.c"
+        ).read_text(encoding="utf-8-sig")
+        options = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "options.c"
+        ).read_text(encoding="utf-8-sig")
         main = (
             REPO_ROOT / "plugins" / "ToolStatus" / "main.c"
         ).read_text(encoding="utf-8-sig")
@@ -1927,7 +2013,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         resource_script = (
             REPO_ROOT / "plugins" / "ToolStatus" / "ToolStatus.rc"
         ).read_text(encoding="utf-8-sig")
-        source = statusbar + toolbar
+        source = statusbar + toolbar + main + graph + options
         statusbar_get_text = statusbar[
             statusbar.index("PWSTR StatusBarGetText("):
             statusbar.index("VOID StatusBarShowMenu(")
@@ -1992,6 +2078,39 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_TS_STATUS_LABEL_SELECTED_PROCESS_WS",
             "IDS_TS_STATUS_LABEL_SELECTED_PROCESS_PRIVATE_BYTES",
             "IDS_TS_STATUS_LABEL_KSI_STATUS",
+            "IDS_TS_MENU_TOOLBAR",
+            "IDS_TS_MENU_MAIN_AUTO_HIDE",
+            "IDS_TS_MENU_SEARCH_BOX",
+            "IDS_TS_MENU_LOCK_TOOLBAR",
+            "IDS_TS_MENU_CUSTOMIZE",
+            "IDS_TS_MENU_LOCK",
+            "IDS_TS_MENU_LOGOFF",
+            "IDS_TS_MENU_SLEEP",
+            "IDS_TS_MENU_HIBERNATE",
+            "IDS_TS_MENU_UPDATE_RESTART",
+            "IDS_TS_MENU_UPDATE_SHUTDOWN",
+            "IDS_TS_MENU_RESTART",
+            "IDS_TS_MENU_RESTART_ADVANCED",
+            "IDS_TS_MENU_RESTART_BOOT",
+            "IDS_TS_MENU_RESTART_FIRMWARE",
+            "IDS_TS_MENU_SHUTDOWN",
+            "IDS_TS_MENU_HYBRID_SHUTDOWN",
+            "IDS_TS_SEARCH_PROCESSES",
+            "IDS_TS_SEARCH_SERVICES",
+            "IDS_TS_SEARCH_NETWORK",
+            "IDS_TS_SEARCH_DISABLED",
+            "IDS_TS_GRAPH_CPU_HISTORY",
+            "IDS_TS_GRAPH_PHYSICAL_MEMORY_HISTORY",
+            "IDS_TS_GRAPH_COMMIT_CHARGE_HISTORY",
+            "IDS_TS_GRAPH_IO_HISTORY",
+            "IDS_TS_GRAPH_UNAVAILABLE_SUFFIX",
+            "IDS_TS_GRAPH_PID_CLOSE_READ_OTHER",
+            "IDS_TS_GRAPH_READ_OTHER",
+            "IDS_TS_GRAPH_WRITE_SEPARATOR",
+            "IDS_TS_GRAPH_READ",
+            "IDS_TS_GRAPH_WRITE_LINE",
+            "IDS_TS_GRAPH_OTHER_LINE",
+            "IDS_TS_GRAPH_NONE",
             "IDS_TS_TOOLBAR_REFRESH",
             "IDS_TS_TOOLBAR_OPTIONS",
             "IDS_TS_TOOLBAR_FIND_HANDLES_OR_DLLS",
@@ -2015,12 +2134,40 @@ class NativeResourceGenerationTests(unittest.TestCase):
             source,
         ):
             routed_fallbacks.setdefault(resource_id, set()).add(fallback)
+        option_routes = re.findall(
+            r'\{\s*TASKBAR_ICON_[A-Z0-9_]+,\s*(IDS_TS_[A-Z0-9_]+),\s*L"([^"]*)"\s*\}',
+            options,
+        )
+        for resource_id, fallback in option_routes:
+            routed_fallbacks.setdefault(resource_id, set()).add(fallback)
 
         for resource_id in resource_ids:
             with self.subTest(toolstatus_resource_id=resource_id):
                 self.assertEqual(
                     routed_fallbacks.get(resource_id),
                     {resource_texts[resource_id]},
+                )
+
+        newly_routed_texts = {
+            resource_texts[resource_id]
+            for resource_id in resource_ids
+            if resource_id.startswith(("IDS_TS_MENU_", "IDS_TS_SEARCH_", "IDS_TS_GRAPH_"))
+        }
+        for fallback in newly_routed_texts:
+            with self.subTest(toolstatus_native_fallback=fallback):
+                literal = f'L"{fallback}"'
+                routed = re.findall(
+                    rf'ToolStatusGetUiString\(\s*IDS_TS_[A-Z0-9_]+,\s*{re.escape(literal)}\s*\)',
+                    source,
+                )
+                table_routes = [
+                    route
+                    for route in option_routes
+                    if route[1] == fallback
+                ]
+                self.assertEqual(
+                    source.count(literal),
+                    len(routed) + len(table_routes),
                 )
 
         self.assertIn(
@@ -2033,6 +2180,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         self.assertIn("IDS_TS_FIRST", main)
         self.assertIn("IDS_TS_LAST", main)
+        self.assertIn("ComboBox_SetItemData", options)
+        self.assertIn("ComboBox_GetItemData", options)
+        self.assertIn("ComboBox_DeleteString", options)
+        self.assertNotIn("GraphTypePairs", options)
+        self.assertNotIn("GraphTypeGetTypeInteger", options)
+        self.assertNotIn("PhSelectComboBoxString", options)
 
     def test_statusbar_audit_counts_only_native_resource_calls(self) -> None:
         audit = load_audit_module()
@@ -2256,7 +2409,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
-                    (r"bin\Release64\plugins\ToolStatus.dll", 64): 2,
+                    (r"bin\Release64\plugins\ToolStatus.dll", 97): 2,
                     (r"bin\Release64\plugins\Updater.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 7): 2,

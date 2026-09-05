@@ -36,6 +36,12 @@ GLOSSARY_RULES = """
 """
 
 
+def needs_automatic_translation(table: dict, english: str) -> bool:
+    if english in table.get("native_strings", {}):
+        return False
+    return table.get("strings", {}).get(english) in (None, english)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--manifest", default=os.path.join(HERE, "manifest.json"))
@@ -73,7 +79,7 @@ def main():
         if en in seen or is_keep_english(en) or not re.search(r"[A-Za-z]", en):
             continue
         seen.add(en)
-        if strings.get(en) in (None, en):
+        if needs_automatic_translation(table, en):
             pending.append(en)
 
     if not pending:

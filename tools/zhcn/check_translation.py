@@ -103,6 +103,26 @@ def json_unescape_key(raw: str) -> str:
     return json.loads('"' + raw + '"')
 
 
+def translation_decisions(table: dict) -> dict[str, str]:
+    runtime_strings = table.get("strings", {})
+    native_strings = table.get("native_strings", {})
+    overlap = set(runtime_strings) & set(native_strings)
+
+    if overlap:
+        raise ValueError(
+            "translation keys cannot appear in both strings and native_strings: "
+            + ", ".join(sorted(overlap))
+        )
+
+    strings = dict(runtime_strings)
+    strings.update(native_strings)
+    return strings
+
+
+def is_reviewed_native_identity(table: dict, english: str) -> bool:
+    return table.get("native_strings", {}).get(english) == english
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--manifest", default=os.path.join(HERE, "manifest.json"))
@@ -125,7 +145,11 @@ def main():
         fail = True
     with open(args.translation, "r", encoding="utf-8") as f:
         table = json.load(f)
-    strings = table.get("strings", {})
+    try:
+        strings = translation_decisions(table)
+    except ValueError as exc:
+        print(f"error: {exc}")
+        return 1
 
     # ---- load manifest ----------------------------------------------------
     with open(args.manifest, "r", encoding="utf-8") as f:
@@ -153,7 +177,9 @@ def main():
             entry["category"],
             zh is not None and zh != en,
         )
-        if not translated and is_keep_english(en):
+        if not translated and (
+            is_keep_english(en) or is_reviewed_native_identity(table, en)
+        ):
             keep_english.append(entry)
             continue
         per_cat[entry["category"]][1] += 1

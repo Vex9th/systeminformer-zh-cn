@@ -122,7 +122,7 @@ VOID ToolbarGraphsInitialize(
     ToolbarRegisterGraph(
         PluginInstance,
         1,
-        L"CPU history",
+        (PWSTR)ToolStatusGetUiString(IDS_TS_GRAPH_CPU_HISTORY, L"CPU history"),
         0,
         NULL,
         CpuHistoryGraphMessageCallback
@@ -131,7 +131,7 @@ VOID ToolbarGraphsInitialize(
     ToolbarRegisterGraph(
         PluginInstance,
         2,
-        L"Physical memory history",
+        (PWSTR)ToolStatusGetUiString(IDS_TS_GRAPH_PHYSICAL_MEMORY_HISTORY, L"Physical memory history"),
         0,
         NULL,
         PhysicalHistoryGraphMessageCallback
@@ -140,7 +140,7 @@ VOID ToolbarGraphsInitialize(
     ToolbarRegisterGraph(
         PluginInstance,
         3,
-        L"Commit charge history",
+        (PWSTR)ToolStatusGetUiString(IDS_TS_GRAPH_COMMIT_CHARGE_HISTORY, L"Commit charge history"),
         0,
         NULL,
         CommitHistoryGraphMessageCallback
@@ -149,7 +149,7 @@ VOID ToolbarGraphsInitialize(
     ToolbarRegisterGraph(
         PluginInstance,
         4,
-        L"I/O history",
+        (PWSTR)ToolStatusGetUiString(IDS_TS_GRAPH_IO_HISTORY, L"I/O history"),
         0,
         NULL,
         IoHistoryGraphMessageCallback
@@ -505,7 +505,7 @@ VOID ToolbarGraphCreateMenu(
         {
             PPH_STRING newText;
 
-            newText = PhaConcatStrings2(graph->Text, L" (Unavailable)");
+            newText = PhaConcatStrings2(graph->Text, ToolStatusGetUiString(IDS_TS_GRAPH_UNAVAILABLE_SUFFIX, L" (Unavailable)"));
             PhModifyEMenuItem(menuItem, PH_EMENU_MODIFY_TEXT, PH_EMENU_TEXT_OWNED,
                 PhAllocateCopy(newText->Buffer, newText->Length + sizeof(UNICODE_NULL)), NULL);
         }
@@ -536,7 +536,7 @@ VOID ToolbarGraphCreatePluginMenu(
         {
             PPH_STRING newText;
 
-            newText = PhaConcatStrings2(graph->Text, L" (Unavailable)");
+            newText = PhaConcatStrings2(graph->Text, ToolStatusGetUiString(IDS_TS_GRAPH_UNAVAILABLE_SUFFIX, L" (Unavailable)"));
             PhModifyEMenuItem(menuItem, PH_EMENU_MODIFY_TEXT, PH_EMENU_TEXT_OWNED,
                 PhAllocateCopy(newText->Buffer, newText->Length + sizeof(UNICODE_NULL)), NULL);
         }
@@ -712,9 +712,9 @@ static PPH_STRING PhSipGetMaxIoString(
             PhInitFormatSR(&format[1], maxProcessRecord->ProcessName->sr);
             PhInitFormatS(&format[2], L" (");
             PhInitFormatU(&format[3], HandleToUlong(maxProcessRecord->ProcessId));
-            PhInitFormatS(&format[4], L"): R+O: ");
+            PhInitFormatS(&format[4], ToolStatusGetUiString(IDS_TS_GRAPH_PID_CLOSE_READ_OTHER, L"): R+O: "));
             PhInitFormatSize(&format[5], maxIoReadOther);
-            PhInitFormatS(&format[6], L", W: ");
+            PhInitFormatS(&format[6], ToolStatusGetUiString(IDS_TS_GRAPH_WRITE_SEPARATOR, L", W: "));
             PhInitFormatSize(&format[7], maxIoWrite);
 
             maxUsageString = PhFormat(format, RTL_NUMBER_OF(format), 128);
@@ -726,9 +726,9 @@ static PPH_STRING PhSipGetMaxIoString(
             // \n%s: R+O: %s, W: %s
             PhInitFormatC(&format[0], L'\n');
             PhInitFormatSR(&format[1], maxProcessRecord->ProcessName->sr);
-            PhInitFormatS(&format[2], L": R+O: ");
+            PhInitFormatS(&format[2], ToolStatusGetUiString(IDS_TS_GRAPH_READ_OTHER, L": R+O: "));
             PhInitFormatSize(&format[3], maxIoReadOther);
-            PhInitFormatS(&format[4], L", W: ");
+            PhInitFormatS(&format[4], ToolStatusGetUiString(IDS_TS_GRAPH_WRITE_SEPARATOR, L", W: "));
             PhInitFormatSize(&format[5], maxIoWrite);
 
             maxUsageString = PhFormat(format, RTL_NUMBER_OF(format), 128);
@@ -927,7 +927,7 @@ BOOLEAN PhysicalHistoryGraphMessageCallback(
                     physicalUsage = PhGetItemCircularBuffer_ULONG(SystemStatistics.PhysicalHistory, getTooltipText->Index);
 
                     // Physical memory: %s\n%s
-                    PhInitFormatS(&format[0], L"Physical memory: ");
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_PHYSICAL_MEMORY, L"Physical memory: "));
                     PhInitFormatSize(&format[1], UInt32x32To64(physicalUsage, PAGE_SIZE));
                     PhInitFormatC(&format[2], L'\n');
                     PhInitFormatSR(&format[3], PH_AUTO_T(PH_STRING, PhGetStatisticsTimeString(NULL, getTooltipText->Index))->sr);
@@ -1034,7 +1034,7 @@ BOOLEAN CommitHistoryGraphMessageCallback(
                     commitUsage = PhGetItemCircularBuffer_ULONG(SystemStatistics.CommitHistory, getTooltipText->Index);
 
                     // Commit charge: %s\n%s
-                    PhInitFormatS(&format[0], L"Commit charge: ");
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_COMMIT_CHARGE, L"Commit charge: "));
                     PhInitFormatSize(&format[1], UInt32x32To64(commitUsage, PAGE_SIZE));
                     PhInitFormatC(&format[2], L'\n');
                     PhInitFormatSR(&format[3], PH_AUTO_T(PH_STRING, PhGetStatisticsTimeString(NULL, getTooltipText->Index))->sr);
@@ -1145,11 +1145,11 @@ BOOLEAN IoHistoryGraphMessageCallback(
                     ioOther = PhGetItemCircularBuffer_ULONG64(SystemStatistics.IoOtherHistory, getTooltipText->Index);
 
                     // R: %s\nW: %s\nO: %s%s\n%s
-                    PhInitFormatS(&format[0], L"R: ");
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_GRAPH_READ, L"R: "));
                     PhInitFormatSize(&format[1], ioRead);
-                    PhInitFormatS(&format[2], L"\nW: ");
+                    PhInitFormatS(&format[2], ToolStatusGetUiString(IDS_TS_GRAPH_WRITE_LINE, L"\nW: "));
                     PhInitFormatSize(&format[3], ioWrite);
-                    PhInitFormatS(&format[4], L"\nO: ");
+                    PhInitFormatS(&format[4], ToolStatusGetUiString(IDS_TS_GRAPH_OTHER_LINE, L"\nO: "));
                     PhInitFormatSize(&format[5], ioOther);
                     PhInitFormatSR(&format[6], PH_AUTO_T(PH_STRING, PhSipGetMaxIoString(getTooltipText->Index))->sr);
                     PhInitFormatC(&format[7], L'\n');

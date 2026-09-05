@@ -51,6 +51,8 @@ def utf16_key(s: str):
 def build(translation_path: str):
     with open(translation_path, "r", encoding="utf-8") as f:
         table = json.load(f)
+    # native_strings is intentionally excluded: those texts are loaded from
+    # module STRINGTABLE resources and must not expand the legacy dictionary.
     strings = table.get("strings", {})
 
     items = [(k, v) for k, v in strings.items() if v and v != k]

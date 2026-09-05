@@ -266,6 +266,22 @@ def source_label(path: pathlib.Path) -> str:
         return str(path)
 
 
+def translation_decisions(translation_data: dict) -> dict[str, str]:
+    runtime_strings = translation_data.get("strings", {})
+    native_strings = translation_data.get("native_strings", {})
+    overlap = set(runtime_strings) & set(native_strings)
+
+    if overlap:
+        raise ValueError(
+            "translation keys cannot appear in both strings and native_strings: "
+            + ", ".join(sorted(overlap))
+        )
+
+    translations = dict(runtime_strings)
+    translations.update(native_strings)
+    return translations
+
+
 def source_includes(source: str) -> list[str]:
     includes = []
 
@@ -291,7 +307,7 @@ def source_includes(source: str) -> list[str]:
 def build(source_path: pathlib.Path, translation_path: pathlib.Path) -> str:
     source = source_path.read_text(encoding="utf-8-sig")
     translation_data = json.loads(translation_path.read_text(encoding="utf-8"))
-    translations = translation_data["strings"]
+    translations = translation_decisions(translation_data)
     blocks = extract_dialog_blocks(source)
     stringtable_blocks = extract_stringtable_blocks(source)
 

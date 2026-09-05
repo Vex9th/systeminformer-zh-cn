@@ -274,16 +274,16 @@ VOID ShowCustomizeMenu(
         return;
 
     menu = PhCreateEMenu();
-    PhInsertEMenuItem(menu, mainMenuItem = PhCreateEMenuItem(0, COMMAND_ID_ENABLE_MENU, L"Main menu (auto-hide)", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, searchMenuItem = PhCreateEMenuItem(0, COMMAND_ID_ENABLE_SEARCHBOX, L"Search box", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, mainMenuItem = PhCreateEMenuItem(0, COMMAND_ID_ENABLE_MENU, ToolStatusGetUiString(IDS_TS_MENU_MAIN_AUTO_HIDE, L"Main menu (auto-hide)"), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, searchMenuItem = PhCreateEMenuItem(0, COMMAND_ID_ENABLE_SEARCHBOX, ToolStatusGetUiString(IDS_TS_MENU_SEARCH_BOX, L"Search box"), NULL, NULL), ULONG_MAX);
 #if TOOLSTATUS_ENABLE_MENUBAR
     //PhInsertEMenuItem(menu, menuBarMenuItem = PhCreateEMenuItem(0, COMMAND_ID_ENABLE_MENUBAR, L"Menu bar", NULL, NULL), ULONG_MAX);
 #endif
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     ToolbarGraphCreateMenu(menu, COMMAND_ID_GRAPHS_CUSTOMIZE);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, lockMenuItem = PhCreateEMenuItem(0, COMMAND_ID_TOOLBAR_LOCKUNLOCK, L"Lock the toolbar", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, COMMAND_ID_TOOLBAR_CUSTOMIZE, L"Customize...", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, lockMenuItem = PhCreateEMenuItem(0, COMMAND_ID_TOOLBAR_LOCKUNLOCK, ToolStatusGetUiString(IDS_TS_MENU_LOCK_TOOLBAR, L"Lock the toolbar"), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, COMMAND_ID_TOOLBAR_CUSTOMIZE, ToolStatusGetUiString(IDS_TS_MENU_CUSTOMIZE, L"Customize..."), NULL, NULL), ULONG_MAX);
 
     if (ToolStatusConfig.AutoHideMenu)
         mainMenuItem->Flags |= PH_EMENU_CHECKED;
@@ -422,13 +422,13 @@ VOID NTAPI TabPageUpdatedCallback(
     switch (tabIndex)
     {
     case 0:
-        Edit_SetCueBannerText(SearchboxHandle, L"Search Processes (Ctrl+K)");
+        Edit_SetCueBannerText(SearchboxHandle, ToolStatusGetUiString(IDS_TS_SEARCH_PROCESSES, L"Search Processes (Ctrl+K)"));
         break;
     case 1:
-        Edit_SetCueBannerText(SearchboxHandle, L"Search Services (Ctrl+K)");
+        Edit_SetCueBannerText(SearchboxHandle, ToolStatusGetUiString(IDS_TS_SEARCH_SERVICES, L"Search Services (Ctrl+K)"));
         break;
     case 2:
-        Edit_SetCueBannerText(SearchboxHandle, L"Search Network (Ctrl+K)");
+        Edit_SetCueBannerText(SearchboxHandle, ToolStatusGetUiString(IDS_TS_SEARCH_NETWORK, L"Search Network (Ctrl+K)"));
         break;
     default:
         {
@@ -436,7 +436,7 @@ VOID NTAPI TabPageUpdatedCallback(
             PPH_STRING text;
 
             text = PH_AUTO_T(PH_STRING, GetTabIndexBannerText(tabIndex, &string));
-            Edit_SetCueBannerText(SearchboxHandle, PhGetStringOrDefault(text, L"Search disabled"));
+            Edit_SetCueBannerText(SearchboxHandle, PhGetStringOrDefault(text, ToolStatusGetUiString(IDS_TS_SEARCH_DISABLED, L"Search disabled")));
         }
         break;
     }
@@ -1235,22 +1235,22 @@ LRESULT CALLBACK MainWindowCallbackProc(
                                 case TIDC_POWERMENUDROPDOWN:
                                     {
                                         // Create the sub-menu...
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOCK, L"&Lock", NULL, NULL), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOGOFF, L"Log o&ff", NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOCK, ToolStatusGetUiString(IDS_TS_MENU_LOCK, L"&Lock"), NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOGOFF, ToolStatusGetUiString(IDS_TS_MENU_LOGOFF, L"Log o&ff"), NULL, NULL), ULONG_MAX);
                                         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SLEEP, L"&Sleep", NULL, NULL), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_HIBERNATE, L"&Hibernate", NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SLEEP, ToolStatusGetUiString(IDS_TS_MENU_SLEEP, L"&Sleep"), NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_HIBERNATE, ToolStatusGetUiString(IDS_TS_MENU_HIBERNATE, L"&Hibernate"), NULL, NULL), ULONG_MAX);
                                         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART_UPDATE, L"Update and restart", NULL, NULL), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN_UPDATE, L"Update and shut down", NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART_UPDATE, ToolStatusGetUiString(IDS_TS_MENU_UPDATE_RESTART, L"Update and restart"), NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN_UPDATE, ToolStatusGetUiString(IDS_TS_MENU_UPDATE_SHUTDOWN, L"Update and shut down"), NULL, NULL), ULONG_MAX);
                                         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART, L"R&estart", NULL, NULL), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTADVOPTIONS, L"Restart to advanced options", NULL, NULL), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTBOOTOPTIONS, L"Restart to boot &options", NULL, NULL), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, PHAPP_ID_COMPUTER_RESTARTFWOPTIONS, L"Restart to firmware options", NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART, ToolStatusGetUiString(IDS_TS_MENU_RESTART, L"R&estart"), NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTADVOPTIONS, ToolStatusGetUiString(IDS_TS_MENU_RESTART_ADVANCED, L"Restart to advanced options"), NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTBOOTOPTIONS, ToolStatusGetUiString(IDS_TS_MENU_RESTART_BOOT, L"Restart to boot &options"), NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, PHAPP_ID_COMPUTER_RESTARTFWOPTIONS, ToolStatusGetUiString(IDS_TS_MENU_RESTART_FIRMWARE, L"Restart to firmware options"), NULL, NULL), ULONG_MAX);
                                         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN, L"Shu&t down", NULL, NULL), ULONG_MAX);
-                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWNHYBRID, L"H&ybrid shut down", NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN, ToolStatusGetUiString(IDS_TS_MENU_SHUTDOWN, L"Shu&t down"), NULL, NULL), ULONG_MAX);
+                                        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWNHYBRID, ToolStatusGetUiString(IDS_TS_MENU_HYBRID_SHUTDOWN, L"H&ybrid shut down"), NULL, NULL), ULONG_MAX);
 
                                         if (PhWindowsVersion < WINDOWS_8)
                                         {
@@ -1384,22 +1384,22 @@ LRESULT CALLBACK MainWindowCallbackProc(
                             break;
 
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOCK, L"&Lock", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOGOFF, L"Log o&ff", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOCK, ToolStatusGetUiString(IDS_TS_MENU_LOCK, L"&Lock"), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_LOGOFF, ToolStatusGetUiString(IDS_TS_MENU_LOGOFF, L"Log o&ff"), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SLEEP, L"&Sleep", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_HIBERNATE, L"&Hibernate", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SLEEP, ToolStatusGetUiString(IDS_TS_MENU_SLEEP, L"&Sleep"), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_HIBERNATE, ToolStatusGetUiString(IDS_TS_MENU_HIBERNATE, L"&Hibernate"), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART_UPDATE, L"Update and restart", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN_UPDATE, L"Update and shut down", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART_UPDATE, ToolStatusGetUiString(IDS_TS_MENU_UPDATE_RESTART, L"Update and restart"), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN_UPDATE, ToolStatusGetUiString(IDS_TS_MENU_UPDATE_SHUTDOWN, L"Update and shut down"), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART, L"R&estart", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTADVOPTIONS, L"Restart to advanced options", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTBOOTOPTIONS, L"Restart to boot &options", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, PHAPP_ID_COMPUTER_RESTARTFWOPTIONS, L"Restart to firmware options", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTART, ToolStatusGetUiString(IDS_TS_MENU_RESTART, L"R&estart"), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTADVOPTIONS, ToolStatusGetUiString(IDS_TS_MENU_RESTART_ADVANCED, L"Restart to advanced options"), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_RESTARTBOOTOPTIONS, ToolStatusGetUiString(IDS_TS_MENU_RESTART_BOOT, L"Restart to boot &options"), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, PHAPP_ID_COMPUTER_RESTARTFWOPTIONS, ToolStatusGetUiString(IDS_TS_MENU_RESTART_FIRMWARE, L"Restart to firmware options"), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN, L"Shu&t down", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWNHYBRID, L"H&ybrid shut down", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWN, ToolStatusGetUiString(IDS_TS_MENU_SHUTDOWN, L"Shu&t down"), NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_ID_COMPUTER_SHUTDOWNHYBRID, ToolStatusGetUiString(IDS_TS_MENU_HYBRID_SHUTDOWN, L"H&ybrid shut down"), NULL, NULL), ULONG_MAX);
 
                         if (PhWindowsVersion < WINDOWS_8)
                         {
@@ -1869,17 +1869,17 @@ VOID NTAPI MainMenuInitializingCallback(
     else
         insertIndex = ULONG_MAX;
 
-    menu = PhPluginCreateEMenuItem(PluginInstance, 0, 0, L"Toolbar", NULL);
-    PhInsertEMenuItem(menu, mainMenuItem = PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_ENABLE_MENU, L"Main menu (auto-hide)", NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, searchMenuItem = PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_ENABLE_SEARCHBOX, L"Search box", NULL), ULONG_MAX);
+    menu = PhPluginCreateEMenuItem(PluginInstance, 0, 0, ToolStatusGetUiString(IDS_TS_MENU_TOOLBAR, L"Toolbar"), NULL);
+    PhInsertEMenuItem(menu, mainMenuItem = PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_ENABLE_MENU, ToolStatusGetUiString(IDS_TS_MENU_MAIN_AUTO_HIDE, L"Main menu (auto-hide)"), NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, searchMenuItem = PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_ENABLE_SEARCHBOX, ToolStatusGetUiString(IDS_TS_MENU_SEARCH_BOX, L"Search box"), NULL), ULONG_MAX);
 #if TOOLSTATUS_ENABLE_MENUBAR
     //PhInsertEMenuItem(menu, menuBarMenuItem = PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_ENABLE_MENUBAR, L"Menu bar", NULL), ULONG_MAX);
 #endif
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     ToolbarGraphCreatePluginMenu(menu, COMMAND_ID_GRAPHS_CUSTOMIZE);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, lockMenuItem = PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_TOOLBAR_LOCKUNLOCK, L"Lock the toolbar", NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_TOOLBAR_CUSTOMIZE, L"Customize...", NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, lockMenuItem = PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_TOOLBAR_LOCKUNLOCK, ToolStatusGetUiString(IDS_TS_MENU_LOCK_TOOLBAR, L"Lock the toolbar"), NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhPluginCreateEMenuItem(PluginInstance, 0, COMMAND_ID_TOOLBAR_CUSTOMIZE, ToolStatusGetUiString(IDS_TS_MENU_CUSTOMIZE, L"Customize..."), NULL), ULONG_MAX);
 
     if (ToolStatusConfig.AutoHideMenu)
         mainMenuItem->Flags |= PH_EMENU_CHECKED;

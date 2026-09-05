@@ -12,63 +12,22 @@
 
 #include "toolstatus.h"
 
-static PH_KEY_VALUE_PAIR GraphTypePairs[] =
+typedef struct _GRAPH_TYPE_ITEM
 {
-    { L"None", (PVOID)TASKBAR_ICON_NONE },
-    { L"CPU usage", (PVOID)TASKBAR_ICON_CPU_USAGE },
-    { L"CPU history", (PVOID)TASKBAR_ICON_CPU_HISTORY },
-    { L"I/O history", (PVOID)TASKBAR_ICON_IO_HISTORY },
-    { L"Commit charge history", (PVOID)TASKBAR_ICON_COMMIT_HISTORY },
-    { L"Physical memory history", (PVOID)TASKBAR_ICON_PHYSICAL_HISTORY },
+    PH_TASKBAR_ICON Type;
+    ULONG ResourceId;
+    PCWSTR Fallback;
+} GRAPH_TYPE_ITEM;
+
+static CONST GRAPH_TYPE_ITEM GraphTypeItems[] =
+{
+    { TASKBAR_ICON_NONE, IDS_TS_GRAPH_NONE, L"None" },
+    { TASKBAR_ICON_CPU_USAGE, IDS_TS_STATUS_LABEL_CPU_USAGE, L"CPU usage" },
+    { TASKBAR_ICON_CPU_HISTORY, IDS_TS_GRAPH_CPU_HISTORY, L"CPU history" },
+    { TASKBAR_ICON_IO_HISTORY, IDS_TS_GRAPH_IO_HISTORY, L"I/O history" },
+    { TASKBAR_ICON_COMMIT_HISTORY, IDS_TS_GRAPH_COMMIT_CHARGE_HISTORY, L"Commit charge history" },
+    { TASKBAR_ICON_PHYSICAL_HISTORY, IDS_TS_GRAPH_PHYSICAL_MEMORY_HISTORY, L"Physical memory history" },
 };
-
-static CONST PCWSTR GraphTypeStrings[] =
-{
-    L"None",
-    L"CPU usage",
-    L"CPU history",
-    L"I/O history",
-    L"Commit charge history",
-    L"Physical memory history"
-};
-
-PCWSTR GraphTypeGetTypeString(
-    _In_ ULONG SidType
-    )
-{
-    PCWSTR string;
-
-    if (PhFindStringSiKeyValuePairs(
-        GraphTypePairs,
-        sizeof(GraphTypePairs),
-        SidType,
-        &string
-        ))
-    {
-        return string;
-    }
-
-    return L"None";
-}
-
-ULONG GraphTypeGetTypeInteger(
-    _In_ PCWSTR SidType
-    )
-{
-    ULONG integer;
-
-    if (PhFindIntegerSiKeyValuePairs(
-        GraphTypePairs,
-        sizeof(GraphTypePairs),
-        SidType,
-        &integer
-        ))
-    {
-        return integer;
-    }
-
-    return 0;
-}
 
 INT_PTR CALLBACK OptionsDlgProc(
     _In_ HWND WindowHandle,
@@ -82,6 +41,8 @@ INT_PTR CALLBACK OptionsDlgProc(
     case WM_INITDIALOG:
         {
             HWND graphTypeHandle;
+            ULONG graphType;
+            INT selectedIndex = CB_ERR;
 
             Button_SetCheck(GetDlgItem(WindowHandle, IDC_ENABLE_TOOLBAR), ToolStatusConfig.ToolBarEnabled ? BST_CHECKED : BST_UNCHECKED);
             Button_SetCheck(GetDlgItem(WindowHandle, IDC_ENABLE_STATUSBAR), ToolStatusConfig.StatusBarEnabled ? BST_CHECKED : BST_UNCHECKED);
@@ -94,13 +55,49 @@ INT_PTR CALLBACK OptionsDlgProc(
             Button_SetCheck(GetDlgItem(WindowHandle, IDC_ENABLE_LARGETOOLBARICON), ToolStatusConfig.ToolBarLargeIcons ? BST_CHECKED : BST_UNCHECKED);
 
             graphTypeHandle = GetDlgItem(WindowHandle, IDC_CURRENT);
-            PhAddComboBoxStrings(graphTypeHandle, (PCWSTR*)GraphTypeStrings, RTL_NUMBER_OF(GraphTypeStrings));
-            PhSelectComboBoxString(graphTypeHandle, GraphTypeGetTypeString(PhGetIntegerSetting(SETTING_NAME_TASKBARDISPLAYSTYLE)), FALSE);
+            graphType = PhGetIntegerSetting(SETTING_NAME_TASKBARDISPLAYSTYLE);
+
+            for (ULONG i = 0; i < RTL_NUMBER_OF(GraphTypeItems); i++)
+            {
+                INT itemIndex;
+
+                itemIndex = ComboBox_AddString(
+                    graphTypeHandle,
+                    ToolStatusGetUiString(
+                        GraphTypeItems[i].ResourceId,
+                        GraphTypeItems[i].Fallback
+                        )
+                    );
+
+                if (itemIndex == CB_ERR || itemIndex == CB_ERRSPACE)
+                    continue;
+
+                if (ComboBox_SetItemData(
+                    graphTypeHandle,
+                    itemIndex,
+                    UlongToPtr(GraphTypeItems[i].Type)
+                    ) == CB_ERR)
+                {
+                    ComboBox_DeleteString(graphTypeHandle, itemIndex);
+                    continue;
+                }
+
+                if (GraphTypeItems[i].Type == graphType ||
+                    (selectedIndex == CB_ERR && GraphTypeItems[i].Type == TASKBAR_ICON_NONE))
+                {
+                    selectedIndex = itemIndex;
+                }
+            }
+
+            if (selectedIndex != CB_ERR)
+                ComboBox_SetCurSel(graphTypeHandle, selectedIndex);
         }
         break;
     case WM_DESTROY:
         {
-            PPH_STRING graphTypeString;
+            HWND graphTypeHandle;
+            INT selectedIndex;
+            PH_TASKBAR_ICON graphType = TASKBAR_ICON_NONE;
 
             ReBarSaveLayoutSettings();
 
@@ -130,9 +127,19 @@ INT_PTR CALLBACK OptionsDlgProc(
             ToolbarCreateControls();
             ReBarSaveLayoutSettings();
 
-            graphTypeString = PH_AUTO(PhGetWindowText(GetDlgItem(WindowHandle, IDC_CURRENT)));
-            PhSetIntegerSetting(SETTING_NAME_TASKBARDISPLAYSTYLE, GraphTypeGetTypeInteger(graphTypeString->Buffer));
-            TaskbarListIconType = PhGetIntegerSetting(SETTING_NAME_TASKBARDISPLAYSTYLE);
+            graphTypeHandle = GetDlgItem(WindowHandle, IDC_CURRENT);
+            selectedIndex = ComboBox_GetCurSel(graphTypeHandle);
+
+            if (selectedIndex != CB_ERR)
+            {
+                LRESULT itemData = ComboBox_GetItemData(graphTypeHandle, selectedIndex);
+
+                if (itemData != CB_ERR)
+                    graphType = PtrToUlong((PVOID)itemData);
+            }
+
+            PhSetIntegerSetting(SETTING_NAME_TASKBARDISPLAYSTYLE, graphType);
+            TaskbarListIconType = graphType;
             TaskbarIsDirty = TRUE;
 
             TaskbarInitialize();

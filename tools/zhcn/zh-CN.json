@@ -4,13 +4,28 @@
     "language": "zh-CN",
     "note": "English source string -> Simplified Chinese translation. See glossary.md for terminology."
   },
-  "strings": {
+  "native_strings": {
+    "\nO: ": "\nO: ",
+    "\nW: ": "\nW: ",
     "%": "%",
     " (": " (",
+    " (Unavailable)": "（不可用）",
+    ", W: ": ", W: ",
     "%)": "%)",
+    "): R+O: ": "): R+O: ",
     "): ": "): ",
+    ": R+O: ": ": R+O: ",
     ": ": ": ",
     "-": "-",
+    "Commit charge history": "提交内存历史",
+    "Physical memory history": "物理内存历史",
+    "R: ": "R: ",
+    "Search disabled": "搜索已禁用",
+    "Search Network (Ctrl+K)": "搜索网络 (Ctrl+K)",
+    "Search Services (Ctrl+K)": "搜索服务 (Ctrl+K)",
+    "Toolbar": "工具栏"
+  },
+  "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
     " and its descendants": "及其子进程",
     "100000": "100000",
