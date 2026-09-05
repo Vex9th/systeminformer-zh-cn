@@ -254,16 +254,76 @@ INT_PTR CALLBACK PhpSessionPropertiesDlgProc(
             PhAddListViewGroup(context->ListViewHandle, 0, L"User");
             //PhAddListViewGroup(context->ListViewHandle, 1, L"Profile");
 
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 0, PhGetApplicationUiString(IDS_PH_SESSION_USER_NAME), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 1, PhGetApplicationUiString(IDS_PH_SESSION_ID), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 2, PhGetApplicationUiString(IDS_PH_SESSION_STATE), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 3, PhGetApplicationUiString(IDS_PH_SESSION_LOGON_TIME), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 4, PhGetApplicationUiString(IDS_PH_SESSION_CONNECT_TIME), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 5, PhGetApplicationUiString(IDS_PH_SESSION_DISCONNECT_TIME), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 6, PhGetApplicationUiString(IDS_PH_SESSION_LAST_INPUT_TIME), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 7, PhGetApplicationUiString(IDS_PH_SESSION_CLIENT_NAME), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 8, PhGetApplicationUiString(IDS_PH_SESSION_CLIENT_ADDRESS), NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, 9, PhGetApplicationUiString(IDS_PH_SESSION_CLIENT_DISPLAY), NULL);
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                0,
+                PhGetApplicationUiString(IDS_PH_SESSION_USER_NAME),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                1,
+                PhGetApplicationUiString(IDS_PH_SESSION_ID),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                2,
+                PhGetApplicationUiString(IDS_PH_SESSION_STATE),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                3,
+                PhGetApplicationUiString(IDS_PH_SESSION_LOGON_TIME),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                4,
+                PhGetApplicationUiString(IDS_PH_SESSION_CONNECT_TIME),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                5,
+                PhGetApplicationUiString(IDS_PH_SESSION_DISCONNECT_TIME),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                6,
+                PhGetApplicationUiString(IDS_PH_SESSION_LAST_INPUT_TIME),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                7,
+                PhGetApplicationUiString(IDS_PH_SESSION_CLIENT_NAME),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                8,
+                PhGetApplicationUiString(IDS_PH_SESSION_CLIENT_ADDRESS),
+                NULL
+                );
+            PhAddListViewGroupItem(
+                context->ListViewHandle,
+                0,
+                9,
+                PhGetApplicationUiString(IDS_PH_SESSION_CLIENT_DISPLAY),
+                NULL
+                );
 
             //PhAddListViewGroupItem(context->ListViewHandle, 1, 10, L"LastLogon", NULL);
             //PhAddListViewGroupItem(context->ListViewHandle, 1, 11, L"LastLogoff", NULL);
@@ -377,3 +437,4 @@ INT_PTR CALLBACK PhpSessionPropertiesDlgProc(
 
     return FALSE;
 }
+
