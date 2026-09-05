@@ -3272,6 +3272,10 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_NT_WHOIS_TITLE_FORMAT": ("whois.c", 1),
         }
         all_source = "\n".join(sources.values())
+        ui_string_expression = (
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\("
+            r"PluginInstance->DllBase,\s*{resource_id},\s*NULL\)\)\)"
+        )
 
         for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
             with self.subTest(network_tools_window_text=resource_id):
@@ -3307,6 +3311,71 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     re.findall(r"%(?:\.\d+)?(?:l)?[suf%]", english_text),
                     re.findall(r"%(?:\.\d+)?(?:l)?[suf%]", chinese_text),
                 )
+
+        options_branches = re.search(
+            r"if\s*\(id\s*==\s*IDC_KEYTEXT\)\s*\{(?P<license>.*?)\}"
+            r"\s*else\s*\{(?P<account>.*?)\}",
+            sources["options.c"],
+            re.DOTALL,
+        )
+        self.assertIsNotNone(options_branches)
+        for branch_name, resource_id in (
+            ("license", "IDS_NT_PASTE_LICENSE_KEY_HERE"),
+            ("account", "IDS_NT_PASTE_ACCOUNT_ID_HERE"),
+        ):
+            with self.subTest(network_tools_option_branch=branch_name):
+                self.assertRegex(
+                    options_branches.group(branch_name),
+                    r"PhSetDialogItemText\(\s*WindowHandle,\s*IDC_KEYTEXT_L,\s*"
+                    + ui_string_expression.format(resource_id=resource_id)
+                    + r"\s*\);",
+                )
+
+        ping_targets = {
+            "hwndDlg": "IDS_NT_PING_TITLE_FORMAT",
+            "context->StatusHandle": "IDS_NT_PING_STATUS_FORMAT",
+            "IDC_ICMP_AVG": "IDS_NT_PING_AVERAGE_FORMAT",
+            "IDC_ICMP_MIN": "IDS_NT_PING_MINIMUM_FORMAT",
+            "IDC_ICMP_MAX": "IDS_NT_PING_MAXIMUM_FORMAT",
+            "IDC_PINGS_SENT": "IDS_NT_PINGS_SENT_FORMAT",
+            "IDC_PINGS_LOST": "IDS_NT_PINGS_LOST_FORMAT",
+            "IDC_ICMP_STDEV": "IDS_NT_PING_DEVIATION_FORMAT",
+            "IDC_BAD_HASH": "IDS_NT_BAD_REPLIES_FORMAT",
+            "IDC_ANON_ADDR": "IDS_NT_ANON_REPLIES_FORMAT",
+        }
+        for target, resource_id in ping_targets.items():
+            with self.subTest(network_tools_ping_target=target):
+                if target.startswith("IDC_"):
+                    call_prefix = (
+                        rf"PhSetDialogItemText\(\s*hwndDlg,\s*{target},\s*"
+                        r"PhaFormatString\(\s*"
+                    )
+                else:
+                    call_prefix = (
+                        rf"PhSetWindowText\(\s*{re.escape(target)},\s*"
+                        r"PhaFormatString\(\s*"
+                    )
+                self.assertRegex(
+                    sources["ping.c"],
+                    call_prefix
+                    + ui_string_expression.format(resource_id=resource_id)
+                    + r"\s*,",
+                )
+
+        tracing_result_selection = re.search(
+            r"if\s*\(failed\)\s*\{\s*"
+            r"tracingResult\s*=\s*PhLoadUiString\(PluginInstance->DllBase,\s*"
+            r"IDS_NT_TRACERT_RESULT_ERROR,\s*NULL\);\s*\}\s*"
+            r"else if\s*\(context->PingContinuous\)\s*\{\s*"
+            r"tracingResult\s*=\s*PhLoadUiString\(PluginInstance->DllBase,\s*"
+            r"IDS_NT_TRACERT_RESULT_CONTINUOUS,\s*NULL\);\s*\}\s*"
+            r"else\s*\{\s*"
+            r"tracingResult\s*=\s*PhLoadUiString\(PluginInstance->DllBase,\s*"
+            r"IDS_NT_TRACERT_RESULT_COMPLETE,\s*NULL\);\s*\}",
+            sources["tracert.c"],
+            re.DOTALL,
+        )
+        self.assertIsNotNone(tracing_result_selection)
 
         self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12022$")
         migrated_resource_ids = "|".join(
