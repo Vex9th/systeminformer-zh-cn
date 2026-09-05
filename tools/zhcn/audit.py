@@ -8,12 +8,18 @@ from and which runtime translation funnel covers it.
 The manifest is the single source of truth for translation coverage. It is
 regenerated on every check; it is derived data and must not be committed.
 
-Categories (each maps to a runtime translation hook in phlib or the exe):
+Categories describe the actual UI sink. Categories without a runtime
+translation hook are marked by check_translation.py as requiring call-site
+migration even when the legacy dictionary contains the same English key.
   rc_dialog        dialog template controls and captions (.rc DIALOG/DIALOGEX)
   rc_menu          menu resources (.rc MENU/MENUEX)
   rc_stringtable   dynamic UI text stored in .rc STRINGTABLE blocks
   c_emenu          PhCreateEMenuItem / PhCreateEMenuItemCallback text
   c_listview_col   PhAddListViewColumn* text
+  c_listview_group PhAddListViewGroup text
+  c_listview_group_item PhAddListViewGroupItem* text (no translation hook)
+  c_window_text    PhSetDialogItemText / PhSetWindowText / SetWindowText text
+  c_combobox       ComboBox_AddString text
   c_treenew_col    PhAddTreeNewColumn* text
   c_msgbox         PhShowMessage* family format/title arguments
   c_msgbox_vararg  visible printf arguments not covered by the runtime funnel
@@ -265,6 +271,11 @@ CALL_SPECS = {
     "PhAddListViewColumnDpi": {None: "c_listview_col"},
     "PhAddIListViewColumn": {None: "c_listview_col"},
     "PhAddIListViewColumnDpi": {None: "c_listview_col"},
+    "PhAddListViewGroup": {2: "c_listview_group"},
+    "PhAddListViewGroupItem": {3: "c_listview_group_item"},
+    "PhAddIListViewGroupItem": {3: "c_listview_group_item"},
+    "PhListView_AddGroup": {2: "c_listview_group"},
+    "PhListView_AddGroupItem": {3: "c_listview_group_item"},
     "PhAddTreeNewColumn": {3: "c_treenew_col"},
     "PhAddTreeNewColumnEx": {3: "c_treenew_col"},
     "PhAddTreeNewColumnEx2": {3: "c_treenew_col"},
@@ -283,6 +294,11 @@ CALL_SPECS = {
     "PhShowConfirmMessage": {1: "c_confirm", 2: "c_confirm", 3: "c_confirm"},
     "PhAddListViewItem": {2: "c_listview_item"},
     "PhAddIListViewItem": {2: "c_listview_item"},
+    "PhSetDialogItemText": {2: "c_window_text"},
+    "PhSetWindowText": {1: "c_window_text"},
+    "SetWindowText": {1: "c_window_text"},
+    "SetWindowTextW": {1: "c_window_text"},
+    "ComboBox_AddString": {1: "c_combobox"},
     "PhNfShowBalloonTip": {0: "c_balloon", 1: "c_balloon"},
     "PhNfShowBalloonTipEx": {0: "c_balloon", 1: "c_balloon"},
 }
@@ -340,6 +356,159 @@ def line_of_offset(text: str, offset: int) -> int:
     return text.count("\n", 0, offset) + 1
 
 
+def literals_outside_ui_string_getters(expression: str):
+    """Return literals that are not fallbacks inside native UI getters."""
+    getter_names = {
+        match.group(0)
+        for match in IDENT_RE.finditer(expression)
+        if match.group(0).endswith("GetUiString")
+    }
+    masked = list(expression)
+
+    for _, _, spans, call_start in find_calls(expression, getter_names):
+        call_end = spans[-1][1] + 1
+        for index in range(call_start, call_end):
+            if masked[index] != "\n":
+                masked[index] = " "
+
+    return all_literals("".join(masked))
+
+
+def c_brace_scopes(text: str):
+    """Return matched C brace ranges while ignoring braces in literals."""
+    stack = []
+    scopes = []
+    state = "normal"
+    index = 0
+
+    while index < len(text):
+        char = text[index]
+        if state == "normal":
+            if char == '"':
+                state = "string"
+            elif char == "'":
+                state = "char"
+            elif char == "{":
+                stack.append(index)
+            elif char == "}" and stack:
+                scopes.append((stack.pop(), index))
+        elif state in {"string", "char"}:
+            if char == "\\":
+                index += 1
+            elif (state == "string" and char == '"') or (
+                state == "char" and char == "'"
+            ):
+                state = "normal"
+        index += 1
+
+    return scopes
+
+
+def innermost_c_scope(scopes, offset: int):
+    containing = [
+        scope for scope in scopes if scope[0] < offset < scope[1]
+    ]
+    return max(containing, key=lambda scope: scope[0], default=None)
+
+
+def visible_array_declaration(declarations, offset: int, scopes):
+    """Resolve the nearest declaration whose lexical scope contains offset."""
+    visible = []
+    for declaration in declarations:
+        if declaration.start() >= offset:
+            continue
+        scope = innermost_c_scope(scopes, declaration.start())
+        if scope is None or scope[0] < offset < scope[1]:
+            visible.append((scope, declaration))
+
+    if not visible:
+        return None
+
+    return max(
+        visible,
+        key=lambda item: (
+            item[0][0] if item[0] is not None else -1,
+            item[1].start(),
+        ),
+    )[1]
+
+
+def scan_combo_box_string_arrays(text: str, scan_text: str, rel: str, entries):
+    """Resolve string arrays passed to the no-hook PhAddComboBoxStrings."""
+    scopes = c_brace_scopes(scan_text)
+
+    for _, args, spans, call_start in find_calls(
+        scan_text, {"PhAddComboBoxStrings"}
+    ):
+        if len(args) < 2:
+            continue
+
+        array_argument = args[1]
+        for visible_text in literals_outside_ui_string_getters(array_argument):
+            if not is_noise(visible_text):
+                entries.append({
+                    "category": "c_combobox",
+                    "file": rel,
+                    "line": line_of_offset(text, spans[1][0]),
+                    "english": visible_text,
+                })
+
+        identifier_match = re.fullmatch(
+            r"\s*([A-Za-z_][A-Za-z0-9_]*)\s*", array_argument
+        )
+        if not identifier_match:
+            continue
+
+        identifier = identifier_match.group(1)
+        declaration_re = re.compile(
+            rf"\b{re.escape(identifier)}\s*\[[^\]]*\]\s*"
+            rf"(?:=\s*\{{(?P<body>.*?)\}})?\s*;",
+            re.DOTALL,
+        )
+        declarations = list(declaration_re.finditer(scan_text))
+        declaration = visible_array_declaration(
+            declarations, call_start, scopes
+        )
+        if declaration is None:
+            continue
+
+        sources = []
+        if declaration.group("body") is not None:
+            sources.append((declaration.group("body"), declaration.start("body")))
+
+        declaration_scope = innermost_c_scope(scopes, declaration.start())
+        if declaration_scope is not None:
+            assignment_region = scan_text[declaration.end():call_start]
+            assignment_re = re.compile(
+                rf"\b{re.escape(identifier)}\s*\[[^\]]+\]\s*=\s*"
+                rf"(?P<value>.*?);",
+                re.DOTALL,
+            )
+            for assignment in assignment_re.finditer(assignment_region):
+                assignment_offset = declaration.end() + assignment.start()
+                if visible_array_declaration(
+                    declarations, assignment_offset, scopes
+                ) is not declaration:
+                    continue
+                # Keep every visible assignment conservatively. If one index
+                # is overwritten, reporting both values is preferable to
+                # silently dropping a possible user-visible string.
+                sources.append((
+                    assignment.group("value"),
+                    declaration.end() + assignment.start("value"),
+                ))
+
+        for source, source_offset in sources:
+            for visible_text in literals_outside_ui_string_getters(source):
+                if not is_noise(visible_text):
+                    entries.append({
+                        "category": "c_combobox",
+                        "file": rel,
+                        "line": line_of_offset(text, source_offset),
+                        "english": visible_text,
+                    })
+
+
 def scan_c_file(path: str, entries):
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     try:
@@ -349,6 +518,8 @@ def scan_c_file(path: str, entries):
         return
 
     scan_text = mask_c_comments(text)
+
+    scan_combo_box_string_arrays(text, scan_text, rel, entries)
 
     for name, args, spans, call_start in find_calls(scan_text, set(CALL_SPECS) | set(ANY_LITERAL_SPECS)):
         if name in CALL_SPECS:

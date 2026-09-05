@@ -48,7 +48,12 @@ KEEP_ENGLISH_RULES = [
     r"^(Hybrid-Analysis|VirusTotal|Worker Factory|PingGraphLayout)$",
 ]
 
-CALLSITE_MIGRATION_CATEGORIES = {"c_msgbox_vararg"}
+CALLSITE_MIGRATION_CATEGORIES = {
+    "c_combobox",
+    "c_listview_group_item",
+    "c_msgbox_vararg",
+    "c_window_text",
+}
 
 
 def is_keep_english(s: str) -> bool:
@@ -215,7 +220,11 @@ def main():
     lines.append(f"- 已翻译：{total_t}")
     lines.append(f"- 未翻译：{total_a - total_t}")
     lines.append(f"- 约定保留英文（技术缩写/键名/占位符等）：{len(keep_english)} 项")
-    lines.append("- `c_msgbox_vararg` 必须迁移调用点；即使字典存在同名项也不计为已翻译")
+    migration_categories = "`, `".join(sorted(CALLSITE_MIGRATION_CATEGORIES))
+    lines.append(
+        f"- `{migration_categories}` 必须迁移调用点；"
+        "即使字典存在同名项也不计为已翻译"
+    )
     lines.append("")
     lines.append("## 按类别 / By category")
     lines.append("")

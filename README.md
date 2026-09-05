@@ -27,7 +27,7 @@ System Informer 的非官方简体中文、无驱动便携构建。程序名为 
 | 项目 | 当前状态 |
 |---|---|
 | 主程序静态对话框 | 106 个 en-US/zh-CN 同 ID 资源曾在历史 Windows x64 CI 中通过 PE 结构校验；当前本地新增提交尚未重新跑 Windows CI，人工界面验收仍未完成 |
-| 动态文字 | PE Viewer、安装器和主程序分别已有 128、74、244 条使用原生 `STRINGTABLE`；ExtendedServices、ExtendedTools、ToolStatus、UserNotes 分别已迁移 15、25、103、15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计迁移 13 条。审计当前未发现尚待翻译的已识别动态提示，但大量既有文字仍由兼容翻译层接管，不能据此宣称整体完成 |
+| 动态文字 | PE Viewer、安装器和主程序分别已有 128、74、244 条使用原生 `STRINGTABLE`；ExtendedServices、ExtendedTools、ToolStatus、UserNotes 分别已迁移 15、25、103、15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计迁移 13 条。扩展审计到窗口文字、组合框（含数组批量添加）及列表分组/项目和包装入口，并按真实翻译入口区分必须迁移的调用点后，当前报告 685 条未翻译项；大量既有文字仍由兼容翻译层接管，不能据此宣称整体完成 |
 | 生成器与源码契约 | 本地测试通过 |
 | Windows x64 构建与原生加载 | 历史远端基线曾通过；当前本地分支新增内容尚未推送，不能宣称已通过 Windows 编译、启动或 UI 响应验证 |
 | x86、ARM64、多 DPI 界面 | 尚未完成真实运行与视觉验收 |

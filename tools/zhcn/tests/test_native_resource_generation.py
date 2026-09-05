@@ -275,6 +275,87 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn("Block-commented message.", categories)
         self.assertNotIn("Unused vararg literal.", categories)
 
+    def test_audit_scans_common_ui_text_setters(self) -> None:
+        audit = load_audit_module()
+        source = """
+            PCWSTR sharedChoices[] = { L"Global shared choice" };
+            void sample(void) {
+                PhSetDialogItemText(hwnd, IDC_STATUS, L"Dialog item text");
+                PhSetWindowText(hwnd, L"Window title");
+                SetWindowText(hwnd, L"Native window title");
+                SetWindowTextW(hwnd, L"Wide window title");
+                PhAddListViewGroup(list, 1, L"Group heading");
+                PhAddListViewGroupItem(list, 1, MAXINT, L"Grouped item", NULL);
+                PhAddIListViewGroupItem(list, 1, MAXINT, L"Interface grouped item", NULL);
+                PhListView_AddGroup(list, 2, L"Wrapped group heading");
+                PhListView_AddGroupItem(list, 2, MAXINT, L"Wrapped grouped item", NULL);
+                ComboBox_AddString(combo, L"Choice label");
+                PCWSTR choices[] = { L"First array choice", L"Second array choice" };
+                PhAddComboBoxStrings(combo, choices, RTL_NUMBER_OF(choices));
+                PWSTR formattedChoices[2];
+                formattedChoices[i] = PhaFormatString(L"%u units", i)->Buffer;
+                PhAddComboBoxStrings(combo, formattedChoices, RTL_NUMBER_OF(formattedChoices));
+                PCWSTR mixedChoices[2] = { L"Initial mixed choice" };
+                mixedChoices[1] = L"Assigned mixed choice";
+                PhAddComboBoxStrings(combo, mixedChoices, RTL_NUMBER_OF(mixedChoices));
+                PCWSTR nativeChoices[] = {
+                    ToolStatusGetUiString(IDS_TEST_CHOICE, L"Native fallback")
+                };
+                PhAddComboBoxStrings(combo, nativeChoices, RTL_NUMBER_OF(nativeChoices));
+            }
+            void first(void) {
+                PCWSTR sharedChoices[] = { L"Unrelated local choice" };
+            }
+            void second(void) {
+                PhAddComboBoxStrings(combo, sharedChoices, RTL_NUMBER_OF(sharedChoices));
+            }
+            void third(void) {
+                PWSTR assignedChoices[1];
+                {
+                    PWSTR assignedChoices[1];
+                    assignedChoices[0] = L"Unrelated shadow assignment";
+                }
+                assignedChoices[0] = L"Visible scoped assignment";
+                PhAddComboBoxStrings(combo, assignedChoices, RTL_NUMBER_OF(assignedChoices));
+            }
+            // PhSetWindowText(hwnd, L"Commented title");
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            {(entry["category"], entry["english"]) for entry in entries},
+            {
+                ("c_window_text", "Dialog item text"),
+                ("c_window_text", "Window title"),
+                ("c_window_text", "Native window title"),
+                ("c_window_text", "Wide window title"),
+                ("c_listview_group", "Group heading"),
+                ("c_listview_group", "Wrapped group heading"),
+                ("c_listview_group_item", "Grouped item"),
+                ("c_listview_group_item", "Interface grouped item"),
+                ("c_listview_group_item", "Wrapped grouped item"),
+                ("c_combobox", "Choice label"),
+                ("c_combobox", "First array choice"),
+                ("c_combobox", "Second array choice"),
+                ("c_combobox", "%u units"),
+                ("c_combobox", "Initial mixed choice"),
+                ("c_combobox", "Assigned mixed choice"),
+                ("c_combobox", "Global shared choice"),
+                ("c_combobox", "Visible scoped assignment"),
+            },
+        )
+        scanned_text = {entry["english"] for entry in entries}
+        self.assertNotIn("Native fallback", scanned_text)
+        self.assertNotIn("Unrelated local choice", scanned_text)
+        self.assertNotIn("Unrelated shadow assignment", scanned_text)
+
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
         audit = load_audit_module()
         source_files = {
@@ -495,6 +576,18 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertFalse(
             checker.translation_is_effective("c_msgbox_vararg", "已翻译")
         )
+        self.assertTrue(
+            checker.translation_is_effective("c_listview_group", "已翻译")
+        )
+        for category in (
+            "c_window_text",
+            "c_combobox",
+            "c_listview_group_item",
+        ):
+            with self.subTest(callsite_migration_category=category):
+                self.assertFalse(
+                    checker.translation_is_effective(category, "已翻译")
+                )
 
     def test_compiled_dialog_parser_keeps_control_ordinals_in_structure(self) -> None:
         validator = load_validator_module()
