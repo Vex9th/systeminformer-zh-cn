@@ -74,6 +74,49 @@ IDS_PH_STAT_GDIHANDLES|2396|GDI handles|GDI 句柄|PH_PROCESS_STATISTICS_CATEGOR
 IDS_PH_STAT_PEAKGDIHANDLES|2397|Peak GDI handles|GDI 句柄峰值|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_PEAKGDIHANDLES
 IDS_PH_STAT_USERHANDLES|2398|USER handles|USER 句柄|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_USERHANDLES
 IDS_PH_STAT_PEAKUSERHANDLES|2399|Peak USER handles|USER 句柄峰值|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_PEAKUSERHANDLES
+IDS_PH_STAT_CYCLES|2345|Cycles|周期|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLES
+IDS_PH_STAT_ENERGYATTRIBUTEDCYCLES|2400|Attributed cycles|归属周期|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYATTRIBUTEDCYCLES
+IDS_PH_STAT_ENERGYWORKONBEHALFCYCLES|2401|Work on behalf cycles|代为执行周期|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYWORKONBEHALFCYCLES
+IDS_PH_STAT_ENERGYCYCLESHIGHUSER|2402|Cycles: high/foreground user|周期：高优先级/前台（用户）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESHIGHUSER
+IDS_PH_STAT_ENERGYCYCLESHIGHKERNEL|2403|Cycles: high/foreground kernel|周期：高优先级/前台（内核）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESHIGHKERNEL
+IDS_PH_STAT_ENERGYCYCLESABOVENORMALUSER|2404|Cycles: above normal user|周期：高于正常（用户）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESABOVENORMALUSER
+IDS_PH_STAT_ENERGYCYCLESABOVENORMALKERNEL|2405|Cycles: above normal kernel|周期：高于正常（内核）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESABOVENORMALKERNEL
+IDS_PH_STAT_ENERGYCYCLESNORMALUSER|2406|Cycles: normal user|周期：正常（用户）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESNORMALUSER
+IDS_PH_STAT_ENERGYCYCLESNORMALKERNEL|2407|Cycles: normal kernel|周期：正常（内核）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESNORMALKERNEL
+IDS_PH_STAT_ENERGYCYCLESLOWUSER|2408|Cycles: low/background user|周期：低优先级/后台（用户）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESLOWUSER
+IDS_PH_STAT_ENERGYCYCLESLOWKERNEL|2409|Cycles: low/background kernel|周期：低优先级/后台（内核）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCYCLESLOWKERNEL
+IDS_PH_STAT_ENERGYDISK|2410|Disk energy (uJ)|磁盘能耗（uJ）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYDISK
+IDS_PH_STAT_ENERGYDISKJOULES|2411|Disk energy (J)|磁盘能耗（J）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYDISKJOULES
+IDS_PH_STAT_ENERGYDISKWATTHOURS|2412|Disk energy (Wh)|磁盘能耗（Wh）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYDISKWATTHOURS
+IDS_PH_STAT_ENERGYDISKWATTS|2413|Disk power (W)|磁盘功率（W）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYDISKWATTS
+IDS_PH_STAT_ENERGYNETWORKTAIL|2414|Network tail energy (uJ)|网络尾部能耗（uJ）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYNETWORKTAIL
+IDS_PH_STAT_ENERGYNETWORKTAILJOULES|2415|Network tail energy (J)|网络尾部能耗（J）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYNETWORKTAILJOULES
+IDS_PH_STAT_ENERGYNETWORKTAILWATTHOURS|2416|Network tail energy (Wh)|网络尾部能耗（Wh）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYNETWORKTAILWATTHOURS
+IDS_PH_STAT_ENERGYNETWORKTAILWATTS|2417|Network tail power (W)|网络尾部功率（W）|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYNETWORKTAILWATTS
+IDS_PH_STAT_CARBON|2418|Carbon impact|碳排放影响|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_CARBON
+IDS_PH_STAT_ENERGYNETWORKTXRX|2419|Network Tx/Rx bytes|网络收发字节数|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYNETWORKTXRX
+IDS_PH_STAT_ENERGYMBBTXRX|2420|MBB Tx/Rx bytes|MBB 收发字节数|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYMBBTXRX
+IDS_PH_STAT_ENERGYFOREGROUNDDURATION|2421|Foreground duration|前台时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYFOREGROUNDDURATION
+IDS_PH_STAT_ENERGYDESKTOPVISIBLEDURATION|2422|Desktop visible duration|桌面可见时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYDESKTOPVISIBLEDURATION
+IDS_PH_STAT_ENERGYPSMFOREGROUNDDURATION|2423|PSM foreground duration|PSM 前台时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYPSMFOREGROUNDDURATION
+IDS_PH_STAT_ENERGYCOMPOSITIONRENDERED|2424|Composition rendered|合成渲染|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCOMPOSITIONRENDERED
+IDS_PH_STAT_ENERGYCOMPOSITIONDIRTYGENERATED|2425|Composition dirty generated|合成脏区域生成|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCOMPOSITIONDIRTYGENERATED
+IDS_PH_STAT_ENERGYCOMPOSITIONDIRTYPROPAGATED|2426|Composition dirty propagated|合成脏区域传播|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCOMPOSITIONDIRTYPROPAGATED
+IDS_PH_STAT_ENERGYCPUTIMELINE|2427|CPU timeline active|CPU 时间线活动|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYCPUTIMELINE
+IDS_PH_STAT_ENERGYDISKTIMELINE|2428|Disk timeline active|磁盘时间线活动|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYDISKTIMELINE
+IDS_PH_STAT_ENERGYNETWORKTIMELINE|2429|Network timeline active|网络时间线活动|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYNETWORKTIMELINE
+IDS_PH_STAT_ENERGYINPUTDURATION|2430|Input duration|输入时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYINPUTDURATION
+IDS_PH_STAT_ENERGYAUDIOINDURATION|2431|Audio in duration|音频输入时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYAUDIOINDURATION
+IDS_PH_STAT_ENERGYAUDIOOUTDURATION|2432|Audio out duration|音频输出时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYAUDIOOUTDURATION
+IDS_PH_STAT_ENERGYDISPLAYREQUIREDDURATION|2433|Display required duration|需要显示时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYDISPLAYREQUIREDDURATION
+IDS_PH_STAT_ENERGYPSMBACKGROUNDDURATION|2434|PSM background duration|PSM 后台时长|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYPSMBACKGROUNDDURATION
+IDS_PH_STAT_ENERGYKEYBOARDINPUT|2435|Keyboard input|键盘输入|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYKEYBOARDINPUT
+IDS_PH_STAT_ENERGYMOUSEINPUT|2436|Mouse input|鼠标输入|PH_PROCESS_STATISTICS_CATEGORY_ENERGY|PH_PROCESS_STATISTICS_INDEX_ENERGYMOUSEINPUT
+IDS_PH_STAT_RUNNINGTIME|2437|Running time|运行时间|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_RUNNINGTIME
+IDS_PH_STAT_SUSPENDEDTIME|2438|Suspended time|挂起时间|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_SUSPENDEDTIME
+IDS_PH_STAT_HANGCOUNT|2439|Hang count|无响应次数|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_HANGCOUNT
+IDS_PH_STAT_GHOSTCOUNT|2440|Ghost count|假死次数|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_GHOSTCOUNT
+IDS_PH_STAT_NETWORKTXRXBYTES|2441|NetworkTxRxBytes|网络收发字节数|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_NETWORKTXRXBYTES
 """.strip()
 
 
@@ -101,6 +144,48 @@ NATIVE_KEYS = {
     "Peak handles",
     "Peak GDI handles",
     "Peak USER handles",
+    "Attributed cycles",
+    "Work on behalf cycles",
+    "Cycles: high/foreground user",
+    "Cycles: high/foreground kernel",
+    "Cycles: above normal user",
+    "Cycles: above normal kernel",
+    "Cycles: normal user",
+    "Cycles: normal kernel",
+    "Cycles: low/background user",
+    "Cycles: low/background kernel",
+    "Disk energy (uJ)",
+    "Disk energy (J)",
+    "Disk energy (Wh)",
+    "Disk power (W)",
+    "Network tail energy (uJ)",
+    "Network tail energy (J)",
+    "Network tail energy (Wh)",
+    "Network tail power (W)",
+    "Carbon impact",
+    "Network Tx/Rx bytes",
+    "MBB Tx/Rx bytes",
+    "Foreground duration",
+    "Desktop visible duration",
+    "PSM foreground duration",
+    "Composition rendered",
+    "Composition dirty generated",
+    "Composition dirty propagated",
+    "CPU timeline active",
+    "Disk timeline active",
+    "Network timeline active",
+    "Input duration",
+    "Audio in duration",
+    "Audio out duration",
+    "Display required duration",
+    "PSM background duration",
+    "Keyboard input",
+    "Mouse input",
+    "Running time",
+    "Suspended time",
+    "Hang count",
+    "Ghost count",
+    "NetworkTxRxBytes",
 }
 
 
@@ -203,15 +288,16 @@ def parse_stringtable(path):
 
 class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
     def test_table_has_exact_migrated_scope(self):
-        self.assertEqual(len(ROUTES), 60)
-        self.assertEqual(len({symbol for symbol, *_ in ROUTES}), 60)
+        self.assertEqual(len(ROUTES), 103)
+        self.assertEqual(len({symbol for symbol, *_ in ROUTES}), 102)
         self.assertEqual(
             Counter(group for *_prefix, group, _index in ROUTES),
             {
                 "PH_PROCESS_STATISTICS_CATEGORY_CPU": 16,
                 "PH_PROCESS_STATISTICS_CATEGORY_MEMORY": 22,
                 "PH_PROCESS_STATISTICS_CATEGORY_IO": 16,
-                "PH_PROCESS_STATISTICS_CATEGORY_OTHER": 6,
+                "PH_PROCESS_STATISTICS_CATEGORY_OTHER": 11,
+                "PH_PROCESS_STATISTICS_CATEGORY_ENERGY": 38,
             },
         )
 
@@ -235,7 +321,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             self.assertEqual(chinese.get(symbol), zh, symbol)
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
-        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_STAT_PEAKUSERHANDLES")
+        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_STAT_NETWORKTXRXBYTES")
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
         expected_ids = set(range(first_id, last_id + 1))
@@ -248,7 +334,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
         self.assertEqual(len(english), len(expected_ids))
         self.assertEqual(len(chinese), len(expected_ids))
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2400$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2442$")
 
     def test_json_uses_existing_and_native_strings_without_overlap(self):
         data = json.loads(
@@ -257,7 +343,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         strings = data["strings"]
         native_strings = data["native_strings"]
 
-        self.assertEqual(len(NATIVE_KEYS), 17)
+        self.assertEqual(len(NATIVE_KEYS), 59)
         self.assertFalse(strings.keys() & native_strings.keys())
         for _symbol, _resource_id, english, chinese, *_ in ROUTES:
             table = native_strings if english in NATIVE_KEYS else strings
@@ -270,8 +356,8 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("sys_info.exe=400"), 2)
-        self.assertNotIn("sys_info.exe=378", workflow)
+        self.assertEqual(workflow.count("sys_info.exe=442"), 2)
+        self.assertNotIn("sys_info.exe=400", workflow)
 
     def test_audit_removes_batch_and_preserves_expected_remainder(self):
         audit = load_audit_module()
@@ -283,14 +369,11 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             entry for entry in entries
             if entry["category"] == "c_listview_group_item"
         ]
-        target_english = {
-            english for _symbol, _id, english, *_ in ROUTES
-            if english != "Cycles"  # The out-of-scope Energy group reuses this label.
-        }
+        target_english = {english for _symbol, _id, english, *_ in ROUTES}
 
         self.assertFalse(target_english & {entry["english"] for entry in remaining})
-        self.assertEqual(len(remaining), 72)
-        self.assertEqual(len({entry["english"] for entry in remaining}), 65)
+        self.assertEqual(len(remaining), 29)
+        self.assertEqual(len({entry["english"] for entry in remaining}), 22)
 
 
 if __name__ == "__main__":
