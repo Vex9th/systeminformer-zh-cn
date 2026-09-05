@@ -182,6 +182,12 @@
     "Whois %s...": "WHOIS %s...",
     "Unicast": "单播",
     "Multicast": "多播",
+    "Connect time": "连接时间",
+    "Disconnect time": "断开连接时间",
+    "Last input time": "上次输入时间",
+    "Client name": "客户端名称",
+    "Client address": "客户端地址",
+    "Client display": "客户端显示",
     "Unknown network adapter": "未知网络适配器"
   },
   "strings": {

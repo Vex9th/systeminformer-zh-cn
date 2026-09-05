@@ -1281,8 +1281,21 @@
 #define IDS_PH_GROUP_IMAGES_AND_DLLS                        2287
 #define IDS_PH_GROUP_NOTIFICATIONS                          2288
 #define IDS_PH_GROUP_TRAY_ICONS                             2289
+#define IDS_PH_SESSION_USER_NAME                            2290
+#define IDS_PH_SESSION_ID                                   2291
+#define IDS_PH_SESSION_STATE                                2292
+#define IDS_PH_SESSION_LOGON_TIME                           2293
+#define IDS_PH_SESSION_CONNECT_TIME                         2294
+#define IDS_PH_SESSION_DISCONNECT_TIME                      2295
+#define IDS_PH_SESSION_LAST_INPUT_TIME                      2296
+#define IDS_PH_SESSION_CLIENT_NAME                          2297
+#define IDS_PH_SESSION_CLIENT_ADDRESS                       2298
+#define IDS_PH_SESSION_CLIENT_DISPLAY                       2299
+#define IDS_PH_HANDLE_SECURITY_OWNER                        2300
+#define IDS_PH_HANDLE_SECURITY_GROUP                        2301
+#define IDS_PH_HANDLE_SECURITY_INTEGRITY                    2302
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_GROUP_TRAY_ICONS
+#define IDS_PH_LAST                                  IDS_PH_HANDLE_SECURITY_INTEGRITY
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1294,6 +1307,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2290
+#define _APS_NEXT_SYMED_VALUE           2303
 #endif
 #endif

@@ -2888,6 +2888,19 @@ BEGIN
     IDS_PH_GROUP_IMAGES_AND_DLLS                         "Images and DLLs"
     IDS_PH_GROUP_NOTIFICATIONS                           "Notifications"
     IDS_PH_GROUP_TRAY_ICONS                              "Tray icons"
+    IDS_PH_SESSION_USER_NAME                             "User name"
+    IDS_PH_SESSION_ID                                    "Session ID"
+    IDS_PH_SESSION_STATE                                 "State"
+    IDS_PH_SESSION_LOGON_TIME                            "Logon time"
+    IDS_PH_SESSION_CONNECT_TIME                          "Connect time"
+    IDS_PH_SESSION_DISCONNECT_TIME                       "Disconnect time"
+    IDS_PH_SESSION_LAST_INPUT_TIME                       "Last input time"
+    IDS_PH_SESSION_CLIENT_NAME                           "Client name"
+    IDS_PH_SESSION_CLIENT_ADDRESS                        "Client address"
+    IDS_PH_SESSION_CLIENT_DISPLAY                        "Client display"
+    IDS_PH_HANDLE_SECURITY_OWNER                         "Owner"
+    IDS_PH_HANDLE_SECURITY_GROUP                         "Group"
+    IDS_PH_HANDLE_SECURITY_INTEGRITY                     "Integrity"
 END
 
 /////////////////////////////////////////////////////////////////////////////

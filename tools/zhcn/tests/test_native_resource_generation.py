@@ -913,7 +913,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("777 strings", result.stdout)
+        self.assertIn("790 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1363,7 +1363,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 290)
+        self.assertEqual(len(stringtable_ids(resource_script)), 303)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -1402,7 +1402,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2290)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2303)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1799,6 +1799,108 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     rf"PhAddListViewGroup\([^;]*?{group_id},[^;]*?"
                     rf"PhGetApplicationUiString\({resource_id}\)[^;]*?\);",
                 )
+
+    def test_session_and_handle_group_items_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        sources = {
+            name: audit.mask_c_comments(
+                (REPO_ROOT / "SystemInformer" / name).read_text(
+                    encoding="utf-8-sig"
+                )
+            )
+            for name in ("sessprp.c", "hndlprp.c")
+        }
+        resource_header = (
+            REPO_ROOT / "SystemInformer" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = SOURCE_RC.read_text(encoding="utf-8-sig")
+        chinese_resource = ZH_CN_RC.read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_resources = {
+            "IDS_PH_SESSION_USER_NAME": (2290, "User name", "用户名"),
+            "IDS_PH_SESSION_ID": (2291, "Session ID", "会话 ID"),
+            "IDS_PH_SESSION_STATE": (2292, "State", "状态"),
+            "IDS_PH_SESSION_LOGON_TIME": (2293, "Logon time", "登录时间"),
+            "IDS_PH_SESSION_CONNECT_TIME": (2294, "Connect time", "连接时间"),
+            "IDS_PH_SESSION_DISCONNECT_TIME": (2295, "Disconnect time", "断开连接时间"),
+            "IDS_PH_SESSION_LAST_INPUT_TIME": (2296, "Last input time", "上次输入时间"),
+            "IDS_PH_SESSION_CLIENT_NAME": (2297, "Client name", "客户端名称"),
+            "IDS_PH_SESSION_CLIENT_ADDRESS": (2298, "Client address", "客户端地址"),
+            "IDS_PH_SESSION_CLIENT_DISPLAY": (2299, "Client display", "客户端显示"),
+            "IDS_PH_HANDLE_SECURITY_OWNER": (2300, "Owner", "所有者"),
+            "IDS_PH_HANDLE_SECURITY_GROUP": (2301, "Group", "组"),
+            "IDS_PH_HANDLE_SECURITY_INTEGRITY": (2302, "Integrity", "完整性"),
+        }
+        runtime_owned = {
+            "User name",
+            "Session ID",
+            "State",
+            "Logon time",
+            "Owner",
+            "Group",
+            "Integrity",
+        }
+
+        for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
+            with self.subTest(main_group_item_resource=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                )
+                table_name = "strings" if english_text in runtime_owned else "native_strings"
+                other_table = "native_strings" if table_name == "strings" else "strings"
+                self.assertEqual(
+                    translation_data[table_name].get(english_text),
+                    chinese_text,
+                )
+                self.assertNotIn(english_text, translation_data[other_table])
+
+        session_routes = tuple(expected_resources)[:10]
+        for index, resource_id in enumerate(session_routes):
+            with self.subTest(session_group_item_index=index):
+                self.assertRegex(
+                    sources["sessprp.c"],
+                    rf"PhAddListViewGroupItem\(\s*context->ListViewHandle,\s*0,\s*{index},\s*"
+                    rf"PhGetApplicationUiString\({resource_id}\),\s*NULL\s*\);",
+                )
+
+        handle_routes = tuple(expected_resources)[10:]
+        for index, resource_id in enumerate(handle_routes):
+            with self.subTest(handle_security_group_item_index=index):
+                call_pattern = (
+                    rf"PhAddListViewGroupItem\(\s*Context->ListViewHeader,\s*"
+                    rf"PH_HANDLE_GENERAL_CATEGORY_SECURITY,\s*{index},\s*"
+                    rf"PhGetApplicationUiString\({resource_id}\),\s*NULL\s*\);"
+                )
+                self.assertEqual(len(re.findall(call_pattern, sources["hndlprp.c"])), 2)
+
+        for _, english_text, _ in expected_resources.values():
+            with self.subTest(removed_group_item_literal=english_text):
+                self.assertNotRegex(
+                    sources["sessprp.c"] + sources["hndlprp.c"],
+                    rf"PhAddListViewGroupItem\([^;]*L\"{re.escape(english_text)}\"[^;]*\);",
+                )
+
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_SECURITY_INTEGRITY$",
+        )
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2303$",
+        )
 
     def test_early_crash_prompt_does_not_depend_on_ui_string_cache(self) -> None:
         main = (REPO_ROOT / "SystemInformer" / "main.c").read_text(
@@ -4503,7 +4605,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 290): 2,
+                    (r"bin\Release64\sys_info.exe", 303): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 8): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,

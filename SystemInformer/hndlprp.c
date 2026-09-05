@@ -285,6 +285,7 @@ BOOLEAN PhpIsVerboseBestObjectName(
     return FALSE;
 }
 
+
 _Function_class_(PH_TYPE_DELETE_PROCEDURE)
 static VOID PhHandlePropertiesContextDeleteProcedure(
     _In_ PVOID Object,
@@ -2825,9 +2826,9 @@ VOID PhUpdateHandlePermissionSecurity(
 
     ListView_EnableGroupView(Context->ListViewHeader, TRUE);
     PhAddListViewGroup(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, L"Security information");
-    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 0, L"Owner", NULL);
-    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 1, L"Group", NULL);
-    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 2, L"Integrity", NULL);
+    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 0, PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_OWNER), NULL);
+    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 1, PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_GROUP), NULL);
+    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 2, PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_INTEGRITY), NULL);
     PhSetListViewSubItem(Context->ListViewHeader, 0, 1, L"N/A");
     PhSetListViewSubItem(Context->ListViewHeader, 1, 1, L"N/A");
     PhSetListViewSubItem(Context->ListViewHeader, 2, 1, L"N/A");
@@ -2912,9 +2913,9 @@ VOID PhUpdateHandleAuditingSecurity(
 
     ListView_EnableGroupView(Context->ListViewHeader, TRUE);
     PhAddListViewGroup(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, L"Auditing information");
-    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 0, L"Owner", NULL);
-    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 1, L"Group", NULL);
-    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 2, L"Integrity", NULL);
+    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 0, PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_OWNER), NULL);
+    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 1, PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_GROUP), NULL);
+    PhAddListViewGroupItem(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, 2, PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_INTEGRITY), NULL);
     PhSetListViewSubItem(Context->ListViewHeader, 0, 1, L"N/A");
     PhSetListViewSubItem(Context->ListViewHeader, 1, 1, L"N/A");
     PhSetListViewSubItem(Context->ListViewHeader, 2, 1, L"N/A");
@@ -3332,4 +3333,3 @@ INT_PTR CALLBACK PhpHandleAuditingDlgProc(
 
     return FALSE;
 }
-
