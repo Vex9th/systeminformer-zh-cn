@@ -443,183 +443,183 @@ VOID DotNetPerfAddListViewGroups(
 
     // This counter displays the total number of methods compiled Just-In-Time (JIT) by the CLR JIT compiler since the start of the application.
     // This counter does not include the pre-jitted methods.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILMETHODSJITTED, L"# of Methods Jitted", UlongToPtr(DOTNET_INDEX_JIT_ILMETHODSJITTED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILMETHODSJITTED, IDS_DN_PERF_ITEM_JIT_METHODSJITTED);
 
     // This counter displays the total IL bytes jitted since the start of the application.
     // This counter is exactly equivalent to the "Total # of IL Bytes Jitted" counter.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILBYTESJITTED, L"# of IL Bytes Jitted", UlongToPtr(DOTNET_INDEX_JIT_ILBYTESJITTED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILBYTESJITTED, IDS_DN_PERF_ITEM_JIT_ILBYTESJITTED);
 
     // This counter displays the total IL bytes jitted since the start of the application.
     // This counter is exactly equivalent to the "# of IL Bytes Jitted" counter.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILTOTALBYTESJITTED, L"Total # of IL Bytes Jitted", UlongToPtr(DOTNET_INDEX_JIT_ILTOTALBYTESJITTED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILTOTALBYTESJITTED, IDS_DN_PERF_ITEM_JIT_TOTALILBYTESJITTED);
 
     // This counter displays the peak number of methods the JIT compiler has failed to JIT since the start of the application.
     // This failure can occur if the IL cannot be verified or if there was an internal error in the JIT compiler.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_FAILURES, L"Jit Failures", UlongToPtr(DOTNET_INDEX_JIT_FAILURES));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_FAILURES, IDS_DN_PERF_ITEM_JIT_FAILURES);
 
     // This counter displays the percentage of elapsed time spent in JIT compilation since the last JIT compilation phase.
     // This counter is updated at the end of every JIT compilation phase. A JIT compilation phase is the phase when a method and its dependencies are being compiled.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_TIME, L"% Time in Jit", UlongToPtr(DOTNET_INDEX_JIT_TIME));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_TIME, IDS_DN_PERF_ITEM_JIT_TIME);
 
     // This counter displays the rate at which IL bytes are jitted per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILBYTESJITTEDPERSEC, L"IL Bytes Jitted / sec", UlongToPtr(DOTNET_INDEX_JIT_ILBYTESJITTEDPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_JIT, DOTNET_INDEX_JIT_ILBYTESJITTEDPERSEC, IDS_DN_PERF_ITEM_JIT_ILBYTESJITTEDPERSEC);
 
     // This counter displays the current number of classes loaded in all Assemblies.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CURRENTLOADED, L"Current Classes Loaded", UlongToPtr(DOTNET_INDEX_LOADING_CURRENTLOADED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CURRENTLOADED, IDS_DN_PERF_ITEM_LOADING_CURRENTCLASSESLOADED);
 
     // This counter displays the cumulative number of classes loaded in all Assemblies since the start of this application.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALLOADED, L"Total Classes Loaded", UlongToPtr(DOTNET_INDEX_LOADING_TOTALLOADED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALLOADED, IDS_DN_PERF_ITEM_LOADING_TOTALCLASSESLOADED);
 
     // This counter displays the current number of AppDomains loaded in this application.
     // AppDomains (application domains) provide a secure and versatile unit of processing that the CLR can use to provide isolation between applications running in the same process.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CURRENTAPPDOMAINS, L"Current Appdomains", UlongToPtr(DOTNET_INDEX_LOADING_CURRENTAPPDOMAINS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CURRENTAPPDOMAINS, IDS_DN_PERF_ITEM_LOADING_CURRENTAPPDOMAINS);
 
     // This counter displays the peak number of AppDomains loaded since the start of this application.
     // AppDomains (application domains) provide a secure and versatile unit of processing that the CLR can use to provide isolation between applications running in the same process.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALAPPDOMAINS, L"Total Appdomains", UlongToPtr(DOTNET_INDEX_LOADING_TOTALAPPDOMAINS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALAPPDOMAINS, IDS_DN_PERF_ITEM_LOADING_TOTALAPPDOMAINS);
 
     // This counter displays the current number of Assemblies loaded across all AppDomains in this application.
     // If the Assembly is loaded as domain - neutral from multiple AppDomains then this counter is incremented once only.
     // Assemblies can be loaded as domain - neutral when their code can be shared by all AppDomains or they can be loaded as domain - specific when their code is private to the AppDomain.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CURRENTASSEMBLIES, L"Current Assemblies", UlongToPtr(DOTNET_INDEX_LOADING_CURRENTASSEMBLIES));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CURRENTASSEMBLIES, IDS_DN_PERF_ITEM_LOADING_CURRENTASSEMBLIES);
 
     // This counter displays the total number of Assemblies loaded since the start of this application.
     // If the Assembly is loaded as domain - neutral from multiple AppDomains then this counter is incremented once only.
     // Assemblies can be loaded as domain - neutral when their code can be shared by all AppDomains or they can be loaded as domain - specific when their code is private to the AppDomain.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALASSEMBLIES, L"Total Assemblies", UlongToPtr(DOTNET_INDEX_LOADING_TOTALASSEMBLIES));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALASSEMBLIES, IDS_DN_PERF_ITEM_LOADING_TOTALASSEMBLIES);
 
     // Reserved for future use.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_ASSEMBLYSEARCHLENGTH, L"Assembly Search Length", UlongToPtr(DOTNET_INDEX_LOADING_ASSEMBLYSEARCHLENGTH));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_ASSEMBLYSEARCHLENGTH, IDS_DN_PERF_ITEM_LOADING_ASSEMBLYSEARCHLENGTH);
 
     // This counter displays the peak number of classes that have failed to load since the start of the application.
     // These load failures could be due to many reasons like inadequate security or illegal format.Full details can be found in the profiling services help.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALLOADFAILURES, L"Total # of Load Failures", UlongToPtr(DOTNET_INDEX_LOADING_TOTALLOADFAILURES));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALLOADFAILURES, IDS_DN_PERF_ITEM_LOADING_TOTALLOADFAILURES);
 
     // This counter displays the current size(in bytes) of the memory committed by the class loader across all AppDomains.
     // (Committed memory is the physical memory for which space has been reserved on the disk paging file.)
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_BYTESINLOADERHEAP, L"Bytes in Loader Heap", UlongToPtr(DOTNET_INDEX_LOADING_BYTESINLOADERHEAP));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_BYTESINLOADERHEAP, IDS_DN_PERF_ITEM_LOADING_BYTESINLOADERHEAP);
 
     // This counter displays the total number of AppDomains unloaded since the start of the application.
     //If an AppDomain is loaded and unloaded multiple times this counter would count each of those unloads as separate.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALAPPDOMAINSUNLOADED, L"Total Appdomains Unloaded", UlongToPtr(DOTNET_INDEX_LOADING_TOTALAPPDOMAINSUNLOADED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_TOTALAPPDOMAINSUNLOADED, IDS_DN_PERF_ITEM_LOADING_TOTALAPPDOMAINSUNLOADED);
 
     // This counter displays the number of classes loaded per second in all Assemblies.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CLASSESLOADEDRATE, L"Rate of Classes Loaded", UlongToPtr(DOTNET_INDEX_LOADING_CLASSESLOADEDRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_CLASSESLOADEDRATE, IDS_DN_PERF_ITEM_LOADING_CLASSESLOADEDPERSEC);
 
     // This counter displays the number of AppDomains loaded per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_APPDOMAINSRATE, L"Rate of Appdomains", UlongToPtr(DOTNET_INDEX_LOADING_APPDOMAINSRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_APPDOMAINSRATE, IDS_DN_PERF_ITEM_LOADING_APPDOMAINSLOADEDPERSEC);
 
     // This counter displays the number of Assemblies loaded across all AppDomains per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_ASSEMBLIESRATE, L"Rate of Assemblies", UlongToPtr(DOTNET_INDEX_LOADING_ASSEMBLIESRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_ASSEMBLIESRATE, IDS_DN_PERF_ITEM_LOADING_ASSEMBLIESLOADEDPERSEC);
 
     // This counter displays the number of classes that failed to load per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_LOADFAILURESRATE, L"Rate of Load Failures", UlongToPtr(DOTNET_INDEX_LOADING_LOADFAILURESRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_LOADFAILURESRATE, IDS_DN_PERF_ITEM_LOADING_LOADFAILURESPERSEC);
 
     // This counter displays the number of AppDomains unloaded per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_APPDOMAINSUNLOADEDRATE, L"Rate of Appdomains Unloaded", UlongToPtr(DOTNET_INDEX_LOADING_APPDOMAINSUNLOADEDRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOADING, DOTNET_INDEX_LOADING_APPDOMAINSUNLOADEDRATE, IDS_DN_PERF_ITEM_LOADING_APPDOMAINSUNLOADEDPERSEC);
 
     // This counter displays the total number of times threads in the CLR have attempted to acquire a managed lock unsuccessfully.
     // Managed locks can be acquired in many ways; by the "lock" statement in C# or by calling System.Monitor.Enter or by using MethodImplOptions.Synchronized custom attribute.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_TOTALLOCKS, L"Total # of Contentions", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_TOTALLOCKS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_TOTALLOCKS, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_TOTALCONTENTIONS);
 
     // This counter displays the total number of threads currently waiting to acquire some managed lock in the application.
     // This counter is not an average over time; it displays the last observed value.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_TOTALQUEUELENGTH, L"Current Queue Length", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_TOTALQUEUELENGTH));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_TOTALQUEUELENGTH, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTQUEUELENGTH);
 
     // This counter displays the total number of threads that waited to acquire some managed lock since the start of the application.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHPEAK, L"Queue Length Peak", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHPEAK));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHPEAK, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_QUEUELENGTHPEAK);
 
     // This counter displays the number of current.NET thread objects in the application.
     // A.NET thread object is created either by new System.Threading.Thread or when an unmanaged thread enters the managed environment.
     // This counters maintains the count of both running and stopped threads. This counter is not an average over time; it just displays the last observed value.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CURRENTLOGICAL, L"# of Current Logical Threads", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_CURRENTLOGICAL));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CURRENTLOGICAL, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTLOGICALTHREADS);
 
     // This counter displays the number of native OS threads created and owned by the CLR to act as underlying threads for .NET thread objects.
     // This counters value does not include the threads used by the CLR in its internal operations; it is a subset of the threads in the OS process.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CURRENTPHYSICAL, L"# of Current Physical Threads", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_CURRENTPHYSICAL));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CURRENTPHYSICAL, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTPHYSICALTHREADS);
 
     // This counter displays the number of threads that are currently recognized by the CLR; they have a corresponding .NET thread object associated with them.
     // These threads are not created by the CLR; they are created outside the CLR but have since run inside the CLR at least once.
     // Only unique threads are tracked; threads with same thread ID re-entering the CLR or recreated after thread exit are not counted twice.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CURRENTRECOGNIZED, L"# of Current Recognized Threads", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_CURRENTRECOGNIZED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CURRENTRECOGNIZED, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTRECOGNIZEDTHREADS);
 
     // This counter displays the total number of threads that have been recognized by the CLR since the start of this application;
     // these threads have a corresponding .NET thread object associated with them.
     // These threads are not created by the CLR; they are created outside the CLR but have since run inside the CLR at least once.
     // Only unique threads are tracked; threads with same thread ID re-entering the CLR or recreated after thread exit are not counted twice.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_TOTALRECOGNIZED, L"# of Total Recognized Threads", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_TOTALRECOGNIZED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_TOTALRECOGNIZED, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_TOTALRECOGNIZEDTHREADS);
 
     // Rate at which threads in the runtime attempt to acquire a managed lock unsuccessfully.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CONTENTIONRATE, L"Contention Rate / sec", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_CONTENTIONRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_CONTENTIONRATE, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CONTENTIONSPERSEC);
 
     // This counter displays the number of threads per second waiting to acquire some lock in the application.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHRATE, L"Queue Length / sec", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHRATE, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_QUEUELENGTHPERSEC);
 
     // This counter displays the number of threads per second recognized by the CLR.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_RECOGNIZEDTHREADSRATE, L"Rate of Recognized Threads / sec", UlongToPtr(DOTNET_INDEX_LOCKSANDTHREADS_RECOGNIZEDTHREADSRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, DOTNET_INDEX_LOCKSANDTHREADS_RECOGNIZEDTHREADSRATE, IDS_DN_PERF_ITEM_LOCKSANDTHREADS_RECOGNIZEDTHREADSPERSEC);
 
     // This counter displays the total number of remote procedure calls invoked since the start of this application.
     // A remote procedure call is a call on any object outside the callers AppDomain.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_TOTALREMOTECALLS, L"Total Remote Calls", UlongToPtr(DOTNET_INDEX_REMOTING_TOTALREMOTECALLS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_TOTALREMOTECALLS, IDS_DN_PERF_ITEM_REMOTING_TOTALREMOTECALLS);
 
     // This counter displays the total number of remoting channels registered across all AppDomains since the start of the application.
     // Channels are used to transport messages to and from remote objects.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CHANNELS, L"Channels", UlongToPtr(DOTNET_INDEX_REMOTING_CHANNELS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CHANNELS, IDS_DN_PERF_ITEM_REMOTING_CHANNELS);
 
     // This counter displays the total number of remoting proxy objects created in this process since the start of the process.
     // Proxy object acts as a representative of the remote objects and ensures that all calls made on the proxy are forwarded to the correct remote object instance.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTPROXIES, L"Context Proxies", UlongToPtr(DOTNET_INDEX_REMOTING_CONTEXTPROXIES));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTPROXIES, IDS_DN_PERF_ITEM_REMOTING_CONTEXTPROXIES);
 
     // This counter displays the current number of context-bound classes loaded.
     // Classes that can be bound to a context are called context-bound classes; context-bound classes are marked with Context Attributes
     // which provide usage rules for synchronization; thread affinity; transactions etc.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTCLASSESLOADED, L"Context-Bound Classes Loaded", UlongToPtr(DOTNET_INDEX_REMOTING_CONTEXTCLASSESLOADED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTCLASSESLOADED, IDS_DN_PERF_ITEM_REMOTING_CONTEXTBOUNDCLASSESLOADED);
 
     // This counter displays the current number of remoting contexts in the application.
     // A context is a boundary containing a collection of objects with the same usage rules like synchronization; thread affinity; transactions etc.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTS, L"Contexts", UlongToPtr(DOTNET_INDEX_REMOTING_CONTEXTS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTS, IDS_DN_PERF_ITEM_REMOTING_CONTEXTS);
 
     // Reserved for future use.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTSALLOCATED, L"# of context bound objects allocated", UlongToPtr(DOTNET_INDEX_REMOTING_CONTEXTSALLOCATED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_CONTEXTSALLOCATED, IDS_DN_PERF_ITEM_REMOTING_CONTEXTBOUNDOBJECTSALLOCATED);
 
     // This counter displays the number of remote procedure calls invoked per second.
     // A remote procedure call is a call on any object outside the callers AppDomain.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_REMOTECALLSRATE, L"Remote Calls / sec", UlongToPtr(DOTNET_INDEX_REMOTING_REMOTECALLSRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_REMOTECALLSRATE, IDS_DN_PERF_ITEM_REMOTING_REMOTECALLSPERSEC);
 
     // This counter displays the number of context-bound objects allocated per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_OBJALLOCATIONRATE, L"Context-Bound Objects Alloc / sec", UlongToPtr(DOTNET_INDEX_REMOTING_OBJALLOCATIONRATE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_REMOTING, DOTNET_INDEX_REMOTING_OBJALLOCATIONRATE, IDS_DN_PERF_ITEM_REMOTING_CONTEXTBOUNDOBJECTSALLOCATIONSPERSEC);
 
     // This counter displays the total number of runtime Code Access Security(CAS) checks performed since the start of the application.
     // Runtime CAS checks are performed when a caller makes a call to a callee demanding a particular permission;
     // the runtime check is made on every call by the caller; the check is done by examining the current thread stack of the caller.
     // This counter used together with "Stack Walk Depth" is indicative of performance penalty for security checks.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_TOTALRUNTIMECHECKS, L"Total Runtime Checks", UlongToPtr(DOTNET_INDEX_SECURITY_TOTALRUNTIMECHECKS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_TOTALRUNTIMECHECKS, IDS_DN_PERF_ITEM_SECURITY_TOTALRUNTIMECHECKS);
 
     // This counter displays the total number of linktime Code Access Security(CAS) checks since the start of the application.
     // Linktime CAS checks are performed when a caller makes a call to a callee demanding a particular permission at JIT compile time; linktime check is performed once per caller.
     // This count is not indicative of serious performance issues; its indicative of the security system activity.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_LINKTIMECHECKS, L"# Link Time Checks", UlongToPtr(DOTNET_INDEX_SECURITY_LINKTIMECHECKS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_LINKTIMECHECKS, IDS_DN_PERF_ITEM_SECURITY_LINKTIMECHECKS);
 
     // This counter displays the percentage of elapsed time spent in performing runtime Code Access Security(CAS) checks since the last such check.
     // CAS allows code to be trusted to varying degrees and enforces these varying levels of trust depending on code identity.
     // This counter is updated at the end of a runtime security check; it represents the last observed value; its not an average.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_TIMEINRTCHECKS, L"% Time in RT checks", UlongToPtr(DOTNET_INDEX_SECURITY_TIMEINRTCHECKS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_TIMEINRTCHECKS, IDS_DN_PERF_ITEM_SECURITY_TIMEINRUNTIMECHECKS);
 
     // This counter displays the depth of the stack during that last runtime Code Access Security check.
     // Runtime Code Access Security check is performed by crawling the stack.
     // This counter is not an average; it just displays the last observed value.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_STACKWALKDEPTH, L"Stack Walk Depth", UlongToPtr(DOTNET_INDEX_SECURITY_STACKWALKDEPTH));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_SECURITY, DOTNET_INDEX_SECURITY_STACKWALKDEPTH, IDS_DN_PERF_ITEM_SECURITY_STACKWALKDEPTH);
 
     // % Time Sig.Authenticating
     // Reserved for future use.

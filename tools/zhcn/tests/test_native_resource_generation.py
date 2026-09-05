@@ -1257,7 +1257,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("926 strings", result.stdout)
+        self.assertIn("969 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -4541,6 +4541,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
             r"(IDS_DN_PERF_ITEM_[A-Z0-9_]+)\s*\);",
             source,
         )
+        actual_routes = [
+            route for route in actual_routes if route[2] in expected_resources
+        ]
 
         self.assertEqual(actual_routes, expected_routes)
         self.assertRegex(
@@ -4583,11 +4586,157 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2046$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2089$",
         )
         self.assertEqual(
             workflow.count(
-                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=46'"
+                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=89'"
+            ),
+            2,
+        )
+
+    def test_dotnet_performance_batch_b_items_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        source_path = REPO_ROOT / "plugins" / "DotNetTools" / "perfpage.c"
+        source = audit.mask_c_comments(source_path.read_text(encoding="utf-8-sig"))
+        resource_header = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "DotNetTools.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_resource = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "DotNetTools.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        workflow = (
+            REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
+        ).read_text(encoding="utf-8")
+        expected_items = [
+            ("DOTNET_CATEGORY_JIT", "DOTNET_INDEX_JIT_ILMETHODSJITTED", "IDS_DN_PERF_ITEM_JIT_METHODSJITTED", 2046, "# of Methods Jitted", "JIT编译方法数"),
+            ("DOTNET_CATEGORY_JIT", "DOTNET_INDEX_JIT_ILBYTESJITTED", "IDS_DN_PERF_ITEM_JIT_ILBYTESJITTED", 2047, "# of IL Bytes Jitted", "JIT编译的IL字节数"),
+            ("DOTNET_CATEGORY_JIT", "DOTNET_INDEX_JIT_ILTOTALBYTESJITTED", "IDS_DN_PERF_ITEM_JIT_TOTALILBYTESJITTED", 2048, "Total # of IL Bytes Jitted", "JIT编译的IL字节总数"),
+            ("DOTNET_CATEGORY_JIT", "DOTNET_INDEX_JIT_FAILURES", "IDS_DN_PERF_ITEM_JIT_FAILURES", 2049, "Jit Failures", "JIT编译失败数"),
+            ("DOTNET_CATEGORY_JIT", "DOTNET_INDEX_JIT_TIME", "IDS_DN_PERF_ITEM_JIT_TIME", 2050, "% Time in Jit", "JIT编译耗时 (%)"),
+            ("DOTNET_CATEGORY_JIT", "DOTNET_INDEX_JIT_ILBYTESJITTEDPERSEC", "IDS_DN_PERF_ITEM_JIT_ILBYTESJITTEDPERSEC", 2051, "IL Bytes Jitted / sec", "JIT编译的IL字节数/秒"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_CURRENTLOADED", "IDS_DN_PERF_ITEM_LOADING_CURRENTCLASSESLOADED", 2052, "Current Classes Loaded", "当前已加载类数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_TOTALLOADED", "IDS_DN_PERF_ITEM_LOADING_TOTALCLASSESLOADED", 2053, "Total Classes Loaded", "已加载类总数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_CURRENTAPPDOMAINS", "IDS_DN_PERF_ITEM_LOADING_CURRENTAPPDOMAINS", 2054, "Current Appdomains", "当前 AppDomain 数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_TOTALAPPDOMAINS", "IDS_DN_PERF_ITEM_LOADING_TOTALAPPDOMAINS", 2055, "Total Appdomains", "AppDomain 总数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_CURRENTASSEMBLIES", "IDS_DN_PERF_ITEM_LOADING_CURRENTASSEMBLIES", 2056, "Current Assemblies", "当前程序集数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_TOTALASSEMBLIES", "IDS_DN_PERF_ITEM_LOADING_TOTALASSEMBLIES", 2057, "Total Assemblies", "程序集总数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_ASSEMBLYSEARCHLENGTH", "IDS_DN_PERF_ITEM_LOADING_ASSEMBLYSEARCHLENGTH", 2058, "Assembly Search Length", "程序集搜索长度"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_TOTALLOADFAILURES", "IDS_DN_PERF_ITEM_LOADING_TOTALLOADFAILURES", 2059, "Total # of Load Failures", "类加载失败总数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_BYTESINLOADERHEAP", "IDS_DN_PERF_ITEM_LOADING_BYTESINLOADERHEAP", 2060, "Bytes in Loader Heap", "加载器堆字节数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_TOTALAPPDOMAINSUNLOADED", "IDS_DN_PERF_ITEM_LOADING_TOTALAPPDOMAINSUNLOADED", 2061, "Total Appdomains Unloaded", "已卸载 AppDomain 总数"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_CLASSESLOADEDRATE", "IDS_DN_PERF_ITEM_LOADING_CLASSESLOADEDPERSEC", 2062, "Rate of Classes Loaded", "类加载数/秒"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_APPDOMAINSRATE", "IDS_DN_PERF_ITEM_LOADING_APPDOMAINSLOADEDPERSEC", 2063, "Rate of Appdomains", "AppDomain 加载数/秒"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_ASSEMBLIESRATE", "IDS_DN_PERF_ITEM_LOADING_ASSEMBLIESLOADEDPERSEC", 2064, "Rate of Assemblies", "程序集加载数/秒"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_LOADFAILURESRATE", "IDS_DN_PERF_ITEM_LOADING_LOADFAILURESPERSEC", 2065, "Rate of Load Failures", "类加载失败数/秒"),
+            ("DOTNET_CATEGORY_LOADING", "DOTNET_INDEX_LOADING_APPDOMAINSUNLOADEDRATE", "IDS_DN_PERF_ITEM_LOADING_APPDOMAINSUNLOADEDPERSEC", 2066, "Rate of Appdomains Unloaded", "AppDomain 卸载数/秒"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_TOTALLOCKS", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_TOTALCONTENTIONS", 2067, "Total # of Contentions", "锁争用总次数"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_TOTALQUEUELENGTH", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTQUEUELENGTH", 2068, "Current Queue Length", "当前锁等待线程数"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHPEAK", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_QUEUELENGTHPEAK", 2069, "Queue Length Peak", "队列长度峰值"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_CURRENTLOGICAL", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTLOGICALTHREADS", 2070, "# of Current Logical Threads", "当前逻辑线程数"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_CURRENTPHYSICAL", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTPHYSICALTHREADS", 2071, "# of Current Physical Threads", "当前物理线程数"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_CURRENTRECOGNIZED", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CURRENTRECOGNIZEDTHREADS", 2072, "# of Current Recognized Threads", "当前已识别线程数"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_TOTALRECOGNIZED", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_TOTALRECOGNIZEDTHREADS", 2073, "# of Total Recognized Threads", "已识别线程总数"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_CONTENTIONRATE", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_CONTENTIONSPERSEC", 2074, "Contention Rate / sec", "锁争用次数/秒"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_QUEUELENGTHRATE", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_QUEUELENGTHPERSEC", 2075, "Queue Length / sec", "锁等待线程数/秒"),
+            ("DOTNET_CATEGORY_LOCKSANDTHREADS", "DOTNET_INDEX_LOCKSANDTHREADS_RECOGNIZEDTHREADSRATE", "IDS_DN_PERF_ITEM_LOCKSANDTHREADS_RECOGNIZEDTHREADSPERSEC", 2076, "Rate of Recognized Threads / sec", "已识别线程数/秒"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_TOTALREMOTECALLS", "IDS_DN_PERF_ITEM_REMOTING_TOTALREMOTECALLS", 2077, "Total Remote Calls", "远程调用总数"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_CHANNELS", "IDS_DN_PERF_ITEM_REMOTING_CHANNELS", 2078, "Channels", "通道数"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_CONTEXTPROXIES", "IDS_DN_PERF_ITEM_REMOTING_CONTEXTPROXIES", 2079, "Context Proxies", "上下文代理数"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_CONTEXTCLASSESLOADED", "IDS_DN_PERF_ITEM_REMOTING_CONTEXTBOUNDCLASSESLOADED", 2080, "Context-Bound Classes Loaded", "已加载的上下文绑定类数"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_CONTEXTS", "IDS_DN_PERF_ITEM_REMOTING_CONTEXTS", 2081, "Contexts", "上下文数"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_CONTEXTSALLOCATED", "IDS_DN_PERF_ITEM_REMOTING_CONTEXTBOUNDOBJECTSALLOCATED", 2082, "# of context bound objects allocated", "已分配的上下文绑定对象数"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_REMOTECALLSRATE", "IDS_DN_PERF_ITEM_REMOTING_REMOTECALLSPERSEC", 2083, "Remote Calls / sec", "远程调用数/秒"),
+            ("DOTNET_CATEGORY_REMOTING", "DOTNET_INDEX_REMOTING_OBJALLOCATIONRATE", "IDS_DN_PERF_ITEM_REMOTING_CONTEXTBOUNDOBJECTSALLOCATIONSPERSEC", 2084, "Context-Bound Objects Alloc / sec", "上下文绑定对象分配数/秒"),
+            ("DOTNET_CATEGORY_SECURITY", "DOTNET_INDEX_SECURITY_TOTALRUNTIMECHECKS", "IDS_DN_PERF_ITEM_SECURITY_TOTALRUNTIMECHECKS", 2085, "Total Runtime Checks", "运行时安全检查总数"),
+            ("DOTNET_CATEGORY_SECURITY", "DOTNET_INDEX_SECURITY_LINKTIMECHECKS", "IDS_DN_PERF_ITEM_SECURITY_LINKTIMECHECKS", 2086, "# Link Time Checks", "链接时安全检查数"),
+            ("DOTNET_CATEGORY_SECURITY", "DOTNET_INDEX_SECURITY_TIMEINRTCHECKS", "IDS_DN_PERF_ITEM_SECURITY_TIMEINRUNTIMECHECKS", 2087, "% Time in RT checks", "运行时安全检查耗时 (%)"),
+            ("DOTNET_CATEGORY_SECURITY", "DOTNET_INDEX_SECURITY_STACKWALKDEPTH", "IDS_DN_PERF_ITEM_SECURITY_STACKWALKDEPTH", 2088, "Stack Walk Depth", "堆栈遍历深度"),
+        ]
+        entries = []
+
+        audit.scan_c_file(str(source_path), entries)
+
+        active_items = {
+            entry["english"]
+            for entry in entries
+            if entry["category"] == "c_listview_group_item"
+        }
+        expected_routes = [
+            (group_id, index_id, resource_id)
+            for group_id, index_id, resource_id, _, _, _ in expected_items
+        ]
+        resource_ids = {item[2] for item in expected_items}
+        actual_routes = [
+            route
+            for route in re.findall(
+                r"DotNetPerfAddListViewGroupItem\(\s*ListViewHandle,\s*"
+                r"(DOTNET_CATEGORY_[A-Z0-9_]+),\s*"
+                r"(DOTNET_INDEX_[A-Z0-9_]+),\s*"
+                r"(IDS_DN_PERF_ITEM_[A-Z0-9_]+)\s*\);",
+                source,
+            )
+            if route[2] in resource_ids
+        ]
+
+        self.assertEqual(len(expected_items), 43)
+        self.assertEqual(
+            [numeric_id for _, _, _, numeric_id, _, _ in expected_items],
+            list(range(2046, 2089)),
+        )
+        self.assertEqual(actual_routes, expected_routes)
+
+        for (
+            group_id,
+            index_id,
+            resource_id,
+            numeric_id,
+            english_text,
+            chinese_text,
+        ) in expected_items:
+            with self.subTest(dotnet_performance_item=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                )
+                self.assertEqual(
+                    translation_data["native_strings"].get(english_text),
+                    chinese_text,
+                )
+                self.assertNotIn(english_text, translation_data["strings"])
+                self.assertNotIn(english_text, active_items)
+
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2089$",
+        )
+        self.assertNotRegex(
+            resource_header,
+            r"(?m)^#define\s+IDS_DN_PERF_ITEM_LOCKSANDTHREADS_TOTALQUEUELENGTH\s+",
+        )
+        self.assertNotRegex(
+            resource_header,
+            r"(?m)^#define\s+IDS_DN_PERF_ITEM_REMOTING_CONTEXTSALLOCATED\s+",
+        )
+        self.assertEqual(
+            workflow.count(
+                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=89'"
             ),
             2,
         )
@@ -5775,7 +5924,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             Counter(
                 {
                     (r"bin\Release64\sys_info.exe", 312): 2,
-                    (r"bin\Release64\plugins\DotNetTools.dll", 46): 2,
+                    (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 9): 2,
