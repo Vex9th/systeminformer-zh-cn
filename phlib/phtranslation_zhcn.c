@@ -985,7 +985,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2355] =
     { L"Limit", L"限制", },
     { L"Limits:", L"限制：", },
     { L"Line number", L"行号", },
-    { L"Link speed", L"链接速度", },
+    { L"Link speed", L"链路速度", },
     { L"Link state", L"链接状态", },
     { L"Linked token", L"链接的令牌", },
     { L"Links", L"链接", },

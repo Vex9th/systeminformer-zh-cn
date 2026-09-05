@@ -371,7 +371,7 @@ BOOLEAN PhpInitializePropSheetLayoutStage1(
         // Hide the OK button.
         ShowWindow(GetDlgItem(WindowHandle, IDOK), SW_HIDE);
         // Set the Cancel button's text to "Close".
-        PhSetDialogItemText(WindowHandle, IDCANCEL, L"Close");
+        PhSetDialogItemText(WindowHandle, IDCANCEL, HardwareDevicesGetUiString(IDS_HD_CLOSE));
 
         if (PositionSettingName)
         {

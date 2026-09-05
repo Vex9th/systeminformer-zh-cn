@@ -259,40 +259,17 @@ PVOID PhTranslateDialogTemplateCopy(
         if (extended)
         {
             // pointsize(2) weight(2) italic(1) charset(1) typeface(string);
-            // substitute the Windows zh-CN standard UI font so Chinese text
-            // renders crisp instead of falling back from MS Shell Dlg 8pt.
-            USHORT pointSize = *(PUSHORT)cursor;
-            USHORT weight = *(PUSHORT)(cursor + 2);
-
-            if (pointSize < 9)
-                pointSize = 9;
-
-            PhTlpWriteWord(&writer, pointSize);
-            PhTlpWriteWord(&writer, weight);
-            PhTlpWrite(&writer, (PVOID)(cursor + 4), 2); // italic + charset
+            PhTlpWrite(&writer, (PVOID)cursor, 6);
             cursor += 6;
         }
         else
         {
-            USHORT pointSize = *(PUSHORT)cursor;
-
-            if (pointSize < 9)
-                pointSize = 9;
-
-            PhTlpWriteWord(&writer, pointSize);
+            // pointsize(2) typeface(string);
+            PhTlpWrite(&writer, (PVOID)cursor, 2);
             cursor += 2;
         }
 
-        // skip the original typeface (wide characters)
-        while (*(PUSHORT)cursor != 0)
-            cursor += sizeof(WCHAR);
-        cursor += sizeof(WCHAR);
-        {
-            static const WCHAR zhCnFont[] = L"Microsoft YaHei UI";
-
-            PhTlpWrite(&writer, (PVOID)zhCnFont, (wcslen(zhCnFont) + 1) * sizeof(WCHAR));
-        }
-        changed = TRUE;
+        PhTlpCopyTemplateString(&writer, &cursor); // typeface
     }
 
     PhTlpPadToDword(&writer);

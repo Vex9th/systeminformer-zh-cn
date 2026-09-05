@@ -56,9 +56,6 @@ RESOURCE_MODULES = (
 DIALOG_HEADER_RE = re.compile(r"^([A-Z][A-Z0-9_]*)\s+DIALOG(?:EX)?\b")
 STRINGTABLE_HEADER_RE = re.compile(r"^\s*STRINGTABLE\b")
 STRING_ENTRY_RE = re.compile(r'^\s*(?:[A-Z][A-Z0-9_]*|\d+)\s+"')
-FONT_RE = re.compile(
-    r'^(\s*FONT\s+)(\d+)(\s*,\s*)"[^"]+"(.*)$'
-)
 CAPTION_RE = re.compile(r'^\s*CAPTION\s+"(?:(?:"")|[^"\\]|\\.)*"')
 CONTROL_RE = re.compile(
     r"^\s*(?:LTEXT|RTEXT|CTEXT|PUSHBUTTON|DEFPUSHBUTTON|GROUPBOX|CONTROL|"
@@ -220,16 +217,6 @@ def localize_dialog_block(
     localized: list[str] = []
 
     for line in block:
-        font_match = FONT_RE.match(line)
-
-        if font_match:
-            point_size = max(int(font_match.group(2)), 9)
-            localized.append(
-                f'{font_match.group(1)}{point_size}{font_match.group(3)}'
-                f'"Microsoft YaHei UI"{font_match.group(4)}'
-            )
-            continue
-
         caption_match = CAPTION_RE.match(line)
         if caption_match:
             localized.append(replace_first_string(line, translations))

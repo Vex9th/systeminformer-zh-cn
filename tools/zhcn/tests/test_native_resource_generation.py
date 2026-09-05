@@ -292,6 +292,19 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 PhSetWindowText(hwnd, L"Window title");
                 SetWindowText(hwnd, L"Native window title");
                 SetWindowTextW(hwnd, L"Wide window title");
+                PhSetListViewSubItem(list, 4, 1, L"List-view value");
+                PPH_SYSINFO_DRAW_PANEL drawPanel = panel;
+                PhMoveReference(&drawPanel->Title, PhCreateString(L"Panel title"));
+                drawPanel->Title = PhCreateString(L"Panel fallback title");
+                static PH_STRINGREF sectionText = PH_STRINGREF_INIT(L"Section title");
+                PH_SYSINFO_SECTION section;
+                section.Name = sectionText;
+                {
+                    OTHER* drawPanel;
+                    OTHER section;
+                    drawPanel->Title = L"Shadowed panel field";
+                    section.Name = L"Shadowed section field";
+                }
                 PhAddListViewGroup(list, 1, L"Group heading");
                 PhAddListViewGroupItem(list, 1, MAXINT, L"Grouped item", NULL);
                 PhAddIListViewGroupItem(list, 1, MAXINT, L"Interface grouped item", NULL);
@@ -329,6 +342,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 assignedChoices[0] = L"Visible scoped assignment";
                 PhAddComboBoxStrings(combo, assignedChoices, RTL_NUMBER_OF(assignedChoices));
             }
+            void unrelated_sysinfo_names(void) {
+                OTHER *drawPanel;
+                OTHER section;
+                drawPanel->Title = L"Unrelated panel field";
+                section.Name = L"Unrelated section field";
+            }
             // PhSetWindowText(hwnd, L"Commented title");
         """
         entries = []
@@ -347,6 +366,10 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 ("c_window_text", "Window title"),
                 ("c_window_text", "Native window title"),
                 ("c_window_text", "Wide window title"),
+                ("c_window_text", "List-view value"),
+                ("c_window_text", "Panel title"),
+                ("c_window_text", "Panel fallback title"),
+                ("c_window_text", "Section title"),
                 ("c_listview_group", "Group heading"),
                 ("c_listview_group", "Wrapped group heading"),
                 ("c_listview_group_item", "Grouped item"),
@@ -1579,7 +1602,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("969 strings", result.stdout)
+        self.assertIn("1056 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1596,14 +1619,15 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertGreater(len(source_ids), 50)
         self.assertEqual(localized_ids, source_ids)
 
-    def test_localized_dialogs_use_explicit_zh_cn_font(self) -> None:
+    def test_localized_dialogs_preserve_source_font_metrics(self) -> None:
+        source = SOURCE_RC.read_text(encoding="utf-8-sig")
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
+        source_fonts = FONT_RE.findall(source)
         fonts = FONT_RE.findall(localized)
 
         self.assertIn("LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED", localized)
         self.assertGreater(len(fonts), 50)
-        self.assertTrue(all(int(point_size) >= 9 for point_size, _ in fonts))
-        self.assertTrue(all(typeface == "Microsoft YaHei UI" for _, typeface in fonts))
+        self.assertEqual(fonts, source_fonts)
 
     def test_native_resource_is_compiled_and_checked_by_ci(self) -> None:
         project = (REPO_ROOT / "SystemInformer" / "SystemInformer.vcxproj").read_text(
@@ -1665,6 +1689,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 localized_ids = DIALOG_RE.findall(localized)
                 source_string_ids = stringtable_ids(source)
                 localized_string_ids = stringtable_ids(localized)
+                source_fonts = FONT_RE.findall(source)
                 fonts = FONT_RE.findall(localized)
 
                 self.assertGreater(len(source_ids), 0)
@@ -1675,12 +1700,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     "LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED",
                     localized,
                 )
-                self.assertTrue(
-                    all(int(point_size) >= 9 for point_size, _ in fonts)
-                )
-                self.assertTrue(
-                    all(typeface == "Microsoft YaHei UI" for _, typeface in fonts)
-                )
+                self.assertEqual(fonts, source_fonts)
 
     def test_tool_native_resources_match_sources_and_projects(self) -> None:
         for module_name, source_path, localized_path, project_path, filters_path in TOOL_MODULES:
@@ -1691,6 +1711,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 localized_ids = DIALOG_RE.findall(localized)
                 source_string_ids = stringtable_ids(source)
                 localized_string_ids = stringtable_ids(localized)
+                source_fonts = FONT_RE.findall(source)
                 fonts = FONT_RE.findall(localized)
                 localized_name = localized_path.name
                 project_root = ET.parse(project_path).getroot()
@@ -1716,12 +1737,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     "LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED",
                     localized,
                 )
-                self.assertTrue(
-                    all(int(point_size) >= 9 for point_size, _ in fonts)
-                )
-                self.assertTrue(
-                    all(typeface == "Microsoft YaHei UI" for _, typeface in fonts)
-                )
+                self.assertEqual(fonts, source_fonts)
                 self.assertEqual(project_resources.count(localized_name), 1)
                 self.assertEqual(len(filter_resources), 1)
                 self.assertEqual(
@@ -1791,7 +1807,13 @@ class NativeResourceGenerationTests(unittest.TestCase):
             encoding="utf-8-sig"
         )
 
-        self.assertIn("PhApplicationFont = PhCreateMessageFont(dpiValue);", peview)
+        self.assertIn("newFont = PhCreateMessageFont(dpiValue);", peview)
+        self.assertIn("PhApplicationFont = newFont;", peview)
+        self.assertIn(
+            "SetWindowFont(PropSheet_GetTabControl(hwnd), newFont, TRUE);",
+            peview,
+        )
+        self.assertNotIn("DeleteFont(PhApplicationFont);", peview)
         self.assertNotIn('PvpCreateFont(L"Microsoft Sans Serif"', peview)
         self.assertNotIn('PvpCreateFont(L"Tahoma"', peview)
 
@@ -5139,7 +5161,6 @@ class NativeResourceGenerationTests(unittest.TestCase):
             r"PhGetString\(PH_AUTO\(PhLoadUiString\("
             r"PluginInstance->DllBase,\s*{resource_id},\s*NULL\)\)\)"
         )
-
         for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
             with self.subTest(network_tools_window_text=resource_id):
                 self.assertRegex(
@@ -5411,6 +5432,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
             r"PhGetString\(PH_AUTO\(PhLoadUiString\("
             r"PluginInstance->DllBase,\s*{resource_id},\s*NULL\)\)\)"
         )
+        cached_ui_string_expression = (
+            r"HardwareDevicesGetUiString\({resource_id}\)"
+        )
         for source_name in (
             "diskoptions.c",
             "gpuoptions.c",
@@ -5466,9 +5490,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
             r"PhSetListViewSubItem\(\s*Context->ListViewHandle,\s*"
             r"NETADAPTER_DETAILS_INDEX_STATE,\s*1,\s*"
             r"mediaState\s*==\s*MediaConnectStateConnected\s*\?\s*"
-            + ui_string_expression.format(resource_id="IDS_HD_CONNECTED")
+            + cached_ui_string_expression.format(resource_id="IDS_HD_CONNECTED")
             + r"\s*:\s*"
-            + ui_string_expression.format(resource_id="IDS_HD_DISCONNECTED")
+            + cached_ui_string_expression.format(resource_id="IDS_HD_DISCONNECTED")
             + r"\s*\);",
         )
         self.assertRegex(
@@ -5488,7 +5512,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "if (mediaState == MediaConnectStateConnected)"
         )
         disconnected_speed = network_panel.index(
-            'PhSetWindowText(Context->NetAdapterPanelSpeedLabel, L"N/A")',
+            "PhSetWindowText(Context->NetAdapterPanelSpeedLabel, "
+            "HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE))",
             state_condition,
         )
         outer_else = network_panel.rindex(
@@ -5496,15 +5521,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         next_panel_section = network_panel.index(
             "PhInitFormatSize(&format[0], "
-            "Context->AdapterEntry->CurrentNetworkReceive + "
-            "Context->AdapterEntry->CurrentNetworkSend)",
+            "Context->AdapterEntry->CurrentNetworkReceive",
             disconnected_speed,
         )
         connected_branch = network_panel[state_condition:outer_else]
         disconnected_branch = network_panel[outer_else:next_panel_section]
         panel_state_call = (
             r"PhSetWindowText\(\s*Context->NetAdapterPanelStateLabel,\s*"
-            + ui_string_expression.format(resource_id="{resource_id}")
+            + cached_ui_string_expression.format(resource_id="{resource_id}")
             + r"\s*\);"
         )
         self.assertRegex(
@@ -5527,8 +5551,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('L"Disconnected"', sources["netgraph.c"])
 
         expected_load_counts = {
-            "IDS_HD_CONNECTED": 6,
-            "IDS_HD_DISCONNECTED": 6,
+            "IDS_HD_CONNECTED": 4,
+            "IDS_HD_DISCONNECTED": 4,
             "IDS_HD_ADAPTER": 1,
             "IDS_HD_UNICAST": 1,
             "IDS_HD_BROADCAST": 1,
@@ -5549,13 +5573,13 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     expected_count,
                 )
 
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12009$")
-        self.assertEqual(len(stringtable_ids(english_resource)), 9)
-        self.assertEqual(len(stringtable_ids(chinese_resource)), 9)
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12096$")
+        self.assertEqual(len(stringtable_ids(english_resource)), 96)
+        self.assertEqual(len(stringtable_ids(chinese_resource)), 96)
         self.assertEqual(
             len(
                 re.findall(
-                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=9'",
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=96'",
                     workflow,
                 )
             ),
@@ -6249,7 +6273,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
-                    (r"bin\Release64\plugins\HardwareDevices.dll", 9): 2,
+                    (r"bin\Release64\plugins\HardwareDevices.dll", 96): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 93): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 5): 2,

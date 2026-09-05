@@ -232,13 +232,21 @@ VOID PvpInitializeFont(
 )
 {
     LONG dpiValue;
+    HFONT newFont;
+    HFONT oldFont;
 
     dpiValue = PhGetWindowDpi(hwnd);
+    newFont = PhCreateMessageFont(dpiValue);
 
-    if (PhApplicationFont)
-        DeleteFont(PhApplicationFont);
+    if (!newFont)
+        return;
 
-    PhApplicationFont = PhCreateMessageFont(dpiValue);
+    oldFont = PhApplicationFont;
+    PhApplicationFont = newFont;
+    SetWindowFont(PropSheet_GetTabControl(hwnd), newFont, TRUE);
+
+    if (oldFont)
+        DeleteFont(oldFont);
 }
 
 INT CALLBACK PvpPropSheetProc(

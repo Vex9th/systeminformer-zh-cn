@@ -234,7 +234,7 @@ VOID RaplDeviceUpdatePanel(
     if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->RaplDeviceProcessorUsageLabel, formatBuffer);
     else
-        PhSetWindowText(Context->RaplDeviceProcessorUsageLabel, L"N/A");
+        PhSetWindowText(Context->RaplDeviceProcessorUsageLabel, HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE));
 
     PhInitFormatF(&format[0], Context->DeviceEntry->CurrentCorePower, 2);
     PhInitFormatS(&format[1], L" W");
@@ -242,7 +242,7 @@ VOID RaplDeviceUpdatePanel(
     if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->RaplDeviceCoreUsageLabel, formatBuffer);
     else
-        PhSetWindowText(Context->RaplDeviceCoreUsageLabel, L"N/A");
+        PhSetWindowText(Context->RaplDeviceCoreUsageLabel, HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE));
 
     PhInitFormatF(&format[0], Context->DeviceEntry->CurrentDramPower, 2);
     PhInitFormatS(&format[1], L" W");
@@ -250,7 +250,7 @@ VOID RaplDeviceUpdatePanel(
     if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->RaplDeviceDimmUsageLabel, formatBuffer);
     else
-        PhSetWindowText(Context->RaplDeviceDimmUsageLabel, L"N/A");
+        PhSetWindowText(Context->RaplDeviceDimmUsageLabel, HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE));
 
     PhInitFormatF(&format[0], Context->DeviceEntry->CurrentDiscreteGpuPower, 2);
     PhInitFormatS(&format[1], L" W");
@@ -258,7 +258,7 @@ VOID RaplDeviceUpdatePanel(
     if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->RaplDeviceGpuLimitLabel, formatBuffer);
     else
-        PhSetWindowText(Context->RaplDeviceGpuLimitLabel, L"N/A");
+        PhSetWindowText(Context->RaplDeviceGpuLimitLabel, HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE));
 
     PhInitFormatF(&format[0], Context->DeviceEntry->CurrentComponentPower, 2);
     PhInitFormatS(&format[1], L" W");
@@ -266,7 +266,7 @@ VOID RaplDeviceUpdatePanel(
     if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->RaplDeviceComponentUsageLabel, formatBuffer);
     else
-        PhSetWindowText(Context->RaplDeviceComponentUsageLabel, L"N/A");
+        PhSetWindowText(Context->RaplDeviceComponentUsageLabel, HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE));
 
     PhInitFormatF(&format[0], Context->DeviceEntry->CurrentTotalPower, 2);
     PhInitFormatS(&format[1], L" W");
@@ -274,7 +274,7 @@ VOID RaplDeviceUpdatePanel(
     if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->RaplDeviceTotalUsageLabel, formatBuffer);
     else
-        PhSetWindowText(Context->RaplDeviceTotalUsageLabel, L"N/A");
+        PhSetWindowText(Context->RaplDeviceTotalUsageLabel, HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE));
 }
 
 /**
@@ -857,7 +857,7 @@ INT_PTR CALLBACK RaplDeviceDialogProc(
 
             SetWindowFont(GetDlgItem(hwndDlg, IDC_TITLE), context->SysinfoSection->Parameters->LargeFont, FALSE);
             SetWindowFont(GetDlgItem(hwndDlg, IDC_DEVICENAME), context->SysinfoSection->Parameters->MediumFont, FALSE);
-            PhSetDialogItemText(hwndDlg, IDC_DEVICENAME, PhGetStringOrDefault(context->DeviceEntry->DeviceName, L"Unknown"));
+            PhSetDialogItemText(hwndDlg, IDC_DEVICENAME, PhGetStringOrDefault(context->DeviceEntry->DeviceName, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
 
             context->RaplDevicePanel = PhCreateDialog(PluginInstance->DllBase, MAKEINTRESOURCE(IDD_RAPLDEVICE_PANEL), hwndDlg, RaplDevicePanelDialogProc, context);
             ShowWindow(context->RaplDevicePanel, SW_SHOW);
@@ -1083,7 +1083,7 @@ BOOLEAN RaplDeviceSectionCallback(
             PPH_SYSINFO_DRAW_PANEL drawPanel = (PPH_SYSINFO_DRAW_PANEL)Parameter1;
             PH_FORMAT format[2];
 
-            drawPanel->Title = PhCreateString(L"RAPL");
+            PhSetReference(&drawPanel->Title, HardwareDevicesGetUiStringObject(IDS_HD_RAPL));
 
             // %.2f W
             PhInitFormatF(&format[0], context->DeviceEntry->CurrentTotalPower, 2);
@@ -1108,7 +1108,6 @@ VOID RaplDeviceSysInfoInitializing(
     _In_ _Assume_refs_(1) PDV_RAPL_ENTRY DeviceEntry
     )
 {
-    static PH_STRINGREF text = PH_STRINGREF_INIT(L"RAPL");
     PDV_RAPL_SYSINFO_CONTEXT context;
     PH_SYSINFO_SECTION section;
 
@@ -1118,7 +1117,7 @@ VOID RaplDeviceSysInfoInitializing(
     memset(&section, 0, sizeof(PH_SYSINFO_SECTION));
     section.Context = context;
     section.Callback = RaplDeviceSectionCallback;
-    section.Name = text;
+    section.Name = PhGetStringRef(HardwareDevicesGetUiStringObject(IDS_HD_RAPL));
 
     context->SysinfoSection = Pointers->CreateSection(&section);
 }

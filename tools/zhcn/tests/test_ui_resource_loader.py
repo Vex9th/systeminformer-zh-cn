@@ -92,14 +92,16 @@ class UiResourceLoaderContractTests(unittest.TestCase):
         self.assertIn("stringBuffer->Length * sizeof(WCHAR)", body)
         self.assertNotIn("- sizeof(UNICODE_NULL)", body)
 
-    def test_translated_font_writes_one_terminator(self) -> None:
+    def test_translated_dialog_preserves_template_font(self) -> None:
         source = read_source("phlib/phtranslation.c")
-        start = source.index("static const WCHAR zhCnFont[]")
-        end = source.index("changed = TRUE", start)
-        font_write = source[start:end]
+        start = source.index("PVOID PhTranslateDialogTemplateCopy(")
+        end = source.index("PVOID PhTranslateDialogTemplateCached(", start)
+        body = source[start:end]
 
-        self.assertIn("(wcslen(zhCnFont) + 1) * sizeof(WCHAR)", font_write)
-        self.assertNotIn("PhTlpWriteWord(&writer, 0)", font_write)
+        self.assertIn("PhTlpWrite(&writer, (PVOID)cursor, 6);", body)
+        self.assertIn("PhTlpWrite(&writer, (PVOID)cursor, 2);", body)
+        self.assertIn("PhTlpCopyTemplateString(&writer, &cursor); // typeface", body)
+        self.assertNotIn("Microsoft YaHei UI", body)
 
     def test_legacy_template_font_check_uses_setfont_bit(self) -> None:
         source = read_source("phlib/phtranslation.c")

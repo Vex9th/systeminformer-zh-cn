@@ -45,6 +45,47 @@ PH_CALLBACK_REGISTRATION ProcessesUpdatedCallbackRegistration;
 PH_CALLBACK_REGISTRATION SystemInformationInitializingCallbackRegistration;
 PH_CALLBACK_REGISTRATION SettingsUpdatedCallbackRegistration;
 
+static PH_INITONCE HardwareDevicesUiStringsInitOnce = PH_INITONCE_INIT;
+static PPH_STRING HardwareDevicesUiStrings[
+    IDS_HD_RAPL - IDS_HD_NO_GRAPHICS_NODES + 1
+    ];
+
+PPH_STRING HardwareDevicesGetUiStringObject(
+    _In_ ULONG ResourceId
+    )
+{
+    if (
+        ResourceId < IDS_HD_NO_GRAPHICS_NODES ||
+        ResourceId > IDS_HD_RAPL
+        )
+    {
+        return NULL;
+    }
+
+    if (PhBeginInitOnce(&HardwareDevicesUiStringsInitOnce))
+    {
+        for (ULONG id = IDS_HD_NO_GRAPHICS_NODES; id <= IDS_HD_RAPL; id++)
+        {
+            HardwareDevicesUiStrings[id - IDS_HD_NO_GRAPHICS_NODES] = PhLoadUiString(
+                PluginInstance->DllBase,
+                id,
+                NULL
+                );
+        }
+
+        PhEndInitOnce(&HardwareDevicesUiStringsInitOnce);
+    }
+
+    return HardwareDevicesUiStrings[ResourceId - IDS_HD_NO_GRAPHICS_NODES];
+}
+
+PCWSTR HardwareDevicesGetUiString(
+    _In_ ULONG ResourceId
+    )
+{
+    return PhGetString(HardwareDevicesGetUiStringObject(ResourceId));
+}
+
 VOID NTAPI LoadSettings(
     VOID
     )

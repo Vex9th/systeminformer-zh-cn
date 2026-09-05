@@ -4,8 +4,8 @@
 
 This checks the compiled resource tree rather than replaying the retired
 runtime text-rewrite algorithm. Every en-US dialog and string-table entry must
-have a zh-CN resource. Dialogs must keep the same structural template, and
-every zh-CN font must be explicit and usable without font fallback.
+have a zh-CN resource. Dialogs must keep the same structural template and font
+metrics so localization cannot change dialog-unit scaling.
 """
 
 import argparse
@@ -209,10 +209,8 @@ def parse_stringtable_block(data: bytes) -> list[str]:
 def dialog_font_attributes(font):
     if not font:
         return None
-    if len(font) == 5:
-        return font[1:4]
-    if len(font) == 2:
-        return ()
+    if len(font) in (2, 5):
+        return font
     raise ValueError(f"unexpected dialog font tuple: {font!r}")
 
 
@@ -291,11 +289,8 @@ def validate_pe(
             failures += 1
 
         font = chinese["font"]
-        if not font or font[0] < 9 or font[-1] != "Microsoft YaHei UI":
-            print(f"FAIL dialog {resource_name}: invalid zh-CN font {font!r}")
-            failures += 1
-        elif dialog_font_attributes(english["font"]) != dialog_font_attributes(font):
-            print(f"FAIL dialog {resource_name}: zh-CN font attributes changed")
+        if dialog_font_attributes(english["font"]) != dialog_font_attributes(font):
+            print(f"FAIL dialog {resource_name}: zh-CN font differs from en-US")
             failures += 1
 
         if any(contains_han(text) for text in chinese["strings"]):

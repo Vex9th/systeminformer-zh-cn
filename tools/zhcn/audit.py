@@ -340,6 +340,7 @@ CALL_SPECS = {
     "PhAddIListViewItem": {2: "c_listview_item"},
     "PhSetDialogItemText": {2: "c_window_text"},
     "PhSetWindowText": {1: "c_window_text"},
+    "PhSetListViewSubItem": {3: "c_window_text"},
     "SetWindowText": {1: "c_window_text"},
     "SetWindowTextW": {1: "c_window_text"},
     "ComboBox_AddString": {1: "c_combobox"},
@@ -378,7 +379,7 @@ RUNTIME_COMPOSER_CALLS = {
 }
 
 LOCAL_UI_TEXT_DECLARATION_RE = re.compile(
-    r"\b(?:(?:const|CONST|volatile)\s+)*"
+    r"\b(?:(?:static|const|CONST|volatile)\s+)*"
     r"(?P<type>PWSTR|PCWSTR|PPH_STRING|WCHAR|PH_STRINGREF)\s+"
     r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)"
     r"(?P<array>\s*\[[^\]]*\])?\s*"
@@ -515,7 +516,9 @@ def one_hop_expression_source_literals(expression: str, default_category: str):
         ]
         if any(is_runtime_composer(name) for name in enclosing_calls):
             sources.append(("c_runtime_composed", text, offset))
-        elif not enclosing_calls:
+        elif not enclosing_calls or all(
+            name == "PH_STRINGREF_INIT" for name in enclosing_calls
+        ):
             sources.append((default_category, text, offset))
 
     return sources
@@ -911,6 +914,112 @@ def append_runtime_target_entries(
         entries.append(entry)
 
 
+def scan_sysinfo_text_sinks(text: str, scan_text: str, rel: str, entries, one_hop_seen):
+    """Scan custom System Information titles that bypass window-text setters."""
+    syntax_text = mask_c_literals(scan_text)
+    scopes = c_brace_scopes(scan_text)
+    draw_panel_declarations = list(re.finditer(
+        r"\bPPH_SYSINFO_DRAW_PANEL\s+(?P<name>[A-Za-z_][A-Za-z0-9_]*)\b",
+        syntax_text,
+    ))
+    section_declarations = list(re.finditer(
+        r"\bPH_SYSINFO_SECTION\s+(?P<name>[A-Za-z_][A-Za-z0-9_]*)\b",
+        syntax_text,
+    ))
+
+    def has_nested_shadow(declaration, identifier, offset):
+        declaration_scope = innermost_c_scope(scopes, declaration.start())
+        if declaration_scope is None:
+            return False
+        shadow_re = re.compile(
+            rf"(?:^|[;{{}}])\s*(?:[A-Za-z_][A-Za-z0-9_]*\s+)*"
+            rf"[A-Za-z_][A-Za-z0-9_]*\s*(?:\*+\s*)?"
+            rf"{re.escape(identifier)}\s*(?:=|;|,|\[)"
+        )
+        return any(
+            declaration_scope[0] < scope[0] < offset < scope[1] < declaration_scope[1]
+            and shadow_re.search(syntax_text[scope[0] + 1:offset])
+            for scope in scopes
+        )
+
+    def has_visible_declaration(declarations, identifier, offset):
+        declaration = visible_local_text_declaration(
+            declarations,
+            identifier,
+            offset,
+            scopes,
+        )
+        return declaration is not None and not has_nested_shadow(
+            declaration,
+            identifier,
+            offset,
+        )
+
+    for name, args, spans, call_start in find_calls(
+        scan_text, {"PhMoveReference", "PhSetReference"}
+    ):
+        if len(args) < 2:
+            continue
+        target_match = re.fullmatch(
+            r"\s*&\s*([A-Za-z_][A-Za-z0-9_]*)\s*(?:->|\.)\s*Title\s*",
+            args[0],
+        )
+        if not target_match or not has_visible_declaration(
+            draw_panel_declarations,
+            target_match.group(1),
+            call_start,
+        ):
+            continue
+        append_runtime_target_entries(
+            text,
+            scan_text,
+            rel,
+            entries,
+            args[1],
+            spans[1][0],
+            call_start,
+            "c_window_text",
+            one_hop_seen,
+        )
+
+    assignment_specs = (
+        (
+            re.compile(
+                r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*(?:->|\.)\s*Title\s*=(?!=)\s*(?P<value>.*?);",
+                re.DOTALL,
+            ),
+            draw_panel_declarations,
+        ),
+        (
+            re.compile(
+                r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Name\s*=(?!=)\s*(?P<value>.*?);",
+                re.DOTALL,
+            ),
+            section_declarations,
+        ),
+    )
+    for assignment_re, declarations in assignment_specs:
+        for assignment in assignment_re.finditer(syntax_text):
+            if not has_visible_declaration(
+                declarations,
+                assignment.group("name"),
+                assignment.start(),
+            ):
+                continue
+            value_start = assignment.start("value")
+            append_runtime_target_entries(
+                text,
+                scan_text,
+                rel,
+                entries,
+                scan_text[value_start:assignment.end("value")],
+                value_start,
+                assignment.start(),
+                "c_window_text",
+                one_hop_seen,
+            )
+
+
 def split_c_initializer_fields(initializer: str):
     """Split one flat C initializer using the balanced call parser."""
     wrapped = f"AuditInitializer({initializer})"
@@ -1088,6 +1197,7 @@ def scan_c_file(path: str, entries):
     scan_text = mask_c_comments(text)
     one_hop_seen = set()
 
+    scan_sysinfo_text_sinks(text, scan_text, rel, entries, one_hop_seen)
     scan_combo_box_string_arrays(text, scan_text, rel, entries)
     scan_combo_box_struct_arrays(text, scan_text, rel, entries)
     scan_struct_array_member_calls(

@@ -113,47 +113,43 @@ BOOLEAN NetworkDeviceGraphMessageCallback(
      {
          PhSetWindowText(
              Context->NetAdapterPanelStateLabel,
-             PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_CONNECTED, NULL)))
+             HardwareDevicesGetUiString(IDS_HD_CONNECTED)
              );
- 
-         //PhInitFormatSR(&format[0], PH_AUTO_T(PH_STRING, NetAdapterFormatBitratePrefix(linkSpeedValue))->sr);
+
          PhInitFormatSize(&format[0], linkSpeedValue / BITS_IN_ONE_BYTE);
-         PhInitFormatS(&format[1], L"/s");
- 
+         PhInitFormatS(&format[1], HardwareDevicesGetUiString(IDS_HD_RATE_SUFFIX));
+
          if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
              PhSetWindowText(Context->NetAdapterPanelSpeedLabel, formatBuffer);
          else
-         {
-             PhSetWindowText(Context->NetAdapterPanelSpeedLabel, PhaConcatStrings2(
-                 PhaFormatSize(linkSpeedValue / BITS_IN_ONE_BYTE, ULONG_MAX)->Buffer,
-                 L"/s"
+             PhSetWindowText(Context->NetAdapterPanelSpeedLabel, PhaFormatString(
+                 HardwareDevicesGetUiString(IDS_HD_RATE_FORMAT),
+                 PhaFormatSize(linkSpeedValue / BITS_IN_ONE_BYTE, ULONG_MAX)->Buffer
                  )->Buffer);
-             //PhSetWindowText(Context->NetAdapterPanelSpeedLabel, PH_AUTO_T(PH_STRING, NetAdapterFormatBitratePrefix(linkSpeedValue))->Buffer);
-         }
      }
      else
      {
          PhSetWindowText(
              Context->NetAdapterPanelStateLabel,
-             PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_DISCONNECTED, NULL)))
+             HardwareDevicesGetUiString(IDS_HD_DISCONNECTED)
              );
-         PhSetWindowText(Context->NetAdapterPanelSpeedLabel, L"N/A");
+
+         PhSetWindowText(Context->NetAdapterPanelSpeedLabel, HardwareDevicesGetUiString(IDS_HD_NOT_AVAILABLE));
      }
- 
-     //PhInitFormatSR(&format[0], PH_AUTO_T(PH_STRING, NetAdapterFormatBitratePrefix((Context->AdapterEntry->CurrentNetworkReceive + Context->AdapterEntry->CurrentNetworkSend) * BITS_IN_ONE_BYTE))->sr);
+
      PhInitFormatSize(&format[0], Context->AdapterEntry->CurrentNetworkReceive + Context->AdapterEntry->CurrentNetworkSend);
-     PhInitFormatS(&format[1], L"/s");
- 
+     PhInitFormatS(&format[1], HardwareDevicesGetUiString(IDS_HD_RATE_SUFFIX));
+
      if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
          PhSetWindowText(Context->NetAdapterPanelBytesLabel, formatBuffer);
      else
-     {
          PhSetWindowText(Context->NetAdapterPanelBytesLabel, PhaFormatString(
-             L"%s/s",
-             PhaFormatSize(Context->AdapterEntry->CurrentNetworkReceive + Context->AdapterEntry->CurrentNetworkSend, ULONG_MAX)->Buffer)->Buffer
-             );
-         //PhSetWindowText(Context->NetAdapterPanelBytesLabel, PH_AUTO_T(PH_STRING, NetAdapterFormatBitratePrefix((Context->AdapterEntry->CurrentNetworkReceive + Context->AdapterEntry->CurrentNetworkSend)* BITS_IN_ONE_BYTE))->Buffer);
-     }
+             HardwareDevicesGetUiString(IDS_HD_RATE_FORMAT),
+             PhaFormatSize(
+                 Context->AdapterEntry->CurrentNetworkReceive + Context->AdapterEntry->CurrentNetworkSend,
+                 ULONG_MAX
+                 )->Buffer
+             )->Buffer);
  }
 
 INT_PTR CALLBACK NetworkDevicePanelDialogProc(
@@ -573,16 +569,16 @@ VOID NetworkDeviceUpdateTitle(
     if (Context->AdapterEntry->PendingQuery)
     {
         if (Context->AdapterTextLabel)
-            PhSetWindowText(Context->AdapterTextLabel, L"Pending...");
+            PhSetWindowText(Context->AdapterTextLabel, HardwareDevicesGetUiString(IDS_HD_PENDING));
         if (Context->AdapterNameLabel)
-            PhSetWindowText(Context->AdapterNameLabel, L"Pending...");
+            PhSetWindowText(Context->AdapterNameLabel, HardwareDevicesGetUiString(IDS_HD_PENDING));
     }
     else
     {
         if (Context->AdapterTextLabel)
-            PhSetWindowText(Context->AdapterTextLabel, PhGetStringOrDefault(Context->AdapterEntry->AdapterAlias, L"Unknown"));
+            PhSetWindowText(Context->AdapterTextLabel, PhGetStringOrDefault(Context->AdapterEntry->AdapterAlias, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
         if (Context->AdapterNameLabel)
-            PhSetWindowText(Context->AdapterNameLabel, PhGetStringOrDefault(Context->AdapterEntry->AdapterName, L"Unknown"));
+            PhSetWindowText(Context->AdapterNameLabel, PhGetStringOrDefault(Context->AdapterEntry->AdapterName, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
     }
 }
 
@@ -667,7 +663,7 @@ INT_PTR CALLBACK NetworkDeviceDialogProc(
 
             SetWindowFont(context->AdapterTextLabel, context->SysinfoSection->Parameters->LargeFont, FALSE);
             SetWindowFont(context->AdapterNameLabel, context->SysinfoSection->Parameters->MediumFont, FALSE);
-            PhSetWindowText(context->AdapterNameLabel, PhGetStringOrDefault(context->AdapterEntry->AdapterName, L"Unknown"));
+            PhSetWindowText(context->AdapterNameLabel, PhGetStringOrDefault(context->AdapterEntry->AdapterName, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
 
             context->PanelWindowHandle = PhCreateDialog(PluginInstance->DllBase, MAKEINTRESOURCE(IDD_NETADAPTER_PANEL), WindowHandle, NetworkDevicePanelDialogProc, context);
             ShowWindow(context->PanelWindowHandle, SW_SHOW);
@@ -891,7 +887,7 @@ BOOLEAN NetworkDeviceSectionCallback(
             PH_FORMAT format[4];
 
             if (context->AdapterEntry->PendingQuery)
-                PhMoveReference(&drawPanel->Title, PhCreateString(L"Pending..."));
+                PhSetReference(&drawPanel->Title, HardwareDevicesGetUiStringObject(IDS_HD_PENDING));
             else
             {
                 if (context->AdapterEntry->AdapterAlias)
@@ -901,7 +897,7 @@ BOOLEAN NetworkDeviceSectionCallback(
             }
 
             if (!drawPanel->Title)
-                drawPanel->Title = PhCreateString(L"Unknown");
+                PhSetReference(&drawPanel->Title, HardwareDevicesGetUiStringObject(IDS_HD_UNKNOWN));
 
             // R: %s\nS: %s
             PhInitFormatS(&format[0], L"R: ");
@@ -922,7 +918,6 @@ VOID NetworkDeviceSysInfoInitializing(
     _In_ _Assume_refs_(1) PDV_NETADAPTER_ENTRY AdapterEntry
     )
 {
-    static PH_STRINGREF text = PH_STRINGREF_INIT(L"Unknown");
     PDV_NETADAPTER_SYSINFO_CONTEXT context;
     PH_SYSINFO_SECTION section;
 
@@ -934,7 +929,7 @@ VOID NetworkDeviceSysInfoInitializing(
     memset(&section, 0, sizeof(PH_SYSINFO_SECTION));
     section.Context = context;
     section.Callback = NetworkDeviceSectionCallback;
-    section.Name = text;
+    section.Name = PhGetStringRef(HardwareDevicesGetUiStringObject(IDS_HD_UNKNOWN));
 
     context->SysinfoSection = Pointers->CreateSection(&section);
 }

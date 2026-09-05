@@ -115,6 +115,23 @@ extern PPH_OBJECT_TYPE GraphicsDeviceEntryType;
 extern PPH_LIST GraphicsDevicesList;
 extern PH_QUEUED_LOCK GraphicsDevicesListLock;
 
+PCWSTR HardwareDevicesGetUiString(
+    _In_ ULONG ResourceId
+    );
+
+PPH_STRING HardwareDevicesGetUiStringObject(
+    _In_ ULONG ResourceId
+    );
+
+#define HardwareDevicesAddListViewGroupItem(ListViewHandle, GroupId, ItemId, ResourceId) \
+    PhAddListViewGroupItem( \
+        (ListViewHandle), \
+        (GroupId), \
+        (ItemId), \
+        HardwareDevicesGetUiString(ResourceId), \
+        NULL \
+        )
+
 #ifdef _DEBUG
 //#define FORCE_DELAY_LABEL_WORKQUEUE
 #endif

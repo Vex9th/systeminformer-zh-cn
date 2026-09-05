@@ -137,7 +137,7 @@ VOID EtpQueryAdapterDriverModel(
         ULONG minorVersion = (d3dkmtDriverVersion - majorVersion * 1000) / 100;
 
         PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_WDDMVERSION, 1,
-            PhaFormatString(L"WDDM %lu.%lu", majorVersion, minorVersion)->Buffer);
+            PhaFormatString(HardwareDevicesGetUiString(IDS_HD_WDDM_VERSION_FORMAT), majorVersion, minorVersion)->Buffer);
     }
 }
 
@@ -242,7 +242,7 @@ VOID EtpQueryAdapterPerfInfo(
         if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
             PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_GPUFREQUENCY, 1, formatBuffer);
         else
-            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_GPUFREQUENCY, 1, PhaFormatString(L"%I64u MHz", nodePerfData.Frequency / 1000 / 1000)->Buffer);
+            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_GPUFREQUENCY, 1, PhaFormatString(HardwareDevicesGetUiString(IDS_HD_MEGAHERTZ_FORMAT), nodePerfData.Frequency / 1000 / 1000)->Buffer);
 
         PhInitFormatI64U(&format[0], nodePerfData.MaxFrequency / 1000 / 1000);
         PhInitFormatS(&format[1], L" MHz");
@@ -250,7 +250,7 @@ VOID EtpQueryAdapterPerfInfo(
         if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
             PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_GPUMAXFREQUENCY, 1, formatBuffer);
         else
-            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_GPUMAXFREQUENCY, 1, PhaFormatString(L"%I64u MHz", nodePerfData.MaxFrequency / 1000 / 1000)->Buffer);
+            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_GPUMAXFREQUENCY, 1, PhaFormatString(HardwareDevicesGetUiString(IDS_HD_MEGAHERTZ_FORMAT), nodePerfData.MaxFrequency / 1000 / 1000)->Buffer);
     }
 
     memset(&adapterPerfData, 0, sizeof(D3DKMT_ADAPTER_PERFDATA));
@@ -271,7 +271,7 @@ VOID EtpQueryAdapterPerfInfo(
         if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
             PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_MEMORYFREQUENCY, 1, formatBuffer);
         else
-            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_MEMORYFREQUENCY, 1, PhaFormatString(L"%I64u MHz", adapterPerfData.MemoryFrequency / 1000 / 1000)->Buffer);
+            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_MEMORYFREQUENCY, 1, PhaFormatString(HardwareDevicesGetUiString(IDS_HD_MEGAHERTZ_FORMAT), adapterPerfData.MemoryFrequency / 1000 / 1000)->Buffer);
 
         PhInitFormatSize(&format[0], adapterPerfData.MemoryBandwidth);
 
@@ -300,7 +300,7 @@ VOID EtpQueryAdapterPerfInfo(
         if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
             PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_POWERUSAGE, 1, formatBuffer);
         else
-            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_POWERUSAGE, 1, PhaFormatString(L"%lu%%", PhMultiplyDivide((ULONG)adapterPerfData.Power, 100, 1000))->Buffer);
+            PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_POWERUSAGE, 1, PhaFormatString(HardwareDevicesGetUiString(IDS_HD_INTEGER_PERCENT_FORMAT), PhMultiplyDivide((ULONG)adapterPerfData.Power, 100, 1000))->Buffer);
 
         //if (PhGetIntegerSetting(SETTING_NAME_ENABLE_FAHRENHEIT))
         //{
@@ -337,7 +337,7 @@ VOID EtpQueryAdapterPerfInfo(
             else
             {
                 PhSetListViewSubItem(ListViewClass, GPUADAPTER_DETAILS_INDEX_TEMPERATURE, 1, PhaFormatString(
-                    L"%lu\u00b0C",
+                    HardwareDevicesGetUiString(IDS_HD_CELSIUS_FORMAT),
                     gpuCurrentTemp
                     )->Buffer);
             }

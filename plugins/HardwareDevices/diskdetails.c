@@ -273,27 +273,27 @@ VOID DiskDeviceQueryVolumeInfo(
     {
         NTFS_VOLUME_INFO ntfsVolumeInfo;
 
-        PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, Column, L"NTFS");
+        PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, Column, HardwareDevicesGetUiString(IDS_HD_FILE_SYSTEM_NTFS));
 
         if (DiskDriveQueryNtfsVolumeInfo(DeviceHandle, &ntfsVolumeInfo))
         {
             ntfsVolumeInfo.VolumeData.VolumeSerialNumber.QuadPart = _byteswap_uint64(ntfsVolumeInfo.VolumeData.VolumeSerialNumber.QuadPart);
 
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_SERIAL_NUMBER, Column,
-                PhaFormatString(L"0x%s", PH_AUTO_T(PH_STRING, PhBufferToHexString((PUCHAR)&ntfsVolumeInfo.VolumeData.VolumeSerialNumber.QuadPart, sizeof(ntfsVolumeInfo.VolumeData.VolumeSerialNumber.QuadPart)))->Buffer)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_HEX_FORMAT), PH_AUTO_T(PH_STRING, PhBufferToHexString((PUCHAR)&ntfsVolumeInfo.VolumeData.VolumeSerialNumber.QuadPart, sizeof(ntfsVolumeInfo.VolumeData.VolumeSerialNumber.QuadPart)))->Buffer)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FS_VERSION, Column,
-                PhaFormatString(L"%lu.%lu", ntfsVolumeInfo.VolumeDataEx.MajorVersion, ntfsVolumeInfo.VolumeDataEx.MinorVersion)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_VERSION_FORMAT), ntfsVolumeInfo.VolumeDataEx.MajorVersion, ntfsVolumeInfo.VolumeDataEx.MinorVersion)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_LFS_VERSION, Column,
-                PhaFormatString(L"%lu.%lu", ntfsVolumeInfo.VolumeDataEx.LfsMajorVersion, ntfsVolumeInfo.VolumeDataEx.LfsMinorVersion)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_VERSION_FORMAT), ntfsVolumeInfo.VolumeDataEx.LfsMajorVersion, ntfsVolumeInfo.VolumeDataEx.LfsMinorVersion)->Buffer);
             //PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, Column,
             //    PhaFormatSize(ntfsVolumeInfo.ExtendedVolumeData.BytesPerPhysicalSector, ULONG_MAX)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SIZE, Column,
                 PhaFormatSize(ntfsVolumeInfo.VolumeData.NumberSectors.QuadPart * ntfsVolumeInfo.VolumeData.BytesPerSector, ULONG_MAX)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_FREE, Column,
-                PhaFormatString(L"%s (%.2f%%)", PhaFormatSize(ntfsVolumeInfo.VolumeData.FreeClusters.QuadPart * ntfsVolumeInfo.VolumeData.BytesPerCluster, ULONG_MAX)->Buffer,
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_SIZE_PERCENT_FORMAT), PhaFormatSize(ntfsVolumeInfo.VolumeData.FreeClusters.QuadPart * ntfsVolumeInfo.VolumeData.BytesPerCluster, ULONG_MAX)->Buffer,
                 (FLOAT)(ntfsVolumeInfo.VolumeData.FreeClusters.QuadPart * 100.f) / ntfsVolumeInfo.VolumeData.TotalClusters.QuadPart)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_USED, Column,
-                PhaFormatString(L"%s (%.2f%%)", PhaFormatSize(
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_SIZE_PERCENT_FORMAT), PhaFormatSize(
                 (ntfsVolumeInfo.VolumeData.NumberSectors.QuadPart * ntfsVolumeInfo.VolumeData.BytesPerSector) - (ntfsVolumeInfo.VolumeData.FreeClusters.QuadPart * ntfsVolumeInfo.VolumeData.BytesPerCluster), ULONG_MAX)->Buffer,
                 100.f - (FLOAT)(ntfsVolumeInfo.VolumeData.FreeClusters.QuadPart * 100) / ntfsVolumeInfo.VolumeData.TotalClusters.QuadPart)->Buffer); // HACK (dmex)
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SECTORS, Column,
@@ -315,39 +315,39 @@ VOID DiskDeviceQueryVolumeInfo(
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_RECORDS, Column,
                 PhaFormatUInt64(ntfsVolumeInfo.VolumeData.MftValidDataLength.QuadPart / ntfsVolumeInfo.VolumeData.BytesPerFileRecordSegment, TRUE)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_SIZE, Column,
-                PhaFormatString(L"%s (%.2f%%)", PhaFormatSize(ntfsVolumeInfo.VolumeData.MftValidDataLength.QuadPart, ULONG_MAX)->Buffer, ((FLOAT)ntfsVolumeInfo.VolumeData.MftValidDataLength.QuadPart / ntfsVolumeInfo.VolumeData.BytesPerCluster * 100.f) / ntfsVolumeInfo.VolumeData.TotalClusters.QuadPart)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_SIZE_PERCENT_FORMAT), PhaFormatSize(ntfsVolumeInfo.VolumeData.MftValidDataLength.QuadPart, ULONG_MAX)->Buffer, ((FLOAT)ntfsVolumeInfo.VolumeData.MftValidDataLength.QuadPart / ntfsVolumeInfo.VolumeData.BytesPerCluster * 100.f) / ntfsVolumeInfo.VolumeData.TotalClusters.QuadPart)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_START, Column,
                 PhaFormatString(L"%I64u", ntfsVolumeInfo.VolumeData.MftStartLcn.QuadPart)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_ZONE, Column,
-                PhaFormatString(L"%I64u - %I64u", ntfsVolumeInfo.VolumeData.MftZoneStart.QuadPart, ntfsVolumeInfo.VolumeData.MftZoneEnd.QuadPart)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_UINT64_RANGE_FORMAT), ntfsVolumeInfo.VolumeData.MftZoneStart.QuadPart, ntfsVolumeInfo.VolumeData.MftZoneEnd.QuadPart)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_ZONE_SIZE, Column,
-                PhaFormatString(L"%s (%.2f%%)", PhaFormatSize((ntfsVolumeInfo.VolumeData.MftZoneEnd.QuadPart - ntfsVolumeInfo.VolumeData.MftZoneStart.QuadPart) * ntfsVolumeInfo.VolumeData.BytesPerCluster, ULONG_MAX)->Buffer, (FLOAT)(ntfsVolumeInfo.VolumeData.MftZoneEnd.QuadPart - ntfsVolumeInfo.VolumeData.MftZoneStart.QuadPart) * 100.f / ntfsVolumeInfo.VolumeData.TotalClusters.QuadPart)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_SIZE_PERCENT_FORMAT), PhaFormatSize((ntfsVolumeInfo.VolumeData.MftZoneEnd.QuadPart - ntfsVolumeInfo.VolumeData.MftZoneStart.QuadPart) * ntfsVolumeInfo.VolumeData.BytesPerCluster, ULONG_MAX)->Buffer, (FLOAT)(ntfsVolumeInfo.VolumeData.MftZoneEnd.QuadPart - ntfsVolumeInfo.VolumeData.MftZoneStart.QuadPart) * 100.f / ntfsVolumeInfo.VolumeData.TotalClusters.QuadPart)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_MIRROR_START, Column,
                 PhaFormatString(L"%I64u", ntfsVolumeInfo.VolumeData.Mft2StartLcn.QuadPart)->Buffer);
         }
     }
     else if (Type == FILESYSTEM_STATISTICS_TYPE_FAT)
     {
-        PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, Column, L"FAT");
+        PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, Column, HardwareDevicesGetUiString(IDS_HD_FILE_SYSTEM_FAT));
     }
     else if (Type == FILESYSTEM_STATISTICS_TYPE_REFS)
     {
         REFS_VOLUME_DATA_BUFFER refsVolumeInfo;
 
-        PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, Column, L"ReFS");
+        PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, Column, HardwareDevicesGetUiString(IDS_HD_FILE_SYSTEM_REFS));
 
         if (DiskDriveQueryRefsVolumeInfo(DeviceHandle, &refsVolumeInfo))
         {
             refsVolumeInfo.VolumeSerialNumber.QuadPart = _byteswap_uint64(refsVolumeInfo.VolumeSerialNumber.QuadPart);
 
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_SERIAL_NUMBER, Column,
-                PhaFormatString(L"0x%s", PH_AUTO_T(PH_STRING, PhBufferToHexString((PUCHAR)&refsVolumeInfo.VolumeSerialNumber.QuadPart, sizeof(LONGLONG)))->Buffer)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_HEX_FORMAT), PH_AUTO_T(PH_STRING, PhBufferToHexString((PUCHAR)&refsVolumeInfo.VolumeSerialNumber.QuadPart, sizeof(LONGLONG)))->Buffer)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FS_VERSION, Column,
-                PhaFormatString(L"%lu.%lu", refsVolumeInfo.MajorVersion, refsVolumeInfo.MinorVersion)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_VERSION_FORMAT), refsVolumeInfo.MajorVersion, refsVolumeInfo.MinorVersion)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SIZE, Column,
                 PhaFormatSize(refsVolumeInfo.NumberSectors.QuadPart * refsVolumeInfo.BytesPerSector, ULONG_MAX)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_FREE, Column,
-                PhaFormatString(L"%s (%.2f%%)", PhaFormatSize(refsVolumeInfo.FreeClusters.QuadPart * refsVolumeInfo.BytesPerCluster, ULONG_MAX)->Buffer, (FLOAT)(refsVolumeInfo.FreeClusters.QuadPart * 100) / refsVolumeInfo.TotalClusters.QuadPart)->Buffer);
+                PhaFormatString(HardwareDevicesGetUiString(IDS_HD_SIZE_PERCENT_FORMAT), PhaFormatSize(refsVolumeInfo.FreeClusters.QuadPart * refsVolumeInfo.BytesPerCluster, ULONG_MAX)->Buffer, (FLOAT)(refsVolumeInfo.FreeClusters.QuadPart * 100) / refsVolumeInfo.TotalClusters.QuadPart)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SECTORS, Column,
                 PhaFormatUInt64(refsVolumeInfo.NumberSectors.QuadPart, TRUE)->Buffer);
             PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_CLUSTERS, Column,
@@ -397,14 +397,14 @@ VOID DiskDeviceQueryFileSystem(
                 if (volumeInfo->VolumeLabelLength > 0)
                 {
                     PhAddListViewColumn(Context->ListViewHandle, column, column, column, LVCFMT_LEFT, 200, PhaFormatString(
-                        L"Volume %wc: [%s]", entry->DeviceLetter,
+                        HardwareDevicesGetUiString(IDS_HD_VOLUME_LABEL_FORMAT), entry->DeviceLetter,
                         PhaCreateStringEx(volumeInfo->VolumeLabel, volumeInfo->VolumeLabelLength)->Buffer
                         )->Buffer);
                 }
                 else
                 {
                     PhAddListViewColumn(Context->ListViewHandle, column, column, column, LVCFMT_LEFT, 200, PhaFormatString(
-                        L"Volume %wc:", entry->DeviceLetter)->Buffer);
+                        HardwareDevicesGetUiString(IDS_HD_VOLUME_FORMAT), entry->DeviceLetter)->Buffer);
                 }
             }
 
@@ -417,7 +417,7 @@ VOID DiskDeviceQueryFileSystem(
             if (AddListViewColumns)
             {
                 PhAddListViewColumn(Context->ListViewHandle, column, column, column, LVCFMT_LEFT, 200, PhaFormatString(
-                    L"Volume %wc:", entry->DeviceLetter)->Buffer);
+                    HardwareDevicesGetUiString(IDS_HD_VOLUME_FORMAT), entry->DeviceLetter)->Buffer);
             }
         }
 
@@ -502,7 +502,7 @@ VOID DiskDeviceQueryFileSystem(
                         PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_COUNT, column,
                             PhaFormatUInt64(buffer->NtfsStatistics.VolumeTrimCount, TRUE)->Buffer);
                         PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_TIME, column,
-                            PhaFormatString(L"%.2f seconds", volumeTrimTime)->Buffer);
+                            PhaFormatString(HardwareDevicesGetUiString(IDS_HD_SECONDS_FORMAT), volumeTrimTime)->Buffer);
                         PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_BYTES, column,
                             PhaFormatSize(buffer->NtfsStatistics.VolumeTrimByteCount, ULONG_MAX)->Buffer);
                         PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_SKIPPED_COUNT, column,
@@ -513,7 +513,7 @@ VOID DiskDeviceQueryFileSystem(
                         PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_COUNT, column,
                             PhaFormatUInt64(buffer->NtfsStatistics.FileLevelTrimCount, TRUE)->Buffer);
                         PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_TIME, column,
-                            PhaFormatString(L"%.2f seconds", fileTrimTime)->Buffer);
+                            PhaFormatString(HardwareDevicesGetUiString(IDS_HD_SECONDS_FORMAT), fileTrimTime)->Buffer);
                         PhSetListViewSubItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_BYTES, column,
                             PhaFormatSize(buffer->NtfsStatistics.FileLevelTrimByteCount, ULONG_MAX)->Buffer);
                     }

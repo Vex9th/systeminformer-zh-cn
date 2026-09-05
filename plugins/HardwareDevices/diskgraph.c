@@ -54,32 +54,48 @@ VOID DiskDeviceUpdatePanel(
     if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->DiskDevicePanelActiveLabel, formatBuffer);
     else
-        PhSetWindowText(Context->DiskDevicePanelActiveLabel, PhaFormatString(L"%.0f%%", Context->DiskEntry->ActiveTime)->Buffer);
+        PhSetWindowText(Context->DiskDevicePanelActiveLabel, PhaFormatString(
+            HardwareDevicesGetUiString(IDS_HD_PERCENT_FORMAT),
+            Context->DiskEntry->ActiveTime
+            )->Buffer);
 
     PhInitFormatF(&format[0], Context->DiskEntry->ResponseTime / PH_TICKS_PER_MS, 1);
-    PhInitFormatS(&format[1], L" ms");
+    PhInitFormatS(&format[1], HardwareDevicesGetUiString(IDS_HD_MILLISECONDS_SUFFIX));
 
     if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->DiskDevicePanelTimeLabel, formatBuffer);
     else
-        PhSetWindowText(Context->DiskDevicePanelTimeLabel, PhaFormatString(L"%.1f ms", Context->DiskEntry->ResponseTime / PH_TICKS_PER_MS)->Buffer);
+        PhSetWindowText(Context->DiskDevicePanelTimeLabel, PhaFormatString(
+            HardwareDevicesGetUiString(IDS_HD_MILLISECONDS_FORMAT),
+            Context->DiskEntry->ResponseTime / PH_TICKS_PER_MS
+            )->Buffer);
 
     PhInitFormatSize(&format[0], Context->DiskEntry->BytesReadDelta.Delta + Context->DiskEntry->BytesWrittenDelta.Delta);
-    PhInitFormatS(&format[1], L"/s");
+    PhInitFormatS(&format[1], HardwareDevicesGetUiString(IDS_HD_RATE_SUFFIX));
 
     if (PhFormatToBuffer(format, 2, formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(Context->DiskDevicePanelBytesLabel, formatBuffer);
     else
-        PhSetWindowText(Context->DiskDevicePanelBytesLabel, PhaFormatString(L"%s/s", PhaFormatSize(Context->DiskEntry->BytesReadDelta.Delta + Context->DiskEntry->BytesWrittenDelta.Delta, ULONG_MAX)->Buffer)->Buffer);
+        PhSetWindowText(Context->DiskDevicePanelBytesLabel, PhaFormatString(
+            HardwareDevicesGetUiString(IDS_HD_RATE_FORMAT),
+            PhaFormatSize(
+                Context->DiskEntry->BytesReadDelta.Delta + Context->DiskEntry->BytesWrittenDelta.Delta,
+                ULONG_MAX
+                )->Buffer
+            )->Buffer);
 
     PhInitFormatI64UGroupDigits(&format[0], Context->DiskEntry->QueueDepth);
-    PhInitFormatS(&format[1], L" | ");
+    PhInitFormatS(&format[1], HardwareDevicesGetUiString(IDS_HD_QUEUE_SEPARATOR));
     PhInitFormatI64UGroupDigits(&format[2], Context->DiskEntry->ReadCountDelta.Delta + Context->DiskEntry->WriteCountDelta.Delta);
 
     if (PhFormatToBuffer(format, 3, formatBuffer, sizeof(formatBuffer), NULL))
         PhSetWindowText(GetDlgItem(Context->PanelWindowHandle, IDC_STAT_QUEUELENGTH), formatBuffer);
     else
-        PhSetWindowText(GetDlgItem(Context->PanelWindowHandle, IDC_STAT_QUEUELENGTH), PhaFormatString(L"%lu | %lu", Context->DiskEntry->QueueDepth, Context->DiskEntry->ReadCountDelta.Delta + Context->DiskEntry->WriteCountDelta.Delta)->Buffer);
+        PhSetWindowText(GetDlgItem(Context->PanelWindowHandle, IDC_STAT_QUEUELENGTH), PhaFormatString(
+            HardwareDevicesGetUiString(IDS_HD_QUEUE_DEPTH_FORMAT),
+            Context->DiskEntry->QueueDepth,
+            Context->DiskEntry->ReadCountDelta.Delta + Context->DiskEntry->WriteCountDelta.Delta
+            )->Buffer);
 
     PhInitFormatI64UGroupDigits(&format[0], Context->DiskEntry->SplitCount);
 
@@ -96,16 +112,16 @@ VOID DiskDeviceUpdateTitle(
     if (Context->DiskEntry->PendingQuery)
     {
         if (Context->DiskPathLabel)
-            PhSetWindowText(Context->DiskPathLabel, L"Pending...");
+            PhSetWindowText(Context->DiskPathLabel, HardwareDevicesGetUiString(IDS_HD_PENDING));
         if (Context->DiskNameLabel)
-            PhSetWindowText(Context->DiskNameLabel, L"Pending...");
+            PhSetWindowText(Context->DiskNameLabel, HardwareDevicesGetUiString(IDS_HD_PENDING));
     }
     else
     {
         if (Context->DiskPathLabel)
-            PhSetWindowText(Context->DiskPathLabel, PhGetStringOrDefault(Context->DiskEntry->DiskIndexName, L"Unknown"));
+            PhSetWindowText(Context->DiskPathLabel, PhGetStringOrDefault(Context->DiskEntry->DiskIndexName, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
         if (Context->DiskNameLabel)
-            PhSetWindowText(Context->DiskNameLabel, PhGetStringOrDefault(Context->DiskEntry->DiskName, L"Unknown"));
+            PhSetWindowText(Context->DiskNameLabel, PhGetStringOrDefault(Context->DiskEntry->DiskName, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
     }
 }
 
@@ -602,8 +618,8 @@ INT_PTR CALLBACK DiskDeviceDialogProc(
 
             SetWindowFont(context->DiskPathLabel, context->SysinfoSection->Parameters->LargeFont, FALSE);
             SetWindowFont(context->DiskNameLabel, context->SysinfoSection->Parameters->MediumFont, FALSE);
-            PhSetWindowText(context->DiskPathLabel, PhGetStringOrDefault(context->DiskEntry->DiskIndexName, L"Unknown"));
-            PhSetWindowText(context->DiskNameLabel, PhGetStringOrDefault(context->DiskEntry->DiskName, L"Unknown"));
+            PhSetWindowText(context->DiskPathLabel, PhGetStringOrDefault(context->DiskEntry->DiskIndexName, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
+            PhSetWindowText(context->DiskNameLabel, PhGetStringOrDefault(context->DiskEntry->DiskName, HardwareDevicesGetUiString(IDS_HD_UNKNOWN)));
 
             context->PanelWindowHandle = PhCreateDialog(PluginInstance->DllBase, MAKEINTRESOURCE(IDD_DISKDRIVE_PANEL), WindowHandle, DiskDevicePanelDialogProc, context);
             ShowWindow(context->PanelWindowHandle, SW_SHOW);
@@ -857,12 +873,12 @@ BOOLEAN DiskDeviceSectionCallback(
             PH_FORMAT format[4];
 
             if (context->DiskEntry->PendingQuery)
-                PhMoveReference(&drawPanel->Title, PhCreateString(L"Pending..."));
+                PhSetReference(&drawPanel->Title, HardwareDevicesGetUiStringObject(IDS_HD_PENDING));
             else
                 PhSetReference(&drawPanel->Title, context->DiskEntry->DiskIndexName);
 
             if (!drawPanel->Title)
-                drawPanel->Title = PhCreateString(L"Unknown");
+                PhSetReference(&drawPanel->Title, HardwareDevicesGetUiStringObject(IDS_HD_UNKNOWN));
 
             // R: %s\nW: %s
             PhInitFormatS(&format[0], L"R: ");
@@ -883,7 +899,6 @@ VOID DiskDeviceSysInfoInitializing(
     _In_ _Assume_refs_(1) PDV_DISK_ENTRY DiskEntry
     )
 {
-    static CONST PH_STRINGREF text = PH_STRINGREF_INIT(L"Unknown");
     PDV_DISK_SYSINFO_CONTEXT context;
     PH_SYSINFO_SECTION section;
 
@@ -895,7 +910,7 @@ VOID DiskDeviceSysInfoInitializing(
     memset(&section, 0, sizeof(PH_SYSINFO_SECTION));
     section.Context = context;
     section.Callback = DiskDeviceSectionCallback;
-    section.Name = text;
+    section.Name = PhGetStringRef(HardwareDevicesGetUiStringObject(IDS_HD_UNKNOWN));
 
     context->SysinfoSection = Pointers->CreateSection(&section);
 }
