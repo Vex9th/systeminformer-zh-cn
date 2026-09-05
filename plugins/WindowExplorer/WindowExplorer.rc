@@ -166,6 +166,9 @@ BEGIN
     IDS_WE_UNABLE_REMOVE_WINDOW_PROPERTY "Unable to remove the window property."
     IDS_WE_UNABLE_UPDATE_WINDOW_PROPERTY "Unable to update the window property."
     IDS_WE_WINDOW_NOT_FOUND         "The window does not exist."
+    IDS_WE_UIA_GROUP_IDENTIFICATION "Identification"
+    IDS_WE_UIA_GROUP_ACCESSIBILITY  "Accessibility"
+    IDS_WE_UIA_GROUP_PATTERNS       "Patterns"
 END
 
 #endif    // English (United States) resources

@@ -3062,10 +3062,22 @@ VOID WepUiaAddListViewItemGroups(
     )
 {
     ListView_EnableGroupView(ListViewHandle, TRUE);
-    PhAddListViewGroup(ListViewHandle, WND_UIA_GROUP_IDENTIFICATION, L"Identification");
+    PhAddListViewGroup(
+        ListViewHandle,
+        WND_UIA_GROUP_IDENTIFICATION,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UIA_GROUP_IDENTIFICATION, NULL)))
+        );
     PhAddListViewGroup(ListViewHandle, WND_UIA_GROUP_STATE, L"State");
-    PhAddListViewGroup(ListViewHandle, WND_UIA_GROUP_ACCESSIBILITY, L"Accessibility");
-    PhAddListViewGroup(ListViewHandle, WND_UIA_GROUP_PATTERNS, L"Patterns");
+    PhAddListViewGroup(
+        ListViewHandle,
+        WND_UIA_GROUP_ACCESSIBILITY,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UIA_GROUP_ACCESSIBILITY, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        WND_UIA_GROUP_PATTERNS,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UIA_GROUP_PATTERNS, NULL)))
+        );
 
     for (ULONG i = 0; i < RTL_NUMBER_OF(WndUiaProperties); i++)
     {

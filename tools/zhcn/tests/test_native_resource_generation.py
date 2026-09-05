@@ -695,7 +695,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("718 strings", result.stdout)
+        self.assertIn("721 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2724,6 +2724,46 @@ class NativeResourceGenerationTests(unittest.TestCase):
         save_body = source.split("case IDOK:", 1)[1].split("modifiers = 0;", 1)[0]
         self.assertIn("if (!PhpGetSessionShadowHotKey", save_body)
 
+    def test_window_explorer_uia_groups_use_native_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "WindowExplorer.rc"
+        ).read_text(encoding="utf-8-sig")
+        resource_texts = dict(re.findall(
+            r'^\s*(IDS_WE_[A-Z0-9_]+)\s+"([^"]*)"',
+            resource_script,
+            re.MULTILINE,
+        ))
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_resources = {
+            "IDS_WE_UIA_GROUP_IDENTIFICATION": ("Identification", "WND_UIA_GROUP_IDENTIFICATION"),
+            "IDS_WE_UIA_GROUP_ACCESSIBILITY": ("Accessibility", "WND_UIA_GROUP_ACCESSIBILITY"),
+            "IDS_WE_UIA_GROUP_PATTERNS": ("Patterns", "WND_UIA_GROUP_PATTERNS"),
+        }
+
+        for resource_id, (english_text, group_id) in expected_resources.items():
+            with self.subTest(window_explorer_uia_group=resource_id):
+                self.assertEqual(resource_texts.get(resource_id), english_text)
+                self.assertNotIn(f'L"{english_text}"', source)
+                self.assertRegex(
+                    source,
+                    rf"PhAddListViewGroup\([^;]*?{group_id},[^;]*?"
+                    rf"PhLoadUiString\([^;]*?{resource_id}[^;]*?\)[^;]*?\);",
+                )
+
+        self.assertRegex(
+            source,
+            r'PhAddListViewGroup\(ListViewHandle, WND_UIA_GROUP_STATE, L"State"\);',
+        )
+        self.assertEqual(translation_data["strings"].get("State"), "状态")
+        self.assertNotIn("State", translation_data["native_strings"])
+
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
@@ -3412,11 +3452,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 10): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 4): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
-                    (r"bin\Release64\plugins\WindowExplorer.dll", 7): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
