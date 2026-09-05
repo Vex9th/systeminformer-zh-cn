@@ -55,14 +55,37 @@ CALLSITE_MIGRATION_CATEGORIES = {
     "c_window_text",
 }
 
+NATIVE_RESOURCE_CATEGORIES = {
+    "rc_dialog",
+    "rc_menu",
+    "rc_stringtable",
+    "c_statusbar",
+}
+
+RUNTIME_DICTIONARY_CATEGORIES = {
+    "c_emenu",
+    "c_listview_col",
+    "c_listview_group",
+    "c_listview_item",
+    "c_msgbox",
+    "c_confirm",
+    "c_taskdialog",
+    "c_search",
+    "c_tab",
+    "c_toolbar",
+    "c_tree_item",
+    "c_treenew_col",
+    "c_treenew_empty",
+    "phlib_internal",
+}
+
 
 def is_keep_english(s: str) -> bool:
     return any(re.fullmatch(k, s) for k in KEEP_ENGLISH_RULES)
 
 
 def translation_is_effective(category: str, translated_value) -> bool:
-    """A dictionary entry cannot translate literals passed as printf
-    varargs to the non-TaskDialog PhShowMessage family."""
+    """Call-site migration categories stay uncovered while literals remain."""
     return bool(translated_value) and category not in CALLSITE_MIGRATION_CATEGORIES
 
 
@@ -124,8 +147,24 @@ def translation_decisions(table: dict) -> dict[str, str]:
     return strings
 
 
-def is_reviewed_native_identity(table: dict, english: str) -> bool:
-    return table.get("native_strings", {}).get(english) == english
+def translation_for_category(table: dict, category: str, english: str):
+    runtime_strings = table.get("strings", {})
+
+    if category in NATIVE_RESOURCE_CATEGORIES:
+        value = runtime_strings.get(english)
+        if value is not None:
+            return value
+        return table.get("native_strings", {}).get(english)
+    if category in RUNTIME_DICTIONARY_CATEGORIES:
+        return runtime_strings.get(english)
+    return None
+
+
+def is_reviewed_native_identity(table: dict, category: str, english: str) -> bool:
+    return (
+        category in NATIVE_RESOURCE_CATEGORIES
+        and table.get("native_strings", {}).get(english) == english
+    )
 
 
 def main():
@@ -177,20 +216,22 @@ def main():
             sub = entry["locations"][0]["file"].split("/")[1]
             if module == "plugins":
                 module = f"plugins/{sub}"
-        zh = strings.get(en)
+        category = entry["category"]
+        zh = translation_for_category(table, category, en)
         translated = translation_is_effective(
-            entry["category"],
+            category,
             zh is not None and zh != en,
         )
         if not translated and (
-            is_keep_english(en) or is_reviewed_native_identity(table, en)
+            is_keep_english(en)
+            or is_reviewed_native_identity(table, category, en)
         ):
             keep_english.append(entry)
             continue
-        per_cat[entry["category"]][1] += 1
+        per_cat[category][1] += 1
         per_mod[module][1] += 1
         if translated:
-            per_cat[entry["category"]][0] += 1
+            per_cat[category][0] += 1
             per_mod[module][0] += 1
             err = check_placeholders(en, zh) or check_tabs(en, zh)
             if err:

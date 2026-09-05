@@ -505,10 +505,24 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertTrue(
             checker.is_reviewed_native_identity(
                 {"native_strings": {"R: ": "R: "}},
+                "rc_stringtable",
                 "R: ",
             )
         )
-        self.assertFalse(checker.is_reviewed_native_identity(table, "Native text"))
+        self.assertFalse(
+            checker.is_reviewed_native_identity(
+                table,
+                "rc_stringtable",
+                "Native text",
+            )
+        )
+        self.assertFalse(
+            checker.is_reviewed_native_identity(
+                {"native_strings": {"R: ": "R: "}},
+                "c_listview_group",
+                "R: ",
+            )
+        )
         self.assertFalse(
             auto_translator.needs_automatic_translation(
                 {"native_strings": {"R: ": "R: "}},
@@ -629,6 +643,189 @@ class NativeResourceGenerationTests(unittest.TestCase):
             with self.subTest(callsite_migration_category=category):
                 self.assertFalse(
                     checker.translation_is_effective(category, "已翻译")
+                )
+
+    def test_checker_native_only_decisions_apply_only_to_native_resources(self) -> None:
+        manifest = {
+            "unique_strings": [
+                {
+                    "english": "Connected",
+                    "category": "rc_stringtable",
+                    "locations": [{"file": "plugins/Test/Test.rc", "line": 1}],
+                },
+                {
+                    "english": "Connected",
+                    "category": "c_listview_group",
+                    "locations": [{"file": "plugins/Test/test.c", "line": 2}],
+                },
+                {
+                    "english": "R: ",
+                    "category": "rc_stringtable",
+                    "locations": [{"file": "plugins/Test/Test.rc", "line": 3}],
+                },
+                {
+                    "english": "R: ",
+                    "category": "c_listview_group",
+                    "locations": [{"file": "plugins/Test/test.c", "line": 4}],
+                },
+            ]
+        }
+        translations = {
+            "strings": {},
+            "native_strings": {
+                "Connected": "已连接",
+                "R: ": "R: ",
+            },
+        }
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = pathlib.Path(temp_dir)
+            manifest_path = temp_path / "manifest.json"
+            translation_path = temp_path / "zh-CN.json"
+            report_path = temp_path / "coverage-report.md"
+            manifest_path.write_text(
+                json.dumps(manifest, ensure_ascii=False), encoding="utf-8"
+            )
+            translation_path.write_text(
+                json.dumps(translations, ensure_ascii=False), encoding="utf-8"
+            )
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(REPO_ROOT / "tools" / "zhcn" / "check_translation.py"),
+                    "--manifest",
+                    str(manifest_path),
+                    "--translation",
+                    str(translation_path),
+                    "--report",
+                    str(report_path),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn(
+                "translation audit: translated 1/3, untranslated 2",
+                result.stdout,
+            )
+            report = report_path.read_text(encoding="utf-8")
+            self.assertIn("| rc_stringtable | 1 | 1 | 0 |", report)
+            self.assertIn("| c_listview_group | 0 | 2 | 2 |", report)
+            self.assertIn("- `R: ` (plugins/Test/test.c:4)", report)
+            self.assertIn("- `R: ` (rc_stringtable)", report)
+
+    def test_checker_callsite_migration_categories_ignore_all_dictionaries(self) -> None:
+        categories = (
+            "c_combobox",
+            "c_listview_group_item",
+            "c_msgbox_vararg",
+            "c_window_text",
+        )
+        manifest = {
+            "unique_strings": [
+                {
+                    "english": f"Callsite text {index}",
+                    "category": category,
+                    "locations": [{"file": "plugins/Test/test.c", "line": index}],
+                }
+                for index, category in enumerate(categories, start=1)
+            ]
+        }
+        translations = {
+            "strings": {
+                "Callsite text 1": "调用点文字 1",
+                "Callsite text 2": "调用点文字 2",
+            },
+            "native_strings": {
+                "Callsite text 3": "调用点文字 3",
+                "Callsite text 4": "调用点文字 4",
+            },
+        }
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = pathlib.Path(temp_dir)
+            manifest_path = temp_path / "manifest.json"
+            translation_path = temp_path / "zh-CN.json"
+            report_path = temp_path / "coverage-report.md"
+            manifest_path.write_text(
+                json.dumps(manifest, ensure_ascii=False), encoding="utf-8"
+            )
+            translation_path.write_text(
+                json.dumps(translations, ensure_ascii=False), encoding="utf-8"
+            )
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(REPO_ROOT / "tools" / "zhcn" / "check_translation.py"),
+                    "--manifest",
+                    str(manifest_path),
+                    "--translation",
+                    str(translation_path),
+                    "--report",
+                    str(report_path),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn(
+                "translation audit: translated 0/4, untranslated 4",
+                result.stdout,
+            )
+
+    def test_checker_uses_the_translation_source_for_each_category(self) -> None:
+        checker = load_translation_checker_module()
+        table = {
+            "strings": {"Runtime text": "运行时文字"},
+            "native_strings": {"Native text": "原生文字"},
+        }
+
+        for category in checker.NATIVE_RESOURCE_CATEGORIES:
+            with self.subTest(native_resource_category=category):
+                self.assertEqual(
+                    checker.translation_for_category(
+                        table, category, "Runtime text"
+                    ),
+                    "运行时文字",
+                )
+                self.assertEqual(
+                    checker.translation_for_category(
+                        table, category, "Native text"
+                    ),
+                    "原生文字",
+                )
+
+        for category in checker.RUNTIME_DICTIONARY_CATEGORIES:
+            with self.subTest(runtime_dictionary_category=category):
+                self.assertEqual(
+                    checker.translation_for_category(
+                        table, category, "Runtime text"
+                    ),
+                    "运行时文字",
+                )
+                self.assertIsNone(
+                    checker.translation_for_category(
+                        table, category, "Native text"
+                    )
+                )
+
+        for category in checker.CALLSITE_MIGRATION_CATEGORIES:
+            with self.subTest(callsite_migration_category=category):
+                self.assertIsNone(
+                    checker.translation_for_category(
+                        table, category, "Runtime text"
+                    )
+                )
+                self.assertIsNone(
+                    checker.translation_for_category(
+                        table, category, "Native text"
+                    )
                 )
 
     def test_compiled_dialog_parser_keeps_control_ordinals_in_structure(self) -> None:
