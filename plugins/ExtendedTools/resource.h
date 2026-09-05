@@ -289,6 +289,7 @@
 #define IDS_ET_UNABLE_SELECT_PROCESS    61022
 #define IDS_ET_UNABLE_UPDATE_EFI_VARIABLE 61023
 #define IDS_ET_UNABLE_WRITE_TPM         61024
+#define IDS_ET_BYTES_PER_ROW_FORMAT     61025
 
 // Next default values for new objects
 // 
@@ -297,6 +298,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        60043
 #define _APS_NEXT_COMMAND_VALUE         60043
 #define _APS_NEXT_CONTROL_VALUE         60043
-#define _APS_NEXT_SYMED_VALUE           61025
+#define _APS_NEXT_SYMED_VALUE           61026
 #endif
 #endif

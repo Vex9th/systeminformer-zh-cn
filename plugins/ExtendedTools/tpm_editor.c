@@ -149,10 +149,20 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
 
             {
                 PWSTR bytesPerRowStrings[7];
+                PPH_STRING bytesPerRowFormat;
                 ULONG bytesPerRow;
 
+                bytesPerRowFormat = PH_AUTO(PhLoadUiString(
+                    PluginInstance->DllBase,
+                    IDS_ET_BYTES_PER_ROW_FORMAT,
+                    NULL
+                    ));
+
                 for (ULONG i = 0; i < ARRAYSIZE(bytesPerRowStrings); i++)
-                    bytesPerRowStrings[i] = PhaFormatString(L"%u bytes per row", 1 << (2 + i))->Buffer;
+                    bytesPerRowStrings[i] = PhaFormatString(
+                        PhGetString(bytesPerRowFormat),
+                        1u << (2 + i)
+                        )->Buffer;
 
                 PhAddComboBoxStrings(context->BytesPerRowHandle, bytesPerRowStrings, ARRAYSIZE(bytesPerRowStrings));
 
@@ -162,7 +172,9 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
                 {
                     HexEdit_SetBytesPerRow(context->HexEditHandle, bytesPerRow);
                     PhSelectComboBoxString(context->BytesPerRowHandle, PhaFormatString(
-                        L"%u bytes per row", bytesPerRow)->Buffer, FALSE);
+                        PhGetString(bytesPerRowFormat),
+                        (unsigned int)bytesPerRow
+                        )->Buffer, FALSE);
                 }
             }
 

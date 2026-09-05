@@ -653,7 +653,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("644 strings", result.stdout)
+        self.assertIn("648 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2143,6 +2143,81 @@ class NativeResourceGenerationTests(unittest.TestCase):
                         rf"(?m)^#define\s+{re.escape(resource_id)}\s+\d+$",
                     )
 
+    def test_extended_tools_and_updater_combo_labels_use_native_resources(self) -> None:
+        firmware_editor = (
+            REPO_ROOT / "plugins" / "ExtendedTools" / "firmware_editor.c"
+        ).read_text(encoding="utf-8-sig")
+        tpm_editor = (
+            REPO_ROOT / "plugins" / "ExtendedTools" / "tpm_editor.c"
+        ).read_text(encoding="utf-8-sig")
+        updater_options = (
+            REPO_ROOT / "plugins" / "Updater" / "options.c"
+        ).read_text(encoding="utf-8-sig")
+        extended_tools_rc = (
+            REPO_ROOT / "plugins" / "ExtendedTools" / "ExtendedTools.rc"
+        ).read_text(encoding="utf-8-sig")
+        updater_rc = (
+            REPO_ROOT / "plugins" / "Updater" / "Updater.rc"
+        ).read_text(encoding="utf-8-sig")
+        expected_resources = {
+            "IDS_ET_BYTES_PER_ROW_FORMAT": (
+                "%u bytes per row",
+                firmware_editor,
+                extended_tools_rc,
+            ),
+            "IDS_UP_INTERVAL_ONE_DAY": ("1 day", updater_options, updater_rc),
+            "IDS_UP_INTERVAL_ONE_WEEK": ("1 week", updater_options, updater_rc),
+            "IDS_UP_INTERVAL_ONE_MONTH": ("1 month", updater_options, updater_rc),
+        }
+
+        for resource_id, (english_text, source, resource_script) in expected_resources.items():
+            with self.subTest(plugin_combo_resource=resource_id):
+                self.assertRegex(
+                    resource_script,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"',
+                )
+                self.assertEqual(source.count(resource_id), 1)
+                self.assertNotIn(f'L"{english_text}"', source)
+
+        for editor_name, editor in (
+            ("firmware", firmware_editor),
+            ("tpm", tpm_editor),
+        ):
+            with self.subTest(extended_tools_bytes_per_row_editor=editor_name):
+                self.assertRegex(
+                    editor,
+                    r"PhLoadUiString\(\s*PluginInstance->DllBase,\s*"
+                    r"IDS_ET_BYTES_PER_ROW_FORMAT,\s*NULL\s*\)",
+                )
+                self.assertEqual(editor.count("IDS_ET_BYTES_PER_ROW_FORMAT"), 1)
+                self.assertNotIn('L"%u bytes per row"', editor)
+                self.assertIn("1u << (2 + i)", editor)
+
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_UP_INTERVAL_[A-Z0-9_]+), (\d+) \}",
+                updater_options,
+            ),
+            [
+                ("IDS_UP_INTERVAL_ONE_DAY", "1"),
+                ("IDS_UP_INTERVAL_ONE_WEEK", "7"),
+                ("IDS_UP_INTERVAL_ONE_MONTH", "30"),
+            ],
+        )
+        self.assertIn("ComboBox_DeleteString(comboBoxHandle", updater_options)
+        self.assertIn("ComboBox_GetItemData(comboBoxHandle", updater_options)
+        self.assertNotIn("switch (ComboBox_GetCurSel", updater_options)
+        initialization = updater_options[
+            updater_options.index("case WM_INITDIALOG:"):
+            updater_options.index("case WM_COMMAND:")
+        ]
+        self.assertLess(
+            initialization.index("ARRAYSIZE(PhpUpdateIntervals)"),
+            initialization.index(
+                "PhGetIntegerSetting(SETTING_NAME_AUTO_CHECK)"
+            ),
+        )
+
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
@@ -2828,12 +2903,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 {
                     (r"bin\Release64\sys_info.exe", 271): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
-                    (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
+                    (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
-                    (r"bin\Release64\plugins\Updater.dll", 1): 2,
+                    (r"bin\Release64\plugins\Updater.dll", 4): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 7): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

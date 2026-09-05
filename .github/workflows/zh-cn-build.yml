@@ -157,12 +157,12 @@ jobs:
         python tools\zhcn\validate_templates.py @resourceTargets `
           --expect-string-count-in 'bin\Release64\sys_info.exe=271' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=15' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=25' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=26' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=1' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=2' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=2' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
-          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=1' `
+          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=15' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=7' `
           --expect-string-count-in 'bin\Release64\peview.exe=128'
@@ -319,12 +319,12 @@ jobs:
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
           --expect-string-count-in 'bin\Release64\sys_info.exe=271' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=15' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=25' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=26' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=1' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=2' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=2' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
-          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=1' `
+          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=15' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=7' `
           --expect-string-count-in 'bin\Release64\peview.exe=128' `

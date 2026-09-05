@@ -11,6 +11,19 @@
 
 #include "updater.h"
 
+typedef struct _PHP_UPDATE_INTERVAL_ENTRY
+{
+    ULONG ResourceId;
+    ULONG Days;
+} PHP_UPDATE_INTERVAL_ENTRY, *PPHP_UPDATE_INTERVAL_ENTRY;
+
+static CONST PHP_UPDATE_INTERVAL_ENTRY PhpUpdateIntervals[] =
+{
+    { IDS_UP_INTERVAL_ONE_DAY, 1 },
+    { IDS_UP_INTERVAL_ONE_WEEK, 7 },
+    { IDS_UP_INTERVAL_ONE_MONTH, 30 }
+};
+
 /**
  * \brief Dialog procedure for the updater options dialog.
  */
@@ -25,36 +38,50 @@ INT_PTR CALLBACK OptionsDlgProc(
     {
     case WM_INITDIALOG:
         {
+            HWND comboBoxHandle;
+            ULONG updateInterval;
+
+            comboBoxHandle = GetDlgItem(WindowHandle, IDC_UPDATE_INTERVAL);
+            updateInterval = PhGetIntegerSetting(SETTING_NAME_UPDATE_INTERVAL);
+
+            if (updateInterval != 1 && updateInterval != 7 && updateInterval != 30)
+                updateInterval = 1;
+
+            for (ULONG i = 0; i < ARRAYSIZE(PhpUpdateIntervals); i++)
+            {
+                PPH_STRING intervalText;
+                INT itemIndex;
+
+                intervalText = PH_AUTO(PhLoadUiString(
+                    PluginInstance->DllBase,
+                    PhpUpdateIntervals[i].ResourceId,
+                    NULL
+                    ));
+                itemIndex = ComboBox_AddString(comboBoxHandle, PhGetString(intervalText));
+
+                if (itemIndex >= 0)
+                {
+                    if (ComboBox_SetItemData(
+                        comboBoxHandle,
+                        itemIndex,
+                        UlongToPtr(PhpUpdateIntervals[i].Days)
+                        ) == CB_ERR)
+                    {
+                        ComboBox_DeleteString(comboBoxHandle, itemIndex);
+                        continue;
+                    }
+
+                    if (PhpUpdateIntervals[i].Days == updateInterval)
+                        ComboBox_SetCurSel(comboBoxHandle, itemIndex);
+                }
+            }
+
             if (PhGetIntegerSetting(SETTING_NAME_AUTO_CHECK))
             {
                 ULONG lastTimeUpdateSeconds;
                 LARGE_INTEGER lastTimeUpdateTicks;
-                HWND comboBoxHandle;
-                ULONG updateInterval;
 
                 Button_SetCheck(GetDlgItem(WindowHandle, IDC_AUTOCHECKBOX), BST_CHECKED);
-
-                comboBoxHandle = GetDlgItem(WindowHandle, IDC_UPDATE_INTERVAL);
-                ComboBox_AddString(comboBoxHandle, L"1 day");
-                ComboBox_AddString(comboBoxHandle, L"1 week");
-                ComboBox_AddString(comboBoxHandle, L"1 month");
-
-                updateInterval = PhGetIntegerSetting(SETTING_NAME_UPDATE_INTERVAL);
-                switch (updateInterval)
-                {
-                case 1:
-                    ComboBox_SetCurSel(comboBoxHandle, 0);
-                    break;
-                case 7:
-                    ComboBox_SetCurSel(comboBoxHandle, 1);
-                    break;
-                case 30:
-                    ComboBox_SetCurSel(comboBoxHandle, 2);
-                    break;
-                default:
-                    ComboBox_SetCurSel(comboBoxHandle, 0);
-                    break;
-                }
 
                 if (lastTimeUpdateSeconds = PhGetIntegerSetting(SETTING_NAME_LAST_CHECK))
                 {
@@ -141,25 +168,22 @@ INT_PTR CALLBACK OptionsDlgProc(
                 {
                     if (GET_WM_COMMAND_CMD(wParam, lParam) == CBN_SELCHANGE)
                     {
-                        ULONG updateInterval = 0;
+                        HWND comboBoxHandle;
+                        INT selectedIndex;
+                        LRESULT selectedInterval;
 
-                        switch (ComboBox_GetCurSel(GET_WM_COMMAND_HWND(wParam, lParam)))
-                        {
-                        case 0:
-                            updateInterval = 1;
-                            break;
-                        case 1:
-                            updateInterval = 7;
-                            break;
-                        case 2:
-                            updateInterval = 30;
-                            break;
-                        }
+                        comboBoxHandle = GET_WM_COMMAND_HWND(wParam, lParam);
+                        selectedIndex = ComboBox_GetCurSel(comboBoxHandle);
 
-                        if (updateInterval != 0)
-                        {
-                            PhSetIntegerSetting(SETTING_NAME_UPDATE_INTERVAL, updateInterval);
-                        }
+                        if (selectedIndex == CB_ERR)
+                            break;
+
+                        selectedInterval = ComboBox_GetItemData(comboBoxHandle, selectedIndex);
+
+                        if (selectedInterval == CB_ERR)
+                            break;
+
+                        PhSetIntegerSetting(SETTING_NAME_UPDATE_INTERVAL, (ULONG)selectedInterval);
                     }
                 }
                 break;
@@ -966,4 +990,3 @@ INT_PTR CALLBACK TextDlgProc(
 
     return FALSE;
 }
-

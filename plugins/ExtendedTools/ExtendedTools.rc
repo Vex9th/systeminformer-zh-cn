@@ -962,6 +962,7 @@ BEGIN
     IDS_ET_UNABLE_SELECT_PROCESS    "Unable to select the process."
     IDS_ET_UNABLE_UPDATE_EFI_VARIABLE "Unable to update the EFI variable."
     IDS_ET_UNABLE_WRITE_TPM         "Unable to write to the TPM"
+    IDS_ET_BYTES_PER_ROW_FORMAT     "%u bytes per row"
 END
 
 #endif    // English (United States) resources

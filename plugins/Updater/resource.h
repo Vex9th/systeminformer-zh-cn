@@ -13,6 +13,9 @@
 #define IDC_SHOWUPDATENOTIFICATION      1007
 #define IDC_UPDATE_INTERVAL             1008
 #define IDS_UP_UNABLE_EXECUTE_SETUP     12000
+#define IDS_UP_INTERVAL_ONE_DAY         12001
+#define IDS_UP_INTERVAL_ONE_WEEK        12002
+#define IDS_UP_INTERVAL_ONE_MONTH       12003
 
 // Next default values for new objects
 // 
@@ -21,6 +24,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1009
-#define _APS_NEXT_SYMED_VALUE           12001
+#define _APS_NEXT_SYMED_VALUE           12004
 #endif
 #endif

@@ -109,6 +109,9 @@ END
 STRINGTABLE
 BEGIN
     IDS_UP_UNABLE_EXECUTE_SETUP     "Unable to execute the setup."
+    IDS_UP_INTERVAL_ONE_DAY         "1 day"
+    IDS_UP_INTERVAL_ONE_WEEK        "1 week"
+    IDS_UP_INTERVAL_ONE_MONTH       "1 month"
 END
 
 #endif    // English (United States) resources
