@@ -762,8 +762,7 @@ def scan_c_file(path: str, entries):
                 })
                 direct_content = (
                     name in FULL_CONTENT_TRANSLATION_CALLS
-                    and bool(format_texts)
-                    and all(format_text == "%s" for format_text in format_texts)
+                    and adjacent_literal_text(args[format_index]) == "%s"
                     and len(varargs) == 1
                 )
                 for vararg_index in string_argument_indexes:

@@ -488,6 +488,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     flag ? L"%s" : L"Prefix: %s",
                     L"Conditional details"
                 );
+                PhShowError2(
+                    hwnd,
+                    L"Dynamic format title",
+                    flag ? L"%s" : dynamicFormat,
+                    L"Dynamic format details"
+                );
             }
         """
         entries = []
@@ -509,6 +515,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 ("c_msgbox", "Conditional title"),
                 ("c_msgbox", "Prefix: %s"),
                 ("c_msgbox_vararg", "Conditional details"),
+                ("c_msgbox", "Dynamic format title"),
+                ("c_msgbox_vararg", "Dynamic format details"),
             ],
         )
 
