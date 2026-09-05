@@ -24,6 +24,7 @@ migration even when the legacy dictionary contains the same English key.
   c_msgbox         PhShowMessage* family format/title arguments
   c_msgbox_vararg  visible printf arguments not covered by the runtime funnel
   c_confirm        PhShowConfirmMessage verb/object/message arguments
+  c_runtime_composed source templates/fragments composed before runtime hooks
   c_taskdialog     TASKDIALOGCONFIG literal fields (title/content/buttons/...)
   c_balloon        PhNfShowBalloonTip title/text
   c_search         PhCreateSearchControl* banner text
@@ -271,6 +272,37 @@ def mask_c_comments(source: str) -> str:
     return "".join(result)
 
 
+def mask_c_literals(source: str) -> str:
+    """Mask string and character literals while preserving source offsets."""
+    result = list(source)
+    state = "normal"
+    index = 0
+
+    while index < len(source):
+        char = source[index]
+        if state == "normal":
+            if char == '"':
+                state = "string"
+                result[index] = " "
+            elif char == "'":
+                state = "char"
+                result[index] = " "
+        else:
+            if char not in "\r\n":
+                result[index] = " "
+            if char == "\\" and index + 1 < len(source):
+                index += 1
+                if source[index] not in "\r\n":
+                    result[index] = " "
+            elif (state == "string" and char == '"') or (
+                state == "char" and char == "'"
+            ):
+                state = "normal"
+        index += 1
+
+    return "".join(result)
+
+
 # ---------------------------------------------------------------------------
 # C/C++ source scanning
 # ---------------------------------------------------------------------------
@@ -338,6 +370,21 @@ FULL_CONTENT_TRANSLATION_CALLS = {
     "PhShowMessageOneTime",
     "PhShowMessageOneTime2",
 }
+
+RUNTIME_COMPOSER_CALLS = {
+    "PhaFormatString",
+    "PhFormatString",
+    "PhConcatStringRefZ",
+}
+
+LOCAL_UI_TEXT_DECLARATION_RE = re.compile(
+    r"\b(?:(?:const|CONST|volatile)\s+)*"
+    r"(?P<type>PWSTR|PCWSTR|PPH_STRING|WCHAR|PH_STRINGREF)\s+"
+    r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)"
+    r"(?P<array>\s*\[[^\]]*\])?\s*"
+    r"(?:=\s*(?P<initializer>.*?))?;",
+    re.DOTALL,
+)
 
 # any literal argument counts (few-literal calls)
 ANY_LITERAL_SPECS = {
@@ -409,6 +456,80 @@ def literal_sequences_outside_ui_string_getters(expression: str):
     return [(text, offset) for text, offset, _ in sequences]
 
 
+def is_runtime_composer(name: str) -> bool:
+    return (
+        name in RUNTIME_COMPOSER_CALLS
+        or name.startswith("PhaConcatStrings")
+        or name.startswith("PhConcatStrings")
+    )
+
+
+def runtime_composer_names(expression: str):
+    return {
+        match.group(0)
+        for match in IDENT_RE.finditer(expression)
+        if is_runtime_composer(match.group(0))
+    }
+
+
+def expression_call_ranges(expression: str):
+    call_names = {
+        match.group(0) for match in IDENT_RE.finditer(expression)
+    }
+    return [
+        (name, call_start, spans[-1][1])
+        for name, _, spans, call_start in find_calls(expression, call_names)
+        if spans
+    ]
+
+
+def expression_source_literals(expression: str, default_category: str):
+    """Return visible literal sources and their categories for one expression."""
+    calls = expression_call_ranges(expression)
+    return [
+        (
+            "c_runtime_composed"
+            if any(
+                is_runtime_composer(name) and start < offset < end
+                for name, start, end in calls
+            )
+            else default_category,
+            text,
+            offset,
+        )
+        for text, offset in literal_sequences_outside_ui_string_getters(expression)
+        if not is_noise(text)
+    ]
+
+
+def one_hop_expression_source_literals(expression: str, default_category: str):
+    """Accept only literal expressions or explicitly supported composers."""
+    calls = expression_call_ranges(expression)
+    sources = []
+
+    for text, offset in literal_sequences_outside_ui_string_getters(expression):
+        if is_noise(text):
+            continue
+        enclosing_calls = [
+            name for name, start, end in calls if start < offset < end
+        ]
+        if any(is_runtime_composer(name) for name in enclosing_calls):
+            sources.append(("c_runtime_composed", text, offset))
+        elif not enclosing_calls:
+            sources.append((default_category, text, offset))
+
+    return sources
+
+
+def runtime_target_identifier(expression: str):
+    match = re.fullmatch(
+        r"\s*([A-Za-z_][A-Za-z0-9_]*)"
+        r"(?:\s*(?:->|\.)\s*Buffer)?\s*",
+        expression,
+    )
+    return match.group(1) if match else None
+
+
 def literals_outside_ui_string_getters(expression: str):
     """Return literal texts that are not fallbacks inside native UI getters."""
     return [
@@ -452,6 +573,197 @@ def innermost_c_scope(scopes, offset: int):
         scope for scope in scopes if scope[0] < offset < scope[1]
     ]
     return max(containing, key=lambda scope: scope[0], default=None)
+
+
+def visible_local_text_declaration(declarations, identifier, offset, scopes):
+    """Resolve a supported local binding without crossing lexical scopes."""
+    visible = []
+
+    for declaration in declarations:
+        if declaration.group("name") != identifier or declaration.start() >= offset:
+            continue
+        scope = innermost_c_scope(scopes, declaration.start())
+        if scope is not None and scope[0] < offset < scope[1]:
+            visible.append((scope, declaration))
+
+    if not visible:
+        return None
+
+    return max(
+        visible,
+        key=lambda item: (item[0][0], item[1].start()),
+    )[1]
+
+
+def is_conditionally_guarded(
+    scan_text: str, offset: int, binding_scope, scopes
+) -> bool:
+    nested_scopes = sorted(
+        (
+            scope
+            for scope in scopes
+            if binding_scope[0] < scope[0] < offset < scope[1] < binding_scope[1]
+        ),
+        key=lambda scope: scope[0],
+    )
+    for scope in nested_scopes:
+        prefix = scan_text[binding_scope[0]:scope[0]]
+        if re.search(
+            r"(?:\b(?:if|switch|for|while)\s*\([^;{}]*\)|\belse|\bdo)\s*$",
+            prefix,
+            re.DOTALL,
+        ):
+            return True
+
+    prefix = scan_text[binding_scope[0]:offset]
+    return bool(
+        re.search(r"\bif\s*\([^;{}]*\)\s*$", prefix, re.DOTALL)
+        or re.search(r"\belse\s*$", prefix)
+    )
+
+
+def one_hop_runtime_sources(
+    scan_text: str,
+    identifier: str,
+    sink_offset: int,
+    default_category: str,
+):
+    """Resolve conservative reaching definitions for one local UI binding."""
+    scopes = c_brace_scopes(scan_text)
+    syntax_text = mask_c_literals(scan_text)
+    declarations = list(LOCAL_UI_TEXT_DECLARATION_RE.finditer(syntax_text))
+    declaration = visible_local_text_declaration(
+        declarations, identifier, sink_offset, scopes
+    )
+    if declaration is None:
+        return None
+
+    binding_scope = innermost_c_scope(scopes, declaration.start())
+    events = []
+    covered_ranges = []
+
+    initializer = declaration.group("initializer")
+    state = []
+    if initializer is not None:
+        initializer = scan_text[
+            declaration.start("initializer"):declaration.end("initializer")
+        ]
+        state = [
+            (category, text, declaration.start("initializer") + offset)
+            for category, text, offset in one_hop_expression_source_literals(
+                initializer, default_category
+            )
+        ]
+
+    assignment_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*=(?!=)\s*(?P<value>.*?);",
+        re.DOTALL,
+    )
+    for assignment in assignment_re.finditer(
+        syntax_text, declaration.end(), sink_offset
+    ):
+        if visible_local_text_declaration(
+            declarations, identifier, assignment.start(), scopes
+        ) is not declaration:
+            continue
+        value = scan_text[
+            assignment.start("value"):assignment.end("value")
+        ]
+        sources = [
+            (category, text, assignment.start("value") + offset)
+            for category, text, offset in one_hop_expression_source_literals(
+                value, default_category
+            )
+        ]
+        events.append((assignment.start(), "definition", sources))
+        covered_ranges.append((assignment.start(), assignment.end()))
+
+    call_names = {
+        match.group(0)
+        for match in IDENT_RE.finditer(
+            syntax_text[declaration.end():sink_offset]
+        )
+    }
+    for name, _, spans, call_start in find_calls(syntax_text, call_names):
+        if call_start < declaration.end() or call_start >= sink_offset:
+            continue
+        args = [scan_text[start:end] for start, end in spans]
+        if visible_local_text_declaration(
+            declarations, identifier, call_start, scopes
+        ) is not declaration:
+            continue
+        if any(start <= call_start < end for start, end in covered_ranges):
+            continue
+
+        if name == "swprintf_s" and len(args) >= 3:
+            target = re.fullmatch(
+                rf"\s*{re.escape(identifier)}\s*", args[0]
+            )
+            if target:
+                format_sources = literal_sequences_outside_ui_string_getters(
+                    args[2]
+                )
+                has_conversion = any(
+                    PRINTF_SPEC_RE.search(text) for text, _ in format_sources
+                )
+                category = (
+                    "c_runtime_composed" if has_conversion else default_category
+                )
+                sources = [
+                    (category, text, spans[2][0] + offset)
+                    for text, offset in format_sources
+                    if not is_noise(text)
+                ]
+                events.append((call_start, "definition", sources))
+                covered_ranges.append((call_start, spans[-1][1] + 1))
+                continue
+
+        if is_runtime_composer(name):
+            continue
+
+        mutates_binding = any(
+            re.fullmatch(
+                rf"\s*&\s*{re.escape(identifier)}\s*", argument
+            )
+            or re.fullmatch(
+                rf"\s*{re.escape(identifier)}\s*(?:->|\.)\s*Buffer\s*",
+                argument,
+            )
+            or (
+                declaration.group("array") is not None
+                and re.fullmatch(
+                    rf"\s*{re.escape(identifier)}\s*", argument
+                )
+            )
+            for argument in args
+        )
+        if mutates_binding:
+            events.append((call_start, "mutation", []))
+
+    field_assignment_re = re.compile(
+        rf"\b{re.escape(identifier)}\s*(?:->|\.)\s*Buffer\s*="
+    )
+    for assignment in field_assignment_re.finditer(
+        syntax_text, declaration.end(), sink_offset
+    ):
+        if visible_local_text_declaration(
+            declarations, identifier, assignment.start(), scopes
+        ) is declaration:
+            events.append((assignment.start(), "mutation", []))
+
+    for offset, event_kind, sources in sorted(events, key=lambda event: event[0]):
+        conditional = is_conditionally_guarded(
+            scan_text, offset, binding_scope, scopes
+        )
+        if event_kind == "mutation" or not sources:
+            if not conditional:
+                state = []
+        elif conditional:
+            state.extend(sources)
+        else:
+            state = sources
+
+    return state
 
 
 def visible_array_declaration(declarations, offset: int, scopes):
@@ -550,6 +862,53 @@ def scan_combo_box_string_arrays(text: str, scan_text: str, rel: str, entries):
                         "line": line_of_offset(text, source_offset),
                         "english": visible_text,
                     })
+
+
+def append_runtime_target_entries(
+    text: str,
+    scan_text: str,
+    rel: str,
+    entries,
+    expression: str,
+    expression_offset: int,
+    sink_offset: int,
+    default_category: str,
+    one_hop_seen,
+):
+    identifier = runtime_target_identifier(expression)
+    sources = None
+    resolved_one_hop = False
+
+    if identifier is not None:
+        sources = one_hop_runtime_sources(
+            scan_text,
+            identifier,
+            sink_offset,
+            default_category,
+        )
+        resolved_one_hop = sources is not None
+
+    if sources is None:
+        sources = [
+            (category, visible_text, expression_offset + relative_offset)
+            for category, visible_text, relative_offset in expression_source_literals(
+                expression, default_category
+            )
+        ]
+
+    for category, visible_text, source_offset in sources:
+        entry = {
+            "category": category,
+            "file": rel,
+            "line": line_of_offset(text, source_offset),
+            "english": visible_text,
+        }
+        if resolved_one_hop:
+            source_key = (category, source_offset, visible_text)
+            if source_key in one_hop_seen:
+                continue
+            one_hop_seen.add(source_key)
+        entries.append(entry)
 
 
 def split_c_initializer_fields(initializer: str):
@@ -727,6 +1086,7 @@ def scan_c_file(path: str, entries):
         return
 
     scan_text = mask_c_comments(text)
+    one_hop_seen = set()
 
     scan_combo_box_string_arrays(text, scan_text, rel, entries)
     scan_combo_box_struct_arrays(text, scan_text, rel, entries)
@@ -749,18 +1109,17 @@ def scan_c_file(path: str, entries):
                 if idx is None:
                     idx = len(args) - 1
                 if idx < len(args):
-                    for t, relative_offset in literal_sequences_outside_ui_string_getters(
-                        args[idx]
-                    ):
-                        if not is_noise(t):
-                            entries.append({
-                                "category": cat, "file": rel,
-                                "line": line_of_offset(
-                                    text,
-                                    spans[idx][0] + relative_offset,
-                                ),
-                                "english": t,
-                            })
+                    append_runtime_target_entries(
+                        text,
+                        scan_text,
+                        rel,
+                        entries,
+                        args[idx],
+                        spans[idx][0],
+                        call_start,
+                        cat,
+                        one_hop_seen,
+                    )
             if name in FORMAT_ARG_INDEXES:
                 format_index = FORMAT_ARG_INDEXES[name]
                 if format_index >= len(args):
@@ -791,18 +1150,17 @@ def scan_c_file(path: str, entries):
                         if direct_content or "PhTranslateString" in args[idx]
                         else "c_msgbox_vararg"
                     )
-                    for t, relative_offset in literal_sequences_outside_ui_string_getters(
-                        args[idx]
-                    ):
-                        if not is_noise(t):
-                            entries.append({
-                                "category": category, "file": rel,
-                                "line": line_of_offset(
-                                    text,
-                                    spans[idx][0] + relative_offset,
-                                ),
-                                "english": t,
-                            })
+                    append_runtime_target_entries(
+                        text,
+                        scan_text,
+                        rel,
+                        entries,
+                        args[idx],
+                        spans[idx][0],
+                        call_start,
+                        category,
+                        one_hop_seen,
+                    )
         else:
             cat = ANY_LITERAL_SPECS[name]
             for a in args:

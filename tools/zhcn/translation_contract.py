@@ -15,6 +15,7 @@ ALL_CATEGORIES = {
     "c_listview_item",
     "c_msgbox",
     "c_msgbox_vararg",
+    "c_runtime_composed",
     "c_search",
     "c_statusbar",
     "c_tab",
@@ -35,6 +36,7 @@ CALLSITE_MIGRATION_CATEGORIES = {
     "c_combobox",
     "c_listview_group_item",
     "c_msgbox_vararg",
+    "c_runtime_composed",
     "c_window_text",
 }
 

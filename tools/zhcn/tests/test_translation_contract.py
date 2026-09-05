@@ -38,6 +38,7 @@ class TranslationManifestContractTests(unittest.TestCase):
                 "c_listview_item",
                 "c_msgbox",
                 "c_msgbox_vararg",
+                "c_runtime_composed",
                 "c_search",
                 "c_statusbar",
                 "c_tab",
@@ -52,6 +53,11 @@ class TranslationManifestContractTests(unittest.TestCase):
                 "rc_menu",
                 "rc_stringtable",
             },
+        )
+
+        self.assertIn(
+            "c_runtime_composed",
+            contract.CALLSITE_MIGRATION_CATEGORIES,
         )
 
     def test_module_for_path_preserves_independently_built_modules(self) -> None:

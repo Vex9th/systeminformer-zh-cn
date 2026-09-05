@@ -459,9 +459,261 @@ class NativeResourceGenerationTests(unittest.TestCase):
             [(entry["category"], entry["english"]) for entry in entries],
             [
                 ("c_window_text", "Visible fallback"),
-                ("c_window_text", "Configured path: %s"),
+                ("c_runtime_composed", "Configured path: %s"),
             ],
         )
+
+    def test_audit_tracks_direct_and_one_hop_runtime_composition(self) -> None:
+        audit = load_audit_module()
+        source = """
+            void show_actions(BOOLEAN critical, ULONG count) {
+                PPH_STRING message;
+                PPH_STRING allocatedMessage;
+                WCHAR countText[64];
+                WCHAR percentText[64];
+                PCWSTR plainLabel;
+
+                PhShowConfirmMessage(
+                    hwnd,
+                    L"delete",
+                    L"the item",
+                    PhaConcatStrings(
+                        3,
+                        L"You are about to ",
+                        L"delete",
+                        L" the selected item."
+                    )->Buffer,
+                    TRUE
+                );
+
+                PhShowConfirmMessage(
+                    hwnd,
+                    L"delete",
+                    L"the item",
+                    critical
+                        ? L"Direct conditional message"
+                        : PhaFormatString(L"Composed conditional %s", itemName)->Buffer,
+                    TRUE
+                );
+
+                allocatedMessage = PhConcatStrings2(L"Allocated prefix ", itemName);
+                PhShowConfirmMessage(
+                    hwnd,
+                    L"delete",
+                    L"the item",
+                    allocatedMessage->Buffer,
+                    TRUE
+                );
+
+                message = PhaFormatString(
+                    L"Delete %s now?",
+                    itemName
+                );
+                PhShowConfirmMessage(
+                    hwnd,
+                    L"delete",
+                    L"the item",
+                    message->Buffer,
+                    TRUE
+                );
+
+                if (count == 0)
+                    swprintf_s(countText, RTL_NUMBER_OF(countText), L"Thread count... (auto)");
+                else
+                    swprintf_s(countText, RTL_NUMBER_OF(countText), L"Thread count... (%lu)", count);
+                PhCreateEMenuItem(0, 1, countText, NULL, NULL);
+
+                swprintf_s(percentText, RTL_NUMBER_OF(percentText), L"Progress 100%% done");
+                PhCreateEMenuItem(0, 3, percentText, NULL, NULL);
+
+                plainLabel = critical ? L"Critical action" : L"Normal action";
+                PhCreateEMenuItem(0, 2, plainLabel, NULL, NULL);
+
+                PhShowMessage(hwnd, MB_OK, L"Direct API format: %s", itemName);
+                PhShowMessage2(hwnd, TD_OK_BUTTON, TD_INFORMATION_ICON,
+                    L"Direct title", L"Direct API content: %s", itemName);
+            }
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            [(entry["category"], entry["english"]) for entry in entries],
+            [
+                ("c_confirm", "delete"),
+                ("c_confirm", "the item"),
+                ("c_runtime_composed", "You are about to "),
+                ("c_runtime_composed", "delete"),
+                ("c_runtime_composed", " the selected item."),
+                ("c_confirm", "delete"),
+                ("c_confirm", "the item"),
+                ("c_confirm", "Direct conditional message"),
+                ("c_runtime_composed", "Composed conditional %s"),
+                ("c_confirm", "delete"),
+                ("c_confirm", "the item"),
+                ("c_runtime_composed", "Allocated prefix "),
+                ("c_confirm", "delete"),
+                ("c_confirm", "the item"),
+                ("c_runtime_composed", "Delete %s now?"),
+                ("c_emenu", "Thread count... (auto)"),
+                ("c_runtime_composed", "Thread count... (%lu)"),
+                ("c_runtime_composed", "Progress 100%% done"),
+                ("c_emenu", "Critical action"),
+                ("c_emenu", "Normal action"),
+                ("c_msgbox", "Direct API format: %s"),
+                ("c_msgbox", "Direct title"),
+                ("c_msgbox", "Direct API content: %s"),
+            ],
+        )
+
+    def test_audit_preserves_same_line_one_hop_source_occurrences(self) -> None:
+        audit = load_audit_module()
+        source = """
+            void show_labels(void) {
+                PCWSTR first = L"Repeated"; PCWSTR second = L"Repeated";
+                PhSetWindowText(firstWindow, first);
+                PhSetWindowText(secondWindow, second);
+            }
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            [entry["english"] for entry in entries],
+            ["Repeated", "Repeated"],
+        )
+
+    def test_audit_invalidates_hidden_or_overwritten_one_hop_sources(self) -> None:
+        audit = load_audit_module()
+        long_condition = " && ".join(["flag"] * 100)
+        source = """
+            PCWSTR globalText = L"Global text";
+
+            void show_labels(PCWSTR parameterText) {
+                PCWSTR text = L"Never displayed";
+                WCHAR buffer[64];
+                PCWSTR shadowed = L"Outer shadow";
+                PCWSTR addressWritten = L"Address source";
+                PCWSTR blockWritten = L"Block old source";
+                PCWSTR lookupText = LookupSetting(L"Not visible setting key");
+                PCWSTR mixedText = useValue ? FormatValue(value) : L"Visible fallback";
+                PCWSTR comparedText = L"Initial comparison text";
+                PCWSTR conditionalAssignment = L"Conditional assignment fallback";
+                PCWSTR conditionalMutation = L"Conditional mutation fallback";
+                PCWSTR semicolonInitializer = L"Ready; continue";
+                PCWSTR semicolonAssignment;
+                PCWSTR loggedText = L"Logged initial";
+                PCWSTR callLoggedText = L"Call log initial";
+                PCWSTR longConditional = L"Long conditional fallback";
+
+                text = runtimeText;
+                PhSetWindowText(hwnd, text);
+
+                swprintf_s(buffer, RTL_NUMBER_OF(buffer), L"Formatted %lu", value);
+                GetWindowText(otherWindow, buffer, RTL_NUMBER_OF(buffer));
+                PhCreateEMenuItem(0, 1, buffer, NULL, NULL);
+
+                UpdateText(&addressWritten);
+                PhSetWindowText(hwnd, addressWritten);
+
+                {
+                    blockWritten = L"Block visible";
+                }
+                PhSetWindowText(hwnd, blockWritten);
+
+                {
+                    PCWSTR shadowed = L"Inner visible";
+                    PhSetWindowText(hwnd, shadowed);
+                }
+
+                PhSetWindowText(hwnd, shadowed);
+                PhSetWindowText(hwnd, lookupText);
+                PhSetWindowText(hwnd, mixedText);
+                comparedText == L"Comparison operand";
+                PhSetWindowText(hwnd, comparedText);
+                if (flag)
+                    conditionalAssignment = runtimeText;
+                PhSetWindowText(hwnd, conditionalAssignment);
+                if (flag)
+                    UpdateText(&conditionalMutation);
+                PhSetWindowText(hwnd, conditionalMutation);
+                semicolonAssignment = L"Assigned; ready";
+                PhSetWindowText(hwnd, semicolonInitializer);
+                PhSetWindowText(hwnd, semicolonAssignment);
+                Log(L"loggedText = not code;");
+                PhSetWindowText(hwnd, loggedText);
+                Log(L"UpdateText(&callLoggedText)");
+                PhSetWindowText(hwnd, callLoggedText);
+                if (__LONG_CONDITION__)
+                    longConditional = runtimeText;
+                PhSetWindowText(hwnd, longConditional);
+                PhSetWindowText(hwnd, parameterText);
+                PhSetWindowText(hwnd, globalText);
+            }
+        """.replace("__LONG_CONDITION__", long_condition)
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            [(entry["category"], entry["english"]) for entry in entries],
+            [
+                ("c_window_text", "Block visible"),
+                ("c_window_text", "Inner visible"),
+                ("c_window_text", "Outer shadow"),
+                ("c_window_text", "Visible fallback"),
+                ("c_window_text", "Initial comparison text"),
+                ("c_window_text", "Conditional assignment fallback"),
+                ("c_window_text", "Conditional mutation fallback"),
+                ("c_window_text", "Ready; continue"),
+                ("c_window_text", "Assigned; ready"),
+                ("c_window_text", "Logged initial"),
+                ("c_window_text", "Call log initial"),
+                ("c_window_text", "Long conditional fallback"),
+            ],
+        )
+
+    def test_audit_finds_known_repository_one_hop_composed_sources(self) -> None:
+        audit = load_audit_module()
+        cases = {
+            REPO_ROOT / "SystemInformer" / "memsrcht.c": {
+                ("c_emenu", "Thread count... (auto)"),
+                ("c_runtime_composed", "Thread count... (%lu)"),
+            },
+            REPO_ROOT / "plugins" / "ExtendedTools" / "tpm.c": {
+                ("c_runtime_composed", "0x%08lx"),
+            },
+            REPO_ROOT / "tools" / "peview" / "misc.c": {
+                ("c_runtime_composed", 'Copy "%s"'),
+            },
+        }
+
+        for source_path, expected in cases.items():
+            with self.subTest(source_path=source_path):
+                entries = []
+                audit.scan_c_file(str(source_path), entries)
+                actual = {
+                    (entry["category"], entry["english"])
+                    for entry in entries
+                }
+                self.assertTrue(expected <= actual)
 
     def test_peview_search_path_setting_is_not_a_window_text(self) -> None:
         audit = load_audit_module()
