@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("356 strings", result.stdout)
+        self.assertIn("374 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 152)
+        self.assertEqual(len(stringtable_ids(resource_script)), 170)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2152)))
+        self.assertEqual(numeric_ids, list(range(2000, 2170)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1216,7 +1216,10 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         for resource_id, expected_count in expected_ids.items():
             with self.subTest(resource_id=resource_id):
-                self.assertEqual(combined.count(resource_id), expected_count)
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", combined)),
+                    expected_count,
+                )
 
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
         self.assertIn(
@@ -1224,6 +1227,72 @@ class NativeResourceGenerationTests(unittest.TestCase):
             localized,
         )
         self.assertNotIn('"无法暂停线程 %lu"', localized)
+
+    def test_main_object_and_module_errors_use_native_resources(self) -> None:
+        sources = {
+            name: (REPO_ROOT / "SystemInformer" / name).read_text(encoding="utf-8-sig")
+            for name in (
+                "actions.c",
+                "appsup.c",
+                "findobj.c",
+                "informerwnd.c",
+                "memrslt.c",
+                "ntobjprp.c",
+                "usrlist.c",
+            )
+        }
+        combined = "\n".join(sources.values())
+        literals = (
+            "Failed to get process start key.",
+            "Setting handle attributes requires a connection to the kernel driver.",
+            'Unable to close \\"%s\\"',
+            "Unable to compile the regular expression.",
+            '\\"%s\\" at position %zu.',
+            "Unable to locate routines.",
+            "Unable to locate the application directory.",
+            "Unable to open the event",
+            "Unable to open the event pair",
+            "Unable to open the semaphore",
+            "Unable to open the timer",
+            "Unable to search for handles because the total number of handles on the system is too large.",
+            "Please check if there are any processes with an extremely large number of handles open.",
+            "Unidentified third party object.",
+            "Unable to unload the module",
+            "Unable to unload ",
+            "Unable to unmap the section view at 0x%p",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}"', combined)
+
+        expected_ids = {
+            "IDS_PH_UNABLE_GET_PROCESS_START_KEY": 1,
+            "IDS_PH_HANDLE_ATTRIBUTES_REQUIRE_DRIVER": 1,
+            "IDS_PH_UNABLE_CLOSE_NAMED_OBJECT": 1,
+            "IDS_PH_UNABLE_COMPILE_REGULAR_EXPRESSION": 1,
+            "IDS_PH_REGULAR_EXPRESSION_ERROR_POSITION": 1,
+            "IDS_PH_UNABLE_LOCATE_ROUTINES": 1,
+            "IDS_PH_UNABLE_LOCATE_APPLICATION_DIRECTORY": 1,
+            "IDS_PH_UNABLE_OPEN_EVENT": 1,
+            "IDS_PH_UNABLE_OPEN_EVENT_PAIR": 1,
+            "IDS_PH_UNABLE_OPEN_SEMAPHORE": 1,
+            "IDS_PH_UNABLE_OPEN_TIMER": 1,
+            "IDS_PH_TOO_MANY_HANDLES": 1,
+            "IDS_PH_TOO_MANY_HANDLES_HINT": 1,
+            "IDS_PH_UNIDENTIFIED_THIRD_PARTY_OBJECT": 1,
+            "IDS_PH_UNABLE_UNLOAD_MODULE": 1,
+            "IDS_PH_UNABLE_UNLOAD_NAMED_MODULE": 3,
+            "IDS_PH_UNABLE_UNLOAD_NAMED_MODULE_ADMIN": 1,
+            "IDS_PH_UNABLE_UNMAP_SECTION_AT_ADDRESS": 1,
+        }
+
+        for resource_id, expected_count in expected_ids.items():
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", combined)),
+                    expected_count,
+                )
 
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
@@ -1418,7 +1487,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 152): 2,
+                    (r"bin\Release64\sys_info.exe", 170): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

@@ -1230,7 +1230,7 @@
     "Pings sent: 0": "已发送 Ping：0",
     "Platform rights": "平台权限",
     "Platform support pending review.": "平台支持待审核。",
-    "Please check if there are any processes with an extremely large number of handles open.": "请检查是否有进程打开了极其大量的句柄。",
+    "Please check if there are any processes with an extremely large number of handles open.": "请检查是否有进程打开了异常多的句柄。",
     "Please check the Options > Network Tools > GeoLite ID or Key are configured before downloading geoLite updates.": "下载 GeoLite 更新前，请确认已在“设置 > 网络工具”中配置 GeoLite ID 或密钥。",
     "Please ensure that the string is a valid GUID: \"{x-x-x-x-x}\".": "请确保该字符串是有效的 GUID：“{x-x-x-x-x}”。",
     "Please restart System Informer for the changes to take effect...": "请重启 sys_info 以使更改生效...",
@@ -2356,6 +2356,23 @@
     "Unable to set the priority of thread %lu": "无法设置线程 %lu 的优先级",
     "Unable to set the I/O priority of thread %lu": "无法设置线程 %lu 的 I/O 优先级",
     "Unable to set the page priority of thread %lu": "无法设置线程 %lu 的页面优先级",
-    "Unable to execute the program.": "无法执行程序。"
+    "Unable to execute the program.": "无法执行程序。",
+    "Failed to get process start key.": "无法获取进程启动键。",
+    "Setting handle attributes requires a connection to the kernel driver.": "设置句柄属性需要连接内核驱动程序。",
+    "Unable to close \"%s\"": "无法关闭“%s”",
+    "Unable to compile the regular expression.": "无法编译正则表达式。",
+    "\"%s\" at position %zu.": "“%s”，位置 %zu。",
+    "Unable to locate routines.": "无法定位例程。",
+    "Unable to locate the application directory.": "无法定位应用程序目录。",
+    "Unable to open the event": "无法打开事件",
+    "Unable to open the event pair": "无法打开事件对",
+    "Unable to open the semaphore": "无法打开信号量",
+    "Unable to open the timer": "无法打开定时器",
+    "Unable to search for handles because the total number of handles on the system is too large.": "系统句柄总数过多，无法搜索句柄。",
+    "Unidentified third party object.": "未识别的第三方对象。",
+    "Unable to unload the module": "无法卸载模块",
+    "Unable to unload %s": "无法卸载 %s",
+    "Unable to unload %s. Make sure System Informer is running with administrative privileges.": "无法卸载 %s。请确保 sys_info 正以管理员权限运行。",
+    "Unable to unmap the section view at 0x%p": "无法取消映射位于 0x%p 的节视图"
   }
 }

@@ -1333,7 +1333,7 @@ VOID PhShowUserListDialog(
 
     if (!LsaFreeReturnBuffer_I || !LsaEnumerateLogonSessions_I || !LsaGetLogonSessionData_I)
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to locate routines.", STATUS_NOINTERFACE, 0);
+        PhShowStatus(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_ROUTINES), STATUS_NOINTERFACE, 0);
         return;
     }
 

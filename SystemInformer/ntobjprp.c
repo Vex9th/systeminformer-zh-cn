@@ -255,7 +255,7 @@ INT_PTR CALLBACK PhpEventPageProc(
                     PhpRefreshEventPageInfo(hwndDlg, pageContext);
 
                     if (!NT_SUCCESS(status))
-                        PhShowStatus(hwndDlg, L"Unable to open the event", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_EVENT), status, 0);
                 }
                 break;
             }
@@ -332,7 +332,7 @@ INT_PTR CALLBACK PhpEventPairPageProc(
                     }
 
                     if (!NT_SUCCESS(status))
-                        PhShowStatus(hwndDlg, L"Unable to open the event pair", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_EVENT_PAIR), status, 0);
                 }
                 break;
             }
@@ -447,7 +447,7 @@ INT_PTR CALLBACK PhpSemaphorePageProc(
                     PhpRefreshSemaphorePageInfo(hwndDlg, pageContext);
 
                     if (!NT_SUCCESS(status))
-                        PhShowStatus(hwndDlg, L"Unable to open the semaphore", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_SEMAPHORE), status, 0);
                 }
                 break;
             }
@@ -551,7 +551,7 @@ INT_PTR CALLBACK PhpTimerPageProc(
                     PhpRefreshTimerPageInfo(hwndDlg, pageContext);
 
                     if (!NT_SUCCESS(status))
-                        PhShowStatus(hwndDlg, L"Unable to open the timer", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_TIMER), status, 0);
                 }
                 break;
             }

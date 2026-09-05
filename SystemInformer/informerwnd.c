@@ -4096,7 +4096,7 @@ INT_PTR CALLBACK PhpProcessInformerDlgProc(
                 // "global" value of 0.
                 //
                 processStartKey = ULONG64_MAX;
-                PhShowStatus(hwndDlg, L"Failed to get process start key.", status, 0);
+                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_GET_PROCESS_START_KEY), status, 0);
             }
 
             context = PhpCreateInformerContext(processStartKey);

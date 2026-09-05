@@ -7079,7 +7079,7 @@ BOOLEAN PhUiUnloadModule(
 
             if (status == STATUS_DLL_NOT_FOUND)
             {
-                PhShowStatus(WindowHandle, L"Unable to unload the module", 0, ERROR_MOD_NOT_FOUND);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_UNLOAD_MODULE), 0, ERROR_MOD_NOT_FOUND);
                 return FALSE;
             }
 
@@ -7087,7 +7087,7 @@ BOOLEAN PhUiUnloadModule(
             {
                 PhShowStatus(
                     WindowHandle,
-                    PhaConcatStrings2(L"Unable to unload ", Module->Name->Buffer)->Buffer,
+                    PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_UNLOAD_NAMED_MODULE), Module->Name->Buffer)->Buffer,
                     status,
                     0
                     );
@@ -7107,7 +7107,7 @@ BOOLEAN PhUiUnloadModule(
 
             if (PhpShowErrorAndConnectToPhSvc(
                 WindowHandle,
-                PhaConcatStrings2(L"Unable to unload ", Module->Name->Buffer)->Buffer,
+                PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_UNLOAD_NAMED_MODULE), Module->Name->Buffer)->Buffer,
                 status,
                 &connected,
                 &cancelled
@@ -7118,7 +7118,7 @@ BOOLEAN PhUiUnloadModule(
                     if (NT_SUCCESS(status = PhSvcCallUnloadDriver(Module->BaseAddress, Module->Name->Buffer, Module->FileName->Buffer)))
                         success = TRUE;
                     else
-                        PhShowStatus(WindowHandle, PhaConcatStrings2(L"Unable to unload ", Module->Name->Buffer)->Buffer, status, 0);
+                        PhShowStatus(WindowHandle, PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_UNLOAD_NAMED_MODULE), Module->Name->Buffer)->Buffer, status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -7130,13 +7130,10 @@ BOOLEAN PhUiUnloadModule(
 
                 PhShowStatus(
                     WindowHandle,
-                    PhaConcatStrings(
-                    3,
-                    L"Unable to unload ",
-                    Module->Name->Buffer,
-                    L". Make sure System Informer is running with "
-                    L"administrative privileges."
-                    )->Buffer,
+                    PhaFormatString(
+                        PhGetApplicationUiString(IDS_PH_UNABLE_UNLOAD_NAMED_MODULE_ADMIN),
+                        Module->Name->Buffer
+                        )->Buffer,
                     status,
                     0
                     );
@@ -7164,7 +7161,7 @@ BOOLEAN PhUiUnloadModule(
         {
             PhShowStatus(
                 WindowHandle,
-                PhaFormatString(L"Unable to unmap the section view at 0x%p", Module->BaseAddress)->Buffer,
+                PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_UNMAP_SECTION_AT_ADDRESS), Module->BaseAddress)->Buffer,
                 status,
                 0
                 );
@@ -7553,7 +7550,7 @@ BOOLEAN PhUiSetAttributesHandle(
         }
         else
         {
-            PhShowStatus(WindowHandle, L"Setting handle attributes requires a connection to the kernel driver.", status, 0);
+            PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_HANDLE_ATTRIBUTES_REQUIRE_DRIVER), status, 0);
             return FALSE;
         }
 

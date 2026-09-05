@@ -1146,8 +1146,26 @@
 #define IDS_PH_UNABLE_SET_THREAD_IO_PRIORITY               2149
 #define IDS_PH_UNABLE_SET_THREAD_PAGE_PRIORITY             2150
 #define IDS_PH_UNABLE_EXECUTE_PROGRAM                      2151
+#define IDS_PH_UNABLE_GET_PROCESS_START_KEY                2152
+#define IDS_PH_HANDLE_ATTRIBUTES_REQUIRE_DRIVER            2153
+#define IDS_PH_UNABLE_CLOSE_NAMED_OBJECT                   2154
+#define IDS_PH_UNABLE_COMPILE_REGULAR_EXPRESSION           2155
+#define IDS_PH_REGULAR_EXPRESSION_ERROR_POSITION           2156
+#define IDS_PH_UNABLE_LOCATE_ROUTINES                      2157
+#define IDS_PH_UNABLE_LOCATE_APPLICATION_DIRECTORY         2158
+#define IDS_PH_UNABLE_OPEN_EVENT                           2159
+#define IDS_PH_UNABLE_OPEN_EVENT_PAIR                      2160
+#define IDS_PH_UNABLE_OPEN_SEMAPHORE                       2161
+#define IDS_PH_UNABLE_OPEN_TIMER                           2162
+#define IDS_PH_TOO_MANY_HANDLES                            2163
+#define IDS_PH_TOO_MANY_HANDLES_HINT                       2164
+#define IDS_PH_UNIDENTIFIED_THIRD_PARTY_OBJECT              2165
+#define IDS_PH_UNABLE_UNLOAD_MODULE                        2166
+#define IDS_PH_UNABLE_UNLOAD_NAMED_MODULE                  2167
+#define IDS_PH_UNABLE_UNLOAD_NAMED_MODULE_ADMIN            2168
+#define IDS_PH_UNABLE_UNMAP_SECTION_AT_ADDRESS             2169
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_UNABLE_EXECUTE_PROGRAM
+#define IDS_PH_LAST                                  IDS_PH_UNABLE_UNMAP_SECTION_AT_ADDRESS
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1159,6 +1177,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2152
+#define _APS_NEXT_SYMED_VALUE           2170
 #endif
 #endif

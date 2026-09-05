@@ -164,8 +164,8 @@ static VOID FilterResults(
 
             if (!compiledExpression)
             {
-                PhShowError2(hwndDlg, L"Unable to compile the regular expression.",
-                    L"\"%s\" at position %zu.",
+                PhShowError2(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_COMPILE_REGULAR_EXPRESSION),
+                    PhGetApplicationUiString(IDS_PH_REGULAR_EXPRESSION_ERROR_POSITION),
                     PhGetStringOrDefault(PH_AUTO(PhPcre2GetErrorMessage(errorCode)), PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR)),
                     errorOffset
                     );

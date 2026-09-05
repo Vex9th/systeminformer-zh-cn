@@ -1122,7 +1122,7 @@ NTSTATUS PhpFindObjectsThreadStart(
 
                     if (!NT_SUCCESS(status))
                     {
-                        PhShowStatus(NULL, L"Unidentified third party object.", status, 0);
+                        PhShowStatus(NULL, PhGetApplicationUiString(IDS_PH_UNIDENTIFIED_THIRD_PARTY_OBJECT), status, 0);
                     }
                 }
             }
@@ -1585,7 +1585,10 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
                             if (!NT_SUCCESS(status))
                             {
                                 if (!PhShowContinueStatus(hwndDlg,
-                                    PhaFormatString(L"Unable to close \"%s\"", PhGetStringOrDefault(handleObjectNodes[i]->BestObjectName, L"??"))->Buffer,
+                                    PhaFormatString(
+                                        PhGetApplicationUiString(IDS_PH_UNABLE_CLOSE_NAMED_OBJECT),
+                                        PhGetStringOrDefault(handleObjectNodes[i]->BestObjectName, L"??")
+                                        )->Buffer,
                                     status,
                                     0
                                     ))
@@ -1757,9 +1760,9 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
             {
                 PhShowWarning2(
                     hwndDlg,
-                    L"Unable to search for handles because the total number of handles on the system is too large.",
+                    PhGetApplicationUiString(IDS_PH_TOO_MANY_HANDLES),
                     L"%s",
-                    L"Please check if there are any processes with an extremely large number of handles open."
+                    PhGetApplicationUiString(IDS_PH_TOO_MANY_HANDLES_HINT)
                     );
             }
         }

@@ -1063,7 +1063,7 @@ VOID PhShellExecuteUserString(
 
     if (!(applicationDirectory = PhGetApplicationDirectoryWin32()))
     {
-        PhShowStatus(WindowHandle, L"Unable to locate the application directory.", STATUS_NOT_FOUND, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOCATE_APPLICATION_DIRECTORY), STATUS_NOT_FOUND, 0);
         return;
     }
 
