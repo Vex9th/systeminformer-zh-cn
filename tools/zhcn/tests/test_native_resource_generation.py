@@ -2815,6 +2815,30 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 ".NET CLR Security",
             ),
         }
+        category_strings_match = re.search(
+            r"CONST\s+PCWSTR\s+DotNetCategoryStrings\s*\[\s*\]\s*=\s*"
+            r"\{(?P<items>.*?)\};",
+            source,
+            re.DOTALL,
+        )
+
+        self.assertIsNotNone(category_strings_match)
+        self.assertEqual(
+            re.findall(
+                r'L"((?:[^"\\]|\\.)*)"',
+                category_strings_match.group("items"),
+            ),
+            [
+                ".NET CLR Exceptions",
+                ".NET CLR Interop",
+                ".NET CLR Jit",
+                ".NET CLR Loading",
+                ".NET CLR LocksAndThreads",
+                ".NET CLR Memory",
+                ".NET CLR Remoting",
+                ".NET CLR Security",
+            ],
+        )
 
         for group_id, (resource_id, english_text) in expected_resources.items():
             with self.subTest(dotnet_performance_group=group_id):
