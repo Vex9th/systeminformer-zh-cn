@@ -198,6 +198,26 @@ VOID NTAPI DotNetPerfProcessesUpdatedCallback(
     }
 }
 
+static VOID DotNetPerfAddListViewGroupItem(
+    _In_ HWND ListViewHandle,
+    _In_ DOTNET_CATEGORY GroupId,
+    _In_ DOTNET_INDEX Index,
+    _In_ ULONG NameResourceId
+    )
+{
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        GroupId,
+        Index,
+        PhGetString(PH_AUTO(PhLoadUiString(
+            PluginInstance->DllBase,
+            NameResourceId,
+            NULL
+            ))),
+        UlongToPtr(Index)
+        );
+}
+
 VOID DotNetPerfAddListViewGroups(
     _In_ HWND ListViewHandle
     )
@@ -249,36 +269,36 @@ VOID DotNetPerfAddListViewGroups(
     // This counter is incremented at the end of a Gen 0 GC. Higher generation GCs include all lower generation GCs.
     // This counter is explicitly incremented when a higher generation (Gen 1 or Gen 2) GC occurs. _Global_ counter value is not accurate and should be ignored.
     // This counter displays the last observed value.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENZEROCOLLECTIONS, L"# Gen 0 Collections", UlongToPtr(DOTNET_INDEX_MEMORY_GENZEROCOLLECTIONS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENZEROCOLLECTIONS, IDS_DN_PERF_ITEM_MEMORY_GENZEROCOLLECTIONS);
 
     // This counter displays the number of times the generation 1 objects are garbage collected since the start of the application.
     // The counter is incremented at the end of a Gen 1 GC. Higher generation GCs include all lower generation GCs.
     // This counter is explicitly incremented when a higher generation (Gen 2) GC occurs. _Global_ counter value is not accurate and should be ignored.
     // This counter displays the last observed value.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENONECOLLECTIONS, L"# Gen 1 Collections", UlongToPtr(DOTNET_INDEX_MEMORY_GENONECOLLECTIONS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENONECOLLECTIONS, IDS_DN_PERF_ITEM_MEMORY_GENONECOLLECTIONS);
 
     // This counter displays the number of times the generation 2 objects(older) are garbage collected since the start of the application.
     // The counter is incremented at the end of a Gen 2 GC(also called full GC)._Global_ counter value is not accurate and should be ignored.
     // This counter displays the last observed value.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENTWOCOLLECTIONS, L"# Gen 2 Collections", UlongToPtr(DOTNET_INDEX_MEMORY_GENTWOCOLLECTIONS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENTWOCOLLECTIONS, IDS_DN_PERF_ITEM_MEMORY_GENTWOCOLLECTIONS);
 
     // This counter displays the bytes of memory that survive garbage collection(GC) and are promoted from generation 0 to generation 1;
     // objects that are promoted just because they are waiting to be finalized are not included in this counter.
     // This counter displays the value observed at the end of the last GC; its not a cumulative counter.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROMOTEDFROMGENZERO, L"Promoted Memory from Gen 0", UlongToPtr(DOTNET_INDEX_MEMORY_PROMOTEDFROMGENZERO));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROMOTEDFROMGENZERO, IDS_DN_PERF_ITEM_MEMORY_PROMOTEDFROMGENZERO);
 
     // This counter displays the bytes of memory that survive garbage collection(GC) and are promoted from generation 1 to generation 2;
     // objects that are promoted just because they are waiting to be finalized are not included in this counter.
     // This counter displays the value observed at the end of the last GC; its not a cumulative counter.
     // This counter is reset to 0 if the last GC was a Gen 0 GC only.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROMOTEDFROMGENONE, L"Promoted Memory from Gen 1", UlongToPtr(DOTNET_INDEX_MEMORY_PROMOTEDFROMGENONE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROMOTEDFROMGENONE, IDS_DN_PERF_ITEM_MEMORY_PROMOTEDFROMGENONE);
 
     // This counter displays the bytes of memory that are promoted from generation 0 to generation 1 just because they are waiting to be finalized.
     // This counter displays the value observed at the end of the last GC; its not a cumulative counter.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROMOTEDFINALFROMGENZERO, L"Promoted Finalization-Memory from Gen 0", UlongToPtr(DOTNET_INDEX_MEMORY_PROMOTEDFINALFROMGENZERO));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROMOTEDFINALFROMGENZERO, IDS_DN_PERF_ITEM_MEMORY_PROMOTEDFINALFROMGENZERO);
 
     // Reserved for future use.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROCESSID, L"Process ID", UlongToPtr(DOTNET_INDEX_MEMORY_PROCESSID));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_PROCESSID, IDS_DN_PERF_ITEM_MEMORY_PROCESSID);
 
     // This counter displays the maximum bytes that can be allocated in generation 0 (Gen 0);
     // its does not indicate the current number of bytes allocated in Gen 0.
@@ -286,78 +306,78 @@ VOID DotNetPerfAddListViewGroups(
     // The Gen 0 size is tuned by the Garbage Collector and can change during the execution of the application.
     // At the end of a Gen 0 collection the size of the Gen 0 heap is infact 0 bytes; this counter displays the size(in bytes) of allocations that would trigger
     // the next Gen 0 GC.This counter is updated at the end of a GC; its not updated on every allocation.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENZEROHEAPSIZE, L"Gen 0 Heap Size", UlongToPtr(DOTNET_INDEX_MEMORY_GENZEROHEAPSIZE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENZEROHEAPSIZE, IDS_DN_PERF_ITEM_MEMORY_GENZEROHEAPSIZE);
 
     // This counter displays the current number of bytes in generation 1 (Gen 1);
     // this counter does not display the maximum size of Gen 1. Objects are not directly allocated in this generation;
     // they are promoted from previous Gen 0 GCs.This counter is updated at the end of a GC; its not updated on every allocation.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENONEHEAPSIZE, L"Gen 1 Heap Size", UlongToPtr(DOTNET_INDEX_MEMORY_GENONEHEAPSIZE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENONEHEAPSIZE, IDS_DN_PERF_ITEM_MEMORY_GENONEHEAPSIZE);
 
     // This counter displays the current number of bytes in generation 2 (Gen 2).
     // Objects are not directly allocated in this generation; they are promoted from Gen 1 during previous Gen 1 GCs.
     // This counter is updated at the end of a GC; its not updated on every allocation.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENTWOHEAPSIZE, L"Gen 2 Heap Size", UlongToPtr(DOTNET_INDEX_MEMORY_GENTWOHEAPSIZE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GENTWOHEAPSIZE, IDS_DN_PERF_ITEM_MEMORY_GENTWOHEAPSIZE);
 
     // This counter displays the current size of the Large Object Heap in bytes.
     // Objects greater than 20 KBytes are treated as large objects by the Garbage Collector and are directly allocated in a special heap; they are not promoted through the generations.
     // This counter is updated at the end of a GC; its not updated on every allocation.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_LOHSIZE, L"Large Object Heap Size", UlongToPtr(DOTNET_INDEX_MEMORY_LOHSIZE));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_LOHSIZE, IDS_DN_PERF_ITEM_MEMORY_LOHSIZE);
 
     // This counter displays the number of garbage collected objects that survive a collection because they are waiting to be finalized.
     // If these objects hold references to other objects then those objects also survive but are not counted by this counter; the "Promoted Finalization-Memory from Gen 0"
     // and "Promoted Finalization-Memory from Gen 1" counters represent all the memory that survived due to finalization.
     // This counter is not a cumulative counter; its updated at the end of every GC with count of the survivors during that particular GC only.
     // This counter was designed to indicate the extra overhead that the application might incur because of finalization.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_FINALSURVIVORS, L"Finalization Survivors", UlongToPtr(DOTNET_INDEX_MEMORY_FINALSURVIVORS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_FINALSURVIVORS, IDS_DN_PERF_ITEM_MEMORY_FINALSURVIVORS);
 
     // This counter displays the current number of GC Handles in-use.
     // GCHandles are handles to resources external to the CLR and the managed environment.
     // Handles occupy small amounts of memory in the GCHeap but potentially expensive unmanaged resources.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GCHANDLES, L"# GC Handles", UlongToPtr(DOTNET_INDEX_MEMORY_GCHANDLES));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GCHANDLES, IDS_DN_PERF_ITEM_MEMORY_GCHANDLES);
 
     // This counter displays the peak number of times a garbage collection was performed because of an explicit call to GC.Collect.
     // Its a good practice to let the GC tune the frequency of its collections.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_INDUCEDGC, L"# Induced GC", UlongToPtr(DOTNET_INDEX_MEMORY_INDUCEDGC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_INDUCEDGC, IDS_DN_PERF_ITEM_MEMORY_INDUCEDGC);
 
     // % Time in GC is the percentage of elapsed time that was spent in performing a garbage collection(GC) since the last GC cycle.
     // This counter is usually an indicator of the work done by the Garbage Collector on behalf of the application to collect and compact memory.
     // This counter is updated only at the end of every GC and the counter value reflects the last observed value; its not an average.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TIMEINGC, L"% Time in GC", UlongToPtr(DOTNET_INDEX_MEMORY_TIMEINGC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TIMEINGC, IDS_DN_PERF_ITEM_MEMORY_TIMEINGC);
 
     // This counter is the sum of four other counters; Gen 0 Heap Size; Gen 1 Heap Size; Gen 2 Heap Size and the Large Object Heap Size.
     // This counter indicates the current memory allocated in bytes on the GC Heaps.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_BYTESINALLHEAPS, L"# Bytes in all Heaps", UlongToPtr(DOTNET_INDEX_MEMORY_BYTESINALLHEAPS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_BYTESINALLHEAPS, IDS_DN_PERF_ITEM_MEMORY_BYTESINALLHEAPS);
 
     // This counter displays the amount of virtual memory(in bytes) currently committed by the Garbage Collector.
     // (Committed memory is the physical memory for which space has been reserved on the disk paging file).
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALCOMMITTED, L"# Total Committed Bytes", UlongToPtr(DOTNET_INDEX_MEMORY_TOTALCOMMITTED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALCOMMITTED, IDS_DN_PERF_ITEM_MEMORY_TOTALCOMMITTED);
 
     // This counter displays the amount of virtual memory(in bytes) currently reserved by the Garbage Collector.
     // (Reserved memory is the virtual memory space reserved for the application but no disk or main memory pages have been used.)
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALRESERVED, L"# Total Reserved Bytes", UlongToPtr(DOTNET_INDEX_MEMORY_TOTALRESERVED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALRESERVED, IDS_DN_PERF_ITEM_MEMORY_TOTALRESERVED);
 
     // This counter displays the number of pinned objects encountered in the last GC.
     // This counter tracks the pinned objects only in the heaps that were garbage collected e.g. A Gen 0 GC would cause enumeration of pinned objects in the generation 0 heap only.
     // A pinned object is one that the Garbage Collector cannot move in memory.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALPINNED, L"# of Pinned Objects", UlongToPtr(DOTNET_INDEX_MEMORY_TOTALPINNED));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALPINNED, IDS_DN_PERF_ITEM_MEMORY_TOTALPINNED);
 
     // This counter displays the current number of sync blocks in use. Sync blocks are per-object data structures allocated for storing synchronization information.
     // Sync blocks hold weak references to managed objects and need to be scanned by the Garbage Collector.
     // Sync blocks are not limited to storing synchronization information and can also store COM interop metadata.
     // This counter was designed to indicate performance problems with heavy use of synchronization primitives.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALSINKS, L"# of Sink Blocks in use", UlongToPtr(DOTNET_INDEX_MEMORY_TOTALSINKS));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALSINKS, IDS_DN_PERF_ITEM_MEMORY_TOTALSINKS);
 
     // Reserved for future use.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALBYTESSINCESTART, L"Total Bytes Allocated (since start)", UlongToPtr(DOTNET_INDEX_MEMORY_TOTALBYTESSINCESTART));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALBYTESSINCESTART, IDS_DN_PERF_ITEM_MEMORY_TOTALBYTESSINCESTART);
 
     // Reserved for future use.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALLOHBYTESSINCESTART, L"Total Bytes Allocated for Large Objects (since start)", UlongToPtr(DOTNET_INDEX_MEMORY_TOTALLOHBYTESSINCESTART));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_TOTALLOHBYTESSINCESTART, IDS_DN_PERF_ITEM_MEMORY_TOTALLOHBYTESSINCESTART);
 
     // This counter displays the bytes per second that are promoted from generation 0 (youngest) to generation 1;
     // objects that are promoted just because they are waiting to be finalized are not included in this counter.
     // Memory is promoted when it survives a garbage collection. This counter was designed as an indicator of relatively long-lived objects being created per sec.
     // This counter displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GC0PROMOTEDBYTESPERSEC, L"Gen 0 Promoted Bytes / sec", UlongToPtr(DOTNET_INDEX_MEMORY_GC0PROMOTEDBYTESPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GC0PROMOTEDBYTESPERSEC, IDS_DN_PERF_ITEM_MEMORY_GC0PROMOTEDBYTESPERSEC);
 
     // This counter displays the bytes per second that are promoted from generation 1 to generation 2 (oldest);
     // objects that are promoted just because they are waiting to be finalized are not included in this counter.
@@ -365,61 +385,61 @@ VOID DotNetPerfAddListViewGroups(
     // Nothing is promoted from generation 2 since it is the oldest.
     // This counter was designed as an indicator of very long-lived objects being created per sec.
     // This counter displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GC1PROMOTEDBYTESPERSEC, L"Gen 1 Promoted Bytes / sec", UlongToPtr(DOTNET_INDEX_MEMORY_GC1PROMOTEDBYTESPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_GC1PROMOTEDBYTESPERSEC, IDS_DN_PERF_ITEM_MEMORY_GC1PROMOTEDBYTESPERSEC);
 
     // This counter displays the bytes of memory that are promoted from generation 1 to generation 2 just because they are waiting to be finalized.
     // This counter displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_FINALPROMOTEDBYTESPERSEC, L"Promoted Finalization-Memory / sec", UlongToPtr(DOTNET_INDEX_MEMORY_FINALPROMOTEDBYTESPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_FINALPROMOTEDBYTESPERSEC, IDS_DN_PERF_ITEM_MEMORY_FINALPROMOTEDBYTESPERSEC);
 
     // This counter displays the rate of bytes per second allocated on the GC Heap.
     // This counter is updated at the end of every GC; not at each allocation.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_ALLOCATEDBYTESPERSEC, L"Allocated Bytes / sec", UlongToPtr(DOTNET_INDEX_MEMORY_ALLOCATEDBYTESPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_MEMORY, DOTNET_INDEX_MEMORY_ALLOCATEDBYTESPERSEC, IDS_DN_PERF_ITEM_MEMORY_ALLOCATEDBYTESPERSEC);
 
     // This counter displays the total number of exceptions thrown since the start of the application.
     // These include both .NET exceptions and unmanaged exceptions that get converted into .NET exceptions e.g. null pointer reference exception in unmanaged code
     // would get re-thrown in managed code as a .NET System.NullReferenceException; this counter includes both handled and unhandled exceptions.Exceptions
     // that are re-thrown would get counted again. Exceptions should only occur in rare situations and not in the normal control flow of the program.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_THROWNCOUNT, L"# of Exceptions Thrown", UlongToPtr(DOTNET_INDEX_EXCEPTIONS_THROWNCOUNT));
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FILTERSCOUNT, L"# of Filters Executed", UlongToPtr(DOTNET_INDEX_EXCEPTIONS_FILTERSCOUNT));
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FINALLYCOUNT, L"# of Finallys Executed", UlongToPtr(DOTNET_INDEX_EXCEPTIONS_FINALLYCOUNT));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_THROWNCOUNT, IDS_DN_PERF_ITEM_EXCEPTIONS_THROWNCOUNT);
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FILTERSCOUNT, IDS_DN_PERF_ITEM_EXCEPTIONS_FILTERSCOUNT);
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FINALLYCOUNT, IDS_DN_PERF_ITEM_EXCEPTIONS_FINALLYCOUNT);
 
     // This counter displays the number of exceptions thrown per second.
     // These include both .NET exceptions and unmanaged exceptions that get converted into .NET exceptions.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_THROWNPERSEC, L"# of Exceps Thrown / sec", UlongToPtr(DOTNET_INDEX_EXCEPTIONS_THROWNPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_THROWNPERSEC, IDS_DN_PERF_ITEM_EXCEPTIONS_THROWNPERSEC);
 
     // This counter displays the number of .NET exception filters executed per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FILTERSPERSEC, L"# of Filters Executed / sec", UlongToPtr(DOTNET_INDEX_EXCEPTIONS_FILTERSPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FILTERSPERSEC, IDS_DN_PERF_ITEM_EXCEPTIONS_FILTERSPERSEC);
 
     // This counter displays the number of finally blocks executed per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FINALLYPERSEC, L"# of Finallys Executed / sec", UlongToPtr(DOTNET_INDEX_EXCEPTIONS_FINALLYPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_FINALLYPERSEC, IDS_DN_PERF_ITEM_EXCEPTIONS_FINALLYPERSEC);
 
     // This counter displays the number of stack frames traversed from the frame that threw the .NET exception to the frame that handled the exception per second.
     // This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC, L"Throw To Catch Depth / sec", UlongToPtr(DOTNET_INDEX_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, DOTNET_INDEX_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC, IDS_DN_PERF_ITEM_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC);
 
     // This counter displays the current number of Com-Callable-Wrappers (CCWs).
     // A CCW is a proxy for the .NET managed object being referenced from unmanaged COM client(s).
     // This counter was designed to indicate the number of managed objects being referenced by unmanaged COM code.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_CCWCOUNT, L"# of CCWs", UlongToPtr(DOTNET_INDEX_INTEROP_CCWCOUNT));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_CCWCOUNT, IDS_DN_PERF_ITEM_INTEROP_CCWCOUNT);
 
     // This counter displays the current number of stubs created by the CLR.
     // Stubs are responsible for marshalling arguments and return values from managed to unmanaged code and vice versa; during a COM Interop call or PInvoke call.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_STUBCOUNT, L"# of Stubs", UlongToPtr(DOTNET_INDEX_INTEROP_STUBCOUNT));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_STUBCOUNT, IDS_DN_PERF_ITEM_INTEROP_STUBCOUNT);
 
     // This counter displays the total number of times arguments and return values have been marshaled from managed to unmanaged code
     // and vice versa since the start of the application. This counter is not incremented if the stubs are inlined.
     // (Stubs are responsible for marshalling arguments and return values). Stubs usually get inlined if the marshalling overhead is small.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_MARSHALCOUNT, L"# of Marshalling", UlongToPtr(DOTNET_INDEX_INTEROP_MARSHALCOUNT));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_MARSHALCOUNT, IDS_DN_PERF_ITEM_INTEROP_MARSHALCOUNT);
 
     // Reserved for future use.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_TLBIMPORTPERSEC, L"# of TLB imports / sec", UlongToPtr(DOTNET_INDEX_INTEROP_TLBIMPORTPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_TLBIMPORTPERSEC, IDS_DN_PERF_ITEM_INTEROP_TLBIMPORTPERSEC);
 
     // Reserved for future use.
-    PhAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_TLBEXPORTPERSEC, L"# of TLB exports / sec", UlongToPtr(DOTNET_INDEX_INTEROP_TLBEXPORTPERSEC));
+    DotNetPerfAddListViewGroupItem(ListViewHandle, DOTNET_CATEGORY_INTEROP, DOTNET_INDEX_INTEROP_TLBEXPORTPERSEC, IDS_DN_PERF_ITEM_INTEROP_TLBEXPORTPERSEC);
 
     // This counter displays the total number of methods compiled Just-In-Time (JIT) by the CLR JIT compiler since the start of the application.
     // This counter does not include the pre-jitted methods.

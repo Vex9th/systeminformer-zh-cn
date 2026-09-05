@@ -1257,7 +1257,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("888 strings", result.stdout)
+        self.assertIn("926 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -4232,6 +4232,366 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 self.assertIn(english_text, translation_data["native_strings"])
                 self.assertNotIn(english_text, translation_data["strings"])
 
+    def test_dotnet_performance_batch_a_items_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        source_path = REPO_ROOT / "plugins" / "DotNetTools" / "perfpage.c"
+        source = audit.mask_c_comments(source_path.read_text(encoding="utf-8-sig"))
+        resource_header = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "DotNetTools.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_resource = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "DotNetTools.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        workflow = (
+            REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
+        ).read_text(encoding="utf-8")
+        expected_resources = {
+            "IDS_DN_PERF_ITEM_MEMORY_GENZEROCOLLECTIONS": (
+                2008,
+                "# Gen 0 Collections",
+                "第 0 代 GC 次数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GENZEROCOLLECTIONS",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GENONECOLLECTIONS": (
+                2009,
+                "# Gen 1 Collections",
+                "第 1 代 GC 次数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GENONECOLLECTIONS",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GENTWOCOLLECTIONS": (
+                2010,
+                "# Gen 2 Collections",
+                "第 2 代 GC 次数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GENTWOCOLLECTIONS",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_PROMOTEDFROMGENZERO": (
+                2011,
+                "Promoted Memory from Gen 0",
+                "从第 0 代提升的内存",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_PROMOTEDFROMGENZERO",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_PROMOTEDFROMGENONE": (
+                2012,
+                "Promoted Memory from Gen 1",
+                "从第 1 代提升的内存",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_PROMOTEDFROMGENONE",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_PROMOTEDFINALFROMGENZERO": (
+                2013,
+                "Promoted Finalization-Memory from Gen 0",
+                "从第 0 代提升的终结内存",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_PROMOTEDFINALFROMGENZERO",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_PROCESSID": (
+                2014,
+                "Process ID",
+                "进程 ID",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_PROCESSID",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GENZEROHEAPSIZE": (
+                2015,
+                "Gen 0 Heap Size",
+                "第 0 代堆大小",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GENZEROHEAPSIZE",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GENONEHEAPSIZE": (
+                2016,
+                "Gen 1 Heap Size",
+                "第 1 代堆大小",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GENONEHEAPSIZE",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GENTWOHEAPSIZE": (
+                2017,
+                "Gen 2 Heap Size",
+                "第 2 代堆大小",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GENTWOHEAPSIZE",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_LOHSIZE": (
+                2018,
+                "Large Object Heap Size",
+                "大型对象堆大小",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_LOHSIZE",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_FINALSURVIVORS": (
+                2019,
+                "Finalization Survivors",
+                "终结后存活对象",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_FINALSURVIVORS",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GCHANDLES": (
+                2020,
+                "# GC Handles",
+                "GC 句柄数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GCHANDLES",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_INDUCEDGC": (
+                2021,
+                "# Induced GC",
+                "强制 GC 次数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_INDUCEDGC",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_TIMEINGC": (
+                2022,
+                "% Time in GC",
+                "GC 中的时间百分比",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_TIMEINGC",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_BYTESINALLHEAPS": (
+                2023,
+                "# Bytes in all Heaps",
+                "所有堆中的字节数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_BYTESINALLHEAPS",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_TOTALCOMMITTED": (
+                2024,
+                "# Total Committed Bytes",
+                "提交的字节总数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_TOTALCOMMITTED",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_TOTALRESERVED": (
+                2025,
+                "# Total Reserved Bytes",
+                "保留的字节总数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_TOTALRESERVED",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_TOTALPINNED": (
+                2026,
+                "# of Pinned Objects",
+                "固定对象数目",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_TOTALPINNED",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_TOTALSINKS": (
+                2027,
+                "# of Sink Blocks in use",
+                "正在使用的同步块数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_TOTALSINKS",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_TOTALBYTESSINCESTART": (
+                2028,
+                "Total Bytes Allocated (since start)",
+                "自启动以来分配的总字节数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_TOTALBYTESSINCESTART",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_TOTALLOHBYTESSINCESTART": (
+                2029,
+                "Total Bytes Allocated for Large Objects (since start)",
+                "自启动以来为大型对象分配的总字节数",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_TOTALLOHBYTESSINCESTART",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GC0PROMOTEDBYTESPERSEC": (
+                2030,
+                "Gen 0 Promoted Bytes / sec",
+                "第 0 代提升的字节数/秒",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GC0PROMOTEDBYTESPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_GC1PROMOTEDBYTESPERSEC": (
+                2031,
+                "Gen 1 Promoted Bytes / sec",
+                "第 1 代提升的字节数/秒",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_GC1PROMOTEDBYTESPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_FINALPROMOTEDBYTESPERSEC": (
+                2032,
+                "Promoted Finalization-Memory / sec",
+                "提升的终结内存/秒",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_FINALPROMOTEDBYTESPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_MEMORY_ALLOCATEDBYTESPERSEC": (
+                2033,
+                "Allocated Bytes / sec",
+                "分配的字节数/秒",
+                "DOTNET_CATEGORY_MEMORY",
+                "DOTNET_INDEX_MEMORY_ALLOCATEDBYTESPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_EXCEPTIONS_THROWNCOUNT": (
+                2034,
+                "# of Exceptions Thrown",
+                "引发的异常数",
+                "DOTNET_CATEGORY_EXCEPTIONS",
+                "DOTNET_INDEX_EXCEPTIONS_THROWNCOUNT",
+            ),
+            "IDS_DN_PERF_ITEM_EXCEPTIONS_FILTERSCOUNT": (
+                2035,
+                "# of Filters Executed",
+                "执行的筛选器数",
+                "DOTNET_CATEGORY_EXCEPTIONS",
+                "DOTNET_INDEX_EXCEPTIONS_FILTERSCOUNT",
+            ),
+            "IDS_DN_PERF_ITEM_EXCEPTIONS_FINALLYCOUNT": (
+                2036,
+                "# of Finallys Executed",
+                "执行的 finally 块数",
+                "DOTNET_CATEGORY_EXCEPTIONS",
+                "DOTNET_INDEX_EXCEPTIONS_FINALLYCOUNT",
+            ),
+            "IDS_DN_PERF_ITEM_EXCEPTIONS_THROWNPERSEC": (
+                2037,
+                "# of Exceps Thrown / sec",
+                "引发的异常数/秒",
+                "DOTNET_CATEGORY_EXCEPTIONS",
+                "DOTNET_INDEX_EXCEPTIONS_THROWNPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_EXCEPTIONS_FILTERSPERSEC": (
+                2038,
+                "# of Filters Executed / sec",
+                "筛选次数/秒",
+                "DOTNET_CATEGORY_EXCEPTIONS",
+                "DOTNET_INDEX_EXCEPTIONS_FILTERSPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_EXCEPTIONS_FINALLYPERSEC": (
+                2039,
+                "# of Finallys Executed / sec",
+                "Finally 数量/秒",
+                "DOTNET_CATEGORY_EXCEPTIONS",
+                "DOTNET_INDEX_EXCEPTIONS_FINALLYPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC": (
+                2040,
+                "Throw To Catch Depth / sec",
+                "引发到捕获的深度/秒",
+                "DOTNET_CATEGORY_EXCEPTIONS",
+                "DOTNET_INDEX_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_INTEROP_CCWCOUNT": (
+                2041,
+                "# of CCWs",
+                "CCW 数目",
+                "DOTNET_CATEGORY_INTEROP",
+                "DOTNET_INDEX_INTEROP_CCWCOUNT",
+            ),
+            "IDS_DN_PERF_ITEM_INTEROP_STUBCOUNT": (
+                2042,
+                "# of Stubs",
+                "存根数",
+                "DOTNET_CATEGORY_INTEROP",
+                "DOTNET_INDEX_INTEROP_STUBCOUNT",
+            ),
+            "IDS_DN_PERF_ITEM_INTEROP_MARSHALCOUNT": (
+                2043,
+                "# of Marshalling",
+                "封送数",
+                "DOTNET_CATEGORY_INTEROP",
+                "DOTNET_INDEX_INTEROP_MARSHALCOUNT",
+            ),
+            "IDS_DN_PERF_ITEM_INTEROP_TLBIMPORTPERSEC": (
+                2044,
+                "# of TLB imports / sec",
+                "TLB 导入次数/秒",
+                "DOTNET_CATEGORY_INTEROP",
+                "DOTNET_INDEX_INTEROP_TLBIMPORTPERSEC",
+            ),
+            "IDS_DN_PERF_ITEM_INTEROP_TLBEXPORTPERSEC": (
+                2045,
+                "# of TLB exports / sec",
+                "TLB 导出次数/秒",
+                "DOTNET_CATEGORY_INTEROP",
+                "DOTNET_INDEX_INTEROP_TLBEXPORTPERSEC",
+            ),
+        }
+        expected_routes = [
+            (group_id, index_id, resource_id)
+            for resource_id, (_, _, _, group_id, index_id) in expected_resources.items()
+        ]
+        entries = []
+
+        audit.scan_c_file(str(source_path), entries)
+
+        active_items = {
+            entry["english"]
+            for entry in entries
+            if entry["category"] == "c_listview_group_item"
+        }
+        actual_routes = re.findall(
+            r"DotNetPerfAddListViewGroupItem\(\s*ListViewHandle,\s*"
+            r"(DOTNET_CATEGORY_[A-Z0-9_]+),\s*"
+            r"(DOTNET_INDEX_[A-Z0-9_]+),\s*"
+            r"(IDS_DN_PERF_ITEM_[A-Z0-9_]+)\s*\);",
+            source,
+        )
+
+        self.assertEqual(actual_routes, expected_routes)
+        self.assertRegex(
+            source,
+            r"static\s+VOID\s+DotNetPerfAddListViewGroupItem\(\s*"
+            r"_In_\s+HWND\s+ListViewHandle,\s*"
+            r"_In_\s+DOTNET_CATEGORY\s+GroupId,\s*"
+            r"_In_\s+DOTNET_INDEX\s+Index,\s*"
+            r"_In_\s+ULONG\s+NameResourceId\s*\)\s*"
+            r"\{\s*PhAddListViewGroupItem\(\s*ListViewHandle,\s*GroupId,\s*Index,\s*"
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\(\s*PluginInstance->DllBase,\s*"
+            r"NameResourceId,\s*NULL\s*\)\)\),\s*UlongToPtr\(Index\)\s*\);\s*\}",
+        )
+
+        for resource_id, (
+            numeric_id,
+            english_text,
+            chinese_text,
+            _,
+            _,
+        ) in expected_resources.items():
+            with self.subTest(dotnet_performance_item=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                )
+                table_name = "strings" if english_text == "Process ID" else "native_strings"
+                other_table = "native_strings" if table_name == "strings" else "strings"
+                self.assertEqual(translation_data[table_name].get(english_text), chinese_text)
+                self.assertNotIn(english_text, translation_data[other_table])
+                self.assertNotIn(english_text, active_items)
+
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2046$",
+        )
+        self.assertEqual(
+            workflow.count(
+                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=46'"
+            ),
+            2,
+        )
+
     def test_network_tools_window_text_uses_native_resources(self) -> None:
         audit = load_audit_module()
         source_paths = {
@@ -5415,7 +5775,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             Counter(
                 {
                     (r"bin\Release64\sys_info.exe", 312): 2,
-                    (r"bin\Release64\plugins\DotNetTools.dll", 8): 2,
+                    (r"bin\Release64\plugins\DotNetTools.dll", 46): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 9): 2,
