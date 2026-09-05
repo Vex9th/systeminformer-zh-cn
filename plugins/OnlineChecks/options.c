@@ -224,30 +224,22 @@ INT_PTR CALLBACK OptionsGeoLiteDlgProc(
 
             PhCenterWindow(WindowHandle, GetParent(WindowHandle));
 
+            PhSetDialogItemText(
+                WindowHandle,
+                IDC_KEYTEXT_L,
+                PhGetString(PH_AUTO(PhLoadUiString(
+                    PluginInstance->DllBase,
+                    IDS_OC_PASTE_LICENSE_KEY_HERE,
+                    NULL
+                    )))
+                );
+
             if (id == IDC_APIKEYIDBTN)
             {
-                PhSetDialogItemText(
-                    WindowHandle,
-                    IDC_KEYTEXT_L,
-                    PhGetString(PH_AUTO(PhLoadUiString(
-                        PluginInstance->DllBase,
-                        IDS_OC_PASTE_LICENSE_KEY_HERE,
-                        NULL
-                        )))
-                    );
                 PhSetDialogItemText(WindowHandle, IDC_KEY_EDIT, PhaGetStringSetting(SETTING_NAME_HYBRIDANALYSIS_DEFAULT_PAT)->Buffer);
             }
             else
             {
-                PhSetDialogItemText(
-                    WindowHandle,
-                    IDC_KEYTEXT_L,
-                    PhGetString(PH_AUTO(PhLoadUiString(
-                        PluginInstance->DllBase,
-                        IDS_OC_PASTE_LICENSE_KEY_HERE,
-                        NULL
-                        )))
-                    );
                 PhSetDialogItemText(WindowHandle, IDC_KEY_EDIT, PhaGetStringSetting(SETTING_NAME_VIRUSTOTAL_DEFAULT_PAT)->Buffer);
             }
 

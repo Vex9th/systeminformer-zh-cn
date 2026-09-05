@@ -482,6 +482,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     flag ? L"%s" : L"Result: %s",
                     L"Shared details"
                 );
+                PhShowError2(
+                    hwnd,
+                    L"Conditional title",
+                    flag ? L"%s" : L"Prefix: %s",
+                    L"Conditional details"
+                );
             }
         """
         entries = []
@@ -500,6 +506,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 ("c_msgbox_vararg", "Details"),
                 ("c_msgbox", "Result: %s"),
                 ("c_msgbox_vararg", "Shared details"),
+                ("c_msgbox", "Conditional title"),
+                ("c_msgbox", "Prefix: %s"),
+                ("c_msgbox_vararg", "Conditional details"),
             ],
         )
 
@@ -3234,17 +3243,23 @@ class NativeResourceGenerationTests(unittest.TestCase):
             )
 
         window_source = sources["WindowExplorer"]
-        for resource_id, sink in (
-            ("IDS_WE_RESUME", "SetWindowText"),
-            ("IDS_WE_PAUSE", "SetWindowText"),
-            ("IDS_WE_PROPERTY_EDITOR", "PhSetWindowText"),
-        ):
-            with self.subTest(window_explorer_route=resource_id):
-                self.assertRegex(
-                    window_source,
-                    rf"{sink}\([^;]*?PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
-                    rf"PluginInstance->DllBase,\s*{resource_id},\s*NULL\s*\)\)\)[^;]*?\);",
-                )
+        pause_branches = re.search(
+            r"if\s*\(\s*Context->ProviderPaused\s*\)\s*"
+            r"\{(?P<paused>.*?)\}\s*else\s*\{(?P<running>.*?)\}",
+            window_source,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(pause_branches)
+        self.assertIn("IDS_WE_RESUME", pause_branches.group("paused"))
+        self.assertNotIn("IDS_WE_PAUSE", pause_branches.group("paused"))
+        self.assertIn("IDS_WE_PAUSE", pause_branches.group("running"))
+        self.assertNotIn("IDS_WE_RESUME", pause_branches.group("running"))
+        self.assertRegex(
+            window_source,
+            r"PhSetWindowText\([^;]*?PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
+            r"PluginInstance->DllBase,\s*IDS_WE_PROPERTY_EDITOR,\s*NULL\s*\)\)\)"
+            r"[^;]*?\);",
+        )
 
         online_source = sources["OnlineChecks"]
         self.assertRegex(
@@ -3259,7 +3274,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             r"PhGetString\(PH_AUTO\(PhLoadUiString\(\s*PluginInstance->DllBase,\s*"
             r"IDS_OC_PASTE_LICENSE_KEY_HERE,\s*NULL\s*\)\)\)\s*\);"
         )
-        self.assertEqual(len(re.findall(paste_route, online_source)), 2)
+        self.assertEqual(len(re.findall(paste_route, online_source)), 1)
 
         updater_routes = []
         for name, args, _, _ in audit.find_calls(
