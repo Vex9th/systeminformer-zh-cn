@@ -574,7 +574,11 @@
     "Nonpaged pool bytes": "非分页池字节数",
     "Peak nonpaged pool bytes": "非分页池字节数峰值",
     "Private commit": "专用提交",
-    "Peak private commit": "专用提交峰值"
+    "Peak private commit": "专用提交峰值",
+    "Total bytes (average)": "总字节数 (平均)",
+    "Peak handles": "句柄峰值",
+    "Peak GDI handles": "GDI 句柄峰值",
+    "Peak USER handles": "USER 句柄峰值"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

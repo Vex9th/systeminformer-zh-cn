@@ -52,6 +52,28 @@ IDS_PH_STAT_SHAREDCOMMIT|2374|Shared commit|共享提交|PH_PROCESS_STATISTICS_C
 IDS_PH_STAT_PRIVATECOMMIT|2375|Private commit|专用提交|PH_PROCESS_STATISTICS_CATEGORY_MEMORY|PH_PROCESS_STATISTICS_INDEX_PRIVATECOMMIT
 IDS_PH_STAT_PEAKPRIVATECOMMIT|2376|Peak private commit|专用提交峰值|PH_PROCESS_STATISTICS_CATEGORY_MEMORY|PH_PROCESS_STATISTICS_INDEX_PEAKPRIVATECOMMIT
 IDS_PH_STAT_PAGEPRIORITY|2377|Page priority|页优先级|PH_PROCESS_STATISTICS_CATEGORY_MEMORY|PH_PROCESS_STATISTICS_INDEX_PAGEPRIORITY
+IDS_PH_STAT_READS|2378|Reads|读取|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_READS
+IDS_PH_STAT_READSDELTA|2379|Reads delta|读取增量|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_READSDELTA
+IDS_PH_STAT_READBYTES|2380|Read bytes|读取字节数|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_READBYTES
+IDS_PH_STAT_READBYTESDELTA|2381|Read bytes delta|读取字节数增量|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_READBYTESDELTA
+IDS_PH_STAT_WRITES|2382|Writes|写入|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_WRITES
+IDS_PH_STAT_WRITESDELTA|2383|Writes delta|写入增量|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_WRITESDELTA
+IDS_PH_STAT_WRITEBYTES|2384|Write bytes|写入字节数|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_WRITEBYTES
+IDS_PH_STAT_WRITEBYTESDELTA|2385|Write bytes delta|写入字节数增量|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_WRITEBYTESDELTA
+IDS_PH_STAT_OTHER|2386|Other|其他|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_OTHER
+IDS_PH_STAT_OTHERDELTA|2387|Other delta|其他增量|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_OTHERDELTA
+IDS_PH_STAT_OTHERBYTES|2388|Other bytes|其他字节|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_OTHERBYTES
+IDS_PH_STAT_OTHERBYTESDELTA|2389|Other bytes delta|其他字节增量|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_OTHERBYTESDELTA
+IDS_PH_STAT_TOTALBYTES|2390|Total bytes|总字节数|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_IOTOTAL
+IDS_PH_STAT_TOTALBYTESDELTA|2391|Total bytes delta|总字节数增量|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_IOTOTALDELTA
+IDS_PH_STAT_TOTALBYTESAVERAGE|2392|Total bytes (average)|总字节数 (平均)|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_IOAVERAGE
+IDS_PH_STAT_IOPRIORITY|2393|I/O priority|I/O 优先级|PH_PROCESS_STATISTICS_CATEGORY_IO|PH_PROCESS_STATISTICS_INDEX_IOPRIORITY
+IDS_PH_STAT_HANDLES|2394|Handles|句柄|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_HANDLES
+IDS_PH_STAT_PEAKHANDLES|2395|Peak handles|句柄峰值|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_PEAKHANDLES
+IDS_PH_STAT_GDIHANDLES|2396|GDI handles|GDI 句柄|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_GDIHANDLES
+IDS_PH_STAT_PEAKGDIHANDLES|2397|Peak GDI handles|GDI 句柄峰值|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_PEAKGDIHANDLES
+IDS_PH_STAT_USERHANDLES|2398|USER handles|USER 句柄|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_USERHANDLES
+IDS_PH_STAT_PEAKUSERHANDLES|2399|Peak USER handles|USER 句柄峰值|PH_PROCESS_STATISTICS_CATEGORY_OTHER|PH_PROCESS_STATISTICS_INDEX_PEAKUSERHANDLES
 """.strip()
 
 
@@ -74,6 +96,11 @@ NATIVE_KEYS = {
     "Peak nonpaged pool bytes",
     "Private commit",
     "Peak private commit",
+    "Total bytes delta",
+    "Total bytes (average)",
+    "Peak handles",
+    "Peak GDI handles",
+    "Peak USER handles",
 }
 
 
@@ -175,14 +202,16 @@ def parse_stringtable(path):
 
 
 class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
-    def test_table_has_exact_cpu_and_memory_scope(self):
-        self.assertEqual(len(ROUTES), 38)
-        self.assertEqual(len({symbol for symbol, *_ in ROUTES}), 38)
+    def test_table_has_exact_migrated_scope(self):
+        self.assertEqual(len(ROUTES), 60)
+        self.assertEqual(len({symbol for symbol, *_ in ROUTES}), 60)
         self.assertEqual(
             Counter(group for *_prefix, group, _index in ROUTES),
             {
                 "PH_PROCESS_STATISTICS_CATEGORY_CPU": 16,
                 "PH_PROCESS_STATISTICS_CATEGORY_MEMORY": 22,
+                "PH_PROCESS_STATISTICS_CATEGORY_IO": 16,
+                "PH_PROCESS_STATISTICS_CATEGORY_OTHER": 6,
             },
         )
 
@@ -206,7 +235,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             self.assertEqual(chinese.get(symbol), zh, symbol)
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
-        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_STAT_PAGEPRIORITY")
+        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_STAT_PEAKUSERHANDLES")
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
         expected_ids = set(range(first_id, last_id + 1))
@@ -219,16 +248,16 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
         self.assertEqual(len(english), len(expected_ids))
         self.assertEqual(len(chinese), len(expected_ids))
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2378$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2400$")
 
-    def test_json_uses_existing_strings_and_twelve_native_strings(self):
+    def test_json_uses_existing_and_native_strings_without_overlap(self):
         data = json.loads(
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
         strings = data["strings"]
         native_strings = data["native_strings"]
 
-        self.assertEqual(len(NATIVE_KEYS), 12)
+        self.assertEqual(len(NATIVE_KEYS), 17)
         self.assertFalse(strings.keys() & native_strings.keys())
         for _symbol, _resource_id, english, chinese, *_ in ROUTES:
             table = native_strings if english in NATIVE_KEYS else strings
@@ -241,8 +270,8 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("sys_info.exe=378"), 2)
-        self.assertNotIn("sys_info.exe=340", workflow)
+        self.assertEqual(workflow.count("sys_info.exe=400"), 2)
+        self.assertNotIn("sys_info.exe=378", workflow)
 
     def test_audit_removes_batch_and_preserves_expected_remainder(self):
         audit = load_audit_module()
@@ -260,8 +289,8 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         }
 
         self.assertFalse(target_english & {entry["english"] for entry in remaining})
-        self.assertEqual(len(remaining), 94)
-        self.assertEqual(len({entry["english"] for entry in remaining}), 87)
+        self.assertEqual(len(remaining), 72)
+        self.assertEqual(len({entry["english"] for entry in remaining}), 65)
 
 
 if __name__ == "__main__":

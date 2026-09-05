@@ -1369,8 +1369,30 @@
 #define IDS_PH_STAT_PRIVATECOMMIT                           2375
 #define IDS_PH_STAT_PEAKPRIVATECOMMIT                       2376
 #define IDS_PH_STAT_PAGEPRIORITY                            2377
+#define IDS_PH_STAT_READS                                   2378
+#define IDS_PH_STAT_READSDELTA                              2379
+#define IDS_PH_STAT_READBYTES                               2380
+#define IDS_PH_STAT_READBYTESDELTA                          2381
+#define IDS_PH_STAT_WRITES                                  2382
+#define IDS_PH_STAT_WRITESDELTA                             2383
+#define IDS_PH_STAT_WRITEBYTES                              2384
+#define IDS_PH_STAT_WRITEBYTESDELTA                         2385
+#define IDS_PH_STAT_OTHER                                   2386
+#define IDS_PH_STAT_OTHERDELTA                              2387
+#define IDS_PH_STAT_OTHERBYTES                              2388
+#define IDS_PH_STAT_OTHERBYTESDELTA                         2389
+#define IDS_PH_STAT_TOTALBYTES                              2390
+#define IDS_PH_STAT_TOTALBYTESDELTA                         2391
+#define IDS_PH_STAT_TOTALBYTESAVERAGE                       2392
+#define IDS_PH_STAT_IOPRIORITY                              2393
+#define IDS_PH_STAT_HANDLES                                 2394
+#define IDS_PH_STAT_PEAKHANDLES                             2395
+#define IDS_PH_STAT_GDIHANDLES                              2396
+#define IDS_PH_STAT_PEAKGDIHANDLES                          2397
+#define IDS_PH_STAT_USERHANDLES                             2398
+#define IDS_PH_STAT_PEAKUSERHANDLES                         2399
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_STAT_PAGEPRIORITY
+#define IDS_PH_LAST                                  IDS_PH_STAT_PEAKUSERHANDLES
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1382,6 +1404,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2378
+#define _APS_NEXT_SYMED_VALUE           2400
 #endif
 #endif
