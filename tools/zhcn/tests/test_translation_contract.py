@@ -22,6 +22,38 @@ def load_module(name: str):
 
 
 class TranslationManifestContractTests(unittest.TestCase):
+    def test_contract_lists_every_supported_audit_category(self) -> None:
+        contract = load_module("translation_contract")
+
+        self.assertEqual(
+            contract.ALL_CATEGORIES,
+            {
+                "c_balloon",
+                "c_combobox",
+                "c_confirm",
+                "c_emenu",
+                "c_listview_col",
+                "c_listview_group",
+                "c_listview_group_item",
+                "c_listview_item",
+                "c_msgbox",
+                "c_msgbox_vararg",
+                "c_search",
+                "c_statusbar",
+                "c_tab",
+                "c_taskdialog",
+                "c_toolbar",
+                "c_tree_item",
+                "c_treenew_col",
+                "c_treenew_empty",
+                "c_window_text",
+                "phlib_internal",
+                "rc_dialog",
+                "rc_menu",
+                "rc_stringtable",
+            },
+        )
+
     def test_module_for_path_preserves_independently_built_modules(self) -> None:
         contract = load_module("translation_contract")
 
@@ -132,6 +164,21 @@ class TranslationManifestContractTests(unittest.TestCase):
         )
         self.assertEqual([entry["module"] for entry in after], ["plugins/B"])
         self.assertEqual(after[0]["locations"], [{"file": "plugins/B/b.c", "line": 2}])
+
+    def test_audit_rejects_unknown_categories(self) -> None:
+        audit = load_module("audit")
+
+        with self.assertRaisesRegex(ValueError, "unknown manifest category"):
+            audit.build_manifest(
+                [
+                    {
+                        "category": "c_windows_text",
+                        "english": "Misspelled category",
+                        "file": "SystemInformer/main.c",
+                        "line": 1,
+                    }
+                ]
+            )
 
 
 class TranslationCheckerContractTests(unittest.TestCase):
@@ -318,6 +365,113 @@ class TranslationCheckerContractTests(unittest.TestCase):
                 result, _ = self.run_checker(manifest, translations)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn("error: invalid manifest", result.stdout)
+
+    def test_checker_rejects_unknown_categories(self) -> None:
+        manifest = {
+            "schema_version": 2,
+            "total_occurrences": 1,
+            "unique_strings": [
+                {
+                    "category": "c_windows_text",
+                    "english": "Misspelled category",
+                    "locations": [
+                        {"file": "SystemInformer/main.c", "line": 1}
+                    ],
+                }
+            ],
+        }
+
+        result, _ = self.run_checker(
+            manifest, {"strings": {}, "native_strings": {}}
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("unknown manifest category", result.stdout)
+
+    def test_checker_rejects_duplicate_canonical_keys(self) -> None:
+        translations = {"strings": {}, "native_strings": {}}
+        cases = {
+            "ordinary": [
+                {
+                    "category": "c_emenu",
+                    "english": "Duplicate",
+                    "locations": [{"file": "plugins/A/a.c", "line": 1}],
+                },
+                {
+                    "category": "c_emenu",
+                    "english": "Duplicate",
+                    "locations": [{"file": "plugins/B/b.c", "line": 2}],
+                },
+            ],
+            "callsite": [
+                {
+                    "module": "plugins/A",
+                    "category": "c_window_text",
+                    "english": "Duplicate",
+                    "locations": [{"file": "plugins/A/a.c", "line": 1}],
+                },
+                {
+                    "module": "plugins/A",
+                    "category": "c_window_text",
+                    "english": "Duplicate",
+                    "locations": [{"file": "plugins/A/b.c", "line": 2}],
+                },
+            ],
+        }
+
+        for name, entries in cases.items():
+            with self.subTest(name=name):
+                manifest = {
+                    "schema_version": 2,
+                    "total_occurrences": 2,
+                    "unique_strings": entries,
+                }
+                result, _ = self.run_checker(manifest, translations)
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("duplicate canonical manifest key", result.stdout)
+
+    def test_checker_requires_total_occurrences_to_match_locations(self) -> None:
+        manifest = {
+            "schema_version": 2,
+            "total_occurrences": 2,
+            "unique_strings": [
+                {
+                    "category": "c_emenu",
+                    "english": "One occurrence",
+                    "locations": [{"file": "SystemInformer/main.c", "line": 1}],
+                }
+            ],
+        }
+
+        result, _ = self.run_checker(
+            manifest, {"strings": {}, "native_strings": {}}
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("total_occurrences", result.stdout)
+
+    def test_checker_allows_duplicate_source_locations_when_total_matches(self) -> None:
+        manifest = {
+            "schema_version": 2,
+            "total_occurrences": 2,
+            "unique_strings": [
+                {
+                    "category": "c_emenu",
+                    "english": "Repeated occurrence",
+                    "locations": [
+                        {"file": "SystemInformer/main.c", "line": 1},
+                        {"file": "SystemInformer/main.c", "line": 1},
+                    ],
+                }
+            ],
+        }
+
+        result, _ = self.run_checker(
+            manifest, {"strings": {}, "native_strings": {}}
+        )
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

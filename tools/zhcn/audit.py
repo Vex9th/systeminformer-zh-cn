@@ -46,8 +46,10 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
 from translation_contract import (  # noqa: E402
+    ALL_CATEGORIES,
     CALLSITE_MIGRATION_CATEGORIES,
     MANIFEST_SCHEMA_VERSION,
+    canonical_manifest_key,
     module_for_path,
 )
 
@@ -1119,12 +1121,14 @@ def build_manifest(entries):
     for entry in entries:
         category = entry["category"]
         english = entry["english"]
+        if category not in ALL_CATEGORIES:
+            raise ValueError(f"unknown manifest category: {category!r}")
         module = (
             module_for_path(entry["file"])
             if category in CALLSITE_MIGRATION_CATEGORIES
             else None
         )
-        key = (module, category, english)
+        key = canonical_manifest_key(category, english, module)
         record = merged[key]
         record["category"] = category
         record["english"] = english

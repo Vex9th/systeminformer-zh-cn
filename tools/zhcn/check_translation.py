@@ -32,8 +32,10 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
 from translation_contract import (  # noqa: E402
+    ALL_CATEGORIES,
     CALLSITE_MIGRATION_CATEGORIES,
     MANIFEST_SCHEMA_VERSION,
+    canonical_manifest_key,
     module_for_path,
 )
 
@@ -179,6 +181,9 @@ def validate_manifest(manifest: dict) -> None:
     if not isinstance(manifest.get("total_occurrences"), int):
         raise ValueError("total_occurrences must be an integer")
 
+    canonical_keys = set()
+    location_count = 0
+
     for entry in manifest["unique_strings"]:
         category = entry.get("category")
         english = entry.get("english")
@@ -186,8 +191,11 @@ def validate_manifest(manifest: dict) -> None:
 
         if not isinstance(category, str) or not isinstance(english, str):
             raise ValueError("every entry must have string category and english fields")
+        if category not in ALL_CATEGORIES:
+            raise ValueError(f"unknown manifest category: {category!r}")
         if not isinstance(locations, list) or not locations:
             raise ValueError(f"entry {category}/{english!r} must have locations")
+        location_count += len(locations)
         for location in locations:
             if not isinstance(location, dict):
                 raise ValueError(f"entry {category}/{english!r} has an invalid location")
@@ -216,6 +224,17 @@ def validate_manifest(manifest: dict) -> None:
             raise ValueError(
                 f"ordinary entry {category}/{english!r} must not declare module"
             )
+
+        key = canonical_manifest_key(category, english, entry.get("module"))
+        if key in canonical_keys:
+            raise ValueError(f"duplicate canonical manifest key: {key!r}")
+        canonical_keys.add(key)
+
+    if manifest["total_occurrences"] != location_count:
+        raise ValueError(
+            "total_occurrences does not match the number of locations: "
+            f"{manifest['total_occurrences']} != {location_count}"
+        )
 
 
 def main():
