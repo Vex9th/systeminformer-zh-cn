@@ -544,11 +544,11 @@ INT_PTR CALLBACK NetworkPingWndProc(
 
             PhSetDialogItemText(hwndDlg, IDC_PINGS_SENT, PhaFormatString(
                 PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PINGS_SENT_FORMAT, NULL))),
-                context->PingSentCount
+                (ULONG)context->PingSentCount
                 )->Buffer);
             PhSetDialogItemText(hwndDlg, IDC_PINGS_LOST, PhaFormatString(
                 PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PINGS_LOST_FORMAT, NULL))),
-                context->PingLossCount,
+                (ULONG)context->PingLossCount,
                 ((FLOAT)context->PingLossCount / context->PingSentCount * 100)
                 )->Buffer);
 
@@ -561,11 +561,11 @@ INT_PTR CALLBACK NetworkPingWndProc(
 
             PhSetDialogItemText(hwndDlg, IDC_BAD_HASH, PhaFormatString(
                 PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_BAD_REPLIES_FORMAT, NULL))),
-                context->HashFailCount
+                (ULONG)context->HashFailCount
                 )->Buffer);
             PhSetDialogItemText(hwndDlg, IDC_ANON_ADDR, PhaFormatString(
                 PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_ANON_REPLIES_FORMAT, NULL))),
-                context->UnknownAddrCount
+                (ULONG)context->UnknownAddrCount
                 )->Buffer);
         }
         break;

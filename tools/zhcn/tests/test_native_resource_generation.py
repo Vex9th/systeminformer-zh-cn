@@ -3383,6 +3383,22 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     + r"\s*,",
                 )
 
+        ping_unsigned_counters = {
+            "IDC_PINGS_SENT": ("IDS_NT_PINGS_SENT_FORMAT", "PingSentCount"),
+            "IDC_PINGS_LOST": ("IDS_NT_PINGS_LOST_FORMAT", "PingLossCount"),
+            "IDC_BAD_HASH": ("IDS_NT_BAD_REPLIES_FORMAT", "HashFailCount"),
+            "IDC_ANON_ADDR": ("IDS_NT_ANON_REPLIES_FORMAT", "UnknownAddrCount"),
+        }
+        for target, (resource_id, field_name) in ping_unsigned_counters.items():
+            with self.subTest(network_tools_ping_unsigned_counter=target):
+                self.assertRegex(
+                    sources["ping.c"],
+                    rf"PhSetDialogItemText\(\s*hwndDlg,\s*{target},\s*"
+                    r"PhaFormatString\(\s*"
+                    + ui_string_expression.format(resource_id=resource_id)
+                    + rf"\s*,\s*\(ULONG\)context->{field_name}\b",
+                )
+
         tracing_result_selection = re.search(
             r"if\s*\(failed\)\s*\{\s*"
             r"tracingResult\s*=\s*PhLoadUiString\(PluginInstance->DllBase,\s*"
@@ -3397,6 +3413,49 @@ class NativeResourceGenerationTests(unittest.TestCase):
             re.DOTALL,
         )
         self.assertIsNotNone(tracing_result_selection)
+
+        tracert_formatted_targets = (
+            (r"hwndDlg", "IDS_NT_TRACERT_TITLE_FORMAT", 1),
+            (r"context->WindowHandle", "IDS_NT_TRACERT_TITLE_FORMAT", 1),
+            (r"context->WindowHandle", "IDS_NT_TRACERT_TITLE_RESULT_FORMAT", 1),
+            (r"GetDlgItem\(hwndDlg,\s*IDC_STATUS\)", "IDS_NT_TRACERT_ROUTE_FORMAT", 2),
+            (r"GetDlgItem\(hwndDlg,\s*IDC_STATUS\)", "IDS_NT_TRACERT_ROUTE_RESULT_FORMAT", 1),
+        )
+        for target_pattern, resource_id, expected_count in tracert_formatted_targets:
+            with self.subTest(network_tools_tracert_target=resource_id):
+                self.assertEqual(
+                    len(
+                        re.findall(
+                            rf"PhSetWindowText\(\s*{target_pattern},\s*"
+                            r"PhaFormatString\(\s*"
+                            + ui_string_expression.format(resource_id=resource_id)
+                            + r"\s*,",
+                            sources["tracert.c"],
+                        )
+                    ),
+                    expected_count,
+                )
+
+        tracing_finish_body = sources["tracert.c"].split(
+            "case NTM_RECEIVEDFINISH:", 1
+        )[1].split("case WM_TRACERT_HOSTNAME:", 1)[0]
+        title_update = tracing_finish_body.index(
+            "PhSetWindowText(context->WindowHandle"
+        )
+        status_update = tracing_finish_body.index(
+            "PhSetWindowText(GetDlgItem(hwndDlg, IDC_STATUS)"
+        )
+        result_release = tracing_finish_body.index(
+            "PhDereferenceObject(tracingResult)"
+        )
+        tree_update = tracing_finish_body.index(
+            "TreeNew_NodesStructured(context->TreeNewHandle)"
+        )
+        self.assertEqual(tracing_finish_body.count("PhGetString(tracingResult)"), 2)
+        self.assertEqual(tracing_finish_body.count("PhDereferenceObject(tracingResult)"), 1)
+        self.assertLess(title_update, status_update)
+        self.assertLess(status_update, result_release)
+        self.assertLess(result_release, tree_update)
 
         self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12022$")
         migrated_resource_ids = "|".join(
