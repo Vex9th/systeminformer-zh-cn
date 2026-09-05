@@ -111,7 +111,10 @@ BOOLEAN NetworkDeviceGraphMessageCallback(
  
      if (mediaState == MediaConnectStateConnected)
      {
-         PhSetWindowText(Context->NetAdapterPanelStateLabel, L"Connected");
+         PhSetWindowText(
+             Context->NetAdapterPanelStateLabel,
+             PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_CONNECTED, NULL)))
+             );
  
          //PhInitFormatSR(&format[0], PH_AUTO_T(PH_STRING, NetAdapterFormatBitratePrefix(linkSpeedValue))->sr);
          PhInitFormatSize(&format[0], linkSpeedValue / BITS_IN_ONE_BYTE);
@@ -130,7 +133,10 @@ BOOLEAN NetworkDeviceGraphMessageCallback(
      }
      else
      {
-         PhSetWindowText(Context->NetAdapterPanelStateLabel, L"Disconnected");
+         PhSetWindowText(
+             Context->NetAdapterPanelStateLabel,
+             PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_DISCONNECTED, NULL)))
+             );
          PhSetWindowText(Context->NetAdapterPanelSpeedLabel, L"N/A");
      }
  

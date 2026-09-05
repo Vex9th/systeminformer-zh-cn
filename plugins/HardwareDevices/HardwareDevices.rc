@@ -442,8 +442,15 @@ END
 STRINGTABLE
 BEGIN
     IDS_HD_NO_GRAPHICS_NODES        "There are no graphics nodes to display."
+    IDS_HD_CONNECTED                "Connected"
+    IDS_HD_DISCONNECTED             "Disconnected"
+    IDS_HD_ADAPTER                  "Adapter"
+    IDS_HD_UNICAST                  "Unicast"
+    IDS_HD_BROADCAST                "Broadcast"
+    IDS_HD_MULTICAST                "Multicast"
+    IDS_HD_ERRORS                   "Errors"
+    IDS_HD_UNKNOWN_NETWORK_ADAPTER  "Unknown network adapter"
 END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
-

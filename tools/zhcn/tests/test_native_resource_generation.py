@@ -913,7 +913,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("763 strings", result.stdout)
+        self.assertIn("771 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3484,6 +3484,208 @@ class NativeResourceGenerationTests(unittest.TestCase):
             2,
         )
 
+    def test_hardware_device_connection_text_uses_native_resources(self) -> None:
+        audit = load_audit_module()
+        source_names = (
+            "diskoptions.c",
+            "gpuoptions.c",
+            "netoptions.c",
+            "poweroptions.c",
+            "netdetails.c",
+            "netgraph.c",
+        )
+        sources = {
+            name: audit.mask_c_comments(
+                (REPO_ROOT / "plugins" / "HardwareDevices" / name).read_text(
+                    encoding="utf-8-sig"
+                )
+            )
+            for name in source_names
+        }
+        resource_header = (
+            REPO_ROOT / "plugins" / "HardwareDevices" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = (
+            REPO_ROOT / "plugins" / "HardwareDevices" / "HardwareDevices.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_resource = (
+            REPO_ROOT / "plugins" / "HardwareDevices" / "HardwareDevices.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        workflow = (
+            REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
+        ).read_text(encoding="utf-8-sig")
+        expected_resources = {
+            "IDS_HD_CONNECTED": (12001, "Connected", "已连接"),
+            "IDS_HD_DISCONNECTED": (12002, "Disconnected", "已断开连接"),
+            "IDS_HD_ADAPTER": (12003, "Adapter", "适配器"),
+            "IDS_HD_UNICAST": (12004, "Unicast", "单播"),
+            "IDS_HD_BROADCAST": (12005, "Broadcast", "广播"),
+            "IDS_HD_MULTICAST": (12006, "Multicast", "多播"),
+            "IDS_HD_ERRORS": (12007, "Errors", "错误"),
+            "IDS_HD_UNKNOWN_NETWORK_ADAPTER": (
+                12008,
+                "Unknown network adapter",
+                "未知网络适配器",
+            ),
+        }
+        native_owned = {
+            "Connected",
+            "Disconnected",
+            "Unicast",
+            "Broadcast",
+            "Multicast",
+            "Errors",
+            "Unknown network adapter",
+        }
+
+        for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
+            with self.subTest(hardware_device_resource=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{re.escape(resource_id)}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_resource,
+                    rf'(?m)^\s*{re.escape(resource_id)}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_resource,
+                    rf'(?m)^\s*{re.escape(resource_id)}\s+"{re.escape(chinese_text)}"$',
+                )
+                table_name = "native_strings" if english_text in native_owned else "strings"
+                other_table = "strings" if table_name == "native_strings" else "native_strings"
+                self.assertEqual(
+                    translation_data[table_name].get(english_text),
+                    chinese_text,
+                )
+                self.assertNotIn(english_text, translation_data[other_table])
+
+        ui_string_expression = (
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\("
+            r"PluginInstance->DllBase,\s*{resource_id},\s*NULL\)\)\)"
+        )
+        for source_name in (
+            "diskoptions.c",
+            "gpuoptions.c",
+            "netoptions.c",
+            "poweroptions.c",
+        ):
+            with self.subTest(hardware_device_groups=source_name):
+                self.assertRegex(
+                    sources[source_name],
+                    r"PhAddListViewGroup\(\s*[^,]+,\s*0,\s*"
+                    + ui_string_expression.format(resource_id="IDS_HD_CONNECTED")
+                    + r"\s*\);",
+                )
+                self.assertRegex(
+                    sources[source_name],
+                    r"PhAddListViewGroup\(\s*[^,]+,\s*1,\s*"
+                    + ui_string_expression.format(resource_id="IDS_HD_DISCONNECTED")
+                    + r"\s*\);",
+                )
+                self.assertNotIn('L"Connected"', sources[source_name])
+                self.assertNotIn('L"Disconnected"', sources[source_name])
+
+        netdetails_groups = {
+            "NETADAPTER_DETAILS_CATEGORY_ADAPTER": "IDS_HD_ADAPTER",
+            "NETADAPTER_DETAILS_CATEGORY_UNICAST": "IDS_HD_UNICAST",
+            "NETADAPTER_DETAILS_CATEGORY_BROADCAST": "IDS_HD_BROADCAST",
+            "NETADAPTER_DETAILS_CATEGORY_MULTICAST": "IDS_HD_MULTICAST",
+            "NETADAPTER_DETAILS_CATEGORY_ERRORS": "IDS_HD_ERRORS",
+        }
+        for category, resource_id in netdetails_groups.items():
+            with self.subTest(hardware_device_details_group=category):
+                self.assertRegex(
+                    sources["netdetails.c"],
+                    rf"PhAddListViewGroup\(\s*ListViewHandle,\s*{category},\s*"
+                    + ui_string_expression.format(resource_id=resource_id)
+                    + r"\s*\);",
+                )
+
+        for literal in (
+            "Connected",
+            "Disconnected",
+            "Adapter",
+            "Unicast",
+            "Broadcast",
+            "Multicast",
+            "Errors",
+        ):
+            with self.subTest(hardware_device_removed_literal=literal):
+                self.assertNotIn(f'L"{literal}"', "\n".join(sources.values()))
+
+        self.assertRegex(
+            sources["netdetails.c"],
+            r"PhSetListViewSubItem\(\s*Context->ListViewHandle,\s*"
+            r"NETADAPTER_DETAILS_INDEX_STATE,\s*1,\s*"
+            r"mediaState\s*==\s*MediaConnectStateConnected\s*\?\s*"
+            + ui_string_expression.format(resource_id="IDS_HD_CONNECTED")
+            + r"\s*:\s*"
+            + ui_string_expression.format(resource_id="IDS_HD_DISCONNECTED")
+            + r"\s*\);",
+        )
+        self.assertRegex(
+            sources["netdetails.c"],
+            r"PhSetWindowText\(\s*WindowHandle,\s*PhGetStringOrDefault\(\s*"
+            r"context->AdapterName,\s*"
+            + ui_string_expression.format(resource_id="IDS_HD_UNKNOWN_NETWORK_ADAPTER")
+            + r"\s*\)\s*\);",
+        )
+        self.assertNotIn('L"Unknown network adapter"', sources["netdetails.c"])
+        self.assertEqual(sources["netoptions.c"].count('L"Unknown network adapter"'), 1)
+
+        for resource_id in ("IDS_HD_CONNECTED", "IDS_HD_DISCONNECTED"):
+            with self.subTest(hardware_device_panel_state=resource_id):
+                self.assertRegex(
+                    sources["netgraph.c"],
+                    r"PhSetWindowText\(\s*Context->NetAdapterPanelStateLabel,\s*"
+                    + ui_string_expression.format(resource_id=resource_id)
+                    + r"\s*\);",
+                )
+        self.assertNotIn('L"Connected"', sources["netgraph.c"])
+        self.assertNotIn('L"Disconnected"', sources["netgraph.c"])
+
+        expected_load_counts = {
+            "IDS_HD_CONNECTED": 6,
+            "IDS_HD_DISCONNECTED": 6,
+            "IDS_HD_ADAPTER": 1,
+            "IDS_HD_UNICAST": 1,
+            "IDS_HD_BROADCAST": 1,
+            "IDS_HD_MULTICAST": 1,
+            "IDS_HD_ERRORS": 1,
+            "IDS_HD_UNKNOWN_NETWORK_ADAPTER": 1,
+        }
+        all_source = "\n".join(sources.values())
+        for resource_id, expected_count in expected_load_counts.items():
+            with self.subTest(hardware_device_load_count=resource_id):
+                self.assertEqual(
+                    len(
+                        re.findall(
+                            rf"PhLoadUiString\(PluginInstance->DllBase,\s*{resource_id},",
+                            all_source,
+                        )
+                    ),
+                    expected_count,
+                )
+
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12009$")
+        self.assertEqual(len(stringtable_ids(english_resource)), 9)
+        self.assertEqual(len(stringtable_ids(chinese_resource)), 9)
+        self.assertEqual(
+            len(
+                re.findall(
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=9'",
+                    workflow,
+                )
+            ),
+            2,
+        )
+
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
@@ -4171,7 +4373,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\DotNetTools.dll", 8): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
-                    (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
+                    (r"bin\Release64\plugins\HardwareDevices.dll", 9): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 10): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,

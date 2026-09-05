@@ -31,11 +31,31 @@ VOID NetAdapterAddListViewItemGroups(
     )
 {
     ListView_EnableGroupView(ListViewHandle, TRUE);
-    PhAddListViewGroup(ListViewHandle, NETADAPTER_DETAILS_CATEGORY_ADAPTER, L"Adapter");
-    PhAddListViewGroup(ListViewHandle, NETADAPTER_DETAILS_CATEGORY_UNICAST, L"Unicast");
-    PhAddListViewGroup(ListViewHandle, NETADAPTER_DETAILS_CATEGORY_BROADCAST, L"Broadcast");
-    PhAddListViewGroup(ListViewHandle, NETADAPTER_DETAILS_CATEGORY_MULTICAST, L"Multicast");
-    PhAddListViewGroup(ListViewHandle, NETADAPTER_DETAILS_CATEGORY_ERRORS, L"Errors");
+    PhAddListViewGroup(
+        ListViewHandle,
+        NETADAPTER_DETAILS_CATEGORY_ADAPTER,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_ADAPTER, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        NETADAPTER_DETAILS_CATEGORY_UNICAST,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_UNICAST, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        NETADAPTER_DETAILS_CATEGORY_BROADCAST,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_BROADCAST, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        NETADAPTER_DETAILS_CATEGORY_MULTICAST,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_MULTICAST, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        NETADAPTER_DETAILS_CATEGORY_ERRORS,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_ERRORS, NULL)))
+        );
 
     PhAddListViewGroupItem(ListViewHandle, NETADAPTER_DETAILS_CATEGORY_ADAPTER, NETADAPTER_DETAILS_INDEX_STATE, L"State", NULL);
     //PhAddListViewGroupItem(ListViewHandle, NETADAPTER_DETAILS_CATEGORY_ADAPTER, NETADAPTER_DETAILS_INDEX_CONNECTIVITY, L"Connectivity");
@@ -536,7 +556,14 @@ VOID NetAdapterUpdateDetails(
         interfaceXmitSpeed /= NetUpdateInterval;
     }
 
-    PhSetListViewSubItem(Context->ListViewHandle, NETADAPTER_DETAILS_INDEX_STATE, 1, mediaState == MediaConnectStateConnected ? L"Connected" : L"Disconnected");
+    PhSetListViewSubItem(
+        Context->ListViewHandle,
+        NETADAPTER_DETAILS_INDEX_STATE,
+        1,
+        mediaState == MediaConnectStateConnected
+            ? PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_CONNECTED, NULL)))
+            : PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_DISCONNECTED, NULL)))
+        );
     PhSetListViewSubItem(Context->ListViewHandle, NETADAPTER_DETAILS_INDEX_LINKSPEED, 1, PhaFormatString(
         L"%s/s (%s)",
         PhaFormatSize(interfaceLinkSpeed / BITS_IN_ONE_BYTE, ULONG_MAX)->Buffer,
@@ -635,7 +662,13 @@ INT_PTR CALLBACK NetAdapterDetailsDlgProc(
 
             PhSetApplicationWindowIcon(WindowHandle);
 
-            PhSetWindowText(WindowHandle, PhGetStringOrDefault(context->AdapterName, L"Unknown network adapter"));
+            PhSetWindowText(
+                WindowHandle,
+                PhGetStringOrDefault(
+                    context->AdapterName,
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_UNKNOWN_NETWORK_ADAPTER, NULL)))
+                    )
+                );
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
@@ -879,4 +912,3 @@ VOID ShowNetAdapterDetailsDialog(
 
     PostMessage(Context->DetailsWindowDialogHandle, WM_PH_SHOW_DIALOG, 0, 0);
 }
-

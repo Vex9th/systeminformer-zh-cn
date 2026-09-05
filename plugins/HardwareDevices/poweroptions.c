@@ -942,8 +942,16 @@ INT_PTR CALLBACK RaplDeviceOptionsDlgProc(
             LoadRaplDeviceImages(context);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, 0, L"Connected");
-            PhAddListViewGroup(context->ListViewHandle, 1, L"Disconnected");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                0,
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_CONNECTED, NULL)))
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                1,
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_HD_DISCONNECTED, NULL)))
+                );
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);

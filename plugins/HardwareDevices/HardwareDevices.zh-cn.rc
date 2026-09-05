@@ -270,4 +270,12 @@ END
 STRINGTABLE
 BEGIN
     IDS_HD_NO_GRAPHICS_NODES        "没有可显示的图形节点。"
+    IDS_HD_CONNECTED                "已连接"
+    IDS_HD_DISCONNECTED             "已断开连接"
+    IDS_HD_ADAPTER                  "适配器"
+    IDS_HD_UNICAST                  "单播"
+    IDS_HD_BROADCAST                "广播"
+    IDS_HD_MULTICAST                "多播"
+    IDS_HD_ERRORS                   "错误"
+    IDS_HD_UNKNOWN_NETWORK_ADAPTER  "未知网络适配器"
 END

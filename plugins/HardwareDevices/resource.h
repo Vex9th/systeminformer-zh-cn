@@ -84,6 +84,14 @@
 #define IDD_DEVICE_RESOURCES            1110
 #define IDC_DEVICE_RESOURCES_INFO       1111
 #define IDS_HD_NO_GRAPHICS_NODES        12000
+#define IDS_HD_CONNECTED                12001
+#define IDS_HD_DISCONNECTED             12002
+#define IDS_HD_ADAPTER                  12003
+#define IDS_HD_UNICAST                  12004
+#define IDS_HD_BROADCAST                12005
+#define IDS_HD_MULTICAST                12006
+#define IDS_HD_ERRORS                   12007
+#define IDS_HD_UNKNOWN_NETWORK_ADAPTER  12008
 
 // Next default values for new objects
 //
@@ -92,6 +100,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        118
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1045
-#define _APS_NEXT_SYMED_VALUE           12001
+#define _APS_NEXT_SYMED_VALUE           12009
 #endif
 #endif
