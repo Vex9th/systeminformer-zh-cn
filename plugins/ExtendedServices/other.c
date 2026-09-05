@@ -33,91 +33,93 @@ typedef struct _SERVICE_OTHER_CONTEXT
 
 static _RtlCreateServiceSid RtlCreateServiceSid_I = NULL;
 
-static PH_KEY_VALUE_PAIR EspServiceSidTypePairs[] =
+typedef struct _ESP_SERVICE_OPTION_ENTRY
 {
-    SIP(L"None", SERVICE_SID_TYPE_NONE),
-    SIP(L"Restricted", SERVICE_SID_TYPE_RESTRICTED),
-    SIP(L"Unrestricted", SERVICE_SID_TYPE_UNRESTRICTED)
+    ULONG ResourceId;
+    ULONG Value;
+} ESP_SERVICE_OPTION_ENTRY, *PESP_SERVICE_OPTION_ENTRY;
+
+static CONST ESP_SERVICE_OPTION_ENTRY EspServiceSidTypeEntries[] =
+{
+    { IDS_ES_SERVICE_OPTION_NONE, SERVICE_SID_TYPE_NONE },
+    { IDS_ES_SERVICE_SID_RESTRICTED, SERVICE_SID_TYPE_RESTRICTED },
+    { IDS_ES_SERVICE_SID_UNRESTRICTED, SERVICE_SID_TYPE_UNRESTRICTED }
 };
 
-static PH_KEY_VALUE_PAIR EspServiceLaunchProtectedPairs[] =
+static CONST ESP_SERVICE_OPTION_ENTRY EspServiceLaunchProtectedEntries[] =
 {
-    SIP(L"None", SERVICE_LAUNCH_PROTECTED_NONE),
-    SIP(L"Full (Windows)", SERVICE_LAUNCH_PROTECTED_WINDOWS),
-    SIP(L"Light (Windows)", SERVICE_LAUNCH_PROTECTED_WINDOWS_LIGHT),
-    SIP(L"Light (Antimalware)", SERVICE_LAUNCH_PROTECTED_ANTIMALWARE_LIGHT),
-    SIP(L"Light (StoreApp)", 0x4),
+    { IDS_ES_SERVICE_OPTION_NONE, SERVICE_LAUNCH_PROTECTED_NONE },
+    { IDS_ES_SERVICE_PROTECTION_FULL_WINDOWS, SERVICE_LAUNCH_PROTECTED_WINDOWS },
+    { IDS_ES_SERVICE_PROTECTION_LIGHT_WINDOWS, SERVICE_LAUNCH_PROTECTED_WINDOWS_LIGHT },
+    { IDS_ES_SERVICE_PROTECTION_LIGHT_ANTIMALWARE, SERVICE_LAUNCH_PROTECTED_ANTIMALWARE_LIGHT }
 };
 
-static WCHAR *EspServiceSidTypeStrings[3] = { L"None", L"Restricted", L"Unrestricted" };
-static WCHAR *EspServiceLaunchProtectedStrings[4] = { L"None", L"Full (Windows)", L"Light (Windows)", L"Light (Antimalware)" };
-
-PCWSTR EspGetServiceSidTypeString(
-    _In_ ULONG SidType
+static VOID EspAddServiceOptionEntries(
+    _In_ HWND ComboBoxHandle,
+    _In_reads_(NumberOfEntries) CONST ESP_SERVICE_OPTION_ENTRY* Entries,
+    _In_ ULONG NumberOfEntries
     )
 {
-    PCWSTR string;
+    for (ULONG i = 0; i < NumberOfEntries; i++)
+    {
+        PPH_STRING text;
+        INT itemIndex;
 
-    if (PhFindStringSiKeyValuePairs(
-        EspServiceSidTypePairs,
-        sizeof(EspServiceSidTypePairs),
-        SidType,
-        &string
-        ))
-        return string;
-    else
-        return L"Unknown";
+        text = PH_AUTO(PhLoadUiString(
+            PluginInstance->DllBase,
+            Entries[i].ResourceId,
+            NULL
+            ));
+        itemIndex = ComboBox_AddString(ComboBoxHandle, PhGetString(text));
+
+        if (itemIndex >= 0 && ComboBox_SetItemData(
+            ComboBoxHandle,
+            itemIndex,
+            UlongToPtr(Entries[i].Value)
+            ) == CB_ERR)
+        {
+            ComboBox_DeleteString(ComboBoxHandle, itemIndex);
+        }
+    }
 }
 
-ULONG EspGetServiceSidTypeInteger(
-    _In_ PCWSTR SidType
+static BOOLEAN EspSelectServiceOption(
+    _In_ HWND ComboBoxHandle,
+    _In_ ULONG Value
     )
 {
-    ULONG integer;
+    for (INT i = 0; i < ComboBox_GetCount(ComboBoxHandle); i++)
+    {
+        if ((ULONG)ComboBox_GetItemData(ComboBoxHandle, i) == Value)
+        {
+            ComboBox_SetCurSel(ComboBoxHandle, i);
+            return TRUE;
+        }
+    }
 
-    if (PhFindIntegerSiKeyValuePairs(
-        EspServiceSidTypePairs,
-        sizeof(EspServiceSidTypePairs),
-        SidType,
-        &integer
-        ))
-        return integer;
-    else
-        return ULONG_MAX;
+    return FALSE;
 }
 
-PCWSTR EspGetServiceLaunchProtectedString(
-    _In_ ULONG LaunchProtected
+static BOOLEAN EspGetSelectedServiceOption(
+    _In_ HWND ComboBoxHandle,
+    _Out_ PULONG Value
     )
 {
-    PCWSTR string;
+    INT selectedIndex;
+    LRESULT selectedValue;
 
-    if (PhFindStringSiKeyValuePairs(
-        EspServiceLaunchProtectedPairs,
-        sizeof(EspServiceLaunchProtectedPairs),
-        LaunchProtected,
-        &string
-        ))
-        return string;
-    else
-        return L"Unknown";
-}
+    selectedIndex = ComboBox_GetCurSel(ComboBoxHandle);
 
-ULONG EspGetServiceLaunchProtectedInteger(
-    _In_ PCWSTR LaunchProtected
-    )
-{
-    ULONG integer;
+    if (selectedIndex == CB_ERR)
+        return FALSE;
 
-    if (PhFindIntegerSiKeyValuePairs(
-        EspServiceLaunchProtectedPairs,
-        sizeof(EspServiceLaunchProtectedPairs),
-        LaunchProtected,
-        &integer
-        ))
-        return integer;
-    else
-        return ULONG_MAX;
+    selectedValue = ComboBox_GetItemData(ComboBoxHandle, selectedIndex);
+
+    if (selectedValue == CB_ERR)
+        return FALSE;
+
+    *Value = (ULONG)selectedValue;
+    return TRUE;
 }
 
 NTSTATUS EspLoadOtherInfo(
@@ -206,9 +208,10 @@ NTSTATUS EspLoadOtherInfo(
         NULL
         )))
     {
-        PhSelectComboBoxString(GetDlgItem(WindowHandle, IDC_SIDTYPE),
-            EspGetServiceSidTypeString(sidInfo.dwServiceSidType), FALSE);
-        Context->SidTypeValid = TRUE;
+        Context->SidTypeValid = EspSelectServiceOption(
+            GetDlgItem(WindowHandle, IDC_SIDTYPE),
+            sidInfo.dwServiceSidType
+            );
     }
 
     // Launch protected
@@ -221,9 +224,10 @@ NTSTATUS EspLoadOtherInfo(
         NULL
         )))
     {
-        PhSelectComboBoxString(GetDlgItem(WindowHandle, IDC_PROTECTION),
-            EspGetServiceLaunchProtectedString(launchProtectedInfo.dwLaunchProtected), FALSE);
-        Context->LaunchProtectedValid = TRUE;
+        Context->LaunchProtectedValid = EspSelectServiceOption(
+            GetDlgItem(WindowHandle, IDC_PROTECTION),
+            launchProtectedInfo.dwLaunchProtected
+            );
         Context->OriginalLaunchProtected = launchProtectedInfo.dwLaunchProtected;
     }
 
@@ -347,10 +351,16 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
 
             EnableWindow(GetDlgItem(WindowHandle, IDC_REMOVE), FALSE);
 
-            PhAddComboBoxStrings(GetDlgItem(WindowHandle, IDC_SIDTYPE),
-                EspServiceSidTypeStrings, sizeof(EspServiceSidTypeStrings) / sizeof(PWSTR));
-            PhAddComboBoxStrings(GetDlgItem(WindowHandle, IDC_PROTECTION),
-                EspServiceLaunchProtectedStrings, sizeof(EspServiceLaunchProtectedStrings) / sizeof(PWSTR));
+            EspAddServiceOptionEntries(
+                GetDlgItem(WindowHandle, IDC_SIDTYPE),
+                EspServiceSidTypeEntries,
+                ARRAYSIZE(EspServiceSidTypeEntries)
+                );
+            EspAddServiceOptionEntries(
+                GetDlgItem(WindowHandle, IDC_PROTECTION),
+                EspServiceLaunchProtectedEntries,
+                ARRAYSIZE(EspServiceLaunchProtectedEntries)
+                );
 
             if (PhWindowsVersion < WINDOWS_8_1)
                 EnableWindow(GetDlgItem(WindowHandle, IDC_PROTECTION), FALSE);
@@ -561,13 +571,25 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
                     NTSTATUS status;
                     SC_HANDLE serviceHandle = NULL;
                     BOOLEAN connectedToPhSvc = FALSE;
-                    PPH_STRING launchProtectedString;
+                    ULONG sidType = SERVICE_SID_TYPE_NONE;
                     ULONG launchProtected;
 
                     SetWindowLongPtr(WindowHandle, DWLP_MSGRESULT, PSNRET_NOERROR);
 
-                    launchProtectedString = PH_AUTO(PhGetWindowText(GetDlgItem(WindowHandle, IDC_PROTECTION)));
-                    launchProtected = EspGetServiceLaunchProtectedInteger(launchProtectedString->Buffer);
+                    launchProtected = context->OriginalLaunchProtected;
+
+                    if ((context->SidTypeValid && !EspGetSelectedServiceOption(
+                        GetDlgItem(WindowHandle, IDC_SIDTYPE),
+                        &sidType
+                        )) ||
+                        (context->LaunchProtectedValid && !EspGetSelectedServiceOption(
+                            GetDlgItem(WindowHandle, IDC_PROTECTION),
+                            &launchProtected
+                            )))
+                    {
+                        SetWindowLongPtr(WindowHandle, DWLP_MSGRESULT, PSNRET_INVALID);
+                        return TRUE;
+                    }
 
                     if (context->LaunchProtectedValid && launchProtected != 0 && launchProtected != context->OriginalLaunchProtected)
                     {
@@ -666,10 +688,7 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
 
                         if (NT_SUCCESS(status) && context->SidTypeValid)
                         {
-                            PPH_STRING sidTypeString;
-
-                            sidTypeString = PH_AUTO(PhGetWindowText(GetDlgItem(WindowHandle, IDC_SIDTYPE)));
-                            sidInfo.dwServiceSidType = EspGetServiceSidTypeInteger(sidTypeString->Buffer);
+                            sidInfo.dwServiceSidType = sidType;
 
                             status = EspChangeServiceConfig2(
                                 PhGetString(context->ServiceItem->Name),

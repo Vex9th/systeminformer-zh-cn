@@ -356,6 +356,12 @@ BEGIN
     IDS_ES_UNABLE_CHANGE_SERVICE_RECOVERY_INFORMATION "Unable to change service recovery information."
     IDS_ES_UNABLE_QUERY_SERVICE_TRIGGER_INFORMATION "Unable to query service trigger information."
     IDS_ES_UNABLE_CHANGE_SERVICE_TRIGGER_INFORMATION "Unable to change service trigger information."
+    IDS_ES_SERVICE_OPTION_NONE      "None"
+    IDS_ES_SERVICE_SID_RESTRICTED   "Restricted"
+    IDS_ES_SERVICE_SID_UNRESTRICTED "Unrestricted"
+    IDS_ES_SERVICE_PROTECTION_FULL_WINDOWS "Full (Windows)"
+    IDS_ES_SERVICE_PROTECTION_LIGHT_WINDOWS "Light (Windows)"
+    IDS_ES_SERVICE_PROTECTION_LIGHT_ANTIMALWARE "Light (Antimalware)"
 END
 
 #endif    // English (United States) resources

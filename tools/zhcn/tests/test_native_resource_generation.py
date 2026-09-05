@@ -653,7 +653,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("648 strings", result.stdout)
+        self.assertIn("654 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2218,6 +2218,76 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
         )
 
+    def test_extended_services_service_options_use_item_data_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "ExtendedServices" / "other.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "plugins" / "ExtendedServices" / "ExtendedServices.rc"
+        ).read_text(encoding="utf-8-sig")
+        expected_entries = [
+            ("IDS_ES_SERVICE_OPTION_NONE", "SERVICE_SID_TYPE_NONE"),
+            ("IDS_ES_SERVICE_SID_RESTRICTED", "SERVICE_SID_TYPE_RESTRICTED"),
+            ("IDS_ES_SERVICE_SID_UNRESTRICTED", "SERVICE_SID_TYPE_UNRESTRICTED"),
+            ("IDS_ES_SERVICE_OPTION_NONE", "SERVICE_LAUNCH_PROTECTED_NONE"),
+            ("IDS_ES_SERVICE_PROTECTION_FULL_WINDOWS", "SERVICE_LAUNCH_PROTECTED_WINDOWS"),
+            ("IDS_ES_SERVICE_PROTECTION_LIGHT_WINDOWS", "SERVICE_LAUNCH_PROTECTED_WINDOWS_LIGHT"),
+            (
+                "IDS_ES_SERVICE_PROTECTION_LIGHT_ANTIMALWARE",
+                "SERVICE_LAUNCH_PROTECTED_ANTIMALWARE_LIGHT",
+            ),
+        ]
+        resource_texts = {
+            "IDS_ES_SERVICE_OPTION_NONE": "None",
+            "IDS_ES_SERVICE_SID_RESTRICTED": "Restricted",
+            "IDS_ES_SERVICE_SID_UNRESTRICTED": "Unrestricted",
+            "IDS_ES_SERVICE_PROTECTION_FULL_WINDOWS": "Full (Windows)",
+            "IDS_ES_SERVICE_PROTECTION_LIGHT_WINDOWS": "Light (Windows)",
+            "IDS_ES_SERVICE_PROTECTION_LIGHT_ANTIMALWARE": "Light (Antimalware)",
+        }
+
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_ES_SERVICE_[A-Z0-9_]+), (SERVICE_[A-Z0-9_]+) \}",
+                source,
+            ),
+            expected_entries,
+        )
+        for resource_id, english_text in resource_texts.items():
+            with self.subTest(extended_services_option=resource_id):
+                self.assertRegex(
+                    resource_script,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"',
+                )
+
+        self.assertNotIn("EspServiceSidTypePairs", source)
+        self.assertNotIn("EspServiceLaunchProtectedPairs", source)
+        self.assertNotIn("EspServiceSidTypeStrings", source)
+        self.assertNotIn("EspServiceLaunchProtectedStrings", source)
+        self.assertNotRegex(
+            source,
+            r"PhGetWindowText\(GetDlgItem\(WindowHandle, IDC_(?:SIDTYPE|PROTECTION)\)\)",
+        )
+        self.assertNotRegex(
+            source,
+            r"PhSelectComboBoxString\(GetDlgItem\(WindowHandle, IDC_(?:SIDTYPE|PROTECTION)\)",
+        )
+        self.assertIn("ComboBox_SetItemData", source)
+        self.assertIn("ComboBox_DeleteString", source)
+        self.assertIn("ComboBox_GetItemData", source)
+        self.assertRegex(
+            source,
+            r"Context->SidTypeValid\s*=\s*EspSelectServiceOption\(\s*"
+            r"GetDlgItem\(WindowHandle, IDC_SIDTYPE\),\s*"
+            r"sidInfo\.dwServiceSidType\s*\);",
+        )
+        self.assertRegex(
+            source,
+            r"Context->LaunchProtectedValid\s*=\s*EspSelectServiceOption\(\s*"
+            r"GetDlgItem\(WindowHandle, IDC_PROTECTION\),\s*"
+            r"launchProtectedInfo\.dwLaunchProtected\s*\);",
+        )
+
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
@@ -2902,7 +2972,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             Counter(
                 {
                     (r"bin\Release64\sys_info.exe", 271): 2,
-                    (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
+                    (r"bin\Release64\plugins\ExtendedServices.dll", 21): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
