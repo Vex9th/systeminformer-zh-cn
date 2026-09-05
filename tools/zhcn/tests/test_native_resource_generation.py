@@ -695,7 +695,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("729 strings", result.stdout)
+        self.assertIn("743 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2069,6 +2069,157 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     len(re.findall(rf"\b{re.escape(resource_id)}\b", source)),
                     expected_count,
                 )
+
+    def test_extended_tools_adapter_details_share_native_resources(self) -> None:
+        sources = {
+            adapter: (
+                REPO_ROOT / "plugins" / "ExtendedTools" / f"{adapter}details.c"
+            ).read_text(encoding="utf-8-sig")
+            for adapter in ("gpu", "npu")
+        }
+        resource_header = (
+            REPO_ROOT / "plugins" / "ExtendedTools" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_rc = (
+            REPO_ROOT / "plugins" / "ExtendedTools" / "ExtendedTools.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_rc = (
+            REPO_ROOT / "plugins" / "ExtendedTools" / "ExtendedTools.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_resources = {
+            "IDS_ET_ADAPTER_DETAILS_PHYSICAL_LOCATION": (
+                61026,
+                "PHYSICALLOCTION",
+                "Physical Location",
+                "物理位置",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_DRIVER_DATE": (
+                61027,
+                "DRIVERDATE",
+                "Driver Date",
+                "驱动程序日期",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_DRIVER_VERSION": (
+                61028,
+                "DRIVERVERSION",
+                "Driver Version",
+                "驱动程序版本",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_WDDM_VERSION": (
+                61029,
+                "WDDMVERSION",
+                "WDDM Version",
+                "WDDM 版本",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_VENDOR_ID": (
+                61030,
+                "VENDORID",
+                "Vendor ID",
+                "供应商 ID",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_DEVICE_ID": (
+                61031,
+                "DEVICEID",
+                "Device ID",
+                "设备 ID",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_TOTAL_MEMORY": (
+                61032,
+                "TOTALMEMORY",
+                "Total Memory",
+                "总内存",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_RESERVED_MEMORY": (
+                61033,
+                "RESERVEDMEMORY",
+                "Reserved Memory",
+                "预留内存",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_MEMORY_FREQUENCY": (
+                61034,
+                "MEMORYFREQUENCY",
+                "Memory Frequency",
+                "内存频率",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_MEMORY_BANDWIDTH": (
+                61035,
+                "MEMORYBANDWIDTH",
+                "Memory Bandwidth",
+                "内存带宽",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_PCIE_BANDWIDTH": (
+                61036,
+                "PCIEBANDWIDTH",
+                "PCIE Bandwidth",
+                "PCIe 带宽",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_FAN_RPM": (
+                61037,
+                "FANRPM",
+                "Fan RPM",
+                "风扇转速（RPM）",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_POWER_USAGE": (
+                61038,
+                "POWERUSAGE",
+                "Power Usage",
+                "耗电量",
+            ),
+            "IDS_ET_ADAPTER_DETAILS_TEMPERATURE": (
+                61039,
+                "TEMPERATURE",
+                "Temperature",
+                "温度",
+            ),
+        }
+
+        for resource_id, (
+            numeric_id,
+            index_suffix,
+            english_text,
+            chinese_text,
+        ) in expected_resources.items():
+            with self.subTest(adapter_detail=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_rc,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_rc,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                )
+                self.assertEqual(
+                    translation_data["strings"].get(english_text),
+                    chinese_text,
+                )
+                self.assertNotIn(english_text, translation_data["native_strings"])
+
+                for adapter, source in sources.items():
+                    adapter_upper = adapter.upper()
+                    self.assertNotIn(f'L"{english_text}"', source)
+                    self.assertRegex(
+                        source,
+                        rf"PhAddListViewGroupItem\(\s*"
+                        rf"ListViewHandle,\s*{adapter.title()}GroupId,\s*"
+                        rf"{adapter_upper}ADAPTER_DETAILS_INDEX_{index_suffix},\s*"
+                        rf"PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
+                        rf"PluginInstance->DllBase,\s*{resource_id},\s*NULL\s*"
+                        rf"\)\)\),\s*NULL\s*\);",
+                    )
+
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61040$",
+        )
 
     def test_module_services_thread_does_not_use_auto_pool_before_initialization(
         self,
@@ -3538,7 +3689,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\sys_info.exe", 290): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 8): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
-                    (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
+                    (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 10): 2,
