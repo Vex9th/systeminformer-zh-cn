@@ -4292,7 +4292,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_MEMORY_PROMOTEDFINALFROMGENZERO": (
                 2013,
                 "Promoted Finalization-Memory from Gen 0",
-                "从第 0 代提升的终结内存",
+                "因等待终结而从第 0 代提升的内存",
                 "DOTNET_CATEGORY_MEMORY",
                 "DOTNET_INDEX_MEMORY_PROMOTEDFINALFROMGENZERO",
             ),
@@ -4334,7 +4334,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_MEMORY_FINALSURVIVORS": (
                 2019,
                 "Finalization Survivors",
-                "终结后存活对象",
+                "待终结存活对象数",
                 "DOTNET_CATEGORY_MEMORY",
                 "DOTNET_INDEX_MEMORY_FINALSURVIVORS",
             ),
@@ -4355,7 +4355,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_MEMORY_TIMEINGC": (
                 2022,
                 "% Time in GC",
-                "GC 中的时间百分比",
+                "GC 耗时 (%)",
                 "DOTNET_CATEGORY_MEMORY",
                 "DOTNET_INDEX_MEMORY_TIMEINGC",
             ),
@@ -4369,14 +4369,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_MEMORY_TOTALCOMMITTED": (
                 2024,
                 "# Total Committed Bytes",
-                "提交的字节总数",
+                "已提交字节总数",
                 "DOTNET_CATEGORY_MEMORY",
                 "DOTNET_INDEX_MEMORY_TOTALCOMMITTED",
             ),
             "IDS_DN_PERF_ITEM_MEMORY_TOTALRESERVED": (
                 2025,
                 "# Total Reserved Bytes",
-                "保留的字节总数",
+                "已保留字节总数",
                 "DOTNET_CATEGORY_MEMORY",
                 "DOTNET_INDEX_MEMORY_TOTALRESERVED",
             ),
@@ -4425,7 +4425,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_MEMORY_FINALPROMOTEDBYTESPERSEC": (
                 2032,
                 "Promoted Finalization-Memory / sec",
-                "提升的终结内存/秒",
+                "因等待终结而提升的字节数/秒",
                 "DOTNET_CATEGORY_MEMORY",
                 "DOTNET_INDEX_MEMORY_FINALPROMOTEDBYTESPERSEC",
             ),
@@ -4453,7 +4453,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_EXCEPTIONS_FINALLYCOUNT": (
                 2036,
                 "# of Finallys Executed",
-                "执行的 finally 块数",
+                "finally 块执行次数",
                 "DOTNET_CATEGORY_EXCEPTIONS",
                 "DOTNET_INDEX_EXCEPTIONS_FINALLYCOUNT",
             ),
@@ -4474,14 +4474,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_EXCEPTIONS_FINALLYPERSEC": (
                 2039,
                 "# of Finallys Executed / sec",
-                "Finally 数量/秒",
+                "finally 块执行次数/秒",
                 "DOTNET_CATEGORY_EXCEPTIONS",
                 "DOTNET_INDEX_EXCEPTIONS_FINALLYPERSEC",
             ),
             "IDS_DN_PERF_ITEM_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC": (
                 2040,
                 "Throw To Catch Depth / sec",
-                "引发到捕获的深度/秒",
+                "引发到捕获的堆栈帧数/秒",
                 "DOTNET_CATEGORY_EXCEPTIONS",
                 "DOTNET_INDEX_EXCEPTIONS_THROWTOCATCHDEPTHPERSEC",
             ),
@@ -4502,7 +4502,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_DN_PERF_ITEM_INTEROP_MARSHALCOUNT": (
                 2043,
                 "# of Marshalling",
-                "封送数",
+                "封送次数",
                 "DOTNET_CATEGORY_INTEROP",
                 "DOTNET_INDEX_INTEROP_MARSHALCOUNT",
             ),
