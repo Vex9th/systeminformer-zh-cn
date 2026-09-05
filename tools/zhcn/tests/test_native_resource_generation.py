@@ -695,7 +695,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("721 strings", result.stdout)
+        self.assertIn("729 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2763,6 +2763,70 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         self.assertEqual(translation_data["strings"].get("State"), "状态")
         self.assertNotIn("State", translation_data["native_strings"])
+
+    def test_dotnet_performance_groups_use_native_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "perfpage.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "plugins" / "DotNetTools" / "DotNetTools.rc"
+        ).read_text(encoding="utf-8-sig")
+        resource_texts = dict(re.findall(
+            r'^\s*(IDS_DN_[A-Z0-9_]+)\s+"([^"]*)"',
+            resource_script,
+            re.MULTILINE,
+        ))
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_resources = {
+            "DOTNET_CATEGORY_MEMORY": (
+                "IDS_DN_PERF_GROUP_MEMORY",
+                ".NET CLR Memory",
+            ),
+            "DOTNET_CATEGORY_EXCEPTIONS": (
+                "IDS_DN_PERF_GROUP_EXCEPTIONS",
+                ".NET CLR Exceptions",
+            ),
+            "DOTNET_CATEGORY_INTEROP": (
+                "IDS_DN_PERF_GROUP_INTEROP",
+                ".NET CLR Interop",
+            ),
+            "DOTNET_CATEGORY_JIT": (
+                "IDS_DN_PERF_GROUP_JIT",
+                ".NET CLR Jit",
+            ),
+            "DOTNET_CATEGORY_LOADING": (
+                "IDS_DN_PERF_GROUP_LOADING",
+                ".NET CLR Loading",
+            ),
+            "DOTNET_CATEGORY_LOCKSANDTHREADS": (
+                "IDS_DN_PERF_GROUP_LOCKS_AND_THREADS",
+                ".NET CLR LocksAndThreads",
+            ),
+            "DOTNET_CATEGORY_REMOTING": (
+                "IDS_DN_PERF_GROUP_REMOTING",
+                ".NET CLR Remoting",
+            ),
+            "DOTNET_CATEGORY_SECURITY": (
+                "IDS_DN_PERF_GROUP_SECURITY",
+                ".NET CLR Security",
+            ),
+        }
+
+        for group_id, (resource_id, english_text) in expected_resources.items():
+            with self.subTest(dotnet_performance_group=group_id):
+                self.assertEqual(resource_texts.get(resource_id), english_text)
+                self.assertRegex(
+                    source,
+                    rf"PhAddListViewGroup\([^;]*?{group_id},[^;]*?"
+                    rf"PhLoadUiString\([^;]*?{resource_id}[^;]*?\)[^;]*?\);",
+                )
+                self.assertEqual(source.count(f'L"{english_text}"'), 1)
+                self.assertIn(english_text, translation_data["native_strings"])
+                self.assertNotIn(english_text, translation_data["strings"])
 
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (

@@ -95,6 +95,24 @@ END
 #endif    // APSTUDIO_INVOKED
 
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_DN_PERF_GROUP_MEMORY        ".NET CLR Memory"
+    IDS_DN_PERF_GROUP_EXCEPTIONS    ".NET CLR Exceptions"
+    IDS_DN_PERF_GROUP_INTEROP       ".NET CLR Interop"
+    IDS_DN_PERF_GROUP_JIT           ".NET CLR Jit"
+    IDS_DN_PERF_GROUP_LOADING       ".NET CLR Loading"
+    IDS_DN_PERF_GROUP_LOCKS_AND_THREADS ".NET CLR LocksAndThreads"
+    IDS_DN_PERF_GROUP_REMOTING      ".NET CLR Remoting"
+    IDS_DN_PERF_GROUP_SECURITY      ".NET CLR Security"
+END
+
+
 #endif    // English resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -109,4 +127,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

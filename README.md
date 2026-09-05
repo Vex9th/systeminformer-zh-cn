@@ -27,7 +27,7 @@ System Informer 的非官方简体中文、无驱动便携构建。程序名为 
 | 项目 | 当前状态 |
 |---|---|
 | 主程序静态对话框 | 106 个 en-US/zh-CN 同 ID 资源曾在历史 Windows x64 CI 中通过 PE 结构校验；当前本地新增提交尚未重新跑 Windows CI，人工界面验收仍未完成 |
-| 动态文字 | PE Viewer、安装器和主程序分别已有 128、74、290 条使用原生 `STRINGTABLE`；ExtendedServices、ExtendedTools、ToolStatus、UserNotes 分别已迁移 66、26、103、15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计迁移 19 条，合计 721 条。扩展审计到窗口文字、组合框（含普通字符串数组及结构体字段数组）及列表分组/项目和包装入口后，曾新增暴露的 57 条结构体数组组合框文字已经迁移，显示文字不再参与业务值解析；ExtendedServices 当前审计项已全部覆盖，主程序和 WindowExplorer 又迁移 7 个无共享冲突的列表分组，项目仍如实报告 631 条未翻译项。大量既有文字仍由兼容翻译层接管，不能据此宣称整体完成 |
+| 动态文字 | PE Viewer、安装器和主程序分别已有 128、74、290 条使用原生 `STRINGTABLE`；DotNetTools、ExtendedServices、ExtendedTools、ToolStatus、UserNotes 分别已迁移 8、66、26、103、15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计迁移 19 条，合计 729 条。扩展审计到窗口文字、组合框（含普通字符串数组及结构体字段数组）及列表分组/项目和包装入口后，曾新增暴露的 57 条结构体数组组合框文字已经迁移，显示文字不再参与业务值解析；ExtendedServices 当前审计项已全部覆盖，主程序、DotNetTools 和 WindowExplorer 又迁移 15 个无共享冲突的列表分组，项目仍如实报告 623 条未翻译项。大量既有文字仍由兼容翻译层接管，不能据此宣称整体完成 |
 | 生成器与源码契约 | 本地测试通过 |
 | Windows x64 构建与原生加载 | 历史远端基线曾通过；当前本地分支新增内容尚未推送，不能宣称已通过 Windows 编译、启动或 UI 响应验证 |
 | x86、ARM64、多 DPI 界面 | 尚未完成真实运行与视觉验收 |

@@ -203,14 +203,46 @@ VOID DotNetPerfAddListViewGroups(
     )
 {
     ListView_EnableGroupView(ListViewHandle, TRUE);
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_MEMORY, L".NET CLR Memory");
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_EXCEPTIONS, L".NET CLR Exceptions");
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_INTEROP, L".NET CLR Interop");
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_JIT, L".NET CLR Jit");
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_LOADING, L".NET CLR Loading");
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_LOCKSANDTHREADS, L".NET CLR LocksAndThreads");
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_REMOTING, L".NET CLR Remoting");
-    PhAddListViewGroup(ListViewHandle, DOTNET_CATEGORY_SECURITY, L".NET CLR Security");
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_MEMORY,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_MEMORY, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_EXCEPTIONS,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_EXCEPTIONS, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_INTEROP,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_INTEROP, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_JIT,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_JIT, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_LOADING,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_LOADING, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_LOCKSANDTHREADS,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_LOCKS_AND_THREADS, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_REMOTING,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_REMOTING, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        DOTNET_CATEGORY_SECURITY,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_PERF_GROUP_SECURITY, NULL)))
+        );
 
      // This counter displays the number of times the generation 0 objects (youngest; most recently allocated) are garbage collected (Gen 0 GC) since the start of the application.
     // Gen 0 GC occurs when the available memory in generation 0 is not sufficient to satisfy an allocation request.
