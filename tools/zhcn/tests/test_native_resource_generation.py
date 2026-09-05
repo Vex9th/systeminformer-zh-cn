@@ -991,6 +991,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
     def test_checker_native_only_decisions_apply_only_to_native_resources(self) -> None:
         manifest = {
+            "schema_version": 2,
+            "total_occurrences": 4,
             "unique_strings": [
                 {
                     "english": "Connected",
@@ -1070,8 +1072,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "c_balloon",
         )
         manifest = {
+            "schema_version": 2,
+            "total_occurrences": len(categories),
             "unique_strings": [
                 {
+                    "module": "plugins/Test",
                     "english": f"Callsite text {index}",
                     "category": category,
                     "locations": [{"file": "plugins/Test/test.c", "line": index}],

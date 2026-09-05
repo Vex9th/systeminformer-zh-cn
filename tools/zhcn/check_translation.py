@@ -28,6 +28,15 @@ from collections import defaultdict
 HERE = os.path.dirname(__file__)
 REPO_ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
+
+from translation_contract import (  # noqa: E402
+    CALLSITE_MIGRATION_CATEGORIES,
+    MANIFEST_SCHEMA_VERSION,
+    module_for_path,
+)
+
 FORMAT_SPEC_RE = re.compile(
     r"(?<![0-9])%(?:%|[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?"
     r"(?:I64|I32|ll|hh|[hlLwIjzt])?[diuoxXfFeEgGaAcCsSpn])"
@@ -47,14 +56,6 @@ KEEP_ENGLISH_RULES = [
     r"^-debug\n$",
     r"^(Hybrid-Analysis|VirusTotal|Worker Factory|PingGraphLayout)$",
 ]
-
-CALLSITE_MIGRATION_CATEGORIES = {
-    "c_balloon",
-    "c_combobox",
-    "c_listview_group_item",
-    "c_msgbox_vararg",
-    "c_window_text",
-}
 
 NATIVE_RESOURCE_CATEGORIES = {
     "rc_dialog",
@@ -168,6 +169,55 @@ def is_reviewed_native_identity(table: dict, category: str, english: str) -> boo
     )
 
 
+def validate_manifest(manifest: dict) -> None:
+    if manifest.get("schema_version") != MANIFEST_SCHEMA_VERSION:
+        raise ValueError(
+            f"schema_version must be {MANIFEST_SCHEMA_VERSION}; regenerate with audit.py"
+        )
+    if not isinstance(manifest.get("unique_strings"), list):
+        raise ValueError("unique_strings must be a list")
+    if not isinstance(manifest.get("total_occurrences"), int):
+        raise ValueError("total_occurrences must be an integer")
+
+    for entry in manifest["unique_strings"]:
+        category = entry.get("category")
+        english = entry.get("english")
+        locations = entry.get("locations")
+
+        if not isinstance(category, str) or not isinstance(english, str):
+            raise ValueError("every entry must have string category and english fields")
+        if not isinstance(locations, list) or not locations:
+            raise ValueError(f"entry {category}/{english!r} must have locations")
+        for location in locations:
+            if not isinstance(location, dict):
+                raise ValueError(f"entry {category}/{english!r} has an invalid location")
+            if not isinstance(location.get("file"), str) or not isinstance(
+                location.get("line"), int
+            ):
+                raise ValueError(
+                    f"entry {category}/{english!r} locations need file and line"
+                )
+
+        if category in CALLSITE_MIGRATION_CATEGORIES:
+            module = entry.get("module")
+            if not isinstance(module, str) or not module:
+                raise ValueError(
+                    f"call-site entry {category}/{english!r} must declare module"
+                )
+            location_modules = {
+                module_for_path(location["file"]) for location in locations
+            }
+            if location_modules != {module}:
+                raise ValueError(
+                    f"call-site entry {category}/{english!r} module {module!r} "
+                    f"does not match locations {sorted(location_modules)!r}"
+                )
+        elif "module" in entry:
+            raise ValueError(
+                f"ordinary entry {category}/{english!r} must not declare module"
+            )
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--manifest", default=os.path.join(HERE, "manifest.json"))
@@ -199,6 +249,11 @@ def main():
     # ---- load manifest ----------------------------------------------------
     with open(args.manifest, "r", encoding="utf-8") as f:
         manifest = json.load(f)
+    try:
+        validate_manifest(manifest)
+    except ValueError as exc:
+        print(f"error: invalid manifest: {exc}")
+        return 1
 
     # ---- join -------------------------------------------------------------
     errors = []
@@ -208,15 +263,10 @@ def main():
     per_mod = defaultdict(lambda: [0, 0])   # module    -> [translated, total]
 
     manifest_keys = set()
-    keep_english = []
+    keep_english = {}
     for entry in manifest["unique_strings"]:
         en = entry["english"]
         manifest_keys.add(en)
-        module = entry["locations"][0]["file"].split("/")[0]
-        if "/" in entry["locations"][0]["file"]:
-            sub = entry["locations"][0]["file"].split("/")[1]
-            if module == "plugins":
-                module = f"plugins/{sub}"
         category = entry["category"]
         zh = translation_for_category(table, category, en)
         translated = translation_is_effective(
@@ -227,13 +277,24 @@ def main():
             is_keep_english(en)
             or is_reviewed_native_identity(table, category, en)
         ):
-            keep_english.append(entry)
+            keep_english.setdefault((category, en), entry)
             continue
+
+        if category in CALLSITE_MIGRATION_CATEGORIES:
+            modules = {entry["module"]}
+        else:
+            modules = {
+                module_for_path(location["file"])
+                for location in entry["locations"]
+            }
+
         per_cat[category][1] += 1
-        per_mod[module][1] += 1
+        for module in modules:
+            per_mod[module][1] += 1
         if translated:
             per_cat[category][0] += 1
-            per_mod[module][0] += 1
+            for module in modules:
+                per_mod[module][0] += 1
             err = check_placeholders(en, zh) or check_tabs(en, zh)
             if err:
                 errors.append((en, zh, err))
@@ -258,7 +319,7 @@ def main():
     lines = []
     lines.append("# 翻译审计报告 / Translation Audit Report")
     lines.append("")
-    lines.append(f"- 清单唯一字符串（不含约定保留英文项）：{total_a}")
+    lines.append(f"- 有效翻译单元（不含约定保留英文项）：{total_a}")
     lines.append(f"- 已翻译：{total_t}")
     lines.append(f"- 未翻译：{total_a - total_t}")
     lines.append(f"- 约定保留英文（技术缩写/键名/占位符等）：{len(keep_english)} 项")
@@ -278,6 +339,11 @@ def main():
     lines.append("")
     lines.append("## 按模块 / By module")
     lines.append("")
+    lines.append(
+        "> 模块表统计各模块中的有效出现量；同一普通字符串可在多个模块各计一次，"
+        "因此模块行合计不等于上方全局唯一字符串数。"
+    )
+    lines.append("")
     lines.append("| 模块 | 已翻译 | 总数 | 未翻译 |")
     lines.append("|---|---|---|---|")
     for mod in sorted(per_mod):
@@ -287,7 +353,7 @@ def main():
     if keep_english:
         lines.append("## 约定保留英文 / Kept in English by design")
         lines.append("")
-        for e in keep_english[:80]:
+        for e in list(keep_english.values())[:80]:
             lines.append(f"- `{e['english']}` ({e['category']})")
         lines.append("")
 

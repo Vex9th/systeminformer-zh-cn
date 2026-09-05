@@ -39,7 +39,17 @@ import re
 import sys
 from collections import defaultdict
 
-REPO_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+HERE = os.path.dirname(__file__)
+REPO_ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
+
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
+
+from translation_contract import (  # noqa: E402
+    CALLSITE_MIGRATION_CATEGORIES,
+    MANIFEST_SCHEMA_VERSION,
+    module_for_path,
+)
 
 # ---------------------------------------------------------------------------
 # C wide string literal handling
@@ -1100,6 +1110,58 @@ def iter_source_files():
                     yield os.path.join(root, fn)
 
 
+def build_manifest(entries):
+    """Build a schema-v2 manifest from raw audit occurrences."""
+    merged = defaultdict(
+        lambda: {"category": None, "english": None, "module": None, "locations": []}
+    )
+
+    for entry in entries:
+        category = entry["category"]
+        english = entry["english"]
+        module = (
+            module_for_path(entry["file"])
+            if category in CALLSITE_MIGRATION_CATEGORIES
+            else None
+        )
+        key = (module, category, english)
+        record = merged[key]
+        record["category"] = category
+        record["english"] = english
+        record["module"] = module
+        record["locations"].append(
+            {"file": entry["file"], "line": entry["line"]}
+        )
+
+    unique_strings = []
+    for record in sorted(
+        merged.values(),
+        key=lambda value: (
+            value["category"],
+            value["english"].lower(),
+            value["english"],
+            value["module"] or "",
+        ),
+    ):
+        manifest_entry = {
+            "category": record["category"],
+            "english": record["english"],
+            "locations": sorted(
+                record["locations"],
+                key=lambda location: (location["file"], location["line"]),
+            ),
+        }
+        if record["module"] is not None:
+            manifest_entry["module"] = record["module"]
+        unique_strings.append(manifest_entry)
+
+    return {
+        "schema_version": MANIFEST_SCHEMA_VERSION,
+        "unique_strings": unique_strings,
+        "total_occurrences": len(entries),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("-o", "--output", default=os.path.join(os.path.dirname(__file__), "manifest.json"))
@@ -1125,23 +1187,7 @@ def main():
         scan_page_names(path, entries)
         scan_extra_statics(path, entries)
 
-    # Deduplicate identical (category, english) pairs while keeping locations.
-    merged = defaultdict(lambda: {"category": None, "english": None, "locations": []})
-    for e in entries:
-        key = (e["category"], e["english"])
-        rec = merged[key]
-        rec["category"] = e["category"]
-        rec["english"] = e["english"]
-        rec["locations"].append({"file": e["file"], "line": e["line"]})
-
-    manifest = {
-        "unique_strings": [
-            {"category": v["category"], "english": v["english"],
-             "locations": sorted(v["locations"], key=lambda x: (x["file"], x["line"]))}
-            for v in sorted(merged.values(), key=lambda v: (v["category"], v["english"].lower()))
-        ],
-        "total_occurrences": len(entries),
-    }
+    manifest = build_manifest(entries)
 
     with open(args.output, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=1)
@@ -1149,7 +1195,7 @@ def main():
     by_cat = defaultdict(int)
     for v in manifest["unique_strings"]:
         by_cat[v["category"]] += 1
-    print(f"manifest: {len(manifest['unique_strings'])} unique strings "
+    print(f"manifest: {len(manifest['unique_strings'])} schema entries "
           f"({manifest['total_occurrences']} occurrences) -> {args.output}")
     for cat in sorted(by_cat):
         print(f"  {cat:16s} {by_cat[cat]}")
