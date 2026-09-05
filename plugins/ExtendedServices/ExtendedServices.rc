@@ -392,6 +392,11 @@ BEGIN
     IDS_ES_TRIGGER_ACTION_START_SERVICE "Start service"
     IDS_ES_TRIGGER_ACTION_STOP_SERVICE "Stop service"
     IDS_ES_TRIGGER_UNKNOWN          "Unknown"
+    IDS_ES_RECOVERY_ACTION_NONE     "Take no action"
+    IDS_ES_RECOVERY_ACTION_RESTART_SERVICE "Restart the service"
+    IDS_ES_RECOVERY_ACTION_RESTART_COMPUTER "Restart the computer"
+    IDS_ES_RECOVERY_ACTION_RUN_PROGRAM "Run a program"
+    IDS_ES_RECOVERY_ACTION_OWN_RESTART "Own restart"
 END
 
 #endif    // English (United States) resources

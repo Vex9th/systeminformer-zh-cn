@@ -2869,6 +2869,21 @@ BEGIN
     IDS_PH_SERVICE_PAUSE                                 "&Pause"
     IDS_PH_SERVICE_CONTINUE                              "C&ontinue"
     IDS_PH_SERVICE_START                                 "&Start"
+    IDS_PH_SESSION_KEY_BACKSPACE                         "{Backspace}"
+    IDS_PH_SESSION_KEY_DELETE                            "{Delete}"
+    IDS_PH_SESSION_KEY_DOWN                              "{Down}"
+    IDS_PH_SESSION_KEY_END                               "{End}"
+    IDS_PH_SESSION_KEY_ENTER                             "{Enter}"
+    IDS_PH_SESSION_KEY_HOME                              "{Home}"
+    IDS_PH_SESSION_KEY_INSERT                            "{Insert}"
+    IDS_PH_SESSION_KEY_LEFT                              "{Left}"
+    IDS_PH_SESSION_KEY_PAGE_DOWN                         "{Page Down}"
+    IDS_PH_SESSION_KEY_PAGE_UP                           "{Page Up}"
+    IDS_PH_SESSION_KEY_PRINT_SCREEN                      "{Print Screen}"
+    IDS_PH_SESSION_KEY_RIGHT                             "{Right}"
+    IDS_PH_SESSION_KEY_SPACE                             "{Space}"
+    IDS_PH_SESSION_KEY_TAB                               "{Tab}"
+    IDS_PH_SESSION_KEY_UP                                "{Up}"
 END
 
 /////////////////////////////////////////////////////////////////////////////

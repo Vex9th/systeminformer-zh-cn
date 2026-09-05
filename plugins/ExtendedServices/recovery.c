@@ -25,13 +25,19 @@ typedef struct _SERVICE_RECOVERY_CONTEXT
     BOOLEAN Dirty;
 } SERVICE_RECOVERY_CONTEXT, *PSERVICE_RECOVERY_CONTEXT;
 
-static CONST PH_KEY_VALUE_PAIR ServiceActionPairs[] =
+typedef struct _SERVICE_ACTION_ENTRY
 {
-    SIP(L"Take no action", SC_ACTION_NONE),
-    SIP(L"Restart the service", SC_ACTION_RESTART),
-    SIP(L"Restart the computer", SC_ACTION_REBOOT),
-    SIP(L"Run a program", SC_ACTION_RUN_COMMAND),
-    SIP(L"Own restart", SC_ACTION_OWN_RESTART),
+    ULONG ResourceId;
+    SC_ACTION_TYPE ActionType;
+} SERVICE_ACTION_ENTRY, *PSERVICE_ACTION_ENTRY;
+
+static CONST SERVICE_ACTION_ENTRY ServiceActionEntries[] =
+{
+    { IDS_ES_RECOVERY_ACTION_NONE, SC_ACTION_NONE },
+    { IDS_ES_RECOVERY_ACTION_RESTART_SERVICE, SC_ACTION_RESTART },
+    { IDS_ES_RECOVERY_ACTION_RESTART_COMPUTER, SC_ACTION_REBOOT },
+    { IDS_ES_RECOVERY_ACTION_RUN_PROGRAM, SC_ACTION_RUN_COMMAND },
+    { IDS_ES_RECOVERY_ACTION_OWN_RESTART, SC_ACTION_OWN_RESTART }
 };
 
 INT_PTR CALLBACK RestartComputerDlgProc(
@@ -45,63 +51,90 @@ VOID EspAddServiceActionStrings(
     _In_ HWND ComboBoxHandle
     )
 {
-    ULONG i;
+    for (ULONG i = 0; i < ARRAYSIZE(ServiceActionEntries); i++)
+    {
+        PPH_STRING actionText;
+        INT itemIndex;
 
-    for (i = 0; i < sizeof(ServiceActionPairs) / sizeof(PH_KEY_VALUE_PAIR); i++)
-        ComboBox_AddString(ComboBoxHandle, (PWSTR)ServiceActionPairs[i].Key);
+        actionText = PhLoadUiString(
+            PluginInstance->DllBase,
+            ServiceActionEntries[i].ResourceId,
+            NULL
+            );
+        itemIndex = ComboBox_AddString(ComboBoxHandle, PhGetString(actionText));
+        PhDereferenceObject(actionText);
 
-    PhSelectComboBoxString(ComboBoxHandle, (PWSTR)ServiceActionPairs[0].Key, FALSE);
+        if (itemIndex < 0)
+            continue;
+
+        if (ComboBox_SetItemData(
+            ComboBoxHandle,
+            itemIndex,
+            UlongToPtr(ServiceActionEntries[i].ActionType)
+            ) == CB_ERR)
+        {
+            ComboBox_DeleteString(ComboBoxHandle, itemIndex);
+            continue;
+        }
+
+        if (ServiceActionEntries[i].ActionType == SC_ACTION_NONE)
+            ComboBox_SetCurSel(ComboBoxHandle, itemIndex);
+    }
 }
 
-SC_ACTION_TYPE EspStringToServiceAction(
-    _In_ PCWSTR String
+BOOLEAN ComboBoxToServiceAction(
+    _In_ HWND ComboBoxHandle,
+    _Out_ SC_ACTION_TYPE *ActionType
     )
 {
-    ULONG integer;
+    INT selectedIndex;
+    LRESULT selectedData;
 
-    if (PhFindIntegerSiKeyValuePairs(ServiceActionPairs, sizeof(ServiceActionPairs), String, &integer))
-        return integer;
-    else
-        return 0;
+    selectedIndex = ComboBox_GetCurSel(ComboBoxHandle);
+
+    if (selectedIndex == CB_ERR)
+        return FALSE;
+
+    selectedData = ComboBox_GetItemData(ComboBoxHandle, selectedIndex);
+
+    if (selectedData == CB_ERR)
+        return FALSE;
+
+    for (ULONG i = 0; i < ARRAYSIZE(ServiceActionEntries); i++)
+    {
+        if ((SC_ACTION_TYPE)selectedData == ServiceActionEntries[i].ActionType)
+        {
+            *ActionType = ServiceActionEntries[i].ActionType;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
 }
 
-PCWSTR EspServiceActionToString(
-    _In_ SC_ACTION_TYPE ActionType
-    )
-{
-    PCWSTR string;
-
-    if (PhIndexStringSiKeyValuePairs(ServiceActionPairs, sizeof(ServiceActionPairs), ActionType, &string))
-        return string;
-    else
-        return NULL;
-}
-
-SC_ACTION_TYPE ComboBoxToServiceAction(
-    _In_ HWND ComboBoxHandle
-    )
-{
-    PPH_STRING string;
-
-    string = PH_AUTO(PhGetComboBoxString(ComboBoxHandle, ComboBox_GetCurSel(ComboBoxHandle)));
-
-    if (!string)
-        return SC_ACTION_NONE;
-
-    return EspStringToServiceAction(string->Buffer);
-}
-
-VOID ServiceActionToComboBox(
+BOOLEAN ServiceActionToComboBox(
     _In_ HWND ComboBoxHandle,
     _In_ SC_ACTION_TYPE ActionType
     )
 {
-    PCWSTR string;
+    for (INT i = 0; i < ComboBox_GetCount(ComboBoxHandle); i++)
+    {
+        LRESULT itemData;
 
-    if (string = EspServiceActionToString(ActionType))
-        PhSelectComboBoxString(ComboBoxHandle, string, FALSE);
-    else
-        PhSelectComboBoxString(ComboBoxHandle, (PWSTR)ServiceActionPairs[0].Key, FALSE);
+        itemData = ComboBox_GetItemData(ComboBoxHandle, i);
+
+        if (itemData == CB_ERR)
+            continue;
+
+        if ((SC_ACTION_TYPE)itemData == ActionType)
+        {
+            ComboBox_SetCurSel(ComboBoxHandle, i);
+            return TRUE;
+        }
+    }
+
+    ComboBox_SetCurSel(ComboBoxHandle, -1);
+    return FALSE;
 }
 
 VOID EspFixControls(
@@ -117,10 +150,14 @@ VOID EspFixControls(
     BOOLEAN enableReboot;
     BOOLEAN enableCommand;
 
-    action1 = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_FIRSTFAILURE));
-    action2 = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SECONDFAILURE));
-    action3 = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_THIRDFAILURE));
-    actionS = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SUBSEQUENTFAILURES));
+    action1 = SC_ACTION_NONE;
+    action2 = SC_ACTION_NONE;
+    action3 = SC_ACTION_NONE;
+    actionS = SC_ACTION_NONE;
+    ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_FIRSTFAILURE), &action1);
+    ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SECONDFAILURE), &action2);
+    ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_THIRDFAILURE), &action3);
+    ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SUBSEQUENTFAILURES), &actionS);
 
     EnableWindow(GetDlgItem(WindowHandle, IDC_ENABLEFORERRORSTOPS), Context->EnableFlagCheckBox);
 
@@ -454,15 +491,23 @@ INT_PTR CALLBACK EspServiceRecoveryDlgProc(
                     failureActions.cActions = 4;
                     failureActions.lpsaActions = actions;
 
-                    actions[0].Type = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_FIRSTFAILURE));
-                    actions[1].Type = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SECONDFAILURE));
-                    actions[2].Type = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_THIRDFAILURE));
-                    actions[3].Type = ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SUBSEQUENTFAILURES));
+                    if (
+                        !ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_FIRSTFAILURE), &actions[0].Type) ||
+                        !ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SECONDFAILURE), &actions[1].Type) ||
+                        !ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_THIRDFAILURE), &actions[2].Type) ||
+                        !ComboBoxToServiceAction(GetDlgItem(WindowHandle, IDC_SUBSEQUENTFAILURES), &actions[3].Type)
+                        )
+                    {
+                        SetWindowLongPtr(WindowHandle, DWLP_MSGRESULT, PSNRET_INVALID_NOCHANGEPAGE);
+                        return TRUE;
+                    }
 
                     restartServiceAfter = PhGetDialogItemValue(WindowHandle, IDC_RESTARTSERVICEAFTER) * 1000 * 60;
 
                     for (i = 0; i < 4; i++)
                     {
+                        actions[i].Delay = 0;
+
                         switch (actions[i].Type)
                         {
                         case SC_ACTION_RESTART:

@@ -14,74 +14,179 @@
 #include <phsettings.h>
 #include <winsta.h>
 
-static CONST PH_KEY_VALUE_PAIR VirtualKeyPairs[] =
+typedef struct _SESSION_HOTKEY_ENTRY
 {
-    SIP(L"0", '0'),
-    SIP(L"1", '1'),
-    SIP(L"2", '2'),
-    SIP(L"3", '3'),
-    SIP(L"4", '4'),
-    SIP(L"5", '5'),
-    SIP(L"6", '6'),
-    SIP(L"7", '7'),
-    SIP(L"8", '8'),
-    SIP(L"9", '9'),
-    SIP(L"A", 'A'),
-    SIP(L"B", 'B'),
-    SIP(L"C", 'C'),
-    SIP(L"D", 'D'),
-    SIP(L"E", 'E'),
-    SIP(L"F", 'F'),
-    SIP(L"G", 'G'),
-    SIP(L"H", 'H'),
-    SIP(L"I", 'I'),
-    SIP(L"J", 'J'),
-    SIP(L"K", 'K'),
-    SIP(L"L", 'L'),
-    SIP(L"M", 'M'),
-    SIP(L"N", 'N'),
-    SIP(L"O", 'O'),
-    SIP(L"P", 'P'),
-    SIP(L"Q", 'Q'),
-    SIP(L"R", 'R'),
-    SIP(L"S", 'S'),
-    SIP(L"T", 'T'),
-    SIP(L"U", 'U'),
-    SIP(L"V", 'V'),
-    SIP(L"W", 'W'),
-    SIP(L"X", 'X'),
-    SIP(L"Y", 'Y'),
-    SIP(L"Z", 'Z'),
-    SIP(L"{backspace}", VK_BACK),
-    SIP(L"{delete}", VK_DELETE),
-    SIP(L"{down}", VK_DOWN),
-    SIP(L"{end}", VK_END),
-    SIP(L"{enter}", VK_RETURN),
-    SIP(L"{F2}", VK_F2),
-    SIP(L"{F3}", VK_F3),
-    SIP(L"{F4}", VK_F4),
-    SIP(L"{F5}", VK_F5),
-    SIP(L"{F6}", VK_F6),
-    SIP(L"{F7}", VK_F7),
-    SIP(L"{F8}", VK_F8),
-    SIP(L"{F9}", VK_F9),
-    SIP(L"{F10}", VK_F10),
-    SIP(L"{F11}", VK_F11),
-    SIP(L"{F12}", VK_F12),
-    SIP(L"{home}", VK_HOME),
-    SIP(L"{insert}", VK_INSERT),
-    SIP(L"{left}", VK_LEFT),
-    SIP(L"{-}", VK_SUBTRACT),
-    SIP(L"{pagedown}", VK_NEXT),
-    SIP(L"{pageup}", VK_PRIOR),
-    SIP(L"{+}", VK_ADD),
-    SIP(L"{prtscrn}", VK_SNAPSHOT),
-    SIP(L"{right}", VK_RIGHT),
-    SIP(L"{spacebar}", VK_SPACE),
-    SIP(L"{*}", VK_MULTIPLY),
-    SIP(L"{tab}", VK_TAB),
-    SIP(L"{up}", VK_UP)
+    ULONG ResourceId;
+    ULONG VirtualKey;
+} SESSION_HOTKEY_ENTRY, *PSESSION_HOTKEY_ENTRY;
+
+static CONST SESSION_HOTKEY_ENTRY PhpSessionSpecialKeyEntries[] =
+{
+    { IDS_PH_SESSION_KEY_BACKSPACE, VK_BACK },
+    { IDS_PH_SESSION_KEY_DELETE, VK_DELETE },
+    { IDS_PH_SESSION_KEY_DOWN, VK_DOWN },
+    { IDS_PH_SESSION_KEY_END, VK_END },
+    { IDS_PH_SESSION_KEY_ENTER, VK_RETURN },
+    { 0, VK_F2 },
+    { 0, VK_F3 },
+    { 0, VK_F4 },
+    { 0, VK_F5 },
+    { 0, VK_F6 },
+    { 0, VK_F7 },
+    { 0, VK_F8 },
+    { 0, VK_F9 },
+    { 0, VK_F10 },
+    { 0, VK_F11 },
+    { 0, VK_F12 },
+    { IDS_PH_SESSION_KEY_HOME, VK_HOME },
+    { IDS_PH_SESSION_KEY_INSERT, VK_INSERT },
+    { IDS_PH_SESSION_KEY_LEFT, VK_LEFT },
+    { 0, VK_SUBTRACT },
+    { IDS_PH_SESSION_KEY_PAGE_DOWN, VK_NEXT },
+    { IDS_PH_SESSION_KEY_PAGE_UP, VK_PRIOR },
+    { 0, VK_ADD },
+    { IDS_PH_SESSION_KEY_PRINT_SCREEN, VK_SNAPSHOT },
+    { IDS_PH_SESSION_KEY_RIGHT, VK_RIGHT },
+    { IDS_PH_SESSION_KEY_SPACE, VK_SPACE },
+    { 0, VK_MULTIPLY },
+    { IDS_PH_SESSION_KEY_TAB, VK_TAB },
+    { IDS_PH_SESSION_KEY_UP, VK_UP }
 };
+
+static INT PhpAddSessionShadowHotKey(
+    _In_ HWND ComboBoxHandle,
+    _In_ PCWSTR Text,
+    _In_ ULONG VirtualKey
+    )
+{
+    INT itemIndex;
+
+    itemIndex = ComboBox_AddString(ComboBoxHandle, Text);
+
+    if (itemIndex >= 0)
+    {
+        if (ComboBox_SetItemData(
+            ComboBoxHandle,
+            itemIndex,
+            UlongToPtr(VirtualKey)
+            ) != CB_ERR)
+        {
+            return itemIndex;
+        }
+
+        ComboBox_DeleteString(ComboBoxHandle, itemIndex);
+    }
+
+    return CB_ERR;
+}
+
+static VOID PhpAddSessionShadowSpecialHotKey(
+    _In_ HWND ComboBoxHandle,
+    _In_ CONST SESSION_HOTKEY_ENTRY* Entry
+    )
+{
+    PPH_STRING formattedText = NULL;
+    PCWSTR text;
+    WCHAR symbolText[] = L"{ }";
+
+    if (Entry->ResourceId)
+    {
+        text = PhGetApplicationUiString(Entry->ResourceId);
+    }
+    else if (Entry->VirtualKey >= VK_F2 && Entry->VirtualKey <= VK_F12)
+    {
+        formattedText = PhFormatString(L"{F%lu}", Entry->VirtualKey - VK_F1 + 1);
+        text = PhGetString(formattedText);
+    }
+    else
+    {
+        switch (Entry->VirtualKey)
+        {
+        case VK_SUBTRACT:
+            symbolText[1] = L'-';
+            break;
+        case VK_ADD:
+            symbolText[1] = L'+';
+            break;
+        case VK_MULTIPLY:
+            symbolText[1] = L'*';
+            break;
+        default:
+            return;
+        }
+
+        text = symbolText;
+    }
+
+    PhpAddSessionShadowHotKey(ComboBoxHandle, text, Entry->VirtualKey);
+
+    if (formattedText)
+        PhDereferenceObject(formattedText);
+}
+
+static BOOLEAN PhpIsSessionShadowHotKey(
+    _In_ ULONG VirtualKey
+    )
+{
+    if (
+        (VirtualKey >= L'0' && VirtualKey <= L'9') ||
+        (VirtualKey >= L'A' && VirtualKey <= L'Z')
+        )
+    {
+        return TRUE;
+    }
+
+    for (ULONG i = 0; i < ARRAYSIZE(PhpSessionSpecialKeyEntries); i++)
+    {
+        if (PhpSessionSpecialKeyEntries[i].VirtualKey == VirtualKey)
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+static BOOLEAN PhpGetSessionShadowHotKey(
+    _In_ HWND ComboBoxHandle,
+    _Out_ PULONG VirtualKey
+    )
+{
+    INT selectedIndex;
+    LRESULT selectedData;
+
+    selectedIndex = ComboBox_GetCurSel(ComboBoxHandle);
+
+    if (selectedIndex == CB_ERR)
+        return FALSE;
+
+    selectedData = ComboBox_GetItemData(ComboBoxHandle, selectedIndex);
+
+    if (selectedData == CB_ERR || !PhpIsSessionShadowHotKey((ULONG)selectedData))
+        return FALSE;
+
+    *VirtualKey = (ULONG)selectedData;
+    return TRUE;
+}
+
+static BOOLEAN PhpSelectSessionShadowHotKey(
+    _In_ HWND ComboBoxHandle,
+    _In_ ULONG VirtualKey
+    )
+{
+    for (INT i = 0; i < ComboBox_GetCount(ComboBoxHandle); i++)
+    {
+        LRESULT itemData;
+
+        itemData = ComboBox_GetItemData(ComboBoxHandle, i);
+
+        if (itemData != CB_ERR && (ULONG)itemData == VirtualKey)
+        {
+            ComboBox_SetCurSel(ComboBoxHandle, i);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
 
 INT_PTR CALLBACK PhpSessionShadowDlgProc(
     _In_ HWND hwndDlg,
@@ -127,8 +232,6 @@ INT_PTR CALLBACK PhpSessionShadowDlgProc(
         {
             HWND virtualKeyComboBox;
             PH_INTEGER_PAIR hotkey;
-            ULONG i;
-            PWSTR stringToSelect;
 
             PhSetWindowContext(hwndDlg, PH_WINDOW_CONTEXT_DEFAULT, UlongToPtr((ULONG)lParam));
 
@@ -139,19 +242,26 @@ INT_PTR CALLBACK PhpSessionShadowDlgProc(
             // Set up the hotkeys.
 
             virtualKeyComboBox = GetDlgItem(hwndDlg, IDC_VIRTUALKEY);
-            stringToSelect = L"{*}";
 
-            for (i = 0; i < sizeof(VirtualKeyPairs) / sizeof(PH_KEY_VALUE_PAIR); i++)
+            for (WCHAR key = L'0'; key <= L'9'; key++)
             {
-                ComboBox_AddString(virtualKeyComboBox, VirtualKeyPairs[i].Key);
+                WCHAR keyText[2] = { key, UNICODE_NULL };
 
-                if (PtrToUlong(VirtualKeyPairs[i].Value) == (ULONG)hotkey.X)
-                {
-                    stringToSelect = VirtualKeyPairs[i].Key;
-                }
+                PhpAddSessionShadowHotKey(virtualKeyComboBox, keyText, key);
             }
 
-            PhSelectComboBoxString(virtualKeyComboBox, stringToSelect, FALSE);
+            for (WCHAR key = L'A'; key <= L'Z'; key++)
+            {
+                WCHAR keyText[2] = { key, UNICODE_NULL };
+
+                PhpAddSessionShadowHotKey(virtualKeyComboBox, keyText, key);
+            }
+
+            for (ULONG i = 0; i < ARRAYSIZE(PhpSessionSpecialKeyEntries); i++)
+                PhpAddSessionShadowSpecialHotKey(virtualKeyComboBox, &PhpSessionSpecialKeyEntries[i]);
+
+            if (!PhpSelectSessionShadowHotKey(virtualKeyComboBox, (ULONG)hotkey.X))
+                PhpSelectSessionShadowHotKey(virtualKeyComboBox, VK_MULTIPLY);
 
             // Set up the modifiers.
 
@@ -181,13 +291,13 @@ INT_PTR CALLBACK PhpSessionShadowDlgProc(
                     ULONG modifiers;
                     PPH_STRING computerName;
 
-                    virtualKey = VK_MULTIPLY;
-                    PhFindIntegerSiKeyValuePairs(
-                        VirtualKeyPairs,
-                        sizeof(VirtualKeyPairs),
-                        PhaGetDlgItemText(hwndDlg, IDC_VIRTUALKEY)->Buffer,
+                    if (!PhpGetSessionShadowHotKey(
+                        GetDlgItem(hwndDlg, IDC_VIRTUALKEY),
                         &virtualKey
-                        );
+                        ))
+                    {
+                        break;
+                    }
 
                     modifiers = 0;
 

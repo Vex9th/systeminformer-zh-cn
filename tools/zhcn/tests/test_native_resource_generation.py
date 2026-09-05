@@ -371,34 +371,32 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
     def test_audit_scans_qualified_macro_struct_combobox_arrays(self) -> None:
         audit = load_audit_module()
+        source = """
+            static CONST PH_KEY_VALUE_PAIR serviceActionPairs[] = {
+                SIP(L"Take no action", 0),
+                SIP(L"Restart the service", 1)
+            };
+            void add_actions(HWND combo) {
+                for (ULONG i = 0; i < RTL_NUMBER_OF(serviceActionPairs); i++) {
+                    ComboBox_AddString(combo, (PWSTR)serviceActionPairs[i].Key);
+                }
+            }
+        """
         entries = []
 
-        audit.scan_c_file(
-            str(REPO_ROOT / "plugins" / "ExtendedServices" / "recovery.c"),
-            entries,
-        )
-        audit.scan_c_file(
-            str(REPO_ROOT / "SystemInformer" / "sessshad.c"),
-            entries,
-        )
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
 
         combo_text = {
             entry["english"]
             for entry in entries
             if entry["category"] == "c_combobox"
         }
-        self.assertTrue(
-            {
-                "Take no action",
-                "Restart the service",
-                "Restart the computer",
-                "Run a program",
-                "Own restart",
-                "{backspace}",
-                "{delete}",
-                "{enter}",
-            }.issubset(combo_text)
-        )
+        self.assertEqual(combo_text, {"Take no action", "Restart the service"})
 
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
         audit = load_audit_module()
@@ -697,7 +695,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("684 strings", result.stdout)
+        self.assertIn("704 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1047,7 +1045,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 271)
+        self.assertEqual(len(stringtable_ids(resource_script)), 286)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -1086,7 +1084,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2271)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2286)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -2427,6 +2425,148 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertLess(save_body.index("PhStringToGuid"), first_mutation)
         self.assertLess(save_body.index("SERVICE_TRIGGER_ACTION_SERVICE_START"), first_mutation)
 
+    def test_extended_services_recovery_actions_use_item_data_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "ExtendedServices" / "recovery.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "plugins" / "ExtendedServices" / "ExtendedServices.rc"
+        ).read_text(encoding="utf-8-sig")
+        expected_entries = [
+            ("IDS_ES_RECOVERY_ACTION_NONE", "SC_ACTION_NONE"),
+            ("IDS_ES_RECOVERY_ACTION_RESTART_SERVICE", "SC_ACTION_RESTART"),
+            ("IDS_ES_RECOVERY_ACTION_RESTART_COMPUTER", "SC_ACTION_REBOOT"),
+            ("IDS_ES_RECOVERY_ACTION_RUN_PROGRAM", "SC_ACTION_RUN_COMMAND"),
+            ("IDS_ES_RECOVERY_ACTION_OWN_RESTART", "SC_ACTION_OWN_RESTART"),
+        ]
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_ES_RECOVERY_ACTION_[A-Z0-9_]+), (SC_ACTION_[A-Z0-9_]+) \}",
+                source,
+            ),
+            expected_entries,
+        )
+        for resource_id, _ in expected_entries:
+            self.assertRegex(resource_script, rf"(?m)^\s*{resource_id}\s+\"")
+        for action_text in (
+            "Take no action",
+            "Restart the service",
+            "Restart the computer",
+            "Run a program",
+            "Own restart",
+        ):
+            self.assertIn(action_text, translation_data["native_strings"])
+            self.assertNotIn(action_text, translation_data["strings"])
+
+        self.assertNotIn("ServiceActionPairs", source)
+        self.assertNotIn("EspStringToServiceAction", source)
+        self.assertNotIn("EspServiceActionToString", source)
+        self.assertNotIn("PhGetComboBoxString", source)
+        self.assertIn("ComboBox_SetItemData", source)
+        self.assertIn("ComboBox_GetItemData", source)
+        self.assertIn("ComboBox_DeleteString", source)
+        self.assertRegex(
+            source,
+            r"BOOLEAN ComboBoxToServiceAction\([\s\S]*?_Out_ SC_ACTION_TYPE \*ActionType",
+        )
+        selection_body = source.split("ServiceActionToComboBox(", 1)[1].split(
+            "VOID EspFixControls", 1
+        )[0]
+        self.assertNotIn("noneIndex", selection_body)
+        self.assertIn("ComboBox_SetCurSel(ComboBoxHandle, -1)", selection_body)
+        self.assertRegex(source, r"BOOLEAN ServiceActionToComboBox\(")
+        apply_body = source.split("case PSN_APPLY:", 1)[1].split(
+            "// Try to save the changes.", 1
+        )[0]
+        self.assertEqual(apply_body.count("ComboBoxToServiceAction("), 4)
+        self.assertIn("PSNRET_INVALID_NOCHANGEPAGE", apply_body)
+        self.assertLess(
+            apply_body.index("actions[i].Delay = 0;"),
+            apply_body.index("switch (actions[i].Type)"),
+        )
+
+    def test_session_shadow_hotkeys_use_item_data_resources(self) -> None:
+        source = (
+            REPO_ROOT / "SystemInformer" / "sessshad.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "SystemInformer" / "SystemInformer.rc"
+        ).read_text(encoding="utf-8-sig")
+        expected_entries = [
+            ("IDS_PH_SESSION_KEY_BACKSPACE", "VK_BACK"),
+            ("IDS_PH_SESSION_KEY_DELETE", "VK_DELETE"),
+            ("IDS_PH_SESSION_KEY_DOWN", "VK_DOWN"),
+            ("IDS_PH_SESSION_KEY_END", "VK_END"),
+            ("IDS_PH_SESSION_KEY_ENTER", "VK_RETURN"),
+            ("IDS_PH_SESSION_KEY_HOME", "VK_HOME"),
+            ("IDS_PH_SESSION_KEY_INSERT", "VK_INSERT"),
+            ("IDS_PH_SESSION_KEY_LEFT", "VK_LEFT"),
+            ("IDS_PH_SESSION_KEY_PAGE_DOWN", "VK_NEXT"),
+            ("IDS_PH_SESSION_KEY_PAGE_UP", "VK_PRIOR"),
+            ("IDS_PH_SESSION_KEY_PRINT_SCREEN", "VK_SNAPSHOT"),
+            ("IDS_PH_SESSION_KEY_RIGHT", "VK_RIGHT"),
+            ("IDS_PH_SESSION_KEY_SPACE", "VK_SPACE"),
+            ("IDS_PH_SESSION_KEY_TAB", "VK_TAB"),
+            ("IDS_PH_SESSION_KEY_UP", "VK_UP"),
+        ]
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_PH_SESSION_KEY_[A-Z0-9_]+), (VK_[A-Z0-9_]+) \}",
+                source,
+            ),
+            expected_entries,
+        )
+        for resource_id, _ in expected_entries:
+            self.assertRegex(resource_script, rf"(?m)^\s*{resource_id}\s+\"")
+        for key_text in (
+            "{Backspace}",
+            "{Delete}",
+            "{Down}",
+            "{End}",
+            "{Enter}",
+            "{Home}",
+            "{Insert}",
+            "{Left}",
+            "{Page Down}",
+            "{Page Up}",
+            "{Print Screen}",
+            "{Right}",
+            "{Space}",
+            "{Tab}",
+            "{Up}",
+        ):
+            self.assertIn(key_text, translation_data["native_strings"])
+            self.assertNotIn(key_text, translation_data["strings"])
+
+        self.assertNotIn("VirtualKeyPairs", source)
+        self.assertNotIn("PhFindIntegerSiKeyValuePairs", source)
+        self.assertNotRegex(source, r"PhaGetDlgItemText\(hwndDlg, IDC_VIRTUALKEY\)")
+        self.assertNotRegex(source, r"PhSelectComboBoxString\(virtualKeyComboBox")
+        self.assertIn("ComboBox_SetItemData", source)
+        self.assertIn("ComboBox_GetItemData", source)
+        self.assertIn("ComboBox_DeleteString", source)
+        self.assertIn("PhpAddSessionShadowHotKey", source)
+        self.assertIn("PhpGetSessionShadowHotKey", source)
+        self.assertRegex(source, r"for \(WCHAR key = L'0'; key <= L'9'; key\+\+\)")
+        self.assertRegex(source, r"for \(WCHAR key = L'A'; key <= L'Z'; key\+\+\)")
+        self.assertIn("{ 0, VK_F2 }", source)
+        self.assertIn("{ 0, VK_F12 }", source)
+        self.assertIn('PhFormatString(L"{F%lu}"', source)
+        save_body = source.split("case IDOK:", 1)[1].split("modifiers = 0;", 1)[0]
+        self.assertIn("if (!PhpGetSessionShadowHotKey", save_body)
+
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
@@ -3110,8 +3250,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 271): 2,
-                    (r"bin\Release64\plugins\ExtendedServices.dll", 51): 2,
+                    (r"bin\Release64\sys_info.exe", 286): 2,
+                    (r"bin\Release64\plugins\ExtendedServices.dll", 56): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
