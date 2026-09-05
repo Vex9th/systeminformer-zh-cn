@@ -2,9 +2,11 @@
 
 [![zh-ci](https://github.com/Vex9th/systeminformer-zh-cn/actions/workflows/zh-cn-build.yml/badge.svg?branch=zh-cn)](https://github.com/Vex9th/systeminformer-zh-cn/actions/workflows/zh-cn-build.yml)
 
-System Informer 的非官方简体中文、无驱动便携构建。程序名为 `sys_info.exe`，可与官方版并存。
+System Informer 的非官方简体中文、无驱动便携版。程序名为 `sys_info.exe`，可与官方版并存。
 
-## 下载
+汉化仍在完善中，不承诺“100% 汉化”；仍可能出现崩溃或界面布局问题。
+
+## 下载与运行
 
 从 [Releases](https://github.com/Vex9th/systeminformer-zh-cn/releases) 下载便携包，解压后运行：
 
@@ -12,31 +14,20 @@ System Informer 的非官方简体中文、无驱动便携构建。程序名为 
 - ARM64 Windows：`arm64\sys_info.exe`
 - 32 位 Windows：`i386\sys_info.exe`
 
-发布包未签名。遇到 SmartScreen 提示时，请先核对 Release 中的 SHA-256。
+无需安装。发布包未签名；遇到 SmartScreen 提示时，请先核对 Release 中的 SHA-256。
 
-## 与官方版的区别
+## 重要说明
 
-- 提供简体中文界面，当前正在从运行时翻译迁移到原生 zh-CN 资源。
-- 可执行文件和产品标识改为 `sys_info`。
-- 不构建、不打包 KSystemInformer 内核驱动。
+- 部分界面仍可能显示英文。
+- 本项目不构建、不打包 KSystemInformer 内核驱动；依赖驱动的功能不可用。
+- 无驱动不等于反作弊白名单。运行受保护游戏时，建议退出本程序。
+- 自动更新插件指向官方发布渠道，更新后可能恢复为官方英文版。
 
-依赖驱动的功能会不可用，例如受保护进程的完整句柄枚举和部分内核堆栈功能。无驱动不等于反作弊白名单，运行受保护游戏时建议退出本程序。
-
-## 当前验证范围
-
-| 项目 | 当前状态 |
-|---|---|
-| 主程序静态对话框 | 106 个 en-US/zh-CN 同 ID 资源曾在历史 Windows x64 CI 中通过 PE 结构校验；当前本地新增提交尚未重新跑 Windows CI，人工界面验收仍未完成 |
-| 动态文字 | PE Viewer、安装器和主程序分别已有 134、74、312 条使用原生 `STRINGTABLE`；DotNetTools、ExtendedServices、ExtendedTools、ToolStatus、UserNotes 分别已迁移 89、66、40、103、15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计迁移 136 条，合计 969 条。扩展审计到窗口文字、组合框（含普通字符串数组及结构体字段数组）及列表分组/项目和包装入口后，曾新增暴露的 57 条结构体数组组合框文字已经迁移，显示文字不再参与业务值解析；ExtendedServices 当前审计项已全部覆盖，DotNetTools 的 8 个 CLR 性能计数器分组及其 81 个计数器项目已全部迁移，WindowExplorer 的 38 个窗口属性分组项和 43 个 UI Automation 属性项，以及主程序、ExtendedTools、WindowExplorer 和 PE Viewer 的其他无共享冲突分组/项目已迁移，NetworkTools 的许可证提示、Ping、Tracert 和 WHOIS 动态窗口文字以及 HardwareDevices 的连接分组、网络状态和适配器详情分组/后备标题也已迁移。审计清单 schema v2 按模块拆分必须迁移的调用点，同一普通字符串仍只保留一个全局翻译单元；模块表按实际出现模块计数，不能与全局翻译单元直接求和。此前被跨模块合并掩盖的 19 个调用点迁移单元现已恢复；排除误扫的配置键后，项目如实报告 477 条未翻译项。大量既有文字仍由兼容翻译层接管，不能据此宣称整体完成 |
-| 生成器与源码契约 | 本地测试通过 |
-| Windows x64 构建与原生加载 | 历史远端基线曾通过；当前本地分支新增内容尚未推送，不能宣称已通过 Windows 编译、启动或 UI 响应验证 |
-| x86、ARM64、多 DPI 界面 | 尚未完成真实运行与视觉验收 |
-
-这些检查不代表“全部界面 100% 汉化”，也不保证不存在崩溃或布局问题。发布状态以对应版本的 CI 和人工验收记录为准。
+例如，受保护进程的完整句柄枚举和部分内核堆栈功能需要驱动，因此本版本无法提供。
 
 ## 切换语言
 
-关闭程序后，编辑便携目录中的 `sys_info.exe.settings.json`：
+关闭程序后，编辑便携目录中的 `sys_info.exe.settings.json`。只修改或添加 `Language` 字段，不要用下面的示例覆盖整个设置文件：
 
 ```json
 {
@@ -46,23 +37,25 @@ System Informer 的非官方简体中文、无驱动便携构建。程序名为 
 
 使用 `"zh-CN"` 恢复中文，重启后生效。
 
-## 本地开发
+## 验证边界
 
-```bash
-python3 tools/zhcn/audit.py
-python3 tools/zhcn/check_translation.py
-python3 tools/zhcn/generate_translation.py --check
-python3 tools/zhcn/generate_native_resources.py --check
-python3 -m unittest discover -s tools/zhcn/tests -v
-```
+发布工作流会在 Windows x64 上构建程序，并检查：`sys_info.exe` 能启动和响应、11 个插件 DLL 已载入、PE 中英文资源结构符合预期、发布包不含驱动。
 
-工具说明见 [tools/zhcn/README.md](tools/zhcn/README.md)。
+这些检查不代表 11 个插件的功能均正常，也不代表全部文字、稳定性、崩溃路径或视觉效果已经验收。具体版本结果以对应 tag 的 CI 和 Release 说明为准。
+
+macOS 本地只能执行源码、生成器和资源契约检查，不能运行或验证 Windows 的 `sys_info.exe`。
+
+## 构建与贡献
+
+- 汉化工具与检查命令：[tools/zhcn/README.md](tools/zhcn/README.md)
+- Windows 构建流程：[zh-cn-build.yml](.github/workflows/zh-cn-build.yml)
+- 上游构建说明：[System Informer build documentation](https://systeminformer.sourceforge.io/documentation.php)
 
 ## 已知限制
 
-- 插件静态对话框资源已生成；插件动态文字的原生资源迁移尚未完成。
-- 125%–200% DPI 下的字体清晰度、截断和重叠仍需 Windows 截图验收。
-- 自动更新插件指向官方发布渠道，更新后可能恢复为官方英文版。
+- 动态文字的原生资源迁移尚未完成，仍有旧兼容翻译逻辑。
+- 尚未完成 Windows 多 DPI 的完整人工视觉验收；字体清晰度、文字截断、控件重叠和缩放问题仍可能存在。
+- x86 和 ARM64 尚未完成与 x64 同等强度的真实运行验收。
 - 本项目与 System Informer 官方团队、游戏发行商及反作弊厂商无隶属关系。
 
 ## 许可证与上游
