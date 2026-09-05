@@ -1024,7 +1024,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("790 strings", result.stdout)
+        self.assertIn("828 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3446,6 +3446,151 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(translation_data["strings"].get("State"), "状态")
         self.assertNotIn("State", translation_data["native_strings"])
 
+    def test_window_explorer_window_property_items_use_native_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_header = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "WindowExplorer.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_resource = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "WindowExplorer.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_resources = {
+            "IDS_WE_WINDOW_PROPERTY_APP_ID": (12010, "AppId", "应用 ID"),
+            "IDS_WE_WINDOW_PROPERTY_THREAD": (12011, "Thread", "线程"),
+            "IDS_WE_WINDOW_PROPERTY_RECTANGLE": (12012, "Rectangle", "矩形"),
+            "IDS_WE_WINDOW_PROPERTY_NORMAL_RECTANGLE": (12013, "Normal rectangle", "正常位置矩形"),
+            "IDS_WE_WINDOW_PROPERTY_CLIENT_RECTANGLE": (12014, "Client rectangle", "客户区矩形"),
+            "IDS_WE_WINDOW_PROPERTY_INSTANCE_HANDLE": (12015, "Instance handle", "实例句柄"),
+            "IDS_WE_WINDOW_PROPERTY_MENU_HANDLE": (12016, "Menu handle", "菜单句柄"),
+            "IDS_WE_WINDOW_PROPERTY_USER_DATA": (12017, "User data", "用户数据"),
+            "IDS_WE_WINDOW_PROPERTY_UNICODE": (12018, "Unicode", "Unicode"),
+            "IDS_WE_WINDOW_PROPERTY_WINDOW_TEXT": (12019, "Window text", "窗口文本"),
+            "IDS_WE_WINDOW_PROPERTY_WINDOW_HANDLE": (12020, "Window handle", "窗口句柄"),
+            "IDS_WE_WINDOW_PROPERTY_WINDOW_UNIQUE_ID": (12021, "Window unique id", "窗口唯一 ID"),
+            "IDS_WE_WINDOW_PROPERTY_MESSAGE_ONLY": (12022, "Window message-only", "仅消息窗口"),
+            "IDS_WE_WINDOW_PROPERTY_EXTRA_BYTES": (12023, "Window extra bytes", "窗口附加字节"),
+            "IDS_WE_WINDOW_PROPERTY_PROCEDURE": (12024, "Window procedure", "窗口过程"),
+            "IDS_WE_WINDOW_PROPERTY_DIALOG_PROCEDURE": (12025, "Dialog procedure", "对话框过程"),
+            "IDS_WE_WINDOW_PROPERTY_DIALOG_CONTROL_ID": (12026, "Dialog control ID", "对话框控件 ID"),
+            "IDS_WE_WINDOW_PROPERTY_FONT": (12027, "Font", "字体"),
+            "IDS_WE_WINDOW_PROPERTY_STYLES": (12028, "Styles", "样式"),
+            "IDS_WE_WINDOW_PROPERTY_EXTENDED_STYLES": (12029, "Extended styles", "扩展样式"),
+            "IDS_WE_WINDOW_PROPERTY_AUTOMATION_SERVER": (12030, "Automation server", "自动化服务器"),
+            "IDS_WE_WINDOW_PROPERTY_DPI_CONTEXT": (12031, "DPI Context", "DPI 上下文"),
+            "IDS_WE_WINDOW_PROPERTY_MONITOR": (12032, "Monitor", "监视器"),
+            "IDS_WE_WINDOW_PROPERTY_TOP_LEVEL": (12033, "Top level", "顶层窗口"),
+            "IDS_WE_WINDOW_PROPERTY_CLOAKED": (12034, "Cloaked", "隐匿状态"),
+            "IDS_WE_WINDOW_PROPERTY_BAND": (12035, "Band", "窗口带"),
+            "IDS_WE_WINDOW_PROPERTY_IME_WINDOW": (12036, "IME Window", "IME 窗口"),
+            "IDS_WE_WINDOW_PROPERTY_EXCLUSIVE_OWNERSHIP": (12037, "Exclusive ownership", "独占所有权"),
+            "IDS_WE_WINDOW_PROPERTY_NAME": (12038, "Name", "名称"),
+            "IDS_WE_WINDOW_PROPERTY_BASE_NAME": (12039, "Base name", "基类名"),
+            "IDS_WE_WINDOW_PROPERTY_ATOM": (12040, "Atom", "原子"),
+            "IDS_WE_WINDOW_PROPERTY_LARGE_ICON_HANDLE": (12041, "Large icon handle", "大图标句柄"),
+            "IDS_WE_WINDOW_PROPERTY_SMALL_ICON_HANDLE": (12042, "Small icon handle", "小图标句柄"),
+            "IDS_WE_WINDOW_PROPERTY_CURSOR_HANDLE": (12043, "Cursor handle", "光标句柄"),
+            "IDS_WE_WINDOW_PROPERTY_BACKGROUND_BRUSH": (12044, "Background brush", "背景画刷"),
+            "IDS_WE_WINDOW_PROPERTY_MENU_NAME": (12045, "Menu name", "菜单名称"),
+            "IDS_WE_WINDOW_PROPERTY_DROP_SHADOW": (12046, "Drop shadow", "阴影"),
+            "IDS_WE_WINDOW_PROPERTY_SAVE_BITS": (12047, "Save bits", "保存位图"),
+        }
+        expected_routes = [
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_APPID", "IDS_WE_WINDOW_PROPERTY_APP_ID"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_THREAD", "IDS_WE_WINDOW_PROPERTY_THREAD"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_RECT", "IDS_WE_WINDOW_PROPERTY_RECTANGLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_NORMALRECT", "IDS_WE_WINDOW_PROPERTY_NORMAL_RECTANGLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_CLIENTRECT", "IDS_WE_WINDOW_PROPERTY_CLIENT_RECTANGLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_INSTANCE", "IDS_WE_WINDOW_PROPERTY_INSTANCE_HANDLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_MENUHANDLE", "IDS_WE_WINDOW_PROPERTY_MENU_HANDLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_USERDATA", "IDS_WE_WINDOW_PROPERTY_USER_DATA"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_UNICODE", "IDS_WE_WINDOW_PROPERTY_UNICODE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_WNDTEXT", "IDS_WE_WINDOW_PROPERTY_WINDOW_TEXT"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_WNDHANDLE", "IDS_WE_WINDOW_PROPERTY_WINDOW_HANDLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_WNDUNIQID", "IDS_WE_WINDOW_PROPERTY_WINDOW_UNIQUE_ID"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_WNDMSGONLY", "IDS_WE_WINDOW_PROPERTY_MESSAGE_ONLY"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_WNDEXTRA", "IDS_WE_WINDOW_PROPERTY_EXTRA_BYTES"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_WNDPROC", "IDS_WE_WINDOW_PROPERTY_PROCEDURE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_DLGPROC", "IDS_WE_WINDOW_PROPERTY_DIALOG_PROCEDURE"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_DLGCTLID", "IDS_WE_WINDOW_PROPERTY_DIALOG_CONTROL_ID"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_FONTNAME", "IDS_WE_WINDOW_PROPERTY_FONT"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_STYLES", "IDS_WE_WINDOW_PROPERTY_STYLES"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_EXSTYLES", "IDS_WE_WINDOW_PROPERTY_EXTENDED_STYLES"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_AUTOMATION", "IDS_WE_WINDOW_PROPERTY_AUTOMATION_SERVER"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_DPICONTEXT", "IDS_WE_WINDOW_PROPERTY_DPI_CONTEXT"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_MONITOR", "IDS_WE_WINDOW_PROPERTY_MONITOR"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_TOPLEVEL", "IDS_WE_WINDOW_PROPERTY_TOP_LEVEL"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_CLOAKED", "IDS_WE_WINDOW_PROPERTY_CLOAKED"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_IAMID", "IDS_WE_WINDOW_PROPERTY_BAND"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_IMEWND", "IDS_WE_WINDOW_PROPERTY_IME_WINDOW"),
+            ("WINDOW_PROPERTIES_CATEGORY_GENERAL", "WINDOW_PROPERTIES_INDEX_D3DKMT_EXCLUSIVE", "IDS_WE_WINDOW_PROPERTY_EXCLUSIVE_OWNERSHIP"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_NAME", "IDS_WE_WINDOW_PROPERTY_NAME"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_BASENAME", "IDS_WE_WINDOW_PROPERTY_BASE_NAME"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_ATOM", "IDS_WE_WINDOW_PROPERTY_ATOM"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_STYLES", "IDS_WE_WINDOW_PROPERTY_STYLES"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_INSTANCE", "IDS_WE_WINDOW_PROPERTY_INSTANCE_HANDLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_LARGEICON", "IDS_WE_WINDOW_PROPERTY_LARGE_ICON_HANDLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_SMALLICON", "IDS_WE_WINDOW_PROPERTY_SMALL_ICON_HANDLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_CURSOR", "IDS_WE_WINDOW_PROPERTY_CURSOR_HANDLE"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_BACKBRUSH", "IDS_WE_WINDOW_PROPERTY_BACKGROUND_BRUSH"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_MENUNAME", "IDS_WE_WINDOW_PROPERTY_MENU_NAME"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_WNDEXTRA", "IDS_WE_WINDOW_PROPERTY_EXTRA_BYTES"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_WNDPROC", "IDS_WE_WINDOW_PROPERTY_PROCEDURE"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_DROPSHADOW", "IDS_WE_WINDOW_PROPERTY_DROP_SHADOW"),
+            ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_SAVEBITS", "IDS_WE_WINDOW_PROPERTY_SAVE_BITS"),
+        ]
+        runtime_owned = {"Thread", "Unicode", "Monitor", "Name"}
+
+        for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
+            with self.subTest(window_property_resource=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_resource,
+                    rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$',
+                )
+                table_name = "strings" if english_text in runtime_owned else "native_strings"
+                other_table = "native_strings" if table_name == "strings" else "strings"
+                self.assertEqual(translation_data[table_name].get(english_text), chinese_text)
+                self.assertNotIn(english_text, translation_data[other_table])
+
+        for group_id, item_index, resource_id in expected_routes:
+            with self.subTest(window_property_route=item_index):
+                self.assertRegex(
+                    source,
+                    rf"PhAddListViewGroupItem\(\s*ListViewHandle,\s*{group_id},\s*"
+                    rf"{item_index},\s*PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
+                    rf"PluginInstance->DllBase,\s*{resource_id},\s*NULL\s*\)\)\),\s*"
+                    rf"NULL\s*\);",
+                )
+
+        for _, english_text, _ in expected_resources.values():
+            with self.subTest(removed_window_property_literal=english_text):
+                self.assertNotRegex(
+                    source,
+                    rf"PhAddListViewGroupItem\([^;]*L\"{re.escape(english_text)}\"[^;]*\);",
+                )
+
+        self.assertRegex(
+            resource_header,
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12048$",
+        )
+
     def test_dotnet_performance_groups_use_native_resources(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "DotNetTools" / "perfpage.c"
@@ -4722,7 +4867,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 9): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
-                    (r"bin\Release64\plugins\WindowExplorer.dll", 10): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 48): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 4): 2,
