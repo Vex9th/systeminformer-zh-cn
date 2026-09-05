@@ -717,75 +717,453 @@ VOID PvPeUpdateImageHeaderProperties(
     ListView_DeleteAllItems(Context->ListViewHandle);
 
     // DOS Headers
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_MAGIC, L"Magic number", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_BYTES, L"Bytes on last page of file", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_PAGES, L"Pages in file", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_RELOCATIONS, L"Relocations", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_PARAGRAPH, L"Size of header in paragraphs", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_MINPARA, L"Minimum extra paragraphs needed", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_MAXPARA, L"Maximum extra paragraphs needed", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_INITRELSS, L"Initial (relative) SS value", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_INITRELSP, L"Initial SP value", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_CHECKSUM, L"Checksum", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_INITIP, L"Initial IP value", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_INITCS, L"Initial (relative) CS value", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_RELOCADDR, L"File address of relocation table", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_OVERLAY, L"Overlay number", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_MAGIC,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_MAGIC_NUMBER),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_BYTES,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_LAST_PAGE_BYTES),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_PAGES,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_PAGE_COUNT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_RELOCATIONS,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_RELOCATIONS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_PARAGRAPH,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_HEADER_PARAGRAPHS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_MINPARA,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_MIN_EXTRA_PARAGRAPHS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_MAXPARA,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_MAX_EXTRA_PARAGRAPHS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_INITRELSS,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_INITIAL_RELATIVE_SS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_INITRELSP,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_INITIAL_SP),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_CHECKSUM,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_CHECKSUM),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_INITIP,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_INITIAL_IP),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_INITCS,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_INITIAL_RELATIVE_CS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_RELOCADDR,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_RELOCATION_TABLE_ADDRESS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_OVERLAY,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_OVERLAY_NUMBER),
+        NULL
+        );
     //PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_RESERVED1, L"Reserved words", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_OEMID, L"OEM identifier (for e_oeminfo)", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_OEMINFO, L"OEM information (e_oemid specific)", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_OEMID,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_OEM_IDENTIFIER),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_OEMINFO,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_OEM_INFORMATION),
+        NULL
+        );
     //PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_RESERVED2, L"Reserved words", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, PVP_IMAGE_HEADER_INDEX_DOS_EXEHDRADDR, L"File address of new exe header", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PVP_IMAGE_HEADER_INDEX_DOS_EXEHDRADDR,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_NEW_EXE_HEADER_ADDRESS),
+        NULL
+        );
     // DOS Stub
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_STUBSIZE, L"Stub size", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_STUBENTROPY, L"Stub entropy", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_STUBHASH, L"Stub hash", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_RICHSIZE, L"Rich size", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_RICHENTROPY, L"Rich entropy", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_RICHHASH, L"Rich hash", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_SIZE, L"Total size", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_ENTROPY, L"Total entropy", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, PVP_IMAGE_HEADER_INDEX_DOS_HASH, L"Total hash", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_STUBSIZE,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_STUB_SIZE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_STUBENTROPY,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_STUB_ENTROPY),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_STUBHASH,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_STUB_HASH),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_RICHSIZE,
+        PvpLoadUiString(IDS_PV_FIELD_RICH_HEADER_SIZE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_RICHENTROPY,
+        PvpLoadUiString(IDS_PV_FIELD_RICH_HEADER_ENTROPY),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_RICHHASH,
+        PvpLoadUiString(IDS_PV_FIELD_RICH_HEADER_HASH),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_SIZE,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_TOTAL_SIZE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_ENTROPY,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_TOTAL_ENTROPY),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PVP_IMAGE_HEADER_INDEX_DOS_HASH,
+        PvpLoadUiString(IDS_PV_FIELD_DOS_TOTAL_HASH),
+        NULL
+        );
     // File Headers
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_NTSIG, L"Signature", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_MACHINE, L"Machine", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_SECTIONS, L"NumberOfSections", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_TIMESTAMP, L"Timestamp", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_SYMTABLEADDR, L"PointerToSymbolTable", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_SYMTABLECOUNT, L"NumberOfSymbols", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_OPTHDRSIZE, L"SizeOfOptionalHeader", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, PVP_IMAGE_HEADER_INDEX_FILE_CHARACTERISTICS, L"Characteristics", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_NTSIG,
+        PvpLoadUiString(IDS_PV_FIELD_PE_SIGNATURE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_MACHINE,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_MACHINE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_SECTIONS,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_NUMBER_OF_SECTIONS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_TIMESTAMP,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_TIMESTAMP),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_SYMTABLEADDR,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_POINTER_TO_SYMBOL_TABLE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_SYMTABLECOUNT,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_NUMBER_OF_SYMBOLS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_OPTHDRSIZE,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_SIZE_OF_OPTIONAL_HEADER),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PVP_IMAGE_HEADER_INDEX_FILE_CHARACTERISTICS,
+        PvpLoadUiString(IDS_PV_COLUMN_CHARACTERISTICS),
+        NULL
+        );
     // Optional Headers
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_MAGIC, L"Magic", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_LINKERVERSION, L"LinkerVersion", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFCODE, L"SizeOfCode", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_INITSIZE, L"SizeOfInitializedData", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_UNINITSIZE, L"SizeOfUninitializedData", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_ENTRYPOINT, L"AddressOfEntryPoint", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_BASEOFCODE, L"BaseOfCode", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_BASEOFDATA, L"BaseOfData", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_IMAGEBASE, L"ImageBase", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SECTIONALIGN, L"SectionAlignment", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_FILEALIGN, L"FileAlignment", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_OSVERSION, L"OperatingSystemVersion", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_IMGVERSION, L"ImageVersion", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SUBSYSTEMVERSION, L"SubsystemVersion", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_WIN32VERSION, L"Win32VersionValue", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFIMAGE, L"SizeOfImage", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFHEADERS, L"SizeOfHeaders", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_CHECKSUM, L"CheckSum", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SUBSYSTEM, L"Subsystem", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_DLLCHARACTERISTICS, L"DllCharacteristics", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFSTACKRESERVE, L"SizeOfStackReserve", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFSTACKCOMMIT, L"SizeOfStackCommit", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFHEAPRESERVE, L"SizeOfHeapReserve", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFHEAPCOMMIT, L"SizeOfHeapCommit", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_LOADERFLAGS, L"LoaderFlags", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, PVP_IMAGE_HEADER_INDEX_OPT_NUMBEROFRVA, L"NumberOfRvaAndSizes", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_MAGIC,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_MAGIC),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_LINKERVERSION,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_LINKER_VERSION),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFCODE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_CODE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_INITSIZE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_INITIALIZED_DATA),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_UNINITSIZE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_UNINITIALIZED_DATA),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_ENTRYPOINT,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_ADDRESS_OF_ENTRY_POINT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_BASEOFCODE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_BASE_OF_CODE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_BASEOFDATA,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_BASE_OF_DATA),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_IMAGEBASE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_IMAGE_BASE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SECTIONALIGN,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SECTION_ALIGNMENT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_FILEALIGN,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_FILE_ALIGNMENT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_OSVERSION,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_OPERATING_SYSTEM_VERSION),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_IMGVERSION,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_IMAGE_VERSION),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SUBSYSTEMVERSION,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SUBSYSTEM_VERSION),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_WIN32VERSION,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_WIN32_VERSION_VALUE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFIMAGE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_IMAGE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFHEADERS,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_HEADERS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_CHECKSUM,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_CHECKSUM),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SUBSYSTEM,
+        PvpLoadUiString(IDS_PV_FIELD_SUBSYSTEM),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_DLLCHARACTERISTICS,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_DLL_CHARACTERISTICS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFSTACKRESERVE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_STACK_RESERVE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFSTACKCOMMIT,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_STACK_COMMIT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFHEAPRESERVE,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_HEAP_RESERVE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_SIZEOFHEAPCOMMIT,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_SIZE_OF_HEAP_COMMIT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_LOADERFLAGS,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_LOADER_FLAGS),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PVP_IMAGE_HEADER_INDEX_OPT_NUMBEROFRVA,
+        PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_NUMBER_OF_RVA_AND_SIZES),
+        NULL
+        );
     // Overlay Data
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OVERLAY, PVP_IMAGE_HEADER_INDEX_PE_OVERLAY_SIZE, L"Data size", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OVERLAY, PVP_IMAGE_HEADER_INDEX_PE_OVERLAY_ENTROPY, L"Data entropy", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OVERLAY, PVP_IMAGE_HEADER_INDEX_PE_OVERLAY_HASH, L"Data hash", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OVERLAY,
+        PVP_IMAGE_HEADER_INDEX_PE_OVERLAY_SIZE,
+        PvpLoadUiString(IDS_PV_FIELD_OVERLAY_DATA_SIZE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OVERLAY,
+        PVP_IMAGE_HEADER_INDEX_PE_OVERLAY_ENTROPY,
+        PvpLoadUiString(IDS_PV_FIELD_OVERLAY_DATA_ENTROPY),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OVERLAY,
+        PVP_IMAGE_HEADER_INDEX_PE_OVERLAY_HASH,
+        PvpLoadUiString(IDS_PV_FIELD_OVERLAY_DATA_HASH),
+        NULL
+        );
 
     // DOS Headers
     PvSetPeImageDosHeaderProperties(Context);

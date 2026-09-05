@@ -1852,32 +1852,176 @@ VOID PvpSetPeImageProperties(
     ExtendedListView_SetRedraw(Context->ListViewHandle, FALSE);
     ListView_DeleteAllItems(Context->ListViewHandle);
 
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_NAME, L"Target machine", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_TIMESTAMP, L"Time stamp", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_ENTROPY, L"Image entropy", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_IMAGEBASE, L"Image base", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_IMAGESIZE, L"Image size", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_ENTRYPOINT, L"Entry point", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_CHECKSUM, L"Header checksum", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_NAME,
+        PvpLoadUiString(IDS_PV_FIELD_TARGET_MACHINE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_TIMESTAMP,
+        PvpLoadUiString(IDS_PV_FIELD_IMAGE_TIMESTAMP),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_ENTROPY,
+        PvpLoadUiString(IDS_PV_FIELD_IMAGE_ENTROPY),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_IMAGEBASE,
+        PvpLoadUiString(IDS_PV_FIELD_IMAGE_BASE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_IMAGESIZE,
+        PvpLoadUiString(IDS_PV_FIELD_IMAGE_SIZE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_ENTRYPOINT,
+        PvpLoadUiString(IDS_PV_FIELD_ENTRY_POINT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_CHECKSUM,
+        PvpLoadUiString(IDS_PV_FIELD_HEADER_CHECKSUM),
+        NULL
+        );
     //PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_CHECKSUMIAT, L"Import checksum", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_HEADERSPARE, L"Header spare", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_SECTIONSLACK, L"Section slack", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_SUBSYSTEM, L"Subsystem", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_SUBSYSTEMVERSION, L"Subsystem version", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, PVP_IMAGE_GENERAL_INDEX_CHARACTERISTICS, L"Characteristics", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_HEADERSPARE,
+        PvpLoadUiString(IDS_PV_FIELD_HEADER_SPARE),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_SECTIONSLACK,
+        PvpLoadUiString(IDS_PV_FIELD_SECTION_SLACK),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_SUBSYSTEM,
+        PvpLoadUiString(IDS_PV_FIELD_SUBSYSTEM),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_SUBSYSTEMVERSION,
+        PvpLoadUiString(IDS_PV_FIELD_IMAGE_SUBSYSTEM_VERSION),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PVP_IMAGE_GENERAL_INDEX_CHARACTERISTICS,
+        PvpLoadUiString(IDS_PV_COLUMN_CHARACTERISTICS),
+        NULL
+        );
     //PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_FILEINFO, PVP_IMAGE_GENERAL_INDEX_FILEATTRIBUTES, L"Attributes", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_FILEINFO, PVP_IMAGE_GENERAL_INDEX_FILECREATEDTIME, L"Created time", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_FILEINFO, PVP_IMAGE_GENERAL_INDEX_FILELASTACCESSTIME, L"Accessed time", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_FILEINFO, PVP_IMAGE_GENERAL_INDEX_FILELASTMODIFIEDTIME, L"Modified time", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_FILEINFO, PVP_IMAGE_GENERAL_INDEX_FILELASTWRITETIME, L"Updated time", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO, PVP_IMAGE_GENERAL_INDEX_DEBUGPDB, L"Guid", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO, PVP_IMAGE_GENERAL_INDEX_DEBUGIMAGE, L"Image name", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO, PVP_IMAGE_GENERAL_INDEX_DEBUGVCFEATURE, L"Feature count", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO, PVP_IMAGE_GENERAL_INDEX_DEBUGREPRO, L"Reproducible hash", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO, PVP_IMAGE_GENERAL_INDEX_FILEINDEX, L"File index", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO, PVP_IMAGE_GENERAL_INDEX_FILEID, L"File identifier", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO, PVP_IMAGE_GENERAL_INDEX_FILEOBJECTID, L"File object identifier", NULL);
-    PhAddListViewGroupItem(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO, PVP_IMAGE_GENERAL_INDEX_FILEUSN, L"File last USN", NULL);
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_FILEINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILECREATEDTIME,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_CREATED_TIME),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_FILEINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILELASTACCESSTIME,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_ACCESSED_TIME),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_FILEINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILELASTMODIFIEDTIME,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_MODIFIED_TIME),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_FILEINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILELASTWRITETIME,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_CHANGED_TIME),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO,
+        PVP_IMAGE_GENERAL_INDEX_DEBUGPDB,
+        PvpLoadUiString(IDS_PV_FIELD_DEBUG_GUID),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO,
+        PVP_IMAGE_GENERAL_INDEX_DEBUGIMAGE,
+        PvpLoadUiString(IDS_PV_FIELD_DEBUG_IMAGE_NAME),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO,
+        PVP_IMAGE_GENERAL_INDEX_DEBUGVCFEATURE,
+        PvpLoadUiString(IDS_PV_FIELD_DEBUG_FEATURE_COUNT),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO,
+        PVP_IMAGE_GENERAL_INDEX_DEBUGREPRO,
+        PvpLoadUiString(IDS_PV_FIELD_DEBUG_REPRODUCIBLE_HASH),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILEINDEX,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_INDEX),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILEID,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_IDENTIFIER),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILEOBJECTID,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_OBJECT_IDENTIFIER),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO,
+        PVP_IMAGE_GENERAL_INDEX_FILEUSN,
+        PvpLoadUiString(IDS_PV_FIELD_FILE_LAST_USN),
+        NULL
+        );
 
     PvpSetPeImageMachineType(Context->ListViewHandle);
     PvpSetPeImageTimeStamp(Context->ListViewHandle);
