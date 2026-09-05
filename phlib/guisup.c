@@ -11,6 +11,7 @@
  */
 
 #include <ph.h>
+#include <phappresourceid.h>
 #include <phtranslation.h>
 #include <apiimport.h>
 #include <guisup.h>
@@ -3659,7 +3660,24 @@ static PPH_HASHTABLE PhGetWindowContextHashTable(
 
     if (!FlsSetValue(WindowCallbackFlsIndex, hashtable))
     {
-        PhShowStatus(NULL, L"Unable to create the window context.", 0, PhGetLastError());
+        ULONG win32Result;
+        PPH_STRING resourceTitle;
+
+        win32Result = PhGetLastError();
+        resourceTitle = PhApplicationUiResourceInstance
+            ? PhLoadUiString(
+                PhApplicationUiResourceInstance,
+                IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT,
+                NULL
+                )
+            : NULL;
+        PhShowStatus(
+            NULL,
+            PhGetStringOrDefault(resourceTitle, L"Unable to create the window context."),
+            0,
+            win32Result
+            );
+        PhClearReference(&resourceTitle);
         RtlFailFast(FAST_FAIL_INVALID_FLS_DATA);
     }
 

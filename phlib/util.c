@@ -11,6 +11,7 @@
  */
 
 #include <ph.h>
+#include <phappresourceid.h>
 #include <phtranslation.h>
 #include <commdlg.h>
 #include <cfgmgr32.h>
@@ -6946,7 +6947,22 @@ VOID PhShellExploreFile(
         }
         else
         {
-            PhShowError2(WindowHandle, L"The location could not be found.", L"%s", FileName);
+            PPH_STRING resourceTitle;
+
+            resourceTitle = PhApplicationUiResourceInstance
+                ? PhLoadUiString(
+                    PhApplicationUiResourceInstance,
+                    IDS_PH_LOCATION_NOT_FOUND,
+                    NULL
+                    )
+                : NULL;
+            PhShowError2(
+                WindowHandle,
+                PhGetStringOrDefault(resourceTitle, L"The location could not be found."),
+                L"%s",
+                FileName
+                );
+            PhClearReference(&resourceTitle);
         }
     }
     else

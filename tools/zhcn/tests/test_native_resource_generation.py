@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("449 strings", result.stdout)
+        self.assertIn("487 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 177)
+        self.assertEqual(len(stringtable_ids(resource_script)), 215)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -840,7 +840,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
         resource_ids = set(stringtable_ids(resource_script))
         application_source = "\n".join(
             path.read_text(encoding="utf-8-sig")
-            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+            for path in (
+                *(REPO_ROOT / "SystemInformer").glob("*.c"),
+                REPO_ROOT / "phlib" / "guisup.c",
+                REPO_ROOT / "phlib" / "mapldr.c",
+                REPO_ROOT / "phlib" / "util.c",
+            )
         )
         used_ids = set(
             re.findall(
@@ -853,6 +858,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
         resource_header = (
             REPO_ROOT / "SystemInformer" / "resource.h"
         ).read_text(encoding="utf-8-sig")
+        resource_header += (
+            REPO_ROOT / "phlib" / "include" / "phappresourceid.h"
+        ).read_text(encoding="utf-8-sig")
         numeric_ids = [
             int(value)
             for _, value in re.findall(
@@ -861,7 +869,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2177)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2215)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1677,6 +1685,232 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertLess(initialize, execute)
         self.assertLess(execute, cleanup)
 
+    def test_final_main_and_phlib_errors_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        paths = (
+            REPO_ROOT / "SystemInformer" / "actions.c",
+            REPO_ROOT / "SystemInformer" / "appsup.c",
+            REPO_ROOT / "SystemInformer" / "main.c",
+            REPO_ROOT / "phlib" / "guisup.c",
+            REPO_ROOT / "phlib" / "mapldr.c",
+            REPO_ROOT / "phlib" / "util.c",
+        )
+        source = "\n".join(
+            audit.mask_c_comments(path.read_text(encoding="utf-8-sig"))
+            for path in paths
+        )
+        literals = (
+            "Unable to %s %s (PID %lu)",
+            "Unable to %s %s",
+            'Unable to %s handle \\"%s\\" (%s)%s',
+            "Unable to %s handle %s%s",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}"', source)
+
+        expected_ids = {
+            "IDS_PH_ERROR_WITH_DETAILS": 1,
+            "IDS_PH_COMMAND_LINE_OPTIONS": 1,
+            "IDS_PH_COMMAND_LINE_OPTIONS_CONTENT": 1,
+            "IDS_PH_UNABLE_INITIALIZE_DESKTOP_POLICY": 1,
+            "IDS_PH_UNABLE_LOAD_SETTINGS": 1,
+            "IDS_PH_UNABLE_APPLY_PROCESS_ACTION_PID": 1,
+            "IDS_PH_UNABLE_APPLY_PROCESS_ACTION": 1,
+            "IDS_PH_UNABLE_APPLY_NAMED_HANDLE_ACTION": 1,
+            "IDS_PH_UNABLE_APPLY_HANDLE_ACTION": 1,
+            "IDS_PH_UNABLE_LOAD_PLUGIN": 1,
+            "IDS_PH_PLUGIN_IMPORT_BY_ORDINAL": 1,
+            "IDS_PH_PLUGIN_IMPORT_BY_NAME": 1,
+            "IDS_PH_LOCATION_NOT_FOUND": 1,
+            "IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT": 1,
+            "IDS_PH_ACTION_TERMINATE": 3,
+            "IDS_PH_ACTION_SUSPEND": 3,
+            "IDS_PH_ACTION_RESUME": 3,
+            "IDS_PH_ACTION_FREEZE": 1,
+            "IDS_PH_ACTION_THAW": 1,
+            "IDS_PH_ACTION_RESTART": 1,
+            "IDS_PH_ACTION_DEBUG": 1,
+            "IDS_PH_ACTION_REDUCE_WORKING_SET": 1,
+            "IDS_PH_ACTION_EMPTY_WORKING_SET": 1,
+            "IDS_PH_ACTION_SET_BACKGROUND_ACTIVITY_MODERATION": 1,
+            "IDS_PH_ACTION_SET_VIRTUALIZATION": 1,
+            "IDS_PH_ACTION_SET_CRITICAL_STATUS": 1,
+            "IDS_PH_ACTION_SET_ECO_MODE": 1,
+            "IDS_PH_ACTION_CREATE_EXECUTION_REQUIRED": 1,
+            "IDS_PH_ACTION_DETACH_DEBUGGER": 1,
+            "IDS_PH_ACTION_LOAD_DLL": 1,
+            "IDS_PH_ACTION_SET_IO_PRIORITY": 2,
+            "IDS_PH_ACTION_SET_PAGE_PRIORITY": 1,
+            "IDS_PH_ACTION_SET_PRIORITY_CLASS": 2,
+            "IDS_PH_ACTION_CHANGE_BOOST_PRIORITY": 1,
+            "IDS_PH_ACTION_SET_BOOST_PRIORITY": 1,
+            "IDS_PH_ACTION_FLUSH_PROCESS_HEAPS": 1,
+            "IDS_PH_ACTION_CLOSE_HANDLE": 2,
+            "IDS_PH_ACTION_SET_HANDLE_ATTRIBUTES": 1,
+        }
+
+        for resource_id, expected_count in expected_ids.items():
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", source)),
+                    expected_count,
+                )
+
+        shared_header = REPO_ROOT / "phlib" / "include" / "phappresourceid.h"
+        self.assertTrue(shared_header.exists())
+        shared_definitions = shared_header.read_text(encoding="utf-8-sig")
+        for resource_id in (
+            "IDS_PH_UNABLE_LOAD_PLUGIN",
+            "IDS_PH_PLUGIN_IMPORT_BY_ORDINAL",
+            "IDS_PH_PLUGIN_IMPORT_BY_NAME",
+            "IDS_PH_LOCATION_NOT_FOUND",
+            "IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT",
+        ):
+            with self.subTest(shared_resource_id=resource_id):
+                self.assertRegex(
+                    shared_definitions,
+                    rf"(?m)^#define\s+{re.escape(resource_id)}\s+\d+$",
+                )
+
+        main_header = (
+            REPO_ROOT / "SystemInformer" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        self.assertIn("#include <phappresourceid.h>", main_header)
+
+        main_source = (
+            REPO_ROOT / "SystemInformer" / "main.c"
+        ).read_text(encoding="utf-8-sig")
+        startup_parameters = main_source[
+            main_source.index("VOID PhpProcessStartupParameters("):
+            main_source.index("VOID PhpEnablePrivileges(")
+        ]
+        app_settings = main_source[
+            main_source.index("VOID PhInitializeAppSettings("):
+            main_source.index("BOOLEAN NTAPI PhpCommandLineOptionCallback(")
+        ]
+        win_main = main_source[
+            main_source.index("INT WINAPI wWinMain("):
+            main_source.index("VOID PhRegisterDialog(")
+        ]
+        self.assertNotIn("PhGetApplicationUiString", startup_parameters)
+        self.assertNotIn("PhLoadUiString", startup_parameters)
+        self.assertNotIn("PhShowInformation2", startup_parameters)
+        self.assertNotIn("PhGetApplicationUiString", app_settings)
+        self.assertIn("PhStartupParameters.Help = TRUE;", startup_parameters)
+        self.assertRegex(
+            app_settings,
+            r"PhLoadUiString\s*\([^;]+\bIDS_PH_UNABLE_LOAD_SETTINGS\b[^;]+NULL\s*\)",
+        )
+        self.assertLess(
+            app_settings.index("PhSetApplicationUiLanguage("),
+            app_settings.index("IDS_PH_UNABLE_LOAD_SETTINGS"),
+        )
+        help_safe_error_guard = (
+            "if (!PhStartupParameters.NoSettings && !PhStartupParameters.Help)"
+        )
+        self.assertIn(help_safe_error_guard, app_settings)
+        self.assertLess(
+            app_settings.index(help_safe_error_guard),
+            app_settings.index("PhResetSettingsFile("),
+        )
+        self.assertLess(
+            win_main.index("PhInitializeAppSettings();"),
+            win_main.index("PhpInitializeApplicationUiStrings()"),
+        )
+        self.assertLess(
+            win_main.index("PhpInitializeApplicationUiStrings()"),
+            win_main.index("if (PhStartupParameters.Help)"),
+        )
+        help_branch = win_main[win_main.index("if (PhStartupParameters.Help)"):]
+        self.assertIn(
+            "PhGetApplicationUiString(IDS_PH_COMMAND_LINE_OPTIONS)",
+            help_branch,
+        )
+        self.assertIn(
+            "PhGetApplicationUiString(IDS_PH_COMMAND_LINE_OPTIONS_CONTENT)",
+            help_branch,
+        )
+
+        phconfig = (
+            REPO_ROOT / "phlib" / "include" / "phconfig.h"
+        ).read_text(encoding="utf-8-sig")
+        phglobal = (
+            REPO_ROOT / "phlib" / "global.c"
+        ).read_text(encoding="utf-8-sig")
+        self.assertIn("EXTERN_C PVOID PhApplicationUiResourceInstance;", phconfig)
+        self.assertIn("PVOID PhApplicationUiResourceInstance = NULL;", phglobal)
+        registration = "PhApplicationUiResourceInstance = PhInstanceHandle;"
+        self.assertIn(registration, win_main)
+        self.assertLess(
+            win_main.index(registration),
+            win_main.index("PhpProcessStartupParameters();"),
+        )
+
+        phlib_source = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (
+                REPO_ROOT / "phlib" / "guisup.c",
+                REPO_ROOT / "phlib" / "mapldr.c",
+                REPO_ROOT / "phlib" / "util.c",
+            )
+        )
+        self.assertNotRegex(
+            phlib_source,
+            r"PhLoadUiString\s*\([^;]+,\s*L\"",
+        )
+        self.assertNotRegex(
+            phlib_source,
+            r"PhLoadUiString\s*\(\s*NtCurrentImageBase\(\)",
+        )
+        self.assertEqual(
+            len(re.findall(r"PhLoadUiString\s*\([^;]+,\s*NULL\s*\)", phlib_source)),
+            5,
+        )
+        self.assertGreaterEqual(
+            phlib_source.count("PhApplicationUiResourceInstance"),
+            5,
+        )
+        map_loader = (REPO_ROOT / "phlib" / "mapldr.c").read_text(
+            encoding="utf-8-sig"
+        )
+        self.assertEqual(
+            map_loader.count(
+                'PhGetStringOrDefault(resourceTitle, L"Unable to load plugin.")'
+            ),
+            2,
+        )
+        for resource_id, fallback in (
+            ("IDS_PH_PLUGIN_IMPORT_BY_ORDINAL", "Name: %s\\r\\nOrdinal: %u\\r\\nModule: %hs"),
+            ("IDS_PH_PLUGIN_IMPORT_BY_NAME", "Name: %s\\r\\nFunction: %hs\\r\\nModule: %hs"),
+        ):
+            with self.subTest(phlib_format_resource_id=resource_id):
+                self.assertRegex(
+                    map_loader,
+                    rf"(?s){resource_id}(?:(?!IDS_PH_).)*PhGetStringOrDefault\(resourceFormat,\s*L\"{re.escape(fallback)}\"\)",
+                )
+        self.assertRegex(
+            (REPO_ROOT / "phlib" / "util.c").read_text(encoding="utf-8-sig"),
+            r'(?s)IDS_PH_LOCATION_NOT_FOUND(?:(?!IDS_PH_).)*PhGetStringOrDefault\(resourceTitle, L"The location could not be found\."\)',
+        )
+        self.assertRegex(
+            (REPO_ROOT / "phlib" / "guisup.c").read_text(encoding="utf-8-sig"),
+            r'(?s)IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT(?:(?!IDS_PH_).)*PhGetStringOrDefault\(resourceTitle, L"Unable to create the window context\."\)',
+        )
+
+        gui_support = (
+            REPO_ROOT / "phlib" / "guisup.c"
+        ).read_text(encoding="utf-8-sig")
+        fls_failure = gui_support[
+            gui_support.index("if (!FlsSetValue(WindowCallbackFlsIndex, hashtable))"):
+            gui_support.index("RtlFailFast(FAST_FAIL_INVALID_FLS_DATA);")
+        ]
+        self.assertLess(
+            fls_failure.index("PhGetLastError()"),
+            fls_failure.index("PhLoadUiString("),
+        )
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -1870,7 +2104,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 177): 2,
+                    (r"bin\Release64\sys_info.exe", 215): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,

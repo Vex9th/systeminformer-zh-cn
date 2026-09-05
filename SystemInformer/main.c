@@ -102,6 +102,10 @@ INT WINAPI wWinMain(
 
     if (!NT_SUCCESS(PhInitializePhLib(L"sys_info")))
         return 1;
+
+    // Only this application owns the shared UI string IDs consumed by phlib.
+    PhApplicationUiResourceInstance = PhInstanceHandle;
+
     if (!NT_SUCCESS(PhInitializeDirectoryPolicy()))
         return 1;
     if (!NT_SUCCESS(PhInitializeExceptionPolicy()))
@@ -114,11 +118,15 @@ INT WINAPI wWinMain(
         return 1;
 
     PhpProcessStartupParameters();
-    PhpEnablePrivileges();
 
-    if (PhStartupParameters.RunAsServiceMode)
+    if (!PhStartupParameters.Help)
     {
-        PhExitApplication(PhRunAsServiceStart(PhStartupParameters.RunAsServiceMode));
+        PhpEnablePrivileges();
+
+        if (PhStartupParameters.RunAsServiceMode)
+        {
+            PhExitApplication(PhRunAsServiceStart(PhStartupParameters.RunAsServiceMode));
+        }
     }
 
     PhGuiSupportInitialization();
@@ -127,6 +135,18 @@ INT WINAPI wWinMain(
 
     if (!PhpInitializeApplicationUiStrings())
         return 1;
+
+    if (PhStartupParameters.Help)
+    {
+        PhShowInformation2(
+            NULL,
+            PhGetApplicationUiString(IDS_PH_COMMAND_LINE_OPTIONS),
+            L"%s",
+            PhGetApplicationUiString(IDS_PH_COMMAND_LINE_OPTIONS_CONTENT)
+            );
+
+        PhExitApplication(STATUS_SUCCESS);
+    }
 
     PhInitializeCallbacks();
 
@@ -1426,7 +1446,7 @@ VOID PhInitializeDesktopPolicy(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(NULL, L"Unable to initialize desktop policy.", status, 0);
+        PhShowStatus(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_INITIALIZE_DESKTOP_POLICY), status, 0);
     }
 
     PhExitApplication(status);
@@ -1519,6 +1539,8 @@ VOID PhInitializeAppSettings(
     VOID
     )
 {
+    NTSTATUS settingsStatus = STATUS_OBJECT_NAME_NOT_FOUND;
+
     PhSettingsInitialization();
     PhAddDefaultSettings();
 
@@ -1529,7 +1551,6 @@ VOID PhInitializeAppSettings(
         // 2. A file named sys_info.exe.settings.json in the program directory. (This changes
         //    based on the executable file name.)
         // 3. The default location.
-        NTSTATUS status = STATUS_OBJECT_NAME_NOT_FOUND;
         PPH_STRING settingsPath = NULL;
         PPH_STRING basePath = NULL;
 
@@ -1558,48 +1579,21 @@ VOID PhInitializeAppSettings(
 
             if (PhSettingsFileName)
             {
-                status = PhLoadSettingsEx(&PhSettingsFileName->sr, &PhPortableEnabled);
+                settingsStatus = PhLoadSettingsEx(&PhSettingsFileName->sr, &PhPortableEnabled);
             }
         }
 
         // 2. Default locations (AppData)
-        if (PhIsNullOrEmptyString(PhSettingsFileName) || !NT_SUCCESS(status))
+        if (PhIsNullOrEmptyString(PhSettingsFileName) || !NT_SUCCESS(settingsStatus))
         {
-            status = PhLoadSettingsAutoDetect(NULL, L"settings", &settingsPath, NULL, &PhPortableEnabled);
+            settingsStatus = PhLoadSettingsAutoDetect(NULL, L"settings", &settingsPath, NULL, &PhPortableEnabled);
 
-            if (NT_SUCCESS(status) || status == STATUS_OBJECT_NAME_NOT_FOUND)
+            if (NT_SUCCESS(settingsStatus) || settingsStatus == STATUS_OBJECT_NAME_NOT_FOUND)
             {
                 PhMoveReference(&PhSettingsFileName, settingsPath);
             }
         }
-
-        // Handle errors
-        if (status == STATUS_FILE_CORRUPT_ERROR)
-        {
-            if (PhShowMessage2(
-                NULL,
-                TD_YES_BUTTON | TD_NO_BUTTON,
-                TD_WARNING_ICON,
-                L"System Informer's settings file is corrupt. Do you want to reset it?",
-                L"If you select No, the settings system will not function properly."
-                ) == IDYES)
-            {
-                if (PhSettingsFileName)
-                    PhResetSettingsFile(&PhSettingsFileName->sr);
-            }
-            else
-            {
-                PhDereferenceObject(PhSettingsFileName);
-                PhSettingsFileName = NULL;
-            }
-        }
-        else if (!NT_SUCCESS(status) && status != STATUS_OBJECT_NAME_NOT_FOUND)
-        {
-            PhShowStatus(NULL, L"Unable to load the settings file.", status, 0);
-        }
     }
-
-    PhUpdateCachedSettings();
 
     // Keep the legacy dictionary active only while zh-CN resources are being
     // migrated. Unknown values fail closed to the English resource set.
@@ -1639,6 +1633,49 @@ VOID PhInitializeAppSettings(
 
         PhDereferenceObject(languageSetting);
     }
+
+    // Handle settings errors only after the resource language is known.
+    if (!PhStartupParameters.NoSettings && !PhStartupParameters.Help)
+    {
+        if (settingsStatus == STATUS_FILE_CORRUPT_ERROR)
+        {
+            if (PhShowMessage2(
+                NULL,
+                TD_YES_BUTTON | TD_NO_BUTTON,
+                TD_WARNING_ICON,
+                L"System Informer's settings file is corrupt. Do you want to reset it?",
+                L"If you select No, the settings system will not function properly."
+                ) == IDYES)
+            {
+                if (PhSettingsFileName)
+                    PhResetSettingsFile(&PhSettingsFileName->sr);
+            }
+            else
+            {
+                PhDereferenceObject(PhSettingsFileName);
+                PhSettingsFileName = NULL;
+            }
+        }
+        else if (!NT_SUCCESS(settingsStatus) && settingsStatus != STATUS_OBJECT_NAME_NOT_FOUND)
+        {
+            PPH_STRING resourceTitle;
+
+            resourceTitle = PhLoadUiString(
+                NtCurrentImageBase(),
+                IDS_PH_UNABLE_LOAD_SETTINGS,
+                NULL
+                );
+            PhShowStatus(
+                NULL,
+                PhGetStringOrDefault(resourceTitle, L"Unable to load the settings file."),
+                settingsStatus,
+                0
+                );
+            PhClearReference(&resourceTitle);
+        }
+    }
+
+    PhUpdateCachedSettings();
 
     // Apply basic global settings.
     PhPluginsEnabled = !!PhGetIntegerSetting(SETTING_ENABLE_PLUGINS);
@@ -1988,30 +2025,8 @@ VOID PhpProcessStartupParameters(
         NULL
         ) || PhStartupParameters.Help)
     {
-        PhShowInformation2(
-            NULL,
-            L"Command line options:",
-            L"%s",
-            L"-debug\n"
-            L"-elevate\n"
-            L"-help\n"
-            L"-hide\n"
-            L"-newinstance\n"
-            L"-nokph\n"
-            L"-noplugins\n"
-            L"-nosettings\n"
-            L"-plugin pluginname:value\n"
-            L"-priority r|h|n|l\n"
-            L"-s\n"
-            L"-selectpid pid-to-select\n"
-            L"-selecttab name-of-tab-to-select\n"
-            L"-settings filename\n"
-            L"-sysinfo [section-name]\n"
-            L"-channel [channel-name]\n"
-            L"-v"
-            );
-
-        PhExitApplication(STATUS_SUCCESS);
+        PhStartupParameters.Help = TRUE;
+        return;
     }
 
     if (PhStartupParameters.Elevate && !PhGetOwnTokenAttributes().Elevated)

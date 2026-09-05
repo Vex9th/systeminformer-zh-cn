@@ -1758,7 +1758,7 @@ static BOOLEAN PhpShowContinueMessageProcesses(
  * if the user wants to continue.
  *
  * \param WindowHandle A handle to the parent window.
- * \param Verb A verb describing the action which
+ * \param VerbId The resource identifier for the action which
  * resulted in an error.
  * \param Process The process item which the action
  * was performed on.
@@ -1773,7 +1773,7 @@ static BOOLEAN PhpShowContinueMessageProcesses(
  */
 static BOOLEAN PhpShowErrorProcess(
     _In_ HWND WindowHandle,
-    _In_ PCWSTR Verb,
+    _In_ ULONG VerbId,
     _In_ PPH_PROCESS_ITEM Process,
     _In_ NTSTATUS Status,
     _In_opt_ ULONG Win32Result
@@ -1784,11 +1784,11 @@ static BOOLEAN PhpShowErrorProcess(
         return PhShowContinueStatus(
             WindowHandle,
             PhaFormatString(
-            L"Unable to %s %s (PID %lu)",
-            Verb,
-            Process->ProcessName->Buffer,
-            HandleToUlong(Process->ProcessId)
-            )->Buffer,
+                PhGetApplicationUiString(IDS_PH_UNABLE_APPLY_PROCESS_ACTION_PID),
+                Process->ProcessName->Buffer,
+                HandleToUlong(Process->ProcessId),
+                PhGetApplicationUiString(VerbId)
+                )->Buffer,
             Status,
             Win32Result
             );
@@ -1798,10 +1798,10 @@ static BOOLEAN PhpShowErrorProcess(
         return PhShowContinueStatus(
             WindowHandle,
             PhaFormatString(
-            L"Unable to %s %s",
-            Verb,
-            Process->ProcessName->Buffer
-            )->Buffer,
+                PhGetApplicationUiString(IDS_PH_UNABLE_APPLY_PROCESS_ACTION),
+                Process->ProcessName->Buffer,
+                PhGetApplicationUiString(VerbId)
+                )->Buffer,
             Status,
             Win32Result
             );
@@ -1876,7 +1876,7 @@ BOOLEAN PhUiTerminateProcesses(
                     if (NT_SUCCESS(status = PhSvcCallControlProcess(Processes[i]->ProcessId, PhSvcControlProcessTerminate, 0)))
                         success = TRUE;
                     else
-                        PhpShowErrorProcess(WindowHandle, L"terminate", Processes[i], status, 0);
+                        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_TERMINATE, Processes[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -1890,7 +1890,7 @@ BOOLEAN PhUiTerminateProcesses(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorProcess(WindowHandle, L"terminate", Processes[i], status, 0))
+                if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_TERMINATE, Processes[i], status, 0))
                     break;
             }
         }
@@ -1936,7 +1936,7 @@ BOOLEAN PhpUiTerminateTreeProcess(
     {
         *Success = FALSE;
 
-        if (!PhpShowErrorProcess(WindowHandle, L"terminate", Process, status, 0))
+        if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_TERMINATE, Process, status, 0))
             return FALSE;
     }
 
@@ -2086,7 +2086,7 @@ BOOLEAN PhUiSuspendProcesses(
                     if (NT_SUCCESS(status = PhSvcCallControlProcess(Processes[i]->ProcessId, PhSvcControlProcessSuspend, 0)))
                         success = TRUE;
                     else
-                        PhpShowErrorProcess(WindowHandle, L"suspend", Processes[i], status, 0);
+                        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SUSPEND, Processes[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -2100,7 +2100,7 @@ BOOLEAN PhUiSuspendProcesses(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorProcess(WindowHandle, L"suspend", Processes[i], status, 0))
+                if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SUSPEND, Processes[i], status, 0))
                     break;
             }
         }
@@ -2151,7 +2151,7 @@ BOOLEAN PhpUiSuspendTreeProcess(
     {
         *Success = FALSE;
 
-        if (!PhpShowErrorProcess(WindowHandle, L"suspend", Process, status, 0))
+        if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SUSPEND, Process, status, 0))
             return FALSE;
     }
 
@@ -2307,7 +2307,7 @@ BOOLEAN PhUiResumeProcesses(
                     if (NT_SUCCESS(status = PhSvcCallControlProcess(Processes[i]->ProcessId, PhSvcControlProcessResume, 0)))
                         success = TRUE;
                     else
-                        PhpShowErrorProcess(WindowHandle, L"resume", Processes[i], status, 0);
+                        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_RESUME, Processes[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -2321,7 +2321,7 @@ BOOLEAN PhUiResumeProcesses(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorProcess(WindowHandle, L"resume", Processes[i], status, 0))
+                if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_RESUME, Processes[i], status, 0))
                     break;
             }
         }
@@ -2372,7 +2372,7 @@ BOOLEAN PhpUiResumeTreeProcess(
     {
         *Success = FALSE;
 
-        if (!PhpShowErrorProcess(WindowHandle, L"resume", Process, status, 0))
+        if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_RESUME, Process, status, 0))
             return FALSE;
     }
 
@@ -2510,7 +2510,7 @@ BOOLEAN PhUiFreezeTreeProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"freeze", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_FREEZE, Process, status, 0);
         return FALSE;
     }
 
@@ -2547,7 +2547,7 @@ BOOLEAN PhUiThawTreeProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"thaw", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_THAW, Process, status, 0);
         return FALSE;
     }
 
@@ -2919,7 +2919,7 @@ CleanupExit:
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"restart", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_RESTART, Process, status, 0);
         return FALSE;
     }
 
@@ -3275,7 +3275,7 @@ BOOLEAN PhUiDebugProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"debug", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_DEBUG, Process, status, 0);
         return FALSE;
     }
 
@@ -3329,7 +3329,7 @@ BOOLEAN PhUiReduceWorkingSetProcesses(
         {
             success = FALSE;
 
-            if (!PhpShowErrorProcess(WindowHandle, L"reduce the working set of", Processes[i], status, 0))
+            if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_REDUCE_WORKING_SET, Processes[i], status, 0))
                 break;
         }
     }
@@ -3375,7 +3375,7 @@ BOOLEAN PhUiSetEmptyWorkingSetProcesses(
         {
             success = FALSE;
 
-            if (!PhpShowErrorProcess(WindowHandle, L"empty the working set of", Processes[i], status, 0))
+            if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_EMPTY_WORKING_SET, Processes[i], status, 0))
                 break;
         }
     }
@@ -3497,7 +3497,7 @@ BOOLEAN PhUiSetActivityModeration(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"set background activity moderation for", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_BACKGROUND_ACTIVITY_MODERATION, Process, status, 0);
         return FALSE;
     }
 
@@ -3562,7 +3562,7 @@ BOOLEAN PhUiSetVirtualizationProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"set virtualization for", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_VIRTUALIZATION, Process, status, 0);
         return FALSE;
     }
 
@@ -3627,7 +3627,7 @@ BOOLEAN PhUiSetCriticalProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"set critical status for", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_CRITICAL_STATUS, Process, status, 0);
         return FALSE;
     }
 
@@ -3719,7 +3719,7 @@ BOOLEAN PhUiSetEcoModeProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"set Eco mode for", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_ECO_MODE, Process, status, 0);
         return FALSE;
     }
 
@@ -3765,7 +3765,7 @@ BOOLEAN PhUiSetExecutionRequiredProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"create execution required state for", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_CREATE_EXECUTION_REQUIRED, Process, status, 0);
         return FALSE;
     }
 
@@ -3822,7 +3822,7 @@ BOOLEAN PhUiDetachFromDebuggerProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"detach debugger from", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_DETACH_DEBUGGER, Process, status, 0);
         return FALSE;
     }
 
@@ -3900,7 +3900,7 @@ BOOLEAN PhUiLoadDllProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"load the DLL into", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_LOAD_DLL, Process, status, 0);
         return FALSE;
     }
 
@@ -3971,7 +3971,7 @@ BOOLEAN PhUiSetIoPriorityProcesses(
                     if (NT_SUCCESS(status = PhSvcCallControlProcess(Processes[i]->ProcessId, PhSvcControlProcessIoPriority, IoPriority)))
                         success = TRUE;
                     else
-                        PhpShowErrorProcess(WindowHandle, L"set the I/O priority of", Processes[i], status, 0);
+                        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_IO_PRIORITY, Processes[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -3985,7 +3985,7 @@ BOOLEAN PhUiSetIoPriorityProcesses(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorProcess(WindowHandle, L"set the I/O priority of", Processes[i], status, 0))
+                if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_IO_PRIORITY, Processes[i], status, 0))
                     break;
             }
         }
@@ -4032,7 +4032,7 @@ BOOLEAN PhUiSetPagePriorityProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"set the page priority of", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_PAGE_PRIORITY, Process, status, 0);
         return FALSE;
     }
 
@@ -4104,7 +4104,7 @@ BOOLEAN PhUiSetPriorityClassProcesses(
                     if (NT_SUCCESS(status = PhSvcCallControlProcess(Processes[i]->ProcessId, PhSvcControlProcessPriority, PriorityClass)))
                         success = TRUE;
                     else
-                        PhpShowErrorProcess(WindowHandle, L"set the priority class of", Processes[i], status, 0);
+                        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_PRIORITY_CLASS, Processes[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -4118,7 +4118,7 @@ BOOLEAN PhUiSetPriorityClassProcesses(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorProcess(WindowHandle, L"set the priority class of", Processes[i], status, 0))
+                if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_PRIORITY_CLASS, Processes[i], status, 0))
                     break;
             }
         }
@@ -4164,7 +4164,7 @@ BOOLEAN PhUiSetBoostPriorityProcesses(
             {
                 success = FALSE;
 
-                if (!PhpShowErrorProcess(WindowHandle, L"change boost priority of", Processes[i], status, 0))
+                if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_CHANGE_BOOST_PRIORITY, Processes[i], status, 0))
                     break;
             }
         }
@@ -4202,7 +4202,7 @@ BOOLEAN PhUiSetBoostPriorityProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorProcess(WindowHandle, L"set the boost priority of", Process, status, 0);
+        PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_SET_BOOST_PRIORITY, Process, status, 0);
         return FALSE;
     }
 
@@ -7322,7 +7322,7 @@ BOOLEAN PhUiEmptyProcessMemoryWorkingSet(
 
 static BOOLEAN PhpShowErrorHandle(
     _In_ HWND WindowHandle,
-    _In_ PCWSTR Verb,
+    _In_ ULONG VerbId,
     _In_opt_ PCWSTR Verb2,
     _In_ PPH_HANDLE_ITEM Handle,
     _In_ NTSTATUS Status,
@@ -7338,12 +7338,12 @@ static BOOLEAN PhpShowErrorHandle(
         return PhShowContinueStatus(
             WindowHandle,
             PhaFormatString(
-            L"Unable to %s handle \"%s\" (%s)%s",
-            Verb,
-            Handle->BestObjectName->Buffer,
-            value,
-            Verb2
-            )->Buffer,
+                PhGetApplicationUiString(IDS_PH_UNABLE_APPLY_NAMED_HANDLE_ACTION),
+                Handle->BestObjectName->Buffer,
+                value,
+                PhGetApplicationUiString(VerbId),
+                Verb2
+                )->Buffer,
             Status,
             Win32Result
             );
@@ -7353,11 +7353,11 @@ static BOOLEAN PhpShowErrorHandle(
         return PhShowContinueStatus(
             WindowHandle,
             PhaFormatString(
-            L"Unable to %s handle %s%s",
-            Verb,
-            value,
-            Verb2
-            )->Buffer,
+                PhGetApplicationUiString(IDS_PH_UNABLE_APPLY_HANDLE_ACTION),
+                value,
+                PhGetApplicationUiString(VerbId),
+                Verb2
+                )->Buffer,
             Status,
             Win32Result
             );
@@ -7456,7 +7456,7 @@ BOOLEAN PhUiCloseHandles(
             {
                 if (!PhpShowErrorHandle(
                     WindowHandle,
-                    L"close",
+                    IDS_PH_ACTION_CLOSE_HANDLE,
                     NULL,
                     Handles[i],
                     STATUS_HANDLE_NOT_CLOSABLE,
@@ -7483,7 +7483,7 @@ BOOLEAN PhUiCloseHandles(
 
                 if (!PhpShowErrorHandle(
                     WindowHandle,
-                    L"close",
+                    IDS_PH_ACTION_CLOSE_HANDLE,
                     NULL,
                     Handles[i],
                     status,
@@ -7580,7 +7580,7 @@ BOOLEAN PhUiSetAttributesHandle(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorHandle(WindowHandle, L"set attributes of", NULL, Handle, status, 0);
+        PhpShowErrorHandle(WindowHandle, IDS_PH_ACTION_SET_HANDLE_ATTRIBUTES, NULL, Handle, status, 0);
         return FALSE;
     }
 
@@ -7627,7 +7627,7 @@ BOOLEAN PhUiFlushHeapProcesses(
         {
             success = FALSE;
 
-            if (!PhpShowErrorProcess(WindowHandle, L"flush the process heap(s) of", Processes[i], status, 0))
+            if (!PhpShowErrorProcess(WindowHandle, IDS_PH_ACTION_FLUSH_PROCESS_HEAPS, Processes[i], status, 0))
                 break;
         }
     }

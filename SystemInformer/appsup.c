@@ -1190,7 +1190,7 @@ VOID PhShellExecuteUserString(
                 PhShowError2(
                     WindowHandle,
                     PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_COMMAND),
-                    L"%s\n%s",
+                    PhGetApplicationUiString(IDS_PH_ERROR_WITH_DETAILS),
                     PhGetStringOrDefault(ntMessage, PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR_OCCURRED)),
                     ErrorMessage
                     );

@@ -11,6 +11,7 @@
  */
 
 #include <ph.h>
+#include <phappresourceid.h>
 #include <apiimport.h>
 #include <mapimg.h>
 #include <mapldr.h>
@@ -2562,36 +2563,65 @@ VOID PhLoaderEntrySnapShowErrorMessage(
 
     if (NT_SUCCESS(PhGetProcessMappedFileName(NtCurrentProcess(), BaseAddress, &fileName)))
     {
+        PPH_STRING resourceTitle;
+
         PhMoveReference(&fileName, PhGetFileName(fileName));
         PhMoveReference(&fileName, PhGetBaseName(fileName));
+        resourceTitle = PhApplicationUiResourceInstance
+            ? PhLoadUiString(
+                PhApplicationUiResourceInstance,
+                IDS_PH_UNABLE_LOAD_PLUGIN,
+                NULL
+                )
+            : NULL;
 
         if (IMAGE_SNAP_BY_ORDINAL(OriginalThunk->u1.Ordinal))
         {
+            PPH_STRING resourceFormat;
+
+            resourceFormat = PhApplicationUiResourceInstance
+                ? PhLoadUiString(
+                    PhApplicationUiResourceInstance,
+                    IDS_PH_PLUGIN_IMPORT_BY_ORDINAL,
+                    NULL
+                    )
+                : NULL;
             PhShowError2(
                 NULL,
-                L"Unable to load plugin.",
-                L"Name: %s\r\nOrdinal: %u\r\nModule: %hs",
+                PhGetStringOrDefault(resourceTitle, L"Unable to load plugin."),
+                PhGetStringOrDefault(resourceFormat, L"Name: %s\r\nOrdinal: %u\r\nModule: %hs"),
                 PhGetStringOrEmpty(fileName),
                 IMAGE_ORDINAL(OriginalThunk->u1.Ordinal),
                 ImportName
                 );
+            PhClearReference(&resourceFormat);
         }
         else
         {
             PIMAGE_IMPORT_BY_NAME importByName;
+            PPH_STRING resourceFormat;
 
             importByName = PTR_ADD_OFFSET(BaseAddress, OriginalThunk->u1.AddressOfData);
+            resourceFormat = PhApplicationUiResourceInstance
+                ? PhLoadUiString(
+                    PhApplicationUiResourceInstance,
+                    IDS_PH_PLUGIN_IMPORT_BY_NAME,
+                    NULL
+                    )
+                : NULL;
 
             PhShowError2(
                 NULL,
-                L"Unable to load plugin.",
-                L"Name: %s\r\nFunction: %hs\r\nModule: %hs",
+                PhGetStringOrDefault(resourceTitle, L"Unable to load plugin."),
+                PhGetStringOrDefault(resourceFormat, L"Name: %s\r\nFunction: %hs\r\nModule: %hs"),
                 PhGetStringOrEmpty(fileName),
                 importByName->Name,
                 ImportName
                 );
+            PhClearReference(&resourceFormat);
         }
 
+        PhClearReference(&resourceTitle);
         PhDereferenceObject(fileName);
     }
 }

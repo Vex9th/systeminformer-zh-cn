@@ -18,6 +18,9 @@ extern "C" {
 #endif
 
 EXTERN_C PVOID PhInstanceHandle;
+// Optional application-owned UI resource module. Set once during startup,
+// before worker threads are created, and keep unchanged for the process lifetime.
+EXTERN_C PVOID PhApplicationUiResourceInstance;
 EXTERN_C PCWSTR PhApplicationName;
 EXTERN_C HANDLE PhHeapHandle;
 EXTERN_C BOOLEAN PhEnableHighResolution;

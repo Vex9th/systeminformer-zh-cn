@@ -16,6 +16,7 @@
 #include <trace.h>
 
 PVOID PhInstanceHandle = NULL;
+PVOID PhApplicationUiResourceInstance = NULL;
 PCWSTR PhApplicationName = NULL;
 HANDLE PhHeapHandle = NULL;
 BOOLEAN PhEnableHighResolution = TRUE;

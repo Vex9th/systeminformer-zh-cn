@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by SystemInformer.rc
 //
+#include <phappresourceid.h>
+
 #define IDR_RT_MANIFEST                 1
 #define IDI_SYSTEMINFORMER              101
 #define IDR_MAINWND_ACCEL               102
@@ -1171,8 +1173,41 @@
 #define IDS_PH_ZOMBIE_TERMINATION_WARNING                  2174
 #define IDS_PH_PROCESS_RESTART_NOTICE                      2175
 #define IDS_PH_SIGNATURE_FILTER_REQUIRES_CHECKING          2176
+#define IDS_PH_ERROR_WITH_DETAILS                          2182
+#define IDS_PH_COMMAND_LINE_OPTIONS                        2183
+#define IDS_PH_COMMAND_LINE_OPTIONS_CONTENT                2184
+#define IDS_PH_UNABLE_INITIALIZE_DESKTOP_POLICY             2185
+#define IDS_PH_UNABLE_LOAD_SETTINGS                         2186
+#define IDS_PH_UNABLE_APPLY_PROCESS_ACTION_PID              2187
+#define IDS_PH_UNABLE_APPLY_PROCESS_ACTION                  2188
+#define IDS_PH_UNABLE_APPLY_NAMED_HANDLE_ACTION             2189
+#define IDS_PH_UNABLE_APPLY_HANDLE_ACTION                   2190
+#define IDS_PH_ACTION_TERMINATE                              2191
+#define IDS_PH_ACTION_SUSPEND                                2192
+#define IDS_PH_ACTION_RESUME                                 2193
+#define IDS_PH_ACTION_FREEZE                                 2194
+#define IDS_PH_ACTION_THAW                                   2195
+#define IDS_PH_ACTION_RESTART                                2196
+#define IDS_PH_ACTION_DEBUG                                  2197
+#define IDS_PH_ACTION_REDUCE_WORKING_SET                     2198
+#define IDS_PH_ACTION_EMPTY_WORKING_SET                      2199
+#define IDS_PH_ACTION_SET_BACKGROUND_ACTIVITY_MODERATION     2200
+#define IDS_PH_ACTION_SET_VIRTUALIZATION                     2201
+#define IDS_PH_ACTION_SET_CRITICAL_STATUS                    2202
+#define IDS_PH_ACTION_SET_ECO_MODE                           2203
+#define IDS_PH_ACTION_CREATE_EXECUTION_REQUIRED              2204
+#define IDS_PH_ACTION_DETACH_DEBUGGER                        2205
+#define IDS_PH_ACTION_LOAD_DLL                               2206
+#define IDS_PH_ACTION_SET_IO_PRIORITY                        2207
+#define IDS_PH_ACTION_SET_PAGE_PRIORITY                      2208
+#define IDS_PH_ACTION_SET_PRIORITY_CLASS                     2209
+#define IDS_PH_ACTION_CHANGE_BOOST_PRIORITY                  2210
+#define IDS_PH_ACTION_SET_BOOST_PRIORITY                     2211
+#define IDS_PH_ACTION_FLUSH_PROCESS_HEAPS                    2212
+#define IDS_PH_ACTION_CLOSE_HANDLE                           2213
+#define IDS_PH_ACTION_SET_HANDLE_ATTRIBUTES                  2214
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_SIGNATURE_FILTER_REQUIRES_CHECKING
+#define IDS_PH_LAST                                  IDS_PH_ACTION_SET_HANDLE_ATTRIBUTES
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1184,6 +1219,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2177
+#define _APS_NEXT_SYMED_VALUE           2215
 #endif
 #endif
