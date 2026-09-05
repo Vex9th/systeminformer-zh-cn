@@ -362,6 +362,7 @@ def literals_outside_ui_string_getters(expression: str):
         match.group(0)
         for match in IDENT_RE.finditer(expression)
         if match.group(0).endswith("GetUiString")
+        or match.group(0) == "PhLoadUiString"
     }
     masked = list(expression)
 
@@ -516,6 +517,114 @@ def split_c_initializer_fields(initializer: str):
     return call[1] if call else []
 
 
+def resolve_struct_array_member(
+    scan_text: str,
+    expression: str,
+    call_start: int,
+    scopes,
+):
+    member_match = re.fullmatch(
+        r"\s*(?:\(\s*[^()]+\s*\)\s*)*"
+        r"([A-Za-z_][A-Za-z0-9_]*)\s*\[[^\]]+\]\s*\.\s*"
+        r"([A-Za-z_][A-Za-z0-9_]*)\s*",
+        expression,
+    )
+    if not member_match:
+        return None
+
+    array_name, member_name = member_match.groups()
+    declaration_re = re.compile(
+        rf"\b(?:(?:static|extern|CONST|const|volatile)\s+)*"
+        rf"(?P<type>[A-Za-z_][A-Za-z0-9_]*)\s+"
+        rf"{re.escape(array_name)}\s*\[[^\]]*\]\s*=\s*"
+        rf"\{{(?P<body>.*?)\}}\s*;",
+        re.DOTALL,
+    )
+    declarations = list(declaration_re.finditer(scan_text))
+    declaration = visible_array_declaration(declarations, call_start, scopes)
+    if declaration is None:
+        return None
+
+    type_name = declaration.group("type")
+    type_re = re.compile(
+        rf"\btypedef\s+struct(?:\s+[A-Za-z_][A-Za-z0-9_]*)?\s*"
+        rf"\{{(?P<body>[^{{}}]*)\}}\s*{re.escape(type_name)}\b[^;]*;",
+        re.DOTALL,
+    )
+    field_names = []
+    type_match = type_re.search(scan_text)
+
+    if type_match is not None:
+        for field in type_match.group("body").split(";"):
+            field_match = re.search(
+                r"([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*$",
+                field.strip(),
+            )
+            if field_match:
+                field_names.append(field_match.group(1))
+
+    return {
+        "body": declaration.group("body"),
+        "body_offset": declaration.start("body"),
+        "member_name": member_name,
+        "member_index": (
+            field_names.index(member_name) if member_name in field_names else None
+        ),
+    }
+
+
+def struct_array_member_literals(resolved_member):
+    member_index = resolved_member["member_index"]
+    if member_index is None:
+        return
+
+    array_body = resolved_member["body"]
+    array_body_offset = resolved_member["body_offset"]
+
+    for initializer_match in re.finditer(r"\{(?P<body>[^{}]*)\}", array_body):
+        fields = split_c_initializer_fields(initializer_match.group("body"))
+        if member_index >= len(fields):
+            continue
+
+        for visible_text in literals_outside_ui_string_getters(fields[member_index]):
+            if not is_noise(visible_text):
+                yield (
+                    visible_text,
+                    array_body_offset + initializer_match.start("body"),
+                )
+
+
+def scan_struct_array_member_calls(
+    text: str,
+    scan_text: str,
+    rel: str,
+    entries,
+    call_specs,
+):
+    scopes = c_brace_scopes(scan_text)
+
+    for name, args, _, call_start in find_calls(scan_text, call_specs):
+        argument_index, category = call_specs[name]
+        if argument_index >= len(args):
+            continue
+
+        resolved_member = resolve_struct_array_member(
+            scan_text, args[argument_index], call_start, scopes
+        )
+        if resolved_member is None:
+            continue
+
+        for visible_text, source_offset in struct_array_member_literals(
+            resolved_member
+        ):
+            entries.append({
+                "category": category,
+                "file": rel,
+                "line": line_of_offset(text, source_offset),
+                "english": visible_text,
+            })
+
+
 def scan_combo_box_struct_arrays(text: str, scan_text: str, rel: str, entries):
     """Resolve string fields from struct arrays passed to ComboBox_AddString."""
     scopes = c_brace_scopes(scan_text)
@@ -524,69 +633,25 @@ def scan_combo_box_struct_arrays(text: str, scan_text: str, rel: str, entries):
         if len(args) < 2:
             continue
 
-        member_match = re.fullmatch(
-            r"\s*(?:\(\s*[^()]+\s*\)\s*)*"
-            r"([A-Za-z_][A-Za-z0-9_]*)\s*\[[^\]]+\]\s*\.\s*"
-            r"([A-Za-z_][A-Za-z0-9_]*)\s*",
-            args[1],
+        resolved_member = resolve_struct_array_member(
+            scan_text, args[1], call_start, scopes
         )
-        if not member_match:
+        if resolved_member is None:
             continue
 
-        array_name, member_name = member_match.groups()
-        declaration_re = re.compile(
-            rf"\b(?:(?:static|extern|CONST|const|volatile)\s+)*"
-            rf"(?P<type>[A-Za-z_][A-Za-z0-9_]*)\s+"
-            rf"{re.escape(array_name)}\s*\[[^\]]*\]\s*=\s*"
-            rf"\{{(?P<body>.*?)\}}\s*;",
-            re.DOTALL,
-        )
-        declarations = list(declaration_re.finditer(scan_text))
-        declaration = visible_array_declaration(declarations, call_start, scopes)
-        if declaration is None:
-            continue
+        array_body = resolved_member["body"]
+        array_body_offset = resolved_member["body_offset"]
+        member_name = resolved_member["member_name"]
 
-        type_name = declaration.group("type")
-        type_re = re.compile(
-            rf"\btypedef\s+struct(?:\s+[A-Za-z_][A-Za-z0-9_]*)?\s*"
-            rf"\{{(?P<body>.*?)\}}\s*{re.escape(type_name)}\b[^;]*;",
-            re.DOTALL,
-        )
-        array_body = declaration.group("body")
-        array_body_offset = declaration.start("body")
-        member_index = None
-        type_match = type_re.search(scan_text)
-
-        if type_match is not None:
-            field_names = []
-            for field in type_match.group("body").split(";"):
-                field_match = re.search(
-                    r"([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*$",
-                    field.strip(),
-                )
-                if field_match:
-                    field_names.append(field_match.group(1))
-
-            if member_name in field_names:
-                member_index = field_names.index(member_name)
-
-        if member_index is not None:
-            for initializer_match in re.finditer(r"\{(?P<body>[^{}]*)\}", array_body):
-                fields = split_c_initializer_fields(initializer_match.group("body"))
-                if member_index >= len(fields):
-                    continue
-
-                for visible_text in literals_outside_ui_string_getters(fields[member_index]):
-                    if not is_noise(visible_text):
-                        entries.append({
-                            "category": "c_combobox",
-                            "file": rel,
-                            "line": line_of_offset(
-                                text,
-                                array_body_offset + initializer_match.start("body"),
-                            ),
-                            "english": visible_text,
-                        })
+        for visible_text, source_offset in struct_array_member_literals(
+            resolved_member
+        ):
+            entries.append({
+                "category": "c_combobox",
+                "file": rel,
+                "line": line_of_offset(text, source_offset),
+                "english": visible_text,
+            })
 
         sip_field_indexes = {"Key": 0, "Value": 1}
         sip_member_index = sip_field_indexes.get(member_name)
@@ -623,6 +688,17 @@ def scan_c_file(path: str, entries):
 
     scan_combo_box_string_arrays(text, scan_text, rel, entries)
     scan_combo_box_struct_arrays(text, scan_text, rel, entries)
+    scan_struct_array_member_calls(
+        text,
+        scan_text,
+        rel,
+        entries,
+        {
+            "PhAddListViewGroupItem": (3, "c_listview_group_item"),
+            "PhAddIListViewGroupItem": (3, "c_listview_group_item"),
+            "PhListView_AddGroupItem": (3, "c_listview_group_item"),
+        },
+    )
 
     for name, args, spans, call_start in find_calls(scan_text, set(CALL_SPECS) | set(ANY_LITERAL_SPECS)):
         if name in CALL_SPECS:

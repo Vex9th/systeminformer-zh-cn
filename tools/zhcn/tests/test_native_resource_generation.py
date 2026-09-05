@@ -398,6 +398,117 @@ class NativeResourceGenerationTests(unittest.TestCase):
         }
         self.assertEqual(combo_text, {"Take no action", "Restart the service"})
 
+    def test_audit_scans_struct_member_group_item_calls(self) -> None:
+        audit = load_audit_module()
+        source = """
+            typedef struct _GROUP_ITEM_ENTRY {
+                ULONG Value;
+                PCWSTR Name;
+                PCWSTR Description;
+            } GROUP_ITEM_ENTRY;
+            static CONST GROUP_ITEM_ENTRY groupItems[] = {
+                { 1, L"First group item", L"First description" },
+                {
+                    2,
+                    PhGetString(PH_AUTO(PhLoadUiString(
+                        module, IDS_NATIVE_ITEM, L"Native fallback"))),
+                    L"Second description"
+                },
+                { 3, L"Third group item", L"Third description" }
+                // { 4, L"Commented group item", L"Commented description" }
+            };
+            void add_group_items(void) {
+                PhAddListViewGroupItem(
+                    list, groupItems[i].Value, i, groupItems[i].Name, NULL);
+                PhAddIListViewGroupItem(
+                    list, groupItems[i].Value, i, groupItems[i].Name, NULL);
+                PhListView_AddGroupItem(
+                    list, groupItems[i].Value, i, groupItems[i].Name, NULL);
+            }
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        group_item_text = Counter(
+            entry["english"]
+            for entry in entries
+            if entry["category"] == "c_listview_group_item"
+        )
+        self.assertEqual(
+            group_item_text,
+            Counter({"First group item": 3, "Third group item": 3}),
+        )
+        self.assertNotIn("First description", group_item_text)
+        self.assertNotIn("Second description", group_item_text)
+        self.assertNotIn("Third description", group_item_text)
+        self.assertNotIn("Native fallback", group_item_text)
+        self.assertNotIn("Commented group item", group_item_text)
+
+    def test_audit_finds_all_window_explorer_uia_property_names(self) -> None:
+        audit = load_audit_module()
+        source_path = REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c"
+        source = source_path.read_text(encoding="utf-8")
+        array_start = source.index("static WND_UIA_PROPERTY WndUiaProperties[]")
+        array_end = source.index("\n};", array_start)
+        first_line = source.count("\n", 0, array_start) + 1
+        last_line = source.count("\n", 0, array_end) + 1
+        entries = []
+
+        audit.scan_c_file(str(source_path), entries)
+
+        uia_entries = [
+            entry
+            for entry in entries
+            if entry["category"] == "c_listview_group_item"
+            and first_line <= entry["line"] <= last_line
+        ]
+        self.assertEqual(len(uia_entries), 43)
+        self.assertIn("Runtime ID", {entry["english"] for entry in uia_entries})
+        self.assertIn(
+            "Is Window Pattern Available",
+            {entry["english"] for entry in uia_entries},
+        )
+
+    def test_audit_finds_all_main_tray_notification_names(self) -> None:
+        audit = load_audit_module()
+        source_path = REPO_ROOT / "SystemInformer" / "options.c"
+        source = source_path.read_text(encoding="utf-8")
+        array_start = source.index("static PH_TRAYICON_NOTIFY_ITEM TrayIconNotifyItems[]")
+        array_end = source.index("\n};", array_start)
+        first_line = source.count("\n", 0, array_start) + 1
+        last_line = source.count("\n", 0, array_end) + 1
+        entries = []
+
+        audit.scan_c_file(str(source_path), entries)
+
+        tray_entries = [
+            entry
+            for entry in entries
+            if entry["category"] == "c_listview_group_item"
+            and first_line <= entry["line"] <= last_line
+        ]
+        self.assertEqual(len(tray_entries), 9)
+        self.assertEqual(
+            {entry["english"] for entry in tray_entries},
+            {
+                "New processes",
+                "Terminated processes",
+                "New services",
+                "Started services",
+                "Stopped services",
+                "Deleted services",
+                "Modified services",
+                "Arrived devices",
+                "Removed devices",
+            },
+        )
+
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
         audit = load_audit_module()
         source_files = {
