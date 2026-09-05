@@ -3442,9 +3442,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn("State", translation_data["native_strings"])
 
     def test_window_explorer_window_property_items_use_native_resources(self) -> None:
+        audit = load_audit_module()
         source = (
             REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c"
         ).read_text(encoding="utf-8-sig")
+        source = audit.mask_c_comments(source)
         resource_header = (
             REPO_ROOT / "plugins" / "WindowExplorer" / "resource.h"
         ).read_text(encoding="utf-8-sig")
@@ -3544,6 +3546,15 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ("WINDOW_PROPERTIES_CATEGORY_CLASS", "WINDOW_PROPERTIES_INDEX_CLASS_SAVEBITS", "IDS_WE_WINDOW_PROPERTY_SAVE_BITS"),
         ]
         runtime_owned = {"Thread", "Unicode", "Monitor", "Name"}
+        actual_routes = Counter(re.findall(
+            r"PhAddListViewGroupItem\(\s*ListViewHandle,\s*"
+            r"(WINDOW_PROPERTIES_CATEGORY_(?:GENERAL|CLASS)),\s*"
+            r"(WINDOW_PROPERTIES_INDEX_[A-Z0-9_]+),\s*"
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
+            r"PluginInstance->DllBase,\s*(IDS_WE_WINDOW_PROPERTY_[A-Z0-9_]+),\s*"
+            r"NULL\s*\)\)\),\s*NULL\s*\);",
+            source,
+        ))
 
         for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
             with self.subTest(window_property_resource=resource_id):
@@ -3564,15 +3575,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 self.assertEqual(translation_data[table_name].get(english_text), chinese_text)
                 self.assertNotIn(english_text, translation_data[other_table])
 
-        for group_id, item_index, resource_id in expected_routes:
-            with self.subTest(window_property_route=item_index):
-                self.assertRegex(
-                    source,
-                    rf"PhAddListViewGroupItem\(\s*ListViewHandle,\s*{group_id},\s*"
-                    rf"{item_index},\s*PhGetString\(PH_AUTO\(PhLoadUiString\(\s*"
-                    rf"PluginInstance->DllBase,\s*{resource_id},\s*NULL\s*\)\)\),\s*"
-                    rf"NULL\s*\);",
-                )
+        self.assertEqual(actual_routes, Counter(expected_routes))
 
         for _, english_text, _ in expected_resources.values():
             with self.subTest(removed_window_property_literal=english_text):
@@ -3582,9 +3585,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 )
 
     def test_window_explorer_uia_property_items_use_native_resources(self) -> None:
+        audit = load_audit_module()
         source = (
             REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c"
         ).read_text(encoding="utf-8-sig")
+        source = audit.mask_c_comments(source)
         resource_header = (
             REPO_ROOT / "plugins" / "WindowExplorer" / "resource.h"
         ).read_text(encoding="utf-8-sig")
