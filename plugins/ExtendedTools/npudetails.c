@@ -39,20 +39,104 @@ VOID EtpNpuDetailsAddListViewItemGroups(
     _In_ HWND ListViewHandle,
     _In_ LONG NpuGroupId)
 {
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_PHYSICALLOCTION, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_PHYSICAL_LOCATION, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_DRIVERDATE, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_DRIVER_DATE, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_DRIVERVERSION, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_DRIVER_VERSION, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_WDDMVERSION, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_WDDM_VERSION, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_VENDORID, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_VENDOR_ID, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_DEVICEID, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_DEVICE_ID, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_TOTALMEMORY, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_TOTAL_MEMORY, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_RESERVEDMEMORY, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_RESERVED_MEMORY, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_MEMORYFREQUENCY, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_MEMORY_FREQUENCY, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_MEMORYBANDWIDTH, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_MEMORY_BANDWIDTH, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_PCIEBANDWIDTH, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_PCIE_BANDWIDTH, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_FANRPM, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_FAN_RPM, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_POWERUSAGE, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_POWER_USAGE, NULL))), NULL);
-    PhAddListViewGroupItem(ListViewHandle, NpuGroupId, NPUADAPTER_DETAILS_INDEX_TEMPERATURE, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_TEMPERATURE, NULL))), NULL);
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_PHYSICALLOCTION,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_PHYSICAL_LOCATION, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_DRIVERDATE,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_DRIVER_DATE, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_DRIVERVERSION,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_DRIVER_VERSION, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_WDDMVERSION,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_WDDM_VERSION, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_VENDORID,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_VENDOR_ID, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_DEVICEID,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_DEVICE_ID, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_TOTALMEMORY,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_TOTAL_MEMORY, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_RESERVEDMEMORY,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_RESERVED_MEMORY, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_MEMORYFREQUENCY,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_MEMORY_FREQUENCY, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_MEMORYBANDWIDTH,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_MEMORY_BANDWIDTH, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_PCIEBANDWIDTH,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_PCIE_BANDWIDTH, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_FANRPM,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_FAN_RPM, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_POWERUSAGE,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_POWER_USAGE, NULL))),
+        NULL
+        );
+    PhAddListViewGroupItem(
+        ListViewHandle,
+        NpuGroupId,
+        NPUADAPTER_DETAILS_INDEX_TEMPERATURE,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_ADAPTER_DETAILS_TEMPERATURE, NULL))),
+        NULL
+        );
 }
 
 VOID EtpNpuQueryAdapterDeviceProperties(

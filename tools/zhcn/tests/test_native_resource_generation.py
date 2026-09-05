@@ -2168,7 +2168,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 61038,
                 "POWERUSAGE",
                 "Power Usage",
-                "耗电量",
+                "功率使用率",
             ),
             "IDS_ET_ADAPTER_DETAILS_TEMPERATURE": (
                 61039,

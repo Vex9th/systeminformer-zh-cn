@@ -1303,7 +1303,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2355] =
     { L"Pool Table", L"池表", },
     { L"Power Grid Forecast", L"电网预测", },
     { L"Power Policies", L"电源策略", },
-    { L"Power Usage", L"耗电量", },
+    { L"Power Usage", L"功率使用率", },
     { L"Power Usage:", L"耗电量：", },
     { L"Power throttling", L"电源限制", },
     { L"Power usage", L"耗电量", },
