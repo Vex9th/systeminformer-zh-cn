@@ -463,6 +463,30 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ],
         )
 
+    def test_peview_search_path_setting_is_not_a_window_text(self) -> None:
+        audit = load_audit_module()
+        source_path = REPO_ROOT / "tools" / "peview" / "options.c"
+        source = source_path.read_text(encoding="utf-8-sig")
+        entries = []
+
+        audit.scan_c_file(str(source_path), entries)
+
+        self.assertIn(
+            'PhaGetStringSetting(L"DbgHelpSearchPath")',
+            source,
+        )
+        self.assertIn(
+            'PhSetStringSetting2(L"DbgHelpSearchPath"',
+            source,
+        )
+        self.assertFalse(
+            any(
+                entry["category"] == "c_window_text"
+                and entry["english"] == "DbgHelpSearchPath"
+                for entry in entries
+            )
+        )
+
     def test_audit_merges_conditional_literal_sequences_and_tracks_lines(self) -> None:
         audit = load_audit_module()
         source = """

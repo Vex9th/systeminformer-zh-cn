@@ -509,6 +509,11 @@ class TranslationCheckerContractTests(unittest.TestCase):
                     }
                 ],
             },
+            "negative total": {
+                "schema_version": 2,
+                "total_occurrences": -1,
+                "unique_strings": [],
+            },
             "boolean line": {
                 "schema_version": 2,
                 "total_occurrences": 1,
