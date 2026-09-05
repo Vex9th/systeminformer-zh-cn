@@ -93,7 +93,7 @@ INT_PTR CALLBACK EspServiceTriggersDlgProc(
 
                 PhShowWarning2(
                     WindowHandle,
-                    L"Unable to query service trigger information.",
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_QUERY_SERVICE_TRIGGER_INFORMATION, NULL))),
                     L"%s",
                     PhGetStringOrDefault(
                         errorMessage,
@@ -169,7 +169,7 @@ INT_PTR CALLBACK EspServiceTriggersDlgProc(
                         {
                             if (PhShowContinueStatus(
                                 WindowHandle,
-                                L"Unable to change service trigger information.",
+                                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_CHANGE_SERVICE_TRIGGER_INFORMATION, NULL))),
                                 status,
                                 0))
                             {

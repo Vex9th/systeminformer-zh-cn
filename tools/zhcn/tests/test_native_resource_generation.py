@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("381 strings", result.stdout)
+        self.assertIn("395 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1346,6 +1346,64 @@ class NativeResourceGenerationTests(unittest.TestCase):
             localized,
         )
 
+    def test_extended_services_errors_use_native_resources(self) -> None:
+        source = "\n".join(
+            (REPO_ROOT / "plugins" / "ExtendedServices" / name).read_text(
+                encoding="utf-8-sig"
+            )
+            for name in (
+                "other.c",
+                "recovery.c",
+                "svcpnp.c",
+                "trigger.c",
+                "triggpg.c",
+            )
+        )
+        literals = (
+            "Failed to change the device state.",
+            "Failed to restart the device.",
+            "Failed to uninstall the device.",
+            "Unable to find the ETW publisher GUID.",
+            "The custom subtype is invalid.",
+            "If you continue, they will be removed.",
+            "Unable to query service information.",
+            "Unable to open LSA policy",
+            "Unable to change service information.",
+            "Unable to query service recovery information.",
+            "The service has %lu failure actions configured",
+            "Unable to change service recovery information.",
+            "Unable to query service trigger information.",
+            "Unable to change service trigger information.",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}', source)
+
+        expected_ids = {
+            "IDS_ES_FAILED_CHANGE_DEVICE_STATE": 2,
+            "IDS_ES_FAILED_RESTART_DEVICE": 3,
+            "IDS_ES_FAILED_UNINSTALL_DEVICE": 2,
+            "IDS_ES_UNABLE_FIND_ETW_PUBLISHER_GUID": 1,
+            "IDS_ES_CUSTOM_SUBTYPE_INVALID": 1,
+            "IDS_ES_TRIGGER_DATA_REMOVAL_WARNING": 1,
+            "IDS_ES_UNABLE_QUERY_SERVICE_INFORMATION": 1,
+            "IDS_ES_UNABLE_OPEN_LSA_POLICY": 1,
+            "IDS_ES_UNABLE_CHANGE_SERVICE_INFORMATION": 1,
+            "IDS_ES_UNABLE_QUERY_SERVICE_RECOVERY_INFORMATION": 2,
+            "IDS_ES_SERVICE_FAILURE_ACTIONS_TRUNCATED": 1,
+            "IDS_ES_UNABLE_CHANGE_SERVICE_RECOVERY_INFORMATION": 1,
+            "IDS_ES_UNABLE_QUERY_SERVICE_TRIGGER_INFORMATION": 1,
+            "IDS_ES_UNABLE_CHANGE_SERVICE_TRIGGER_INFORMATION": 1,
+        }
+
+        for resource_id, expected_count in expected_ids.items():
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", source)),
+                    expected_count,
+                )
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -1540,7 +1598,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             Counter(
                 {
                     (r"bin\Release64\sys_info.exe", 177): 2,
-                    (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
+                    (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,

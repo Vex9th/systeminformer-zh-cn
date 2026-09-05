@@ -305,9 +305,8 @@ INT_PTR CALLBACK EspServiceRecoveryDlgProc(
                 {
                     PhShowWarning2(
                         WindowHandle,
-                        L"Unable to query service recovery information.",
-                        L"The service has %lu failure actions configured, but this program only supports editing 3. "
-                        L"If you save the recovery information using this program, the additional failure actions will be lost.",
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_QUERY_SERVICE_RECOVERY_INFORMATION, NULL))),
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_SERVICE_FAILURE_ACTIONS_TRUNCATED, NULL))),
                         context->NumberOfActions
                         );
                 }
@@ -323,7 +322,7 @@ INT_PTR CALLBACK EspServiceRecoveryDlgProc(
 
                 PhShowWarning2(
                     WindowHandle,
-                    L"Unable to query service recovery information.",
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_QUERY_SERVICE_RECOVERY_INFORMATION, NULL))),
                     L"%s",
                     PhGetStringOrDefault(
                         errorMessage,
@@ -571,7 +570,7 @@ ErrorCase:
 
                         if (PhShowContinueStatus(
                             WindowHandle,
-                            L"Unable to change service recovery information.",
+                            PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_CHANGE_SERVICE_RECOVERY_INFORMATION, NULL))),
                             status,
                             0))
                         {

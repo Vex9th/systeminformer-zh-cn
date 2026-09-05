@@ -342,6 +342,20 @@ END
 STRINGTABLE
 BEGIN
     IDS_ES_UNKNOWN_ERROR            "Unknown error."
+    IDS_ES_FAILED_CHANGE_DEVICE_STATE "Failed to change the device state."
+    IDS_ES_FAILED_RESTART_DEVICE    "Failed to restart the device."
+    IDS_ES_FAILED_UNINSTALL_DEVICE  "Failed to uninstall the device."
+    IDS_ES_UNABLE_FIND_ETW_PUBLISHER_GUID "Unable to find the ETW publisher GUID."
+    IDS_ES_CUSTOM_SUBTYPE_INVALID   "The custom subtype is invalid."
+    IDS_ES_TRIGGER_DATA_REMOVAL_WARNING "If you continue, they will be removed."
+    IDS_ES_UNABLE_QUERY_SERVICE_INFORMATION "Unable to query service information."
+    IDS_ES_UNABLE_OPEN_LSA_POLICY   "Unable to open LSA policy"
+    IDS_ES_UNABLE_CHANGE_SERVICE_INFORMATION "Unable to change service information."
+    IDS_ES_UNABLE_QUERY_SERVICE_RECOVERY_INFORMATION "Unable to query service recovery information."
+    IDS_ES_SERVICE_FAILURE_ACTIONS_TRUNCATED "The service has %lu failure actions configured, but this program only supports editing 3. If you save the recovery information using this program, the additional failure actions will be lost."
+    IDS_ES_UNABLE_CHANGE_SERVICE_RECOVERY_INFORMATION "Unable to change service recovery information."
+    IDS_ES_UNABLE_QUERY_SERVICE_TRIGGER_INFORMATION "Unable to query service trigger information."
+    IDS_ES_UNABLE_CHANGE_SERVICE_TRIGGER_INFORMATION "Unable to change service trigger information."
 END
 
 #endif    // English (United States) resources

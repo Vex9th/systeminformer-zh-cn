@@ -366,7 +366,7 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
 
                 PhShowWarning2(
                     WindowHandle,
-                    L"Unable to query service information.",
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_QUERY_SERVICE_INFORMATION, NULL))),
                     L"%s",
                     PhGetStringOrDefault(
                         errorMessage,
@@ -419,7 +419,7 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
 
                     if (!NT_SUCCESS(status))
                     {
-                        PhShowStatus(WindowHandle, L"Unable to open LSA policy", status, 0);
+                        PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_OPEN_LSA_POLICY, NULL))), status, 0);
                         break;
                     }
 
@@ -703,7 +703,7 @@ Done:
                         {
                             if (PhShowContinueStatus(
                                 WindowHandle,
-                                L"Unable to change service information.",
+                                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_CHANGE_SERVICE_INFORMATION, NULL))),
                                 status,
                                 0))
                             {

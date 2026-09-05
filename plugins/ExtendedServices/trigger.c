@@ -1430,7 +1430,7 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
                         {
                             if (!EspLookupEtwPublisherGuid(&subTypeString->sr, &context->EditingInfo->SubtypeBuffer))
                             {
-                                PhShowError2(WindowHandle, L"Unable to find the ETW publisher GUID.", L"%s", L"");
+                                PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_FIND_ETW_PUBLISHER_GUID, NULL))), L"%s", L"");
                                 goto DoNotClose;
                             }
 
@@ -1460,7 +1460,7 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
                         }
                         else
                         {
-                            PhShowError2(WindowHandle, L"The custom subtype is invalid.", L"%s", L"Please ensure that the string is a valid GUID: \"{x-x-x-x-x}\".");
+                            PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_CUSTOM_SUBTYPE_INVALID, NULL))), L"%s", L"Please ensure that the string is a valid GUID: \"{x-x-x-x-x}\".");
                             goto DoNotClose;
                         }
                     }
@@ -1486,7 +1486,7 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
                             TD_WARNING_ICON,
                             PhaFormatString(L"The trigger type \"%s\" does not allow data items to be configured.", typeString->Buffer)->Buffer,
                             L"%s",
-                            L"If you continue, they will be removed."
+                            PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_TRIGGER_DATA_REMOVAL_WARNING, NULL)))
                             ) != IDOK)
                         {
                             goto DoNotClose;
