@@ -5,6 +5,12 @@
     "note": "English source string -> Simplified Chinese translation. See glossary.md for terminology."
   },
   "strings": {
+    "%": "%",
+    " (": " (",
+    "%)": "%)",
+    "): ": "): ",
+    ": ": ": ",
+    "-": "-",
     " Are you sure you want to continue?": "确定要继续吗？",
     " and its descendants": "及其子进程",
     "100000": "100000",

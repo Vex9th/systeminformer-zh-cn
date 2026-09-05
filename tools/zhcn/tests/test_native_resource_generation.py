@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("487 strings", result.stdout)
+        self.assertIn("549 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1911,6 +1911,152 @@ class NativeResourceGenerationTests(unittest.TestCase):
             fls_failure.index("PhLoadUiString("),
         )
 
+    def test_toolstatus_runtime_text_uses_native_resources(self) -> None:
+        statusbar = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "statusbar.c"
+        ).read_text(encoding="utf-8-sig")
+        toolbar = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "toolbar.c"
+        ).read_text(encoding="utf-8-sig")
+        main = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "main.c"
+        ).read_text(encoding="utf-8-sig")
+        header = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "toolstatus.h"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "ToolStatus.rc"
+        ).read_text(encoding="utf-8-sig")
+        source = statusbar + toolbar
+        statusbar_get_text = statusbar[
+            statusbar.index("PWSTR StatusBarGetText("):
+            statusbar.index("VOID StatusBarShowMenu(")
+        ]
+
+        self.assertNotIn("PhTranslateString", source)
+        self.assertNotIn("#include <phtranslation.h>", source)
+        self.assertNotRegex(statusbar_get_text, r"return\s+L\"")
+        self.assertIn("ToolStatusInitializeUiStrings();", main)
+        self.assertIn("PCWSTR ToolStatusGetUiString(", main)
+        self.assertIn("PCWSTR ToolStatusGetUiString(", header)
+
+        resource_ids = (
+            "IDS_TS_STATUS_CPU_USAGE",
+            "IDS_TS_STATUS_PERCENT",
+            "IDS_TS_STATUS_COMMIT_CHARGE",
+            "IDS_TS_STATUS_OPEN_PAREN",
+            "IDS_TS_STATUS_CLOSE_PAREN_PERCENT",
+            "IDS_TS_STATUS_PHYSICAL_MEMORY",
+            "IDS_TS_STATUS_FREE_MEMORY",
+            "IDS_TS_STATUS_PROCESSES",
+            "IDS_TS_STATUS_THREADS",
+            "IDS_TS_STATUS_HANDLES",
+            "IDS_TS_STATUS_IO_READ_OTHER",
+            "IDS_TS_STATUS_IO_WRITE",
+            "IDS_TS_STATUS_CLOSE_PAREN_COLON",
+            "IDS_TS_STATUS_COLON",
+            "IDS_TS_STATUS_EMPTY",
+            "IDS_TS_STATUS_VISIBLE",
+            "IDS_TS_STATUS_VISIBLE_NA",
+            "IDS_TS_STATUS_SELECTED",
+            "IDS_TS_STATUS_SELECTED_NA",
+            "IDS_TS_STATUS_INTERVAL_FAST",
+            "IDS_TS_STATUS_INTERVAL_NORMAL",
+            "IDS_TS_STATUS_INTERVAL_BELOW_NORMAL",
+            "IDS_TS_STATUS_INTERVAL_SLOW",
+            "IDS_TS_STATUS_INTERVAL_VERY_SLOW",
+            "IDS_TS_STATUS_INTERVAL_NA",
+            "IDS_TS_STATUS_INTERVAL_PAUSED",
+            "IDS_TS_STATUS_SELECTED_WS",
+            "IDS_TS_STATUS_SELECTED_WS_NA",
+            "IDS_TS_STATUS_SELECTED_PRIVATE_BYTES",
+            "IDS_TS_STATUS_SELECTED_PRIVATE_BYTES_NA",
+            "IDS_TS_STATUS_KSI",
+            "IDS_TS_STATUS_NOT_CONNECTED",
+            "IDS_TS_STATUS_KSI_DOWN",
+            "IDS_TS_STATUS_KSI_UP",
+            "IDS_TS_STATUS_LABEL_CPU_USAGE",
+            "IDS_TS_STATUS_LABEL_PHYSICAL_MEMORY",
+            "IDS_TS_STATUS_LABEL_NUMBER_OF_PROCESSES",
+            "IDS_TS_STATUS_LABEL_COMMIT_CHARGE",
+            "IDS_TS_STATUS_LABEL_FREE_PHYSICAL_MEMORY",
+            "IDS_TS_STATUS_LABEL_NUMBER_OF_THREADS",
+            "IDS_TS_STATUS_LABEL_NUMBER_OF_HANDLES",
+            "IDS_TS_STATUS_LABEL_NUMBER_OF_VISIBLE_ITEMS",
+            "IDS_TS_STATUS_LABEL_NUMBER_OF_SELECTED_ITEMS",
+            "IDS_TS_STATUS_LABEL_INTERVAL_STATUS",
+            "IDS_TS_STATUS_LABEL_IO_READ_OTHER",
+            "IDS_TS_STATUS_LABEL_IO_WRITE",
+            "IDS_TS_STATUS_LABEL_MAX_CPU_PROCESS",
+            "IDS_TS_STATUS_LABEL_MAX_IO_PROCESS",
+            "IDS_TS_STATUS_LABEL_SELECTED_PROCESS_WS",
+            "IDS_TS_STATUS_LABEL_SELECTED_PROCESS_PRIVATE_BYTES",
+            "IDS_TS_STATUS_LABEL_KSI_STATUS",
+            "IDS_TS_TOOLBAR_REFRESH",
+            "IDS_TS_TOOLBAR_OPTIONS",
+            "IDS_TS_TOOLBAR_FIND_HANDLES_OR_DLLS",
+            "IDS_TS_TOOLBAR_SYSTEM_INFORMATION",
+            "IDS_TS_TOOLBAR_FIND_WINDOW",
+            "IDS_TS_TOOLBAR_FIND_WINDOW_THREAD",
+            "IDS_TS_TOOLBAR_FIND_WINDOW_KILL",
+            "IDS_TS_TOOLBAR_ALWAYS_ON_TOP",
+            "IDS_TS_TOOLBAR_COMPUTER",
+            "IDS_TS_TOOLBAR_SHOW_DETAILS_ALL_PROCESSES",
+            "IDS_TS_ERROR",
+        )
+        resource_texts = dict(re.findall(
+            r'^\s*(IDS_TS_[A-Z0-9_]+)\s+"([^"]*)"',
+            resource_script,
+            re.MULTILINE,
+        ))
+        routed_fallbacks = {}
+        for resource_id, fallback in re.findall(
+            r'ToolStatusGetUiString\(\s*(IDS_TS_[A-Z0-9_]+),\s*L"([^"]*)"\s*\)',
+            source,
+        ):
+            routed_fallbacks.setdefault(resource_id, set()).add(fallback)
+
+        for resource_id in resource_ids:
+            with self.subTest(toolstatus_resource_id=resource_id):
+                self.assertEqual(
+                    routed_fallbacks.get(resource_id),
+                    {resource_texts[resource_id]},
+                )
+
+        self.assertIn(
+            "ToolStatusUiStrings[IDS_TS_LAST - IDS_TS_FIRST + 1]",
+            main,
+        )
+        self.assertRegex(
+            main,
+            r"PhLoadUiString\s*\(\s*PluginInstance->DllBase,\s*resourceId,\s*NULL\s*\)",
+        )
+        self.assertIn("IDS_TS_FIRST", main)
+        self.assertIn("IDS_TS_LAST", main)
+
+    def test_statusbar_audit_counts_only_native_resource_calls(self) -> None:
+        audit = load_audit_module()
+        source = """
+            return L"Unrouted status label";
+            return ToolStatusGetUiString(
+                IDS_TS_STATUS_LABEL_CPU_USAGE,
+                L"Routed status label"
+                );
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_statusbar(source_file.name, entries)
+
+        self.assertEqual(
+            [entry["english"] for entry in entries],
+            ["Routed status label"],
+        )
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -2110,7 +2256,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
-                    (r"bin\Release64\plugins\ToolStatus.dll", 2): 2,
+                    (r"bin\Release64\plugins\ToolStatus.dll", 64): 2,
                     (r"bin\Release64\plugins\Updater.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 7): 2,

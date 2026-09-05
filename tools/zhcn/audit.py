@@ -436,19 +436,22 @@ def scan_c_file(path: str, entries):
 
 
 def scan_statusbar(path: str, entries):
-    """ToolStatus status bar templates are patched to route through
-    PhTranslateString; every L"" template literal in the file is counted."""
+    """Count only status bar fallbacks routed through native resources."""
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         text = mask_c_comments(f.read())
-    for m in C_LITERAL_RE.finditer(text):
-        t = literal_text(m.group(0))
-        if is_noise(t):
+    for name, args, spans, call_start in find_calls(
+        text, {"ToolStatusGetUiString"}
+    ):
+        if len(args) < 2:
             continue
-        entries.append({
-            "category": "c_statusbar", "file": rel,
-            "line": line_of_offset(text, m.start()), "english": t,
-        })
+        for t in all_literals(args[1]):
+            if is_noise(t):
+                continue
+            entries.append({
+                "category": "c_statusbar", "file": rel,
+                "line": line_of_offset(text, spans[1][0]), "english": t,
+            })
 
 
 # ---------------------------------------------------------------------------

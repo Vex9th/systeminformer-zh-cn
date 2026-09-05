@@ -11,8 +11,6 @@
  */
 
 #include "toolstatus.h"
-#include <phtranslation.h>
-
 #include <kphuser.h>
 
 HWND StatusBarHandle = NULL;
@@ -158,42 +156,42 @@ PWSTR StatusBarGetText(
     switch (CommandID)
     {
     case ID_STATUS_CPUUSAGE:
-        return L"CPU usage";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_CPU_USAGE, L"CPU usage");
     case ID_STATUS_PHYSICALMEMORY:
-        return L"Physical memory";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_PHYSICAL_MEMORY, L"Physical memory");
     case ID_STATUS_NUMBEROFPROCESSES:
-        return L"Number of processes";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_NUMBER_OF_PROCESSES, L"Number of processes");
     case ID_STATUS_COMMITCHARGE:
-        return L"Commit charge";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_COMMIT_CHARGE, L"Commit charge");
     case ID_STATUS_FREEMEMORY:
-        return L"Free physical memory";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_FREE_PHYSICAL_MEMORY, L"Free physical memory");
     case ID_STATUS_NUMBEROFTHREADS:
-        return L"Number of threads";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_NUMBER_OF_THREADS, L"Number of threads");
     case ID_STATUS_NUMBEROFHANDLES:
-        return L"Number of handles";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_NUMBER_OF_HANDLES, L"Number of handles");
     case ID_STATUS_NUMBEROFVISIBLEITEMS:
-        return L"Number of visible items";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_NUMBER_OF_VISIBLE_ITEMS, L"Number of visible items");
     case ID_STATUS_NUMBEROFSELECTEDITEMS:
-        return L"Number of selected items";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_NUMBER_OF_SELECTED_ITEMS, L"Number of selected items");
     case ID_STATUS_INTERVALSTATUS:
-        return L"Interval status";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_INTERVAL_STATUS, L"Interval status");
     case ID_STATUS_IO_RO:
-        return L"I/O read+other";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_IO_READ_OTHER, L"I/O read+other");
     case ID_STATUS_IO_W:
-        return L"I/O write";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_IO_WRITE, L"I/O write");
     case ID_STATUS_MAX_CPU_PROCESS:
-        return L"Max. CPU process";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_MAX_CPU_PROCESS, L"Max. CPU process");
     case ID_STATUS_MAX_IO_PROCESS:
-        return L"Max. I/O process";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_MAX_IO_PROCESS, L"Max. I/O process");
     case ID_STATUS_SELECTEDWORKINGSET:
-        return L"Selected process WS";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_SELECTED_PROCESS_WS, L"Selected process WS");
     case ID_STATUS_SELECTEDPRIVATEBYTES:
-        return L"Selected process private bytes";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_SELECTED_PROCESS_PRIVATE_BYTES, L"Selected process private bytes");
     case ID_STATUS_KSICOUNTER:
-        return L"KSI status";
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_STATUS_LABEL_KSI_STATUS, L"KSI status");
     }
 
-    return L"ERROR";
+    return (PWSTR)ToolStatusGetUiString(IDS_TS_ERROR, L"ERROR");
 }
 
 VOID StatusBarShowMenu(
@@ -296,9 +294,9 @@ VOID StatusBarUpdate(
                 FLOAT cpuUsage = SystemStatistics.CpuKernelUsage + SystemStatistics.CpuUserUsage;
                 PH_FORMAT format[3];
 
-                PhInitFormatS(&format[0], PhTranslateString(L"CPU usage: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_CPU_USAGE, L"CPU usage: "));
                 PhInitFormatF(&format[1], cpuUsage * 100, 2);
-                PhInitFormatS(&format[2], PhTranslateString(L"%"));
+                PhInitFormatS(&format[2], ToolStatusGetUiString(IDS_TS_STATUS_PERCENT, L"%"));
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
             }
@@ -315,11 +313,11 @@ VOID StatusBarUpdate(
                 commitUsage = SystemStatistics.Performance->CommittedPages;
                 commitFraction = (FLOAT)commitUsage / SystemStatistics.Performance->CommitLimit * 100;
 
-                PhInitFormatS(&format[0], PhTranslateString(L"Commit charge: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_COMMIT_CHARGE, L"Commit charge: "));
                 PhInitFormatSize(&format[1], UInt32x32To64(commitUsage, PAGE_SIZE));
-                PhInitFormatS(&format[2], PhTranslateString(L" ("));
+                PhInitFormatS(&format[2], ToolStatusGetUiString(IDS_TS_STATUS_OPEN_PAREN, L" ("));
                 PhInitFormatF(&format[3], commitFraction, 2);
-                PhInitFormatS(&format[4], PhTranslateString(L"%)"));
+                PhInitFormatS(&format[4], ToolStatusGetUiString(IDS_TS_STATUS_CLOSE_PAREN_PERCENT, L"%)"));
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
             }
@@ -336,11 +334,11 @@ VOID StatusBarUpdate(
                 physicalUsage = PhSystemBasicInformation.NumberOfPhysicalPages - SystemStatistics.Performance->AvailablePages;
                 physicalFraction = (FLOAT)physicalUsage / PhSystemBasicInformation.NumberOfPhysicalPages * 100;
 
-                PhInitFormatS(&format[0], PhTranslateString(L"Physical memory: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_PHYSICAL_MEMORY, L"Physical memory: "));
                 PhInitFormatSize(&format[1], UInt32x32To64(physicalUsage, PAGE_SIZE));
-                PhInitFormatS(&format[2], PhTranslateString(L" ("));
+                PhInitFormatS(&format[2], ToolStatusGetUiString(IDS_TS_STATUS_OPEN_PAREN, L" ("));
                 PhInitFormatF(&format[3], physicalFraction, 2);
-                PhInitFormatS(&format[4], PhTranslateString(L"%)"));
+                PhInitFormatS(&format[4], ToolStatusGetUiString(IDS_TS_STATUS_CLOSE_PAREN_PERCENT, L"%)"));
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
             }
@@ -357,11 +355,11 @@ VOID StatusBarUpdate(
                 physicalFree = SystemStatistics.Performance->AvailablePages;
                 physicalFreeFraction = (FLOAT)physicalFree / PhSystemBasicInformation.NumberOfPhysicalPages * 100;
 
-                PhInitFormatS(&format[0], PhTranslateString(L"Free memory: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_FREE_MEMORY, L"Free memory: "));
                 PhInitFormatSize(&format[1], UInt32x32To64(physicalFree, PAGE_SIZE));
-                PhInitFormatS(&format[2], PhTranslateString(L" ("));
+                PhInitFormatS(&format[2], ToolStatusGetUiString(IDS_TS_STATUS_OPEN_PAREN, L" ("));
                 PhInitFormatF(&format[3], physicalFreeFraction, 2);
-                PhInitFormatS(&format[4], PhTranslateString(L"%)"));
+                PhInitFormatS(&format[4], ToolStatusGetUiString(IDS_TS_STATUS_CLOSE_PAREN_PERCENT, L"%)"));
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
             }
@@ -370,7 +368,7 @@ VOID StatusBarUpdate(
             {
                 PH_FORMAT format[2];
 
-                PhInitFormatS(&format[0], PhTranslateString(L"Processes: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_PROCESSES, L"Processes: "));
                 PhInitFormatI64UGroupDigits(&format[1], SystemStatistics.NumberOfProcesses);
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -380,7 +378,7 @@ VOID StatusBarUpdate(
             {
                 PH_FORMAT format[2];
 
-                PhInitFormatS(&format[0], PhTranslateString(L"Threads: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_THREADS, L"Threads: "));
                 PhInitFormatI64UGroupDigits(&format[1], SystemStatistics.NumberOfThreads);
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -390,7 +388,7 @@ VOID StatusBarUpdate(
             {
                 PH_FORMAT format[2];
 
-                PhInitFormatS(&format[0], PhTranslateString(L"Handles: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_HANDLES, L"Handles: "));
                 PhInitFormatI64UGroupDigits(&format[1], SystemStatistics.NumberOfHandles);
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -400,7 +398,7 @@ VOID StatusBarUpdate(
             {
                 PH_FORMAT format[2];
 
-                PhInitFormatS(&format[0], PhTranslateString(L"I/O R+O: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_IO_READ_OTHER, L"I/O R+O: "));
                 PhInitFormatSize(&format[1], (SystemStatistics.IoReadDelta.Delta + SystemStatistics.IoOtherDelta.Delta));
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -410,7 +408,7 @@ VOID StatusBarUpdate(
             {
                 PH_FORMAT format[2];
 
-                PhInitFormatS(&format[0], PhTranslateString(L"I/O W: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_IO_WRITE, L"I/O W: "));
                 PhInitFormatSize(&format[1], SystemStatistics.IoWriteDelta.Delta);
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -427,11 +425,11 @@ VOID StatusBarUpdate(
                         PH_FORMAT format[6];
 
                         PhInitFormatSR(&format[0], processItem->ProcessName->sr);
-                        PhInitFormatS(&format[1], PhTranslateString(L" ("));
+                        PhInitFormatS(&format[1], ToolStatusGetUiString(IDS_TS_STATUS_OPEN_PAREN, L" ("));
                         PhInitFormatI64U(&format[2], HandleToUlong(processItem->ProcessId));
-                        PhInitFormatS(&format[3], PhTranslateString(L"): "));
+                        PhInitFormatS(&format[3], ToolStatusGetUiString(IDS_TS_STATUS_CLOSE_PAREN_COLON, L"): "));
                         PhInitFormatF(&format[4], processItem->CpuUsage * 100, 2);
-                        PhInitFormatS(&format[5], PhTranslateString(L"%"));
+                        PhInitFormatS(&format[5], ToolStatusGetUiString(IDS_TS_STATUS_PERCENT, L"%"));
 
                         PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
                     }
@@ -440,9 +438,9 @@ VOID StatusBarUpdate(
                         PH_FORMAT format[4];
 
                         PhInitFormatSR(&format[0], processItem->ProcessName->sr);
-                        PhInitFormatS(&format[1], PhTranslateString(L": "));
+                        PhInitFormatS(&format[1], ToolStatusGetUiString(IDS_TS_STATUS_COLON, L": "));
                         PhInitFormatF(&format[2], processItem->CpuUsage * 100, 2);
-                        PhInitFormatS(&format[3], PhTranslateString(L"%)"));
+                        PhInitFormatS(&format[3], ToolStatusGetUiString(IDS_TS_STATUS_CLOSE_PAREN_PERCENT, L"%)"));
 
                         PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
                     }
@@ -453,7 +451,7 @@ VOID StatusBarUpdate(
                 {
                     PH_FORMAT format[1];
 
-                    PhInitFormatS(&format[0], PhTranslateString(L"-"));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_EMPTY, L"-"));
 
                     PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
                 }
@@ -470,9 +468,9 @@ VOID StatusBarUpdate(
                         PH_FORMAT format[5];
 
                         PhInitFormatSR(&format[0], processItem->ProcessName->sr);
-                        PhInitFormatS(&format[1], PhTranslateString(L" ("));
+                        PhInitFormatS(&format[1], ToolStatusGetUiString(IDS_TS_STATUS_OPEN_PAREN, L" ("));
                         PhInitFormatI64U(&format[2], HandleToUlong(processItem->ProcessId));
-                        PhInitFormatS(&format[3], PhTranslateString(L"): "));
+                        PhInitFormatS(&format[3], ToolStatusGetUiString(IDS_TS_STATUS_CLOSE_PAREN_COLON, L"): "));
                         PhInitFormatSize(&format[4], processItem->IoReadDelta.Delta + processItem->IoWriteDelta.Delta + processItem->IoOtherDelta.Delta);
 
                         PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -482,7 +480,7 @@ VOID StatusBarUpdate(
                         PH_FORMAT format[3];
 
                         PhInitFormatSR(&format[0], processItem->ProcessName->sr);
-                        PhInitFormatS(&format[1], PhTranslateString(L": "));
+                        PhInitFormatS(&format[1], ToolStatusGetUiString(IDS_TS_STATUS_COLON, L": "));
                         PhInitFormatSize(&format[2], processItem->IoReadDelta.Delta + processItem->IoWriteDelta.Delta + processItem->IoOtherDelta.Delta);
 
                         PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -494,7 +492,7 @@ VOID StatusBarUpdate(
                 {
                     PH_FORMAT format[1];
 
-                    PhInitFormatS(&format[0], PhTranslateString(L"-"));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_EMPTY, L"-"));
 
                     PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
                 }
@@ -508,7 +506,7 @@ VOID StatusBarUpdate(
                 {
                     PH_FORMAT format[2];
 
-                    PhInitFormatS(&format[0], PhTranslateString(L"Visible: "));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_VISIBLE, L"Visible: "));
                     PhInitFormatI64UGroupDigits(&format[1], TreeNew_GetFlatNodeCount(tnHandle));
 
                     PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -517,7 +515,7 @@ VOID StatusBarUpdate(
                 {
                     PH_FORMAT format[1];
 
-                    PhInitFormatS(&format[0], PhTranslateString(L"Visible: N/A"));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_VISIBLE_NA, L"Visible: N/A"));
 
                     PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
                 }
@@ -531,7 +529,7 @@ VOID StatusBarUpdate(
                 {
                     PH_FORMAT format[2];
 
-                    PhInitFormatS(&format[0], PhTranslateString(L"Selected: "));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_SELECTED, L"Selected: "));
                     PhInitFormatI64UGroupDigits(&format[1], TreeNew_GetSelectedNodeCount(tnHandle));
 
                     PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -540,7 +538,7 @@ VOID StatusBarUpdate(
                 {
                     PH_FORMAT format[1];
 
-                    PhInitFormatS(&format[0], PhTranslateString(L"Selected: N/A"));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_SELECTED_NA, L"Selected: N/A"));
 
                     PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
                 }
@@ -555,28 +553,28 @@ VOID StatusBarUpdate(
                     switch (PhGetIntegerSetting(SETTING_UPDATE_INTERVAL))
                     {
                     case 500:
-                        PhInitFormatS(&format[0], PhTranslateString(L"Interval: Fast"));
+                        PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_INTERVAL_FAST, L"Interval: Fast"));
                         break;
                     case 1000:
-                        PhInitFormatS(&format[0], PhTranslateString(L"Interval: Normal"));
+                        PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_INTERVAL_NORMAL, L"Interval: Normal"));
                         break;
                     case 2000:
-                        PhInitFormatS(&format[0], PhTranslateString(L"Interval: Below normal"));
+                        PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_INTERVAL_BELOW_NORMAL, L"Interval: Below normal"));
                         break;
                     case 5000:
-                        PhInitFormatS(&format[0], PhTranslateString(L"Interval: Slow"));
+                        PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_INTERVAL_SLOW, L"Interval: Slow"));
                         break;
                     case 10000:
-                        PhInitFormatS(&format[0], PhTranslateString(L"Interval: Very slow"));
+                        PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_INTERVAL_VERY_SLOW, L"Interval: Very slow"));
                         break;
                     default:
-                        PhInitFormatS(&format[0], PhTranslateString(L"Interval: N/A"));
+                        PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_INTERVAL_NA, L"Interval: N/A"));
                         break;
                     }
                 }
                 else
                 {
-                    PhInitFormatS(&format[0], PhTranslateString(L"Interval: Paused"));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_INTERVAL_PAUSED, L"Interval: Paused"));
                 }
 
                 PhFormatToBuffer(format, RTL_NUMBER_OF(format), text[count], sizeof(text[count]), &textLength[count]);
@@ -599,13 +597,13 @@ VOID StatusBarUpdate(
 
                 if (value)
                 {
-                    PhInitFormatS(&format[0], PhTranslateString(L"Selected WS: "));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_SELECTED_WS, L"Selected WS: "));
                     PhInitFormatSize(&format[1], value);
                     PhFormatToBuffer(format, 2, text[count], sizeof(text[count]), &textLength[count]);
                 }
                 else
                 {
-                    PhInitFormatS(&format[0], PhTranslateString(L"Selected WS: N/A"));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_SELECTED_WS_NA, L"Selected WS: N/A"));
                     PhFormatToBuffer(format, 1, text[count], sizeof(text[count]), &textLength[count]);
                 }
 
@@ -630,13 +628,13 @@ VOID StatusBarUpdate(
 
                 if (value)
                 {
-                    PhInitFormatS(&format[0], PhTranslateString(L"Selected private bytes: "));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_SELECTED_PRIVATE_BYTES, L"Selected private bytes: "));
                     PhInitFormatSize(&format[1], value);
                     PhFormatToBuffer(format, 2, text[count], sizeof(text[count]), &textLength[count]);
                 }
                 else
                 {
-                    PhInitFormatS(&format[0], PhTranslateString(L"Selected private bytes: N/A"));
+                    PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_SELECTED_PRIVATE_BYTES_NA, L"Selected private bytes: N/A"));
                     PhFormatToBuffer(format, 1, text[count], sizeof(text[count]), &textLength[count]);
                 }
 
@@ -653,19 +651,19 @@ VOID StatusBarUpdate(
 
                 PhQueryKphCounters(&duration, &durationDown, &durationUp);
 
-                PhInitFormatS(&format[0], PhTranslateString(L"KSI: "));
+                PhInitFormatS(&format[0], ToolStatusGetUiString(IDS_TS_STATUS_KSI, L"KSI: "));
 
                 if (KsiLevel() == KphLevelNone)
                 {
-                    PhInitFormatS(&format[1], PhTranslateString(L"not connected"));
+                    PhInitFormatS(&format[1], ToolStatusGetUiString(IDS_TS_STATUS_NOT_CONNECTED, L"not connected"));
                     PhFormatToBuffer(format, 2, text[count], sizeof(text[count]), &textLength[count]);
                 }
                 else
                 {
                     PhInitFormatI64U(&format[1], duration);
-                    PhInitFormatS(&format[2], PhTranslateString(L", D "));
+                    PhInitFormatS(&format[2], ToolStatusGetUiString(IDS_TS_STATUS_KSI_DOWN, L", D "));
                     PhInitFormatI64U(&format[3], durationDown);
-                    PhInitFormatS(&format[4], PhTranslateString(L", U "));
+                    PhInitFormatS(&format[4], ToolStatusGetUiString(IDS_TS_STATUS_KSI_UP, L", U "));
                     PhInitFormatI64U(&format[5], durationUp);
                     PhFormatToBuffer(format, 6, text[count], sizeof(text[count]), &textLength[count]);
                 }

@@ -10,7 +10,6 @@
  */
 
 #include "toolstatus.h"
-#include <phtranslation.h>
 
 SIZE ToolBarImageSize = { 16, 16 };
 HIMAGELIST ToolBarImageList = NULL;
@@ -975,28 +974,28 @@ PWSTR ToolbarGetText(
     switch (CommandID)
     {
     case PHAPP_ID_VIEW_REFRESH:
-        return (PWSTR)PhTranslateString(L"Refresh");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_REFRESH, L"Refresh");
     case PHAPP_ID_HACKER_OPTIONS:
-        return (PWSTR)PhTranslateString(L"Options");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_OPTIONS, L"Options");
     case PHAPP_ID_HACKER_FINDHANDLESORDLLS:
-        return (PWSTR)PhTranslateString(L"Find handles or DLLs");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_FIND_HANDLES_OR_DLLS, L"Find handles or DLLs");
     case PHAPP_ID_VIEW_SYSTEMINFORMATION:
-        return (PWSTR)PhTranslateString(L"System information");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_SYSTEM_INFORMATION, L"System information");
     case TIDC_FINDWINDOW:
-        return (PWSTR)PhTranslateString(L"Find window");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_FIND_WINDOW, L"Find window");
     case TIDC_FINDWINDOWTHREAD:
-        return (PWSTR)PhTranslateString(L"Find window and thread");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_FIND_WINDOW_THREAD, L"Find window and thread");
     case TIDC_FINDWINDOWKILL:
-        return (PWSTR)PhTranslateString(L"Find window and kill");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_FIND_WINDOW_KILL, L"Find window and kill");
     case PHAPP_ID_VIEW_ALWAYSONTOP:
-        return (PWSTR)PhTranslateString(L"Always on top");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_ALWAYS_ON_TOP, L"Always on top");
     case TIDC_POWERMENUDROPDOWN:
-        return (PWSTR)PhTranslateString(L"Computer");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_COMPUTER, L"Computer");
     case PHAPP_ID_HACKER_SHOWDETAILSFORALLPROCESSES:
-        return (PWSTR)PhTranslateString(L"Show details for all processes");
+        return (PWSTR)ToolStatusGetUiString(IDS_TS_TOOLBAR_SHOW_DETAILS_ALL_PROCESSES, L"Show details for all processes");
     }
 
-    return (PWSTR)PhTranslateString(L"ERROR");
+    return (PWSTR)ToolStatusGetUiString(IDS_TS_ERROR, L"ERROR");
 }
 
 /**

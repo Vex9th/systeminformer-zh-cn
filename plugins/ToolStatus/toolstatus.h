@@ -381,6 +381,11 @@ VOID ToolbarResetSettings(
     VOID
     );
 
+PCWSTR ToolStatusGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 PWSTR ToolbarGetText(
     _In_ ULONG CommandID
     );

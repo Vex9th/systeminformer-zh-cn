@@ -51,6 +51,8 @@ PPH_TN_FILTER_ENTRY ProcessTreeFilterEntry = NULL;
 PPH_TN_FILTER_ENTRY ServiceTreeFilterEntry = NULL;
 PPH_TN_FILTER_ENTRY NetworkTreeFilterEntry = NULL;
 PPH_PLUGIN PluginInstance = NULL;
+static PPH_STRING ToolStatusUiStrings[IDS_TS_LAST - IDS_TS_FIRST + 1] = { 0 };
+static BOOLEAN ToolStatusUiStringsInitialized = FALSE;
 
 static ULONG TargetingMode = 0;
 static PPH_WINDOW_TARGETING_CONTEXT TargetingContext = NULL;
@@ -66,6 +68,41 @@ static PH_CALLBACK_REGISTRATION TabPageCallbackRegistration;
 static PH_CALLBACK_REGISTRATION ProcessTreeNewInitializingCallbackRegistration;
 static PH_CALLBACK_REGISTRATION ServiceTreeNewInitializingCallbackRegistration;
 static PH_CALLBACK_REGISTRATION NetworkTreeNewInitializingCallbackRegistration;
+
+static VOID ToolStatusInitializeUiStrings(
+    VOID
+    )
+{
+    if (ToolStatusUiStringsInitialized)
+        return;
+
+    ToolStatusUiStringsInitialized = TRUE;
+
+    for (ULONG resourceId = IDS_TS_FIRST; resourceId <= IDS_TS_LAST; resourceId++)
+    {
+        ToolStatusUiStrings[resourceId - IDS_TS_FIRST] = PhLoadUiString(
+            PluginInstance->DllBase,
+            resourceId,
+            NULL
+            );
+    }
+}
+
+PCWSTR ToolStatusGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    assert(ResourceId >= IDS_TS_FIRST && ResourceId <= IDS_TS_LAST);
+
+    if (ResourceId < IDS_TS_FIRST || ResourceId > IDS_TS_LAST)
+        return Fallback;
+
+    return PhGetStringOrDefault(
+        ToolStatusUiStrings[ResourceId - IDS_TS_FIRST],
+        Fallback
+        );
+}
 
 static BOOLEAN ToolStatusIsValidTargetWindow(
     _In_opt_ HWND WindowHandle,
@@ -1879,6 +1916,8 @@ VOID NTAPI LoadCallback(
     _In_opt_ PVOID Context
     )
 {
+    ToolStatusInitializeUiStrings();
+
     ToolStatusConfig.Flags = PhGetIntegerSetting(SETTING_NAME_TOOLSTATUS_CONFIG);
     DisplayStyle = PhGetIntegerSetting(SETTING_NAME_TOOLBARDISPLAYSTYLE);
     SearchBoxDisplayMode = PhGetIntegerSetting(SETTING_NAME_SEARCHBOXDISPLAYMODE);
