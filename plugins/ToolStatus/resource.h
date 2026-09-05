@@ -156,8 +156,14 @@
 #define IDS_TS_GRAPH_WRITE_LINE         12094
 #define IDS_TS_GRAPH_OTHER_LINE         12095
 #define IDS_TS_GRAPH_NONE               12096
+#define IDS_TS_CUSTOMIZE_NO_TEXT_LABELS 12097
+#define IDS_TS_CUSTOMIZE_SELECTIVE_TEXT 12098
+#define IDS_TS_CUSTOMIZE_SHOW_TEXT_LABELS 12099
+#define IDS_TS_CUSTOMIZE_SEARCH_ALWAYS_SHOW 12100
+#define IDS_TS_CUSTOMIZE_SEARCH_HIDE_INACTIVE 12101
+#define IDS_TS_CUSTOMIZE_SEPARATOR      12102
 #define IDS_TS_FIRST                    IDS_TS_PROCESS_NOT_FOUND
-#define IDS_TS_LAST                     IDS_TS_GRAPH_NONE
+#define IDS_TS_LAST                     IDS_TS_CUSTOMIZE_SEPARATOR
 
 // Next default values for new objects
 //
@@ -166,6 +172,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         40012
 #define _APS_NEXT_CONTROL_VALUE         1022
-#define _APS_NEXT_SYMED_VALUE           12097
+#define _APS_NEXT_SYMED_VALUE           12103
 #endif
 #endif

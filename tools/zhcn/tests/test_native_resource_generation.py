@@ -560,7 +560,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("582 strings", result.stdout)
+        self.assertIn("588 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2004,6 +2004,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
         options = (
             REPO_ROOT / "plugins" / "ToolStatus" / "options.c"
         ).read_text(encoding="utf-8-sig")
+        customize_toolbar = (
+            REPO_ROOT / "plugins" / "ToolStatus" / "customizetb.c"
+        ).read_text(encoding="utf-8-sig")
         main = (
             REPO_ROOT / "plugins" / "ToolStatus" / "main.c"
         ).read_text(encoding="utf-8-sig")
@@ -2013,10 +2016,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
         resource_script = (
             REPO_ROOT / "plugins" / "ToolStatus" / "ToolStatus.rc"
         ).read_text(encoding="utf-8-sig")
-        source = statusbar + toolbar + main + graph + options
+        source = statusbar + toolbar + main + graph + options + customize_toolbar
         statusbar_get_text = statusbar[
             statusbar.index("PWSTR StatusBarGetText("):
             statusbar.index("VOID StatusBarShowMenu(")
+        ]
+        customize_load_settings = customize_toolbar[
+            customize_toolbar.index("VOID CustomizeLoadToolbarSettings("):
+            customize_toolbar.index("VOID CustomizeResetImages(")
         ]
 
         self.assertNotIn("PhTranslateString", source)
@@ -2111,6 +2118,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
             "IDS_TS_GRAPH_WRITE_LINE",
             "IDS_TS_GRAPH_OTHER_LINE",
             "IDS_TS_GRAPH_NONE",
+            "IDS_TS_CUSTOMIZE_NO_TEXT_LABELS",
+            "IDS_TS_CUSTOMIZE_SELECTIVE_TEXT",
+            "IDS_TS_CUSTOMIZE_SHOW_TEXT_LABELS",
+            "IDS_TS_CUSTOMIZE_SEARCH_ALWAYS_SHOW",
+            "IDS_TS_CUSTOMIZE_SEARCH_HIDE_INACTIVE",
+            "IDS_TS_CUSTOMIZE_SEPARATOR",
             "IDS_TS_TOOLBAR_REFRESH",
             "IDS_TS_TOOLBAR_OPTIONS",
             "IDS_TS_TOOLBAR_FIND_HANDLES_OR_DLLS",
@@ -2151,7 +2164,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
         newly_routed_texts = {
             resource_texts[resource_id]
             for resource_id in resource_ids
-            if resource_id.startswith(("IDS_TS_MENU_", "IDS_TS_SEARCH_", "IDS_TS_GRAPH_"))
+            if resource_id.startswith((
+                "IDS_TS_MENU_",
+                "IDS_TS_SEARCH_",
+                "IDS_TS_GRAPH_",
+                "IDS_TS_CUSTOMIZE_",
+            ))
         }
         for fallback in newly_routed_texts:
             with self.subTest(toolstatus_native_fallback=fallback):
@@ -2183,6 +2201,18 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertIn("ComboBox_SetItemData", options)
         self.assertIn("ComboBox_GetItemData", options)
         self.assertIn("ComboBox_DeleteString", options)
+        self.assertNotIn("CustomizeTextOptionsStrings", customize_toolbar)
+        self.assertNotIn("CustomizeSearchDisplayStrings", customize_toolbar)
+        self.assertEqual(
+            re.findall(r"IDS_TS_CUSTOMIZE_[A-Z0-9_]+", customize_load_settings),
+            [
+                "IDS_TS_CUSTOMIZE_NO_TEXT_LABELS",
+                "IDS_TS_CUSTOMIZE_SELECTIVE_TEXT",
+                "IDS_TS_CUSTOMIZE_SHOW_TEXT_LABELS",
+                "IDS_TS_CUSTOMIZE_SEARCH_ALWAYS_SHOW",
+                "IDS_TS_CUSTOMIZE_SEARCH_HIDE_INACTIVE",
+            ],
+        )
         self.assertNotIn("GraphTypePairs", options)
         self.assertNotIn("GraphTypeGetTypeInteger", options)
         self.assertNotIn("PhSelectComboBoxString", options)
@@ -2409,7 +2439,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
-                    (r"bin\Release64\plugins\ToolStatus.dll", 97): 2,
+                    (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 7): 2,

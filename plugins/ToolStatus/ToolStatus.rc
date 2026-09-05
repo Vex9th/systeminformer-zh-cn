@@ -330,6 +330,12 @@ BEGIN
     IDS_TS_GRAPH_WRITE_LINE         "\nW: "
     IDS_TS_GRAPH_OTHER_LINE         "\nO: "
     IDS_TS_GRAPH_NONE               "None"
+    IDS_TS_CUSTOMIZE_NO_TEXT_LABELS "No text labels"
+    IDS_TS_CUSTOMIZE_SELECTIVE_TEXT "Selective text"
+    IDS_TS_CUSTOMIZE_SHOW_TEXT_LABELS "Show text labels"
+    IDS_TS_CUSTOMIZE_SEARCH_ALWAYS_SHOW "Always show"
+    IDS_TS_CUSTOMIZE_SEARCH_HIDE_INACTIVE "Hide when inactive (Ctrl+K)"
+    IDS_TS_CUSTOMIZE_SEPARATOR      "Separator"
 END
 
 #endif    // English (United States) resources

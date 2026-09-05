@@ -17,12 +17,18 @@
     ": R+O: ": ": R+O: ",
     ": ": ": ",
     "-": "-",
+    "Always show": "始终显示",
     "Commit charge history": "提交内存历史",
+    "Hide when inactive (Ctrl+K)": "不活动时隐藏 (Ctrl+K)",
+    "No text labels": "不显示文字标签",
     "Physical memory history": "物理内存历史",
     "R: ": "R: ",
     "Search disabled": "搜索已禁用",
     "Search Network (Ctrl+K)": "搜索网络 (Ctrl+K)",
     "Search Services (Ctrl+K)": "搜索服务 (Ctrl+K)",
+    "Selective text": "选择性显示文字",
+    "Separator": "分隔符",
+    "Show text labels": "显示文字标签",
     "Toolbar": "工具栏"
   },
   "strings": {

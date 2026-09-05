@@ -12,20 +12,6 @@
 #include "toolstatus.h"
 #include "commonutil.h"
 
-static CONST PCWSTR CustomizeTextOptionsStrings[] =
-{
-    L"No text labels",
-    L"Selective text",
-    L"Show text labels"
-};
-
-static CONST PCWSTR CustomizeSearchDisplayStrings[] =
-{
-    L"Always show",
-    L"Hide when inactive (Ctrl+K)",
-    // L"Auto-hide"
-};
-
 BOOLEAN CustomizeToolbarItemExists(
     _In_ PCUSTOMIZE_CONTEXT Context,
     _In_ LONG Command
@@ -348,9 +334,20 @@ VOID CustomizeLoadToolbarSettings(
 {
     HWND toolbarCombo = GetDlgItem(Context->WindowHandle, IDC_TEXTOPTIONS);
     HWND searchboxCombo = GetDlgItem(Context->WindowHandle, IDC_SEARCHOPTIONS);
+    PCWSTR customizeTextOptionsStrings[] =
+    {
+        ToolStatusGetUiString(IDS_TS_CUSTOMIZE_NO_TEXT_LABELS, L"No text labels"),
+        ToolStatusGetUiString(IDS_TS_CUSTOMIZE_SELECTIVE_TEXT, L"Selective text"),
+        ToolStatusGetUiString(IDS_TS_CUSTOMIZE_SHOW_TEXT_LABELS, L"Show text labels")
+    };
+    PCWSTR customizeSearchDisplayStrings[] =
+    {
+        ToolStatusGetUiString(IDS_TS_CUSTOMIZE_SEARCH_ALWAYS_SHOW, L"Always show"),
+        ToolStatusGetUiString(IDS_TS_CUSTOMIZE_SEARCH_HIDE_INACTIVE, L"Hide when inactive (Ctrl+K)")
+    };
 
-    PhAddComboBoxStrings(toolbarCombo, (PCWSTR*)CustomizeTextOptionsStrings, RTL_NUMBER_OF(CustomizeTextOptionsStrings));
-    PhAddComboBoxStrings(searchboxCombo, (PCWSTR*)CustomizeSearchDisplayStrings, RTL_NUMBER_OF(CustomizeSearchDisplayStrings));
+    PhAddComboBoxStrings(toolbarCombo, customizeTextOptionsStrings, RTL_NUMBER_OF(customizeTextOptionsStrings));
+    PhAddComboBoxStrings(searchboxCombo, customizeSearchDisplayStrings, RTL_NUMBER_OF(customizeSearchDisplayStrings));
 
     ComboBox_SetCurSel(toolbarCombo, PhGetIntegerSetting(SETTING_NAME_TOOLBARDISPLAYSTYLE));
     ComboBox_SetCurSel(searchboxCombo, PhGetIntegerSetting(SETTING_NAME_SEARCHBOXDISPLAYMODE));
@@ -915,10 +912,12 @@ INT_PTR CALLBACK CustomizeToolbarDialogProc(
                 }
                 else
                 {
+                    PCWSTR separatorText = ToolStatusGetUiString(IDS_TS_CUSTOMIZE_SEPARATOR, L"Separator");
+
                     DrawText(
                         bufferDc,
-                        L"Separator",
-                        sizeof(L"Separator") / sizeof(WCHAR),
+                        separatorText,
+                        (LONG)PhCountStringZ(separatorText),
                         &bufferRect,
                         DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOCLIP
                         );
