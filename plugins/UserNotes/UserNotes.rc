@@ -81,6 +81,20 @@ END
 STRINGTABLE
 BEGIN
     IDS_UN_AFFINITY_INDIVIDUAL_THREADS "you can only change affinity for individual threads."
+    IDS_UN_IFEO_KEY_DELETED         "Successfully deleted the IFEO key."
+    IDS_UN_MULTI_GROUP_AFFINITY     "This process has multi-group affinity, %s"
+    IDS_UN_UNABLE_CONFIGURE_IFEO_PRIORITY "Unable to configure IFEO priority for this image."
+    IDS_UN_UNABLE_QUERY_GRAPHICS_PRIORITY "Unable to query graphics scheduling priority"
+    IDS_UN_UNABLE_QUERY_IO_PRIORITY "Unable to query IO priority."
+    IDS_UN_UNABLE_QUERY_PAGE_PRIORITY "Unable to query page priority."
+    IDS_UN_UNABLE_QUERY_PRIORITY    "Unable to query priority."
+    IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY "Unable to query process affinity."
+    IDS_UN_UNABLE_QUERY_PROCESS_BOOST "Unable to query process boost."
+    IDS_UN_UNABLE_QUERY_PROCESS_EFFICIENCY "Unable to query process efficiency mode."
+    IDS_UN_UNABLE_UPDATE_GRAPHICS_PRIORITY "Unable to update graphics scheduling priority"
+    IDS_UN_UNABLE_UPDATE_IFEO_IO_PRIORITY "Unable to update the IFEO for IO priority."
+    IDS_UN_UNABLE_UPDATE_IFEO_PAGE_PRIORITY "Unable to update the IFEO for page priority."
+    IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY "Unable to update the IFEO for priority."
 END
 
 

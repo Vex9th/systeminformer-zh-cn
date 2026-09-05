@@ -386,7 +386,7 @@ PPH_STRING ShowFileDialog(
         if (!NT_SUCCESS(status))
         {
             PhClearReference(&fileName);
-            PhShowStatus(ParentWindowHandle, L"Unable to configure IFEO priority for this image.", status, 0);
+            PhShowStatus(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_CONFIGURE_IFEO_PRIORITY, NULL))), status, 0);
         }
     }
 
@@ -886,13 +886,13 @@ VOID ShowProcessD3DKMTPriorityDialog(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(MenuItem->OwnerWindow, L"Unable to update graphics scheduling priority", status, 0);
+                PhShowStatus(MenuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_GRAPHICS_PRIORITY, NULL))), status, 0);
             }
         }
     }
     else
     {
-        PhShowStatus(MenuItem->OwnerWindow, L"Unable to query graphics scheduling priority", status, 0);
+        PhShowStatus(MenuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_GRAPHICS_PRIORITY, NULL))), status, 0);
     }
 }
 
@@ -929,11 +929,11 @@ VOID NTAPI MenuItemCallback(
 
                     if (NT_SUCCESS(status))
                     {
-                        PhShowInformation2(menuItem->OwnerWindow, L"Successfully deleted the IFEO key.", L"%s", L"");
+                        PhShowInformation2(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_IFEO_KEY_DELETED, NULL))), L"%s", L"");
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to update the IFEO for priority.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY, NULL))), status, 0);
                     }
                 }
                 else
@@ -966,11 +966,11 @@ VOID NTAPI MenuItemCallback(
 
                     if (NT_SUCCESS(status))
                     {
-                        PhShowInformation2(menuItem->OwnerWindow, L"Successfully deleted the IFEO key.", L"%s", L"");
+                        PhShowInformation2(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_IFEO_KEY_DELETED, NULL))), L"%s", L"");
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to update the IFEO for IO priority.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_IO_PRIORITY, NULL))), status, 0);
                     }
                 }
                 else
@@ -1003,11 +1003,11 @@ VOID NTAPI MenuItemCallback(
 
                     if (NT_SUCCESS(status))
                     {
-                        PhShowInformation2(menuItem->OwnerWindow, L"Successfully deleted the IFEO key.", L"%s", L"");
+                        PhShowInformation2(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_IFEO_KEY_DELETED, NULL))), L"%s", L"");
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to update the IFEO for page priority.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_PAGE_PRIORITY, NULL))), status, 0);
                     }
                 }
                 else
@@ -1054,7 +1054,7 @@ VOID NTAPI MenuItemCallback(
                 }
                 else
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to query priority.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PRIORITY, NULL))), status, 0);
                 }
             }
 
@@ -1090,7 +1090,7 @@ VOID NTAPI MenuItemCallback(
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to query priority.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PRIORITY, NULL))), status, 0);
                     }
                 }
 
@@ -1115,7 +1115,7 @@ VOID NTAPI MenuItemCallback(
 
                 if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to update the IFEO for priority.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY, NULL))), status, 0);
                 }
             }
             else
@@ -1151,7 +1151,7 @@ VOID NTAPI MenuItemCallback(
                 }
                 else
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to query IO priority.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_IO_PRIORITY, NULL))), status, 0);
                 }
             }
 
@@ -1187,7 +1187,7 @@ VOID NTAPI MenuItemCallback(
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to query IO priority.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_IO_PRIORITY, NULL))), status, 0);
                     }
                 }
 
@@ -1213,7 +1213,7 @@ VOID NTAPI MenuItemCallback(
 
                 if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to update the IFEO for IO priority.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_IO_PRIORITY, NULL))), status, 0);
                 }
             }
             else
@@ -1362,7 +1362,7 @@ VOID NTAPI MenuItemCallback(
                         PhShowInformation2(
                             menuItem->OwnerWindow,
                             L"Unable to query the current affinity.",
-                            L"This process has multi-group affinity, %s",
+                            PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_MULTI_GROUP_AFFINITY, NULL))),
                             PhGetString(PH_AUTO(PhLoadUiString(
                                 PluginInstance->DllBase,
                                 IDS_UN_AFFINITY_INDIVIDUAL_THREADS,
@@ -1372,7 +1372,7 @@ VOID NTAPI MenuItemCallback(
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to query process affinity.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))), status, 0);
                     }
                 }
             }
@@ -1422,7 +1422,7 @@ VOID NTAPI MenuItemCallback(
                             PhShowInformation2(
                                 menuItem->OwnerWindow,
                                 L"Unable to query the current affinity.",
-                                L"This process has multi-group affinity, %s",
+                                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_MULTI_GROUP_AFFINITY, NULL))),
                                 PhGetString(PH_AUTO(PhLoadUiString(
                                     PluginInstance->DllBase,
                                     IDS_UN_AFFINITY_INDIVIDUAL_THREADS,
@@ -1432,7 +1432,7 @@ VOID NTAPI MenuItemCallback(
                         }
                         else
                         {
-                            PhShowStatus(menuItem->OwnerWindow, L"Unable to query process affinity.", status, 0);
+                            PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))), status, 0);
                         }
                     }
                 }
@@ -1469,7 +1469,7 @@ VOID NTAPI MenuItemCallback(
                 }
                 else
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to query page priority.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PAGE_PRIORITY, NULL))), status, 0);
                 }
             }
 
@@ -1505,7 +1505,7 @@ VOID NTAPI MenuItemCallback(
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to query page priority.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PAGE_PRIORITY, NULL))), status, 0);
                     }
                 }
 
@@ -1531,7 +1531,7 @@ VOID NTAPI MenuItemCallback(
 
                 if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to update the IFEO for page priority.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_PAGE_PRIORITY, NULL))), status, 0);
                 }
             }
             else
@@ -1561,7 +1561,7 @@ VOID NTAPI MenuItemCallback(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(menuItem->OwnerWindow, L"Unable to query process boost.", status, 0);
+                PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_BOOST, NULL))), status, 0);
             }
         }
         break;
@@ -1591,7 +1591,7 @@ VOID NTAPI MenuItemCallback(
                 }
                 else
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to query process boost.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_BOOST, NULL))), status, 0);
                 }
             }
 
@@ -1627,7 +1627,7 @@ VOID NTAPI MenuItemCallback(
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to query process boost.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_BOOST, NULL))), status, 0);
                     }
                 }
 
@@ -1664,7 +1664,7 @@ VOID NTAPI MenuItemCallback(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(menuItem->OwnerWindow, L"Unable to query process efficiency mode.", status, 0);
+                PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_EFFICIENCY, NULL))), status, 0);
             }
         }
         break;
@@ -1705,7 +1705,7 @@ VOID NTAPI MenuItemCallback(
                 }
                 else
                 {
-                    PhShowStatus(menuItem->OwnerWindow, L"Unable to query process efficiency mode.", status, 0);
+                    PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_EFFICIENCY, NULL))), status, 0);
                 }
             }
 
@@ -1752,7 +1752,7 @@ VOID NTAPI MenuItemCallback(
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, L"Unable to query process efficiency mode.", status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_EFFICIENCY, NULL))), status, 0);
                     }
                 }
 

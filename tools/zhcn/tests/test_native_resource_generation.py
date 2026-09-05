@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("420 strings", result.stdout)
+        self.assertIn("434 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1508,6 +1508,55 @@ class NativeResourceGenerationTests(unittest.TestCase):
             2,
         )
 
+    def test_user_notes_errors_use_native_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "UserNotes" / "main.c"
+        ).read_text(encoding="utf-8-sig")
+        literals = (
+            "Successfully deleted the IFEO key.",
+            "This process has multi-group affinity, %s",
+            "Unable to configure IFEO priority for this image.",
+            "Unable to query graphics scheduling priority",
+            "Unable to query IO priority.",
+            "Unable to query page priority.",
+            "Unable to query priority.",
+            "Unable to query process affinity.",
+            "Unable to query process boost.",
+            "Unable to query process efficiency mode.",
+            "Unable to update graphics scheduling priority",
+            "Unable to update the IFEO for IO priority.",
+            "Unable to update the IFEO for page priority.",
+            "Unable to update the IFEO for priority.",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}', source)
+
+        expected_ids = {
+            "IDS_UN_IFEO_KEY_DELETED": 3,
+            "IDS_UN_MULTI_GROUP_AFFINITY": 2,
+            "IDS_UN_UNABLE_CONFIGURE_IFEO_PRIORITY": 1,
+            "IDS_UN_UNABLE_QUERY_GRAPHICS_PRIORITY": 1,
+            "IDS_UN_UNABLE_QUERY_IO_PRIORITY": 2,
+            "IDS_UN_UNABLE_QUERY_PAGE_PRIORITY": 2,
+            "IDS_UN_UNABLE_QUERY_PRIORITY": 2,
+            "IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY": 2,
+            "IDS_UN_UNABLE_QUERY_PROCESS_BOOST": 3,
+            "IDS_UN_UNABLE_QUERY_PROCESS_EFFICIENCY": 3,
+            "IDS_UN_UNABLE_UPDATE_GRAPHICS_PRIORITY": 1,
+            "IDS_UN_UNABLE_UPDATE_IFEO_IO_PRIORITY": 2,
+            "IDS_UN_UNABLE_UPDATE_IFEO_PAGE_PRIORITY": 2,
+            "IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY": 2,
+        }
+
+        for resource_id, expected_count in expected_ids.items():
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", source)),
+                    expected_count,
+                )
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -1704,7 +1753,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\sys_info.exe", 177): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
-                    (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
+                    (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
