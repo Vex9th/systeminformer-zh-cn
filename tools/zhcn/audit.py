@@ -918,37 +918,119 @@ def scan_sysinfo_text_sinks(text: str, scan_text: str, rel: str, entries, one_ho
     """Scan custom System Information titles that bypass window-text setters."""
     syntax_text = mask_c_literals(scan_text)
     scopes = c_brace_scopes(scan_text)
-    draw_panel_declarations = list(re.finditer(
-        r"\bPPH_SYSINFO_DRAW_PANEL\s+(?P<name>[A-Za-z_][A-Za-z0-9_]*)\b",
-        syntax_text,
-    ))
-    section_declarations = list(re.finditer(
-        r"\bPH_SYSINFO_SECTION\s+(?P<name>[A-Za-z_][A-Za-z0-9_]*)\b",
-        syntax_text,
-    ))
+
+    def declarators(body, body_start):
+        declarations = []
+        segment_start = 0
+        depth = 0
+
+        for index, char in enumerate(body):
+            if char in "([{":
+                depth += 1
+            elif char in ")]}":
+                depth = max(0, depth - 1)
+            elif char == "," and depth == 0:
+                segment = body[segment_start:index]
+                name_match = re.match(
+                    r"\s*(?:\*+\s*)*(?P<name>[A-Za-z_][A-Za-z0-9_]*)",
+                    segment,
+                )
+                if name_match:
+                    declarations.append((
+                        name_match.group("name"),
+                        body_start + segment_start + name_match.start("name"),
+                    ))
+                segment_start = index + 1
+
+        segment = body[segment_start:]
+        name_match = re.match(
+            r"\s*(?:\*+\s*)*(?P<name>[A-Za-z_][A-Za-z0-9_]*)",
+            segment,
+        )
+        if name_match:
+            declarations.append((
+                name_match.group("name"),
+                body_start + segment_start + name_match.start("name"),
+            ))
+
+        return declarations
+
+    def typed_declarations(type_name):
+        declarations = []
+        statement_re = re.compile(
+            rf"\b{re.escape(type_name)}\b(?P<body>[^;]*);",
+            re.DOTALL,
+        )
+
+        for statement in statement_re.finditer(syntax_text):
+            declarations.extend(declarators(
+                statement.group("body"),
+                statement.start("body"),
+            ))
+
+        return declarations
+
+    def nested_shadow_declarations(start, end):
+        declaration_re = re.compile(
+            r"(?:^|(?<=[;{}]))\s*"
+            r"(?:(?:static|const|volatile|register|extern)\s+)*"
+            r"(?:"
+            r"(?:struct|union|enum)\s+[A-Za-z_][A-Za-z0-9_]*"
+            r"|[A-Z_][A-Za-z0-9_]*"
+            r"|(?:unsigned|signed)(?:\s+(?:char|short|int|long)){0,2}"
+            r"|(?:void|char|short|int|long|float|double)"
+            r")(?=\s|\*)\s*(?P<body>(?:\*+\s*)?[A-Za-z_][A-Za-z0-9_]*[^;]*);",
+            re.DOTALL,
+        )
+        declarations = []
+        fragment = syntax_text[start:end]
+
+        for statement in declaration_re.finditer(fragment):
+            declarations.extend(declarators(
+                statement.group("body"),
+                start + statement.start("body"),
+            ))
+
+        return declarations
+
+    draw_panel_declarations = typed_declarations("PPH_SYSINFO_DRAW_PANEL")
+    section_declarations = typed_declarations("PH_SYSINFO_SECTION")
 
     def has_nested_shadow(declaration, identifier, offset):
-        declaration_scope = innermost_c_scope(scopes, declaration.start())
+        declaration_scope = innermost_c_scope(scopes, declaration[1])
         if declaration_scope is None:
             return False
-        shadow_re = re.compile(
-            rf"(?:^|[;{{}}])\s*(?:[A-Za-z_][A-Za-z0-9_]*\s+)*"
-            rf"[A-Za-z_][A-Za-z0-9_]*\s*(?:\*+\s*)?"
-            rf"{re.escape(identifier)}\s*(?:=|;|,|\[)"
-        )
-        return any(
-            declaration_scope[0] < scope[0] < offset < scope[1] < declaration_scope[1]
-            and shadow_re.search(syntax_text[scope[0] + 1:offset])
-            for scope in scopes
-        )
+
+        for name, declaration_offset in nested_shadow_declarations(
+            declaration_scope[0] + 1,
+            offset,
+        ):
+            if name != identifier:
+                continue
+            shadow_scope = innermost_c_scope(scopes, declaration_offset)
+            if (
+                shadow_scope is not None and
+                declaration_scope[0] < shadow_scope[0] < offset < shadow_scope[1]
+                ):
+                return True
+
+        return False
 
     def has_visible_declaration(declarations, identifier, offset):
-        declaration = visible_local_text_declaration(
-            declarations,
-            identifier,
-            offset,
-            scopes,
-        )
+        visible = []
+
+        for declaration in declarations:
+            if declaration[0] != identifier or declaration[1] >= offset:
+                continue
+            scope = innermost_c_scope(scopes, declaration[1])
+            if scope is not None and scope[0] < offset < scope[1]:
+                visible.append((scope, declaration))
+
+        declaration = max(
+            visible,
+            key=lambda item: (item[0][0], item[1][1]),
+            default=(None, None),
+        )[1]
         return declaration is not None and not has_nested_shadow(
             declaration,
             identifier,
@@ -966,6 +1048,33 @@ def scan_sysinfo_text_sinks(text: str, scan_text: str, rel: str, entries, one_ho
         )
         if not target_match or not has_visible_declaration(
             draw_panel_declarations,
+            target_match.group(1),
+            call_start,
+        ):
+            continue
+        append_runtime_target_entries(
+            text,
+            scan_text,
+            rel,
+            entries,
+            args[1],
+            spans[1][0],
+            call_start,
+            "c_window_text",
+            one_hop_seen,
+        )
+
+    for _, args, spans, call_start in find_calls(
+        scan_text, {"PhInitializeStringRef"}
+    ):
+        if len(args) < 2:
+            continue
+        target_match = re.fullmatch(
+            r"\s*&\s*([A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Name\s*",
+            args[0],
+        )
+        if not target_match or not has_visible_declaration(
+            section_declarations,
             target_match.group(1),
             call_start,
         ):
