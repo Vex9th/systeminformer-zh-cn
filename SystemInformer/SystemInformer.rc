@@ -2837,6 +2837,11 @@ BEGIN
     IDS_PH_PLUGIN_EXTENDED_SERVICES_DESCRIPTION          "Extends service management capabilities."
     IDS_PH_PLUGIN_UNNAMED                                "(unnamed)"
     IDS_PH_PLUGIN_VERSION_UNKNOWN                        "Unknown"
+    IDS_PH_PLUGIN_COLUMN                                 "Plugin"
+    IDS_PH_PLUGIN_DISABLED_COUNT                         "Disabled Plugins (%lu)"
+    IDS_PH_PLUGIN_DISABLE                                "Disable"
+    IDS_PH_PLUGIN_PROPERTIES                             "Properties"
+    IDS_PH_PLUGIN_PROPERTY_COLUMN                        "Property"
 END
 
 /////////////////////////////////////////////////////////////////////////////

@@ -2017,4 +2017,9 @@ BEGIN
     IDS_PH_PLUGIN_EXTENDED_SERVICES_DESCRIPTION          "扩展服务管理功能。"
     IDS_PH_PLUGIN_UNNAMED                                "（未命名）"
     IDS_PH_PLUGIN_VERSION_UNKNOWN                        "未知"
+    IDS_PH_PLUGIN_COLUMN                                 "插件"
+    IDS_PH_PLUGIN_DISABLED_COUNT                         "已禁用的插件 (%lu)"
+    IDS_PH_PLUGIN_DISABLE                                "禁用"
+    IDS_PH_PLUGIN_PROPERTIES                             "属性"
+    IDS_PH_PLUGIN_PROPERTY_COLUMN                        "属性"
 END

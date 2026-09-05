@@ -25,6 +25,7 @@
     "Allows the user to add comments for processes and services, save process priority and affinity, highlight individual processes and show processes collapsed by default.": "允许用户为进程和服务添加备注，保存进程优先级和处理器关联，突出显示单个进程，并默认折叠显示进程。",
     "Always show": "始终显示",
     "Commit charge history": "提交内存历史",
+    "Disabled Plugins (%lu)": "已禁用的插件 (%lu)",
     "Extended Notifications": "扩展通知",
     "Extended Services": "扩展服务",
     "Extended Tools": "扩展工具",

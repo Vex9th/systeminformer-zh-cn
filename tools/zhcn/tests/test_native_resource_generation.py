@@ -560,7 +560,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("612 strings", result.stdout)
+        self.assertIn("617 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -910,7 +910,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 239)
+        self.assertEqual(len(stringtable_ids(resource_script)), 244)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -949,7 +949,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2239)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2244)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1054,6 +1054,37 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertIn("PhpGetPluginLocalizedInformation", refresh_details)
         self.assertIn("IDS_PH_PLUGIN_UNNAMED", refresh_details)
         self.assertIn("IDS_PH_PLUGIN_VERSION_UNKNOWN", refresh_details)
+
+        manager_labels = {
+            "IDS_PH_PLUGIN_COLUMN": "Plugin",
+            "IDS_PH_PLUGIN_DISABLED_COUNT": "Disabled Plugins (%lu)",
+            "IDS_PH_PLUGIN_DISABLE": "Disable",
+            "IDS_PH_PLUGIN_PROPERTIES": "Properties",
+            "IDS_PH_PLUGIN_PROPERTY_COLUMN": "Property",
+        }
+        for resource_id, english_text in manager_labels.items():
+            with self.subTest(plugin_manager_resource_id=resource_id):
+                self.assertEqual(resource_texts[resource_id], english_text)
+                self.assertNotIn(f'L"{english_text}"', plugman)
+
+        self.assertEqual(
+            len(re.findall(
+                r"PhaFormatString\(\s*"
+                r"PhGetApplicationUiString\(IDS_PH_PLUGIN_DISABLED_COUNT\),\s*"
+                r"PhpDisabledPluginsCount\(\)\s*\)",
+                plugman,
+            )),
+            3,
+        )
+        manager_routes = {
+            "IDS_PH_PLUGIN_COLUMN": r"PhAddTreeNewColumnEx2\([^;]*IDS_PH_PLUGIN_COLUMN[^;]*\);",
+            "IDS_PH_PLUGIN_DISABLE": r"PhCreateEMenuItem\([^;]*IDS_PH_PLUGIN_DISABLE[^;]*\)",
+            "IDS_PH_PLUGIN_PROPERTIES": r"PhCreateEMenuItem\([^;]*IDS_PH_PLUGIN_PROPERTIES[^;]*\)",
+            "IDS_PH_PLUGIN_PROPERTY_COLUMN": r"PhAddListViewColumn\([^;]*IDS_PH_PLUGIN_PROPERTY_COLUMN[^;]*\);",
+        }
+        for resource_id, route_pattern in manager_routes.items():
+            with self.subTest(plugin_manager_route=resource_id):
+                self.assertRegex(plugman, route_pattern)
 
     def test_main_window_creation_errors_share_native_resource(self) -> None:
         source = "\n".join(
@@ -2511,7 +2542,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 239): 2,
+                    (r"bin\Release64\sys_info.exe", 244): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,

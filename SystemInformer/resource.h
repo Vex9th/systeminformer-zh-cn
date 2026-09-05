@@ -1230,8 +1230,13 @@
 #define IDS_PH_PLUGIN_EXTENDED_SERVICES_DESCRIPTION          2236
 #define IDS_PH_PLUGIN_UNNAMED                                2237
 #define IDS_PH_PLUGIN_VERSION_UNKNOWN                        2238
+#define IDS_PH_PLUGIN_COLUMN                                 2239
+#define IDS_PH_PLUGIN_DISABLED_COUNT                         2240
+#define IDS_PH_PLUGIN_DISABLE                                2241
+#define IDS_PH_PLUGIN_PROPERTIES                             2242
+#define IDS_PH_PLUGIN_PROPERTY_COLUMN                        2243
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_PLUGIN_VERSION_UNKNOWN
+#define IDS_PH_LAST                                  IDS_PH_PLUGIN_PROPERTY_COLUMN
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1243,6 +1248,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2239
+#define _APS_NEXT_SYMED_VALUE           2244
 #endif
 #endif

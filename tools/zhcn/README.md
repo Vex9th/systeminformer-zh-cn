@@ -1,6 +1,6 @@
 # zh-CN 资源工具
 
-这里放本地化数据、生成器和验证脚本。方案 B 仍在迁移中：当前源码已为主程序、11 个插件、PE Viewer 和安装器生成原生 zh-CN 对话框；已有 612 条动态文字迁到 `STRINGTABLE`，其中 PE Viewer 128 条、安装器 74 条、主程序 239 条、ExtendedServices 15 条、ExtendedTools 25 条、ToolStatus 103 条、UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计 13 条。审计已修正消息宏参数位置，排除注释死代码，并按 C 编译语义合并相邻字符串、检查格式化后续参数和未解析变量；旧字典无法可靠接管的后续参数已迁移调用点，早期崩溃提示保留不依赖缓存的静态后备。审计当前未发现尚待翻译的已识别动态提示，但大量既有文字仍依赖旧兼容翻译层，不能宣称方案 B 整体完成。
+这里放本地化数据、生成器和验证脚本。方案 B 仍在迁移中：当前源码已为主程序、11 个插件、PE Viewer 和安装器生成原生 zh-CN 对话框；已有 617 条动态文字迁到 `STRINGTABLE`，其中 PE Viewer 128 条、安装器 74 条、主程序 244 条、ExtendedServices 15 条、ExtendedTools 25 条、ToolStatus 103 条、UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计 13 条。审计已修正消息宏参数位置，排除注释死代码，并按 C 编译语义合并相邻字符串、检查格式化后续参数和未解析变量；旧字典无法可靠接管的后续参数已迁移调用点，早期崩溃提示保留不依赖缓存的静态后备。审计当前未发现尚待翻译的已识别动态提示，但大量既有文字仍依赖旧兼容翻译层，不能宣称方案 B 整体完成。
 
 ## 常用命令
 
