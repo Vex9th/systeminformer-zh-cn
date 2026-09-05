@@ -746,8 +746,16 @@ INT_PTR CALLBACK EspPnPServiceDlgProc(
             ExtendedListView_SetColumnWidth(context->ListViewHandle, 0, ELVSCW_AUTOSIZE_REMAININGSPACE);
             if (PhWindowsVersion > WINDOWS_7)
                 ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, 0, L"Connected");
-            PhAddListViewGroup(context->ListViewHandle, 1, L"Disconnected");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                0,
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_PNP_GROUP_CONNECTED, NULL)))
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                1,
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_PNP_GROUP_DISCONNECTED, NULL)))
+                );
 
             dpiValue = PhGetWindowDpi(WindowHandle);
             context->ImageList = PhImageListCreate(
@@ -764,7 +772,11 @@ INT_PTR CALLBACK EspPnPServiceDlgProc(
 
             if (context->ServiceItem->Type & SERVICE_DRIVER)
             {
-                PhSetDialogItemText(WindowHandle, IDC_MESSAGE, L"This service has registered the following PnP devices:");
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_MESSAGE,
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_PNP_DEVICES_MESSAGE, NULL)))
+                    );
 
                 if (!EspEnumerateDriverPnpDevices(context))
                 {
@@ -773,7 +785,11 @@ INT_PTR CALLBACK EspPnPServiceDlgProc(
             }
             else
             {
-                PhSetDialogItemText(WindowHandle, IDC_MESSAGE, L"This service type doesn't support PnP devices.");
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_MESSAGE,
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_PNP_UNSUPPORTED_MESSAGE, NULL)))
+                    );
                 ShowWindow(context->ListViewHandle, SW_HIDE);
             }
 

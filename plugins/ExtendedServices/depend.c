@@ -74,7 +74,11 @@ INT_PTR CALLBACK EspServiceDependenciesDlgProc(
             SC_HANDLE serviceHandle;
             NTSTATUS status;
 
-            PhSetDialogItemText(WindowHandle, IDC_MESSAGE, L"This service depends on the following services:");
+            PhSetDialogItemText(
+                WindowHandle,
+                IDC_MESSAGE,
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_DEPENDENCIES_MESSAGE, NULL)))
+                );
 
             PhInitializeLayoutManager(&context->LayoutManager, WindowHandle);
             PhAddLayoutItem(&context->LayoutManager, GetDlgItem(WindowHandle, IDC_SERVICES_LAYOUT), NULL, PH_ANCHOR_ALL);
@@ -128,10 +132,17 @@ INT_PTR CALLBACK EspServiceDependenciesDlgProc(
             {
                 PPH_STRING errorMessage = PhGetNtMessage(status);
 
-                PhSetDialogItemText(WindowHandle, IDC_SERVICES_LAYOUT, PhaConcatStrings2(
-                    L"Unable to enumerate dependencies: ",
-                    PhGetStringOrDefault(errorMessage, L"Unknown error.")
-                    )->Buffer);
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_SERVICES_LAYOUT,
+                    PhaFormatString(
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_ENUMERATE_DEPENDENCIES, NULL))),
+                        PhGetStringOrDefault(
+                            errorMessage,
+                            PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNKNOWN_ERROR, NULL)))
+                            )
+                        )->Buffer
+                    );
 
                 ShowWindow(GetDlgItem(WindowHandle, IDC_SERVICES_LAYOUT), SW_SHOW);
                 PhClearReference(&errorMessage);
@@ -205,7 +216,11 @@ INT_PTR CALLBACK EspServiceDependenciesDlgProc(
             SC_HANDLE serviceHandle;
             NTSTATUS status;
 
-            PhSetDialogItemText(WindowHandle, IDC_MESSAGE, L"The following services depend on this service:");
+            PhSetDialogItemText(
+                WindowHandle,
+                IDC_MESSAGE,
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_DEPENDENTS_MESSAGE, NULL)))
+                );
 
             PhInitializeLayoutManager(&context->LayoutManager, WindowHandle);
             PhAddLayoutItem(&context->LayoutManager, GetDlgItem(WindowHandle, IDC_SERVICES_LAYOUT), NULL, PH_ANCHOR_ALL);
@@ -262,10 +277,17 @@ INT_PTR CALLBACK EspServiceDependenciesDlgProc(
             {
                 PPH_STRING errorMessage = PhGetNtMessage(status);
 
-                PhSetDialogItemText(WindowHandle, IDC_SERVICES_LAYOUT, PhaConcatStrings2(
-                    L"Unable to enumerate dependents: ",
-                    PhGetStringOrDefault(errorMessage, L"Unknown error.")
-                    )->Buffer);
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_SERVICES_LAYOUT,
+                    PhaFormatString(
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_ENUMERATE_DEPENDENTS, NULL))),
+                        PhGetStringOrDefault(
+                            errorMessage,
+                            PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNKNOWN_ERROR, NULL)))
+                            )
+                        )->Buffer
+                    );
 
                 ShowWindow(GetDlgItem(WindowHandle, IDC_SERVICES_LAYOUT), SW_SHOW);
                 PhClearReference(&errorMessage);

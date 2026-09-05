@@ -156,7 +156,7 @@ jobs:
         )
         python tools\zhcn\validate_templates.py @resourceTargets `
           --expect-string-count-in 'bin\Release64\sys_info.exe=286' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=56' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=66' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=26' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=1' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=2' `
@@ -318,7 +318,7 @@ jobs:
           --require-strings-in 'build\output\systeminformer-build-release-setup.exe' `
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
           --expect-string-count-in 'bin\Release64\sys_info.exe=286' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=56' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=66' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=26' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=1' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=2' `

@@ -695,7 +695,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("704 strings", result.stdout)
+        self.assertIn("714 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2491,6 +2491,107 @@ class NativeResourceGenerationTests(unittest.TestCase):
             apply_body.index("switch (actions[i].Type)"),
         )
 
+    def test_extended_services_dynamic_status_text_uses_native_resources(self) -> None:
+        sources = {
+            name: (
+                REPO_ROOT / "plugins" / "ExtendedServices" / name
+            ).read_text(encoding="utf-8-sig")
+            for name in ("depend.c", "srvprgrs.c", "svcpnp.c")
+        }
+        source = "\n".join(sources.values())
+        resource_script = (
+            REPO_ROOT / "plugins" / "ExtendedServices" / "ExtendedServices.rc"
+        ).read_text(encoding="utf-8-sig")
+        resource_texts = dict(re.findall(
+            r'^\s*(IDS_ES_[A-Z0-9_]+)\s+"([^"]*)"',
+            resource_script,
+            re.MULTILINE,
+        ))
+        expected_resources = {
+            "IDS_ES_PNP_GROUP_CONNECTED": ("Connected", "svcpnp.c"),
+            "IDS_ES_PNP_GROUP_DISCONNECTED": ("Disconnected", "svcpnp.c"),
+            "IDS_ES_RESTART_ATTEMPTING_STOP": ("Attempting to stop %s...", "srvprgrs.c"),
+            "IDS_ES_RESTART_ATTEMPTING_START": ("Attempting to start %s...", "srvprgrs.c"),
+            "IDS_ES_DEPENDENCIES_MESSAGE": ("This service depends on the following services:", "depend.c"),
+            "IDS_ES_UNABLE_ENUMERATE_DEPENDENCIES": ("Unable to enumerate dependencies: %s", "depend.c"),
+            "IDS_ES_DEPENDENTS_MESSAGE": ("The following services depend on this service:", "depend.c"),
+            "IDS_ES_UNABLE_ENUMERATE_DEPENDENTS": ("Unable to enumerate dependents: %s", "depend.c"),
+            "IDS_ES_PNP_DEVICES_MESSAGE": ("This service has registered the following PnP devices:", "svcpnp.c"),
+            "IDS_ES_PNP_UNSUPPORTED_MESSAGE": ("This service type doesn't support PnP devices.", "svcpnp.c"),
+        }
+
+        for resource_id, (english_text, source_name) in expected_resources.items():
+            with self.subTest(extended_services_dynamic_text=resource_id):
+                self.assertEqual(resource_texts.get(resource_id), english_text)
+                self.assertEqual(sources[source_name].count(resource_id), 1)
+                self.assertNotIn(f'L"{english_text}"', source)
+
+        for source_name in sources:
+            with self.subTest(extended_services_source=source_name):
+                self.assertIn("PhLoadUiString(", sources[source_name])
+
+        self.assertEqual(sources["depend.c"].count("IDS_ES_UNKNOWN_ERROR"), 2)
+        self.assertNotIn('L"Unknown error."', sources["depend.c"])
+        self.assertNotIn("PhaConcatStrings2(", sources["depend.c"])
+
+        restart_initialization, restart_timer = sources["srvprgrs.c"].split(
+            "case WM_TIMER:", 1
+        )
+        self.assertIn("IDS_ES_RESTART_ATTEMPTING_STOP", restart_initialization)
+        self.assertNotIn("IDS_ES_RESTART_ATTEMPTING_START", restart_initialization)
+        self.assertIn("IDS_ES_RESTART_ATTEMPTING_START", restart_timer)
+        self.assertNotIn("IDS_ES_RESTART_ATTEMPTING_STOP", restart_timer)
+
+        dependencies, dependents = sources["depend.c"].split(
+            "INT_PTR CALLBACK EspServiceDependentsDlgProc", 1
+        )
+        self.assertIn("IDS_ES_DEPENDENCIES_MESSAGE", dependencies)
+        self.assertIn("IDS_ES_UNABLE_ENUMERATE_DEPENDENCIES", dependencies)
+        self.assertNotIn("IDS_ES_DEPENDENTS_MESSAGE", dependencies)
+        self.assertNotIn("IDS_ES_UNABLE_ENUMERATE_DEPENDENTS", dependencies)
+        self.assertRegex(
+            dependencies,
+            r"PhSetDialogItemText\(\s*WindowHandle,\s*IDC_MESSAGE,\s*"
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\([^;]*?"
+            r"IDS_ES_DEPENDENCIES_MESSAGE",
+        )
+        self.assertRegex(
+            dependencies,
+            r"PhaFormatString\(\s*PhGetString\(PH_AUTO\(PhLoadUiString\([^;]*?"
+            r"IDS_ES_UNABLE_ENUMERATE_DEPENDENCIES",
+        )
+        self.assertIn("IDS_ES_DEPENDENTS_MESSAGE", dependents)
+        self.assertIn("IDS_ES_UNABLE_ENUMERATE_DEPENDENTS", dependents)
+        self.assertNotIn("IDS_ES_DEPENDENCIES_MESSAGE", dependents)
+        self.assertNotIn("IDS_ES_UNABLE_ENUMERATE_DEPENDENCIES", dependents)
+        self.assertRegex(
+            dependents,
+            r"PhSetDialogItemText\(\s*WindowHandle,\s*IDC_MESSAGE,\s*"
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\([^;]*?"
+            r"IDS_ES_DEPENDENTS_MESSAGE",
+        )
+        self.assertRegex(
+            dependents,
+            r"PhaFormatString\(\s*PhGetString\(PH_AUTO\(PhLoadUiString\([^;]*?"
+            r"IDS_ES_UNABLE_ENUMERATE_DEPENDENTS",
+        )
+
+        self.assertRegex(
+            sources["svcpnp.c"],
+            r"PhAddListViewGroup\([^;]*?0,[^;]*?IDS_ES_PNP_GROUP_CONNECTED[^;]*?\);",
+        )
+        self.assertRegex(
+            sources["svcpnp.c"],
+            r"PhAddListViewGroup\([^;]*?1,[^;]*?IDS_ES_PNP_GROUP_DISCONNECTED[^;]*?\);",
+        )
+        pnp_driver, pnp_non_driver = sources["svcpnp.c"].split(
+            "if (context->ServiceItem->Type & SERVICE_DRIVER)", 1
+        )[1].split("            else\n", 1)
+        self.assertIn("IDS_ES_PNP_DEVICES_MESSAGE", pnp_driver)
+        self.assertNotIn("IDS_ES_PNP_UNSUPPORTED_MESSAGE", pnp_driver)
+        self.assertIn("IDS_ES_PNP_UNSUPPORTED_MESSAGE", pnp_non_driver)
+        self.assertNotIn("IDS_ES_PNP_DEVICES_MESSAGE", pnp_non_driver)
+
     def test_session_shadow_hotkeys_use_item_data_resources(self) -> None:
         source = (
             REPO_ROOT / "SystemInformer" / "sessshad.c"
@@ -3111,7 +3212,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             REPO_ROOT / "plugins" / "UserNotes" / "main.c"
         ).read_text(encoding="utf-8-sig")
 
-        self.assertEqual(extended_services.count("IDS_ES_UNKNOWN_ERROR"), 3)
+        self.assertEqual(extended_services.count("IDS_ES_UNKNOWN_ERROR"), 5)
         self.assertEqual(
             user_notes.count("IDS_UN_AFFINITY_INDIVIDUAL_THREADS"),
             2,
@@ -3251,7 +3352,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             Counter(
                 {
                     (r"bin\Release64\sys_info.exe", 286): 2,
-                    (r"bin\Release64\plugins\ExtendedServices.dll", 56): 2,
+                    (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
