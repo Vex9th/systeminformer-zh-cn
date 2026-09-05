@@ -3993,7 +3993,11 @@ INT_PTR CALLBACK PhpOptionsHighlightingDlgProc(
             PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_TOKEN, L"Token");
             PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_MEMORY, L"Memory");
             PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_MODULES, L"Modules");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_IMAGES, L"Images and DLLs");
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_IMAGES,
+                PhGetApplicationUiString(IDS_PH_GROUP_IMAGES_AND_DLLS)
+                );
             PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_HANDLES, L"Handles");
             PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_SERVICES, L"Services");
 
@@ -4304,8 +4308,16 @@ INT_PTR CALLBACK PhpOptionsTrayIconDlgProc(
             PhAddListViewColumn(IconListViewHandle, 0, 0, 0, LVCFMT_LEFT, 230, L"Name");
             PhSetExtendedListView(IconListViewHandle);
             ListView_EnableGroupView(IconListViewHandle, TRUE);
-            PhAddListViewGroup(IconListViewHandle, PH_OPTIONS_TRAY_ICON_GROUP_NOTIFICATIONS, L"Notifications");
-            PhAddListViewGroup(IconListViewHandle, PH_OPTIONS_TRAY_ICON_GROUP_TRAY_ICONS, L"Tray icons");
+            PhAddListViewGroup(
+                IconListViewHandle,
+                PH_OPTIONS_TRAY_ICON_GROUP_NOTIFICATIONS,
+                PhGetApplicationUiString(IDS_PH_GROUP_NOTIFICATIONS)
+                );
+            PhAddListViewGroup(
+                IconListViewHandle,
+                PH_OPTIONS_TRAY_ICON_GROUP_TRAY_ICONS,
+                PhGetApplicationUiString(IDS_PH_GROUP_TRAY_ICONS)
+                );
 
             for (ULONG i = 0; i < RTL_NUMBER_OF(TrayIconNotifyItems); i++)
             {

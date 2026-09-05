@@ -160,7 +160,11 @@ VOID PhpUpdateStatisticsAddListViewGroups(
     PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_MEMORY, L"Memory");
     PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_IO, L"I/O");
     PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_OTHER, L"Other");
-    PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_ENERGY, L"Energy");
+    PhListView_AddGroup(
+        Context->ListViewContext,
+        PH_PROCESS_STATISTICS_CATEGORY_ENERGY,
+        PhGetApplicationUiString(IDS_PH_GROUP_ENERGY)
+        );
 
     PhListView_AddGroupItem(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_CPU, PH_PROCESS_STATISTICS_INDEX_CPU, L"CPU", (PVOID)PH_PROCESS_STATISTICS_INDEX_CPU);
     PhListView_AddGroupItem(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_CPU, PH_PROCESS_STATISTICS_INDEX_CPUUSER, L"CPU (user)", (PVOID)PH_PROCESS_STATISTICS_INDEX_CPUUSER);
@@ -3772,4 +3776,3 @@ INT_PTR CALLBACK PhpProcessStatisticsDlgProc(
 
     return FALSE;
 }
-

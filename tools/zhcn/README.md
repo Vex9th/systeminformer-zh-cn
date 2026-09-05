@@ -1,6 +1,6 @@
 # zh-CN 资源工具
 
-这里放本地化数据、生成器和验证脚本。方案 B 仍在迁移中：当前源码已为主程序、11 个插件、PE Viewer 和安装器生成原生 zh-CN 对话框；已有 714 条动态文字迁到 `STRINGTABLE`，其中 PE Viewer 128 条、安装器 74 条、主程序 286 条、ExtendedServices 66 条、ExtendedTools 26 条、ToolStatus 103 条、UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计迁移 16 条。审计已修正消息宏参数位置，排除注释死代码，并按 C 编译语义合并相邻字符串、检查格式化后续参数和未解析变量；现又覆盖窗口文字、组合框（含普通字符串数组、带限定符及 `SIP(...)` 初始化的结构体字段数组）及列表分组/项目和包装入口，并将没有运行时翻译 hook 的类别标为必须迁移调用点。修复漏检后新增暴露的 57 条组合框文字已经迁移，服务恢复动作和远程控制热键均改用 item data 保存业务值；ExtendedServices 当前审计项已全部覆盖，项目仍如实报告 638 条未翻译项。ExtendedServices 触发器编辑器同样已将显示文字与类型、子类型和动作值解耦。早期崩溃提示保留不依赖缓存的静态后备；大量既有文字仍依赖旧兼容翻译层，不能宣称方案 B 整体完成。
+这里放本地化数据、生成器和验证脚本。方案 B 仍在迁移中：当前源码已为主程序、11 个插件、PE Viewer 和安装器生成原生 zh-CN 对话框；已有 718 条动态文字迁到 `STRINGTABLE`，其中 PE Viewer 128 条、安装器 74 条、主程序 290 条、ExtendedServices 66 条、ExtendedTools 26 条、ToolStatus 103 条、UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计迁移 16 条。审计已修正消息宏参数位置，排除注释死代码，并按 C 编译语义合并相邻字符串、检查格式化后续参数和未解析变量；现又覆盖窗口文字、组合框（含普通字符串数组、带限定符及 `SIP(...)` 初始化的结构体字段数组）及列表分组/项目和包装入口，并将没有运行时翻译 hook 的类别标为必须迁移调用点。修复漏检后新增暴露的 57 条组合框文字已经迁移，服务恢复动作和远程控制热键均改用 item data 保存业务值；ExtendedServices 当前审计项已全部覆盖，主程序又迁移 4 个无共享冲突的列表分组，项目仍如实报告 634 条未翻译项。ExtendedServices 触发器编辑器同样已将显示文字与类型、子类型和动作值解耦。早期崩溃提示保留不依赖缓存的静态后备；大量既有文字仍依赖旧兼容翻译层，不能宣称方案 B 整体完成。
 
 ## 常用命令
 

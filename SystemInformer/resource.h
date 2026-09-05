@@ -1277,8 +1277,12 @@
 #define IDS_PH_SESSION_KEY_SPACE                            2283
 #define IDS_PH_SESSION_KEY_TAB                              2284
 #define IDS_PH_SESSION_KEY_UP                               2285
+#define IDS_PH_GROUP_ENERGY                                 2286
+#define IDS_PH_GROUP_IMAGES_AND_DLLS                        2287
+#define IDS_PH_GROUP_NOTIFICATIONS                          2288
+#define IDS_PH_GROUP_TRAY_ICONS                             2289
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_SESSION_KEY_UP
+#define IDS_PH_LAST                                  IDS_PH_GROUP_TRAY_ICONS
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1290,6 +1294,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2286
+#define _APS_NEXT_SYMED_VALUE           2290
 #endif
 #endif

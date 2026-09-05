@@ -695,7 +695,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("714 strings", result.stdout)
+        self.assertIn("718 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1045,7 +1045,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 286)
+        self.assertEqual(len(stringtable_ids(resource_script)), 290)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -1084,7 +1084,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2286)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2290)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1425,6 +1425,62 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             10,
         )
+
+    def test_main_untranslated_list_view_groups_use_native_resources(self) -> None:
+        sources = {
+            name: (REPO_ROOT / "SystemInformer" / name).read_text(
+                encoding="utf-8-sig"
+            )
+            for name in ("options.c", "prpgstat.c")
+        }
+        resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
+        resource_texts = dict(re.findall(
+            r'^\s*(IDS_PH_[A-Z0-9_]+)\s+"([^"]*)"',
+            resource_script,
+            re.MULTILINE,
+        ))
+        expected_resources = {
+            "IDS_PH_GROUP_ENERGY": ("Energy", "prpgstat.c"),
+            "IDS_PH_GROUP_IMAGES_AND_DLLS": ("Images and DLLs", "options.c"),
+            "IDS_PH_GROUP_NOTIFICATIONS": ("Notifications", "options.c"),
+            "IDS_PH_GROUP_TRAY_ICONS": ("Tray icons", "options.c"),
+        }
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        for resource_id, (english_text, source_name) in expected_resources.items():
+            with self.subTest(main_list_view_group=resource_id):
+                self.assertEqual(resource_texts.get(resource_id), english_text)
+                self.assertEqual(
+                    sources[source_name].count(
+                        f"PhGetApplicationUiString({resource_id})"
+                    ),
+                    1,
+                )
+                self.assertNotIn(f'L"{english_text}"', sources[source_name])
+                self.assertIn(english_text, translation_data["native_strings"])
+                self.assertNotIn(english_text, translation_data["strings"])
+
+        self.assertRegex(
+            sources["prpgstat.c"],
+            r"PhListView_AddGroup\([^;]*?PH_PROCESS_STATISTICS_CATEGORY_ENERGY,[^;]*?"
+            r"PhGetApplicationUiString\(IDS_PH_GROUP_ENERGY\)[^;]*?\);",
+        )
+        options_routes = {
+            "PH_OPTIONS_HIGHLIGHTING_GROUP_IMAGES": "IDS_PH_GROUP_IMAGES_AND_DLLS",
+            "PH_OPTIONS_TRAY_ICON_GROUP_NOTIFICATIONS": "IDS_PH_GROUP_NOTIFICATIONS",
+            "PH_OPTIONS_TRAY_ICON_GROUP_TRAY_ICONS": "IDS_PH_GROUP_TRAY_ICONS",
+        }
+        for group_id, resource_id in options_routes.items():
+            with self.subTest(main_list_view_group_route=group_id):
+                self.assertRegex(
+                    sources["options.c"],
+                    rf"PhAddListViewGroup\([^;]*?{group_id},[^;]*?"
+                    rf"PhGetApplicationUiString\({resource_id}\)[^;]*?\);",
+                )
 
     def test_early_crash_prompt_does_not_depend_on_ui_string_cache(self) -> None:
         main = (REPO_ROOT / "SystemInformer" / "main.c").read_text(
@@ -3351,7 +3407,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 286): 2,
+                    (r"bin\Release64\sys_info.exe", 290): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
