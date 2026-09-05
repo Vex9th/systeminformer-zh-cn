@@ -1069,8 +1069,30 @@
 #define IDS_PH_SECTION_VIEW_TRUNCATED                   2072
 #define IDS_PH_UNABLE_QUERY_SECTION                     2073
 #define IDS_PH_64BIT_DUMP_FALLBACK                      2074
+#define IDS_PH_UNABLE_HIBERNATE_COMPUTER                2075
+#define IDS_PH_UNABLE_RESTART_COMPUTER                  2076
+#define IDS_PH_UNABLE_SHUT_DOWN_COMPUTER                2077
+#define IDS_PH_UNABLE_SLEEP_COMPUTER                    2078
+#define IDS_PH_UNABLE_LOCK_COMPUTER                     2079
+#define IDS_PH_UNABLE_LOG_OFF_COMPUTER                  2080
+#define IDS_PH_UNABLE_CONNECT_SESSION                   2081
+#define IDS_PH_UNABLE_DISCONNECT_SESSION                2082
+#define IDS_PH_UNABLE_LOGOFF_SESSION                    2083
+#define IDS_PH_UNABLE_REMOTE_CONTROL_SESSION            2084
+#define IDS_PH_UNABLE_SHADOW_SESSION                    2085
+#define IDS_PH_UNABLE_SEND_MESSAGE                      2086
+#define IDS_PH_UNABLE_DETACH_DEBUGGER                   2087
+#define IDS_PH_UNABLE_CONFIGURE_ADVANCED_BOOT           2088
+#define IDS_PH_UNABLE_CONFIGURE_BOOT_APPLICATION        2089
+#define IDS_PH_CANNOT_CONTROL_CURRENT_SESSION           2090
+#define IDS_PH_PROCESS_NOT_DEBUGGED                     2091
+#define IDS_PH_UNABLE_RESTART_FIRMWARE_OPTIONS          2092
+#define IDS_PH_ADMIN_PRIVILEGES_REQUIRED                2093
+#define IDS_PH_UEFI_NOT_SUPPORTED                       2094
+#define IDS_PH_UNABLE_CREATE_KERNEL_MINIDUMP             2095
+#define IDS_PH_KERNEL_MINIDUMP_ADMIN_REQUIRED            2096
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_64BIT_DUMP_FALLBACK
+#define IDS_PH_LAST                                  IDS_PH_KERNEL_MINIDUMP_ADMIN_REQUIRED
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1082,6 +1104,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2075
+#define _APS_NEXT_SYMED_VALUE           2097
 #endif
 #endif

@@ -482,10 +482,9 @@ NTSTATUS PhpProcessMiniDumpThreadStart(
         {
             PhShowWarning2(
                 context->WindowHandle,
-                L"Unable to create kernel minidump.",
+                PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_KERNEL_MINIDUMP),
                 L"%s",
-                L"Kernel minidump of processes require administrative privileges. "
-                L"Make sure System Informer is running with administrative privileges."
+                PhGetApplicationUiString(IDS_PH_KERNEL_MINIDUMP_ADMIN_REQUIRED)
                 );
         }
     }

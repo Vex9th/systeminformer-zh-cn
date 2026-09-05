@@ -117,7 +117,7 @@ INT_PTR CALLBACK PhpSessionSendMessageDlgProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to send the message", 0, GetLastError());
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_SEND_MESSAGE), 0, GetLastError());
                     }
                 }
                 break;

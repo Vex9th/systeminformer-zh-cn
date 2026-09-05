@@ -535,7 +535,7 @@ BOOLEAN PhUiLockComputer(
     if (LockWorkStation())
         return TRUE;
     else
-        PhShowStatus(WindowHandle, L"Unable to lock the computer.", 0, PhGetLastError());
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOCK_COMPUTER), 0, PhGetLastError());
 
     return FALSE;
 }
@@ -553,7 +553,7 @@ BOOLEAN PhUiLogoffComputer(
     if (ExitWindowsEx(EWX_LOGOFF, 0))
         return TRUE;
     else
-        PhShowStatus(WindowHandle, L"Unable to log off the computer.", 0, PhGetLastError());
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOG_OFF_COMPUTER), 0, PhGetLastError());
 
     return FALSE;
 }
@@ -578,7 +578,7 @@ BOOLEAN PhUiSleepComputer(
         )))
         return TRUE;
     else
-        PhShowStatus(WindowHandle, L"Unable to sleep the computer.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SLEEP_COMPUTER), status, 0);
 
     return FALSE;
 }
@@ -603,7 +603,7 @@ BOOLEAN PhUiHibernateComputer(
         )))
         return TRUE;
     else
-        PhShowStatus(WindowHandle, L"Unable to hibernate the computer.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_HIBERNATE_COMPUTER), status, 0);
 
     return FALSE;
 }
@@ -639,7 +639,7 @@ BOOLEAN PhUiRestartComputer(
                 if (status == ERROR_SUCCESS)
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to restart the computer.", 0, status);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), 0, status);
 
                 //if (ExitWindowsEx(EWX_REBOOT | EWX_BOOTOPTIONS, 0))
                 //    return TRUE;
@@ -673,7 +673,7 @@ BOOLEAN PhUiRestartComputer(
                 if (NT_SUCCESS(status))
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to restart the computer.", status, 0);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), status, 0);
             }
         }
         break;
@@ -712,7 +712,7 @@ BOOLEAN PhUiRestartComputer(
                 if (NT_SUCCESS(status))
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to restart the computer.", status, 0);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), status, 0);
             }
         }
         break;
@@ -739,11 +739,11 @@ BOOLEAN PhUiRestartComputer(
                     if (status == ERROR_SUCCESS)
                         return TRUE;
 
-                    PhShowStatus(WindowHandle, L"Unable to configure the advanced boot options.", 0, status);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_ADVANCED_BOOT), 0, status);
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"Unable to configure the advanced boot options.", status, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_ADVANCED_BOOT), status, 0);
                 }
             }
         }
@@ -756,8 +756,8 @@ BOOLEAN PhUiRestartComputer(
                     WindowHandle,
                     TD_OK_BUTTON,
                     TD_ERROR_ICON,
-                    L"Unable to restart to firmware options.",
-                    L"Make sure System Informer is running with administrative privileges."
+                    PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_FIRMWARE_OPTIONS),
+                    PhGetApplicationUiString(IDS_PH_ADMIN_PRIVILEGES_REQUIRED)
                     );
                 break;
             }
@@ -768,8 +768,8 @@ BOOLEAN PhUiRestartComputer(
                     WindowHandle,
                     TD_OK_BUTTON,
                     TD_ERROR_ICON,
-                    L"Unable to restart to firmware options.",
-                    L"Make sure System Informer is running with administrative privileges."
+                    PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_FIRMWARE_OPTIONS),
+                    PhGetApplicationUiString(IDS_PH_ADMIN_PRIVILEGES_REQUIRED)
                     );
                 break;
             }
@@ -780,8 +780,8 @@ BOOLEAN PhUiRestartComputer(
                     WindowHandle,
                     TD_OK_BUTTON,
                     TD_ERROR_ICON,
-                    L"Unable to restart to firmware options.",
-                    L"This machine does not have UEFI support."
+                    PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_FIRMWARE_OPTIONS),
+                    PhGetApplicationUiString(IDS_PH_UEFI_NOT_SUPPORTED)
                     );
                 break;
             }
@@ -805,11 +805,11 @@ BOOLEAN PhUiRestartComputer(
                     if (status == ERROR_SUCCESS)
                         return TRUE;
 
-                    PhShowStatus(WindowHandle, L"Unable to restart the computer.", 0, status);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), 0, status);
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"Unable to restart the computer.", status, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), status, 0);
                 }
             }
         }
@@ -829,7 +829,7 @@ BOOLEAN PhUiRestartComputer(
                 if (status == ERROR_SUCCESS)
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to restart the computer.", 0, status);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), 0, status);
             }
         }
         break;
@@ -850,11 +850,11 @@ BOOLEAN PhUiRestartComputer(
 
                 if (HRESULT_FACILITY(status) == FACILITY_WIN32 && HRESULT_SEVERITY(status) == SEVERITY_ERROR)
                 {
-                    PhShowStatus(WindowHandle, L"Unable to restart the computer.", 0, HRESULT_CODE(status));
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), 0, HRESULT_CODE(status));
                 }
                 else
                 {
-                    PhShowStatus(WindowHandle, L"Unable to restart the computer.", STATUS_UNSUCCESSFUL, 0);
+                    PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_RESTART_COMPUTER), STATUS_UNSUCCESSFUL, 0);
                 }
             }
         }
@@ -895,7 +895,7 @@ BOOLEAN PhUiShutdownComputer(
                 if (status == ERROR_SUCCESS)
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to shut down the computer.", 0, status);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SHUT_DOWN_COMPUTER), 0, status);
 
                 //if (ExitWindowsEx(EWX_POWEROFF | EWX_HYBRID_SHUTDOWN, 0))
                 //    return TRUE;
@@ -931,7 +931,7 @@ BOOLEAN PhUiShutdownComputer(
                 if (NT_SUCCESS(status))
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to shut down the computer.", status, 0);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SHUT_DOWN_COMPUTER), status, 0);
             }
         }
         break;
@@ -970,7 +970,7 @@ BOOLEAN PhUiShutdownComputer(
                 if (NT_SUCCESS(status))
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to shut down the computer.", status, 0);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SHUT_DOWN_COMPUTER), status, 0);
             }
         }
         break;
@@ -989,7 +989,7 @@ BOOLEAN PhUiShutdownComputer(
                 if (status == ERROR_SUCCESS)
                     return TRUE;
 
-                PhShowStatus(WindowHandle, L"Unable to shut down the computer.", 0, status);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SHUT_DOWN_COMPUTER), 0, status);
             }
         }
         break;
@@ -1147,12 +1147,12 @@ VOID PhUiHandleComputerBootApplicationMenu(
 
         if (status != ERROR_SUCCESS)
         {
-            PhShowStatus(WindowHandle, L"Unable to configure the boot application.", 0, status);
+            PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_BOOT_APPLICATION), 0, status);
         }
     }
     else
     {
-        PhShowStatus(WindowHandle, L"Unable to configure the boot application.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_BOOT_APPLICATION), status, 0);
     }
 }
 
@@ -1200,12 +1200,12 @@ VOID PhUiHandleComputerFirmwareApplicationMenu(
 
         if (status != ERROR_SUCCESS)
         {
-            PhShowStatus(WindowHandle, L"Unable to configure the boot application.", 0, status);
+            PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_BOOT_APPLICATION), 0, status);
         }
     }
     else
     {
-        PhShowStatus(WindowHandle, L"Unable to configure the boot application.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CONFIGURE_BOOT_APPLICATION), status, 0);
     }
 }
 
@@ -1392,7 +1392,7 @@ BOOLEAN PhUiConnectSession(
         }
         else
         {
-            if (!PhShowContinueStatus(WindowHandle, L"Unable to connect to the session", 0, GetLastError()))
+            if (!PhShowContinueStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CONNECT_SESSION), 0, GetLastError()))
                 break;
         }
     }
@@ -1421,7 +1421,7 @@ BOOLEAN PhUiDisconnectSession(
     if (WinStationDisconnect(WINSTATION_CURRENT_SERVER, SessionId, FALSE))
         return TRUE;
     else
-        PhShowStatus(WindowHandle, L"Unable to disconnect the session", 0, GetLastError());
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_DISCONNECT_SESSION), 0, GetLastError());
 
     return FALSE;
 }
@@ -1449,7 +1449,7 @@ BOOLEAN PhUiLogoffSession(
         if (WinStationReset(WINSTATION_CURRENT_SERVER, SessionId, FALSE))
             return TRUE;
         else
-            PhShowStatus(WindowHandle, L"Unable to logoff the session", 0, GetLastError());
+            PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_LOGOFF_SESSION), 0, GetLastError());
     }
 
     return FALSE;
@@ -3818,7 +3818,7 @@ BOOLEAN PhUiDetachFromDebuggerProcess(
 
     if (status == STATUS_PORT_NOT_SET)
     {
-        PhShowInformation2(WindowHandle, L"Unable to detach the debugger.", L"%s", L"The process is not being debugged.");
+        PhShowInformation2(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_DETACH_DEBUGGER), L"%s", PhGetApplicationUiString(IDS_PH_PROCESS_NOT_DEBUGGED));
         return FALSE;
     }
 
@@ -6370,7 +6370,7 @@ BOOLEAN PhUiCloseConnections(
                     TD_OK_BUTTON,
                     TD_ERROR_ICON,
                     PhGetApplicationUiString(IDS_PH_UNABLE_CLOSE_TCP_CONNECTION),
-                    L"Make sure System Informer is running with administrative privileges."
+                    PhGetApplicationUiString(IDS_PH_ADMIN_PRIVILEGES_REQUIRED)
                     ) != IDOK)
                     break;
             }

@@ -101,7 +101,7 @@ VOID PhShowSessionShadowDialog(
 
     if (SessionId == sessionId)
     {
-        PhShowError2(ParentWindowHandle, L"Unable to shadow session.", L"%s", L"You cannot remote control the current session.");
+        PhShowError2(ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SHADOW_SESSION), L"%s", PhGetApplicationUiString(IDS_PH_CANNOT_CONTROL_CURRENT_SESSION));
         return;
     }
 
@@ -212,14 +212,14 @@ INT_PTR CALLBACK PhpSessionShadowDlgProc(
                         }
                         else
                         {
-                            PhShowStatus(hwndDlg, L"Unable to remote control the session", 0, GetLastError());
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_REMOTE_CONTROL_SESSION), 0, GetLastError());
                         }
 
                         PhDereferenceObject(computerName);
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to remote control the session", 0, ERROR_DS_NAME_TOO_LONG);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_REMOTE_CONTROL_SESSION), 0, ERROR_DS_NAME_TOO_LONG);
                     }
                 }
                 break;

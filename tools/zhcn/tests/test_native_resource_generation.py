@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("279 strings", result.stdout)
+        self.assertIn("301 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 75)
+        self.assertEqual(len(stringtable_ids(resource_script)), 97)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2075)))
+        self.assertEqual(numeric_ids, list(range(2000, 2097)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1020,8 +1020,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 )
 
     def test_main_runtime_operation_errors_use_native_resources(self) -> None:
+        audit = load_audit_module()
         source = "\n".join(
-            path.read_text(encoding="utf-8-sig")
+            audit.mask_c_comments(path.read_text(encoding="utf-8-sig"))
             for path in (REPO_ROOT / "SystemInformer").glob("*.c")
         )
         literals = (
@@ -1060,7 +1061,43 @@ class NativeResourceGenerationTests(unittest.TestCase):
         for literal in literals:
             with self.subTest(literal=literal):
                 stem = re.escape(literal.removesuffix("."))
-                self.assertNotRegex(source, rf'L"{stem}\.?' + '"')
+                self.assertNotRegex(source, rf'L"{stem}\.?[ \t]*"')
+
+    def test_main_power_and_session_errors_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        source = "\n".join(
+            audit.mask_c_comments(path.read_text(encoding="utf-8-sig"))
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
+        literals = (
+            "Unable to hibernate the computer.",
+            "Unable to restart the computer.",
+            "Unable to shut down the computer.",
+            "Unable to sleep the computer.",
+            "Unable to lock the computer.",
+            "Unable to log off the computer.",
+            "Unable to connect to the session",
+            "Unable to disconnect the session",
+            "Unable to logoff the session",
+            "Unable to remote control the session",
+            "Unable to shadow session.",
+            "Unable to send the message",
+            "Unable to detach the debugger.",
+            "Unable to configure the advanced boot options.",
+            "Unable to configure the boot application.",
+            "You cannot remote control the current session.",
+            "The process is not being debugged.",
+            "Unable to restart to firmware options.",
+            "Make sure System Informer is running with administrative privileges.",
+            "This machine does not have UEFI support.",
+            "Unable to create kernel minidump.",
+            "Kernel minidump of processes require administrative privileges.",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                stem = re.escape(literal.removesuffix("."))
+                self.assertNotRegex(source, rf'L"{stem}\.?[ \t]*"')
 
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
@@ -1255,7 +1292,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 75): 2,
+                    (r"bin\Release64\sys_info.exe", 97): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

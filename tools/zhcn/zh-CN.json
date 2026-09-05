@@ -912,7 +912,6 @@
     "Keep enabled": "保持启用",
     "Kernel CPU time": "内核 CPU 时间",
     "Kernel WS": "内核工作集",
-    "Kernel minidump of processes require administrative privileges. ": "创建进程的内核小型转储需要管理员权限。",
     "Kernel stack usage": "内核堆栈使用量",
     "Kernel time": "内核时间",
     "Kernel time (period)": "内核时间（周期）",
@@ -2294,6 +2293,23 @@
     "Unable to query 32bit heap information.": "无法查询 32 位堆信息。",
     "Unable to open the thread.": "无法打开线程。",
     "Unable to map a view of the section.": "无法映射节视图。",
-    "Unable to query the section.": "无法查询节。"
+    "Unable to query the section.": "无法查询节。",
+    "Unable to hibernate the computer.": "无法使计算机进入休眠状态。",
+    "Unable to restart the computer.": "无法重启计算机。",
+    "Unable to shut down the computer.": "无法关闭计算机。",
+    "Unable to sleep the computer.": "无法使计算机进入睡眠状态。",
+    "Unable to lock the computer.": "无法锁定计算机。",
+    "Unable to log off the computer.": "无法注销计算机。",
+    "Unable to connect to the session": "无法连接到会话",
+    "Unable to disconnect the session": "无法断开会话连接",
+    "Unable to logoff the session": "无法注销会话",
+    "Unable to remote control the session": "无法远程控制会话",
+    "Unable to shadow session.": "无法对会话进行影子控制。",
+    "Unable to send the message": "无法发送消息",
+    "Unable to detach the debugger.": "无法分离调试器。",
+    "Unable to configure the advanced boot options.": "无法配置高级启动选项。",
+    "Unable to configure the boot application.": "无法配置启动应用程序。",
+    "Unable to create kernel minidump.": "无法创建内核小型转储。",
+    "Kernel minidump of processes require administrative privileges. Make sure System Informer is running with administrative privileges.": "创建进程的内核小型转储需要管理员权限。请确保 sys_info 正以管理员权限运行。"
   }
 }
