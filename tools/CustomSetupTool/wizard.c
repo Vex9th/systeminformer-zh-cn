@@ -38,6 +38,7 @@ typedef HRESULT (WINAPI* SETUP_DWMSETWINDOWATTRIBUTE)(_In_ HWND hwnd, _In_ DWORD
 #define SETUP_DWM_USE_IMMERSIVE_DARK_MODE 20
 #define SETUP_DWM_BORDER_COLOR 34
 #define SETUP_WINDOW_CONTEXT_LARGE_TITLE UCHAR_MAX
+#define SETUP_WINDOW_CONTEXT_WELCOME_BITMAP (UCHAR_MAX - 1)
 
 static BOOLEAN SetupWizardDarkMode = FALSE;
 static SETUP_DWMSETWINDOWATTRIBUTE SetupDwmSetWindowAttribute_I = NULL;
@@ -729,38 +730,27 @@ VOID SetupPaintDarkBackground(
 }
 
 /**
- * Creates a wizard font with an explicit face and logical height.
+ * Creates a wizard font derived from the system message font.
  *
- * \param WindowHandle The window handle used for DPI scaling.
- * \param FaceName The font face name.
+ * \param BaseFont The DPI-aware system message font attributes.
  * \param Height The logical font height at 96 DPI.
  * \param Weight The font weight.
  * \return The created font handle, or NULL on failure.
  */
 static HFONT SetupCreateWizardFont(
-    _In_ HWND WindowHandle,
     _In_ LONG WindowDpi,
-    _In_ PCWSTR FaceName,
+    _In_ PLOGFONT BaseFont,
     _In_ LONG Height,
     _In_ LONG Weight
     )
 {
-    return CreateFont(
-        -PhMultiplyDivideSigned(Height, WindowDpi, 72),
-        0,
-        0,
-        0,
-        Weight,
-        FALSE,
-        FALSE,
-        FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY,
-        DEFAULT_PITCH,
-        FaceName
-        );
+    LOGFONT font = *BaseFont;
+
+    font.lfHeight = PhMultiplyDivideSigned(Height, WindowDpi, USER_DEFAULT_SCREEN_DPI);
+    font.lfWeight = Weight;
+    font.lfQuality = (UCHAR)PhFontQuality;
+
+    return CreateFontIndirect(&font);
 }
 
 typedef struct _SETUP_PROPSHEETCONTEXT
@@ -803,17 +793,28 @@ VOID SetupDeleteWizardFonts(
 }
 
 BOOLEAN SetupCreateWizardFonts(
-    _In_ HWND WindowHandle,
     _In_ LONG WindowDpi,
     _Out_ PSETUP_WIZARD_FONT_CONTEXT FontContext
     )
 {
+    NONCLIENTMETRICS metrics = { sizeof(metrics) };
+
     memset(FontContext, 0, sizeof(SETUP_WIZARD_FONT_CONTEXT));
 
-    FontContext->PageFont = SetupCreateWizardFont(WindowHandle, WindowDpi, L"Segoe UI", -12, FW_NORMAL);
-    FontContext->TitleFont = SetupCreateWizardFont(WindowHandle, WindowDpi, L"Tahoma", -11, FW_BOLD);
-    FontContext->LargeTitleFont = SetupCreateWizardFont(WindowHandle, WindowDpi, L"Verdana", -16, FW_BOLD);
-    FontContext->ButtonFont = SetupCreateWizardFont(WindowHandle, WindowDpi, L"MS Shell Dlg", -14, FW_NORMAL);
+    if (!PhGetSystemParametersInfo(
+        SPI_GETNONCLIENTMETRICS,
+        sizeof(metrics),
+        &metrics,
+        WindowDpi
+        ))
+    {
+        return FALSE;
+    }
+
+    FontContext->PageFont = SetupCreateWizardFont(WindowDpi, &metrics.lfMessageFont, -12, FW_NORMAL);
+    FontContext->TitleFont = SetupCreateWizardFont(WindowDpi, &metrics.lfMessageFont, -11, FW_BOLD);
+    FontContext->LargeTitleFont = SetupCreateWizardFont(WindowDpi, &metrics.lfMessageFont, -16, FW_BOLD);
+    FontContext->ButtonFont = SetupCreateWizardFont(WindowDpi, &metrics.lfMessageFont, -14, FW_NORMAL);
 
     if (
         FontContext->PageFont &&
@@ -927,8 +928,17 @@ VOID SetupInitializeWizardTitleFont(
     )
 {
     PPV_PROPSHEETCONTEXT propSheetContext;
+    HWND iconWindowHandle;
 
     PhSetWindowContext(WindowHandle, SETUP_WINDOW_CONTEXT_LARGE_TITLE, (PVOID)(ULONG_PTR)LargeTitle);
+
+    if (
+        Context->IconLargeHandle &&
+        (iconWindowHandle = GetDlgItem(WindowHandle, IDC_PAGEICON))
+        )
+    {
+        SendMessage(iconWindowHandle, STM_SETICON, (WPARAM)Context->IconLargeHandle, 0);
+    }
 
     if (propSheetContext = PhGetWindowContext(Context->ParentWindowHandle, UCHAR_MAX))
     {
@@ -940,6 +950,14 @@ VOID SetupDestroyWizardPage(
     _In_ HWND WindowHandle
     )
 {
+    HBITMAP bitmapHandle;
+
+    if (bitmapHandle = PhGetWindowContext(WindowHandle, SETUP_WINDOW_CONTEXT_WELCOME_BITMAP))
+    {
+        PhRemoveWindowContext(WindowHandle, SETUP_WINDOW_CONTEXT_WELCOME_BITMAP);
+        DeleteBitmap(bitmapHandle);
+    }
+
     PhRemoveWindowContext(WindowHandle, SETUP_WINDOW_CONTEXT_LARGE_TITLE);
     PhRemoveWindowContext(WindowHandle, PH_WINDOW_CONTEXT_DEFAULT);
 }
@@ -1024,7 +1042,7 @@ VOID SetupUpdateWizardFonts(
     oldFonts = PropSheetContext->Fonts;
     PropSheetContext->DialogDpi = WindowDpi;
 
-    if (!SetupCreateWizardFonts(ParentWindowHandle, WindowDpi, &PropSheetContext->Fonts))
+    if (!SetupCreateWizardFonts(WindowDpi, &PropSheetContext->Fonts))
     {
         PropSheetContext->Fonts = oldFonts;
         return;
@@ -1035,6 +1053,103 @@ VOID SetupUpdateWizardFonts(
     InvalidateRect(ParentWindowHandle, NULL, TRUE);
     UpdateWindow(ParentWindowHandle);
     SetupDeleteWizardFonts(&oldFonts);
+}
+
+/**
+ * Replaces the wizard icons with resources rendered for the current DPI.
+ *
+ * \param Context The setup context that owns the icon handles.
+ * \param ParentWindowHandle Optional property sheet window handle.
+ * \param WindowDpi The target window DPI.
+ * \return TRUE when both icon sizes were replaced successfully.
+ */
+static BOOLEAN SetupUpdateWizardIcons(
+    _Inout_ PPH_SETUP_CONTEXT Context,
+    _In_opt_ HWND ParentWindowHandle,
+    _In_ LONG WindowDpi
+    )
+{
+    HICON newLargeIcon;
+    HICON newSmallIcon;
+    HICON oldLargeIcon;
+    HICON oldSmallIcon;
+    ULONG i;
+
+    newLargeIcon = PhLoadIcon(
+        PhInstanceHandle,
+        MAKEINTRESOURCE(IDI_ICON),
+        PH_LOAD_ICON_SIZE_LARGE,
+        PhGetSystemMetrics(SM_CXICON, WindowDpi),
+        PhGetSystemMetrics(SM_CYICON, WindowDpi),
+        WindowDpi
+        );
+    newSmallIcon = PhLoadIcon(
+        PhInstanceHandle,
+        MAKEINTRESOURCE(IDI_ICON),
+        PH_LOAD_ICON_SIZE_SMALL,
+        PhGetSystemMetrics(SM_CXSMICON, WindowDpi),
+        PhGetSystemMetrics(SM_CYSMICON, WindowDpi),
+        WindowDpi
+        );
+
+    if (!newLargeIcon || !newSmallIcon)
+    {
+        if (newLargeIcon)
+            DestroyIcon(newLargeIcon);
+        if (newSmallIcon)
+            DestroyIcon(newSmallIcon);
+
+        return FALSE;
+    }
+
+    oldLargeIcon = Context->IconLargeHandle;
+    oldSmallIcon = Context->IconSmallHandle;
+    Context->IconLargeHandle = newLargeIcon;
+    Context->IconSmallHandle = newSmallIcon;
+
+    if (ParentWindowHandle)
+    {
+        SendMessage(ParentWindowHandle, WM_SETICON, ICON_BIG, (LPARAM)newLargeIcon);
+        SendMessage(ParentWindowHandle, WM_SETICON, ICON_SMALL, (LPARAM)newSmallIcon);
+
+        for (i = 0; i <= SETUP_WIZARD_ERROR_PAGE_INDEX; i++)
+        {
+            HWND pageWindowHandle;
+            HWND iconWindowHandle;
+
+            if (
+                (pageWindowHandle = PropSheet_IndexToHwnd(ParentWindowHandle, i)) &&
+                (iconWindowHandle = GetDlgItem(pageWindowHandle, IDC_PAGEICON))
+                )
+            {
+                SendMessage(iconWindowHandle, STM_SETICON, (WPARAM)newLargeIcon, 0);
+            }
+        }
+    }
+
+    if (oldLargeIcon && oldLargeIcon != newLargeIcon)
+        DestroyIcon(oldLargeIcon);
+    if (oldSmallIcon && oldSmallIcon != newSmallIcon)
+        DestroyIcon(oldSmallIcon);
+
+    return TRUE;
+}
+
+static VOID SetupDestroyWizardIcons(
+    _Inout_ PPH_SETUP_CONTEXT Context
+    )
+{
+    if (Context->IconLargeHandle)
+    {
+        DestroyIcon(Context->IconLargeHandle);
+        Context->IconLargeHandle = NULL;
+    }
+
+    if (Context->IconSmallHandle)
+    {
+        DestroyIcon(Context->IconSmallHandle);
+        Context->IconSmallHandle = NULL;
+    }
 }
 
 /**
@@ -1049,6 +1164,9 @@ VOID SetupLoadWelcomeBitmap(
     LONG dpiValue;
     LONG bitmapSize;
     HBITMAP bitmapHandle;
+    HBITMAP currentBitmapHandle;
+    HBITMAP oldBitmapHandle;
+    HWND bitmapWindowHandle;
 
     dpiValue = PhGetWindowDpi(WindowHandle);
     bitmapSize = PhMultiplyDivideSigned(144, dpiValue, USER_DEFAULT_SCREEN_DPI);
@@ -1062,10 +1180,71 @@ VOID SetupLoadWelcomeBitmap(
         bitmapSize
         );
 
-    if (bitmapHandle)
+    if (!bitmapHandle)
+        return;
+
+    if (!(bitmapWindowHandle = GetDlgItem(WindowHandle, IDC_SIDEBAR)))
     {
-        SendMessage(GetDlgItem(WindowHandle, IDC_SIDEBAR), STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bitmapHandle);
+        DeleteBitmap(bitmapHandle);
+        return;
     }
+
+    oldBitmapHandle = (HBITMAP)SendMessage(
+        bitmapWindowHandle,
+        STM_SETIMAGE,
+        IMAGE_BITMAP,
+        (LPARAM)bitmapHandle
+        );
+    currentBitmapHandle = (HBITMAP)SendMessage(
+        bitmapWindowHandle,
+        STM_GETIMAGE,
+        IMAGE_BITMAP,
+        0
+        );
+
+    if (!currentBitmapHandle)
+    {
+        if (oldBitmapHandle)
+        {
+            SendMessage(bitmapWindowHandle, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)oldBitmapHandle);
+            currentBitmapHandle = (HBITMAP)SendMessage(
+                bitmapWindowHandle,
+                STM_GETIMAGE,
+                IMAGE_BITMAP,
+                0
+                );
+
+            if (currentBitmapHandle)
+            {
+                PhSetWindowContext(WindowHandle, SETUP_WINDOW_CONTEXT_WELCOME_BITMAP, currentBitmapHandle);
+
+                if (currentBitmapHandle != oldBitmapHandle)
+                    DeleteBitmap(oldBitmapHandle);
+            }
+            else
+            {
+                PhRemoveWindowContext(WindowHandle, SETUP_WINDOW_CONTEXT_WELCOME_BITMAP);
+                DeleteBitmap(oldBitmapHandle);
+            }
+        }
+
+        DeleteBitmap(bitmapHandle);
+        return;
+    }
+
+    PhSetWindowContext(WindowHandle, SETUP_WINDOW_CONTEXT_WELCOME_BITMAP, currentBitmapHandle);
+
+    if (
+        oldBitmapHandle &&
+        oldBitmapHandle != currentBitmapHandle &&
+        oldBitmapHandle != bitmapHandle
+        )
+    {
+        DeleteBitmap(oldBitmapHandle);
+    }
+
+    if (bitmapHandle != currentBitmapHandle)
+        DeleteBitmap(bitmapHandle);
 }
 
 /**
@@ -1288,6 +1467,11 @@ INT_PTR CALLBACK SetupWelcomePageDlgProc(
             context->DialogHandle = WindowHandle;
             context->ParentWindowHandle = GetParent(WindowHandle);
 
+            SetupUpdateWizardIcons(
+                context,
+                context->ParentWindowHandle,
+                PhGetWindowDpi(context->ParentWindowHandle)
+                );
             PhCenterWindow(context->ParentWindowHandle, NULL);
 
             ShowWindow(context->ParentWindowHandle, SW_SHOW);
@@ -1390,7 +1574,10 @@ INT_PTR CALLBACK SetupWelcomePageDlgProc(
         }
         break;
     case WM_DPICHANGED:
+        SetupRedrawControlBorder(WindowHandle);
+        break;
     case WM_DPICHANGED_AFTERPARENT:
+        SetupLoadWelcomeBitmap(WindowHandle);
         SetupRedrawControlBorder(WindowHandle);
         break;
     case WM_ERASEBKGND:
@@ -2189,7 +2376,10 @@ INT_PTR CALLBACK SetupCompletedPageDlgProc(
         }
         break;
     case WM_DPICHANGED:
+        SetupRedrawControlBorder(WindowHandle);
+        break;
     case WM_DPICHANGED_AFTERPARENT:
+        SetupLoadWelcomeBitmap(WindowHandle);
         SetupRedrawControlBorder(WindowHandle);
         break;
     case WM_ERASEBKGND:
@@ -2303,7 +2493,10 @@ INT_PTR CALLBACK SetupErrorPageDlgProc(
         }
         break;
     case WM_DPICHANGED:
+        SetupRedrawControlBorder(WindowHandle);
+        break;
     case WM_DPICHANGED_AFTERPARENT:
+        SetupLoadWelcomeBitmap(WindowHandle);
         SetupRedrawControlBorder(WindowHandle);
         break;
     case WM_ERASEBKGND:
@@ -2360,6 +2553,8 @@ LRESULT CALLBACK PvpPropSheetWndProc(
     case WM_DPICHANGED:
         {
             LRESULT result;
+            HWND pageWindowHandle;
+            PPH_SETUP_CONTEXT setupContext;
             PRECT suggestedRect = (RECT *)lParam;
 
             SetWindowPos(
@@ -2375,6 +2570,16 @@ LRESULT CALLBACK PvpPropSheetWndProc(
             result = CallWindowProc(oldWndProc, WindowHandle, uMsg, wParam, lParam);
 
             SetupUpdateWizardFonts(WindowHandle, propSheetContext, HIWORD(wParam));
+            pageWindowHandle = PropSheet_GetCurrentPageHwnd(WindowHandle);
+
+            if (
+                pageWindowHandle &&
+                (setupContext = PhGetWindowContext(pageWindowHandle, PH_WINDOW_CONTEXT_DEFAULT))
+                )
+            {
+                SetupUpdateWizardIcons(setupContext, WindowHandle, HIWORD(wParam));
+            }
+
             SetupUpdateWindowBorderColor(WindowHandle, TRUE);
             SetupRedrawPropSheetDividers(WindowHandle);
             SetupRedrawControlBorder(WindowHandle);
@@ -2496,7 +2701,7 @@ INT CALLBACK SetupPropSheetProc(
             //PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
 
             context->DialogDpi = PhGetWindowDpi(WindowHandle);
-            SetupCreateWizardFonts(WindowHandle, context->DialogDpi, &context->Fonts);
+            SetupCreateWizardFonts(context->DialogDpi, &context->Fonts);
 
             context->DefaultWindowProc = PhGetWindowProcedure(WindowHandle);
             PhSetWindowContext(WindowHandle, UCHAR_MAX, context);
@@ -2521,30 +2726,12 @@ VOID SetupShowWizard(
     _In_ PPH_SETUP_CONTEXT Context
     )
 {
-    LONG dpiValue;
     PROPSHEETPAGE pageDefinitions[7];
     HPROPSHEETPAGE pages[7] = { 0 };
     PROPSHEETHEADER header;
     ULONG pageIndex;
 
-    dpiValue = PhGetMonitorDpi(NULL, NULL);
-
-    Context->IconLargeHandle = PhLoadIcon(
-        PhInstanceHandle,
-        MAKEINTRESOURCE(IDI_ICON),
-        PH_LOAD_ICON_SIZE_LARGE,
-        PhGetSystemMetrics(SM_CXICON, dpiValue),
-        PhGetSystemMetrics(SM_CYICON, dpiValue),
-        dpiValue
-        );
-    Context->IconSmallHandle = PhLoadIcon(
-        PhInstanceHandle,
-        MAKEINTRESOURCE(IDI_ICON),
-        PH_LOAD_ICON_SIZE_SMALL,
-        PhGetSystemMetrics(SM_CXSMICON, dpiValue),
-        PhGetSystemMetrics(SM_CYSMICON, dpiValue),
-        dpiValue
-        );
+    SetupUpdateWizardIcons(Context, NULL, PhGetDpiValue(NULL, NULL));
 
     memset(pageDefinitions, 0, sizeof(pageDefinitions));
 
@@ -2606,6 +2793,7 @@ VOID SetupShowWizard(
             while (pageIndex != 0)
                 DestroyPropertySheetPage(pages[--pageIndex]);
 
+            SetupDestroyWizardIcons(Context);
             Context->LastStatus = STATUS_UNSUCCESSFUL;
             return;
         }
@@ -2632,4 +2820,5 @@ VOID SetupShowWizard(
     }
 
     PhModalPropertySheet(&header);
+    SetupDestroyWizardIcons(Context);
 }
