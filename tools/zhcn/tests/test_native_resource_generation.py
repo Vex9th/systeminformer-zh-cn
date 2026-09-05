@@ -278,6 +278,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
     def test_audit_scans_common_ui_text_setters(self) -> None:
         audit = load_audit_module()
         source = """
+            typedef struct _CHOICE_ENTRY {
+                ULONG Value;
+                PCWSTR Name;
+            } CHOICE_ENTRY;
+            static CHOICE_ENTRY structChoices[] = {
+                { 1, L"First struct choice" },
+                { 2, L"Second struct choice" }
+            };
             PCWSTR sharedChoices[] = { L"Global shared choice" };
             void sample(void) {
                 PhSetDialogItemText(hwnd, IDC_STATUS, L"Dialog item text");
@@ -302,6 +310,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     ToolStatusGetUiString(IDS_TEST_CHOICE, L"Native fallback")
                 };
                 PhAddComboBoxStrings(combo, nativeChoices, RTL_NUMBER_OF(nativeChoices));
+                for (ULONG i = 0; i < RTL_NUMBER_OF(structChoices); i++) {
+                    ComboBox_AddString(combo, structChoices[i].Name);
+                }
             }
             void first(void) {
                 PCWSTR sharedChoices[] = { L"Unrelated local choice" };
@@ -349,12 +360,45 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 ("c_combobox", "Assigned mixed choice"),
                 ("c_combobox", "Global shared choice"),
                 ("c_combobox", "Visible scoped assignment"),
+                ("c_combobox", "First struct choice"),
+                ("c_combobox", "Second struct choice"),
             },
         )
         scanned_text = {entry["english"] for entry in entries}
         self.assertNotIn("Native fallback", scanned_text)
         self.assertNotIn("Unrelated local choice", scanned_text)
         self.assertNotIn("Unrelated shadow assignment", scanned_text)
+
+    def test_audit_scans_qualified_macro_struct_combobox_arrays(self) -> None:
+        audit = load_audit_module()
+        entries = []
+
+        audit.scan_c_file(
+            str(REPO_ROOT / "plugins" / "ExtendedServices" / "recovery.c"),
+            entries,
+        )
+        audit.scan_c_file(
+            str(REPO_ROOT / "SystemInformer" / "sessshad.c"),
+            entries,
+        )
+
+        combo_text = {
+            entry["english"]
+            for entry in entries
+            if entry["category"] == "c_combobox"
+        }
+        self.assertTrue(
+            {
+                "Take no action",
+                "Restart the service",
+                "Restart the computer",
+                "Run a program",
+                "Own restart",
+                "{backspace}",
+                "{delete}",
+                "{enter}",
+            }.issubset(combo_text)
+        )
 
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
         audit = load_audit_module()
@@ -653,7 +697,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("654 strings", result.stdout)
+        self.assertIn("684 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2288,6 +2332,101 @@ class NativeResourceGenerationTests(unittest.TestCase):
             r"launchProtectedInfo\.dwLaunchProtected\s*\);",
         )
 
+    def test_extended_services_trigger_choices_use_item_data_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "ExtendedServices" / "trigger.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_script = (
+            REPO_ROOT / "plugins" / "ExtendedServices" / "ExtendedServices.rc"
+        ).read_text(encoding="utf-8-sig")
+        expected_type_entries = [
+            ("IDS_ES_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL", "SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL"),
+            ("IDS_ES_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY", "SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY"),
+            ("IDS_ES_TRIGGER_TYPE_DOMAIN_JOIN", "SERVICE_TRIGGER_TYPE_DOMAIN_JOIN"),
+            ("IDS_ES_TRIGGER_TYPE_FIREWALL_PORT_EVENT", "SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT"),
+            ("IDS_ES_TRIGGER_TYPE_GROUP_POLICY", "SERVICE_TRIGGER_TYPE_GROUP_POLICY"),
+            ("IDS_ES_TRIGGER_TYPE_NETWORK_ENDPOINT", "SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT"),
+            ("IDS_ES_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE", "SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE"),
+            ("IDS_ES_TRIGGER_CUSTOM", "SERVICE_TRIGGER_TYPE_CUSTOM"),
+        ]
+        expected_subtype_entries = [
+            ("IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS", "SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY", "NULL"),
+            ("IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS_FIRST_ARRIVAL", "SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY", "&NetworkManagerFirstIpAddressArrivalGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS_LAST_REMOVAL", "SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY", "&NetworkManagerLastIpAddressRemovalGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS_UNKNOWN", "SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY", "&SubTypeUnknownGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_DOMAIN", "SERVICE_TRIGGER_TYPE_DOMAIN_JOIN", "NULL"),
+            ("IDS_ES_TRIGGER_SUBTYPE_DOMAIN_JOIN", "SERVICE_TRIGGER_TYPE_DOMAIN_JOIN", "&DomainJoinGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_DOMAIN_LEAVE", "SERVICE_TRIGGER_TYPE_DOMAIN_JOIN", "&DomainLeaveGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_DOMAIN_UNKNOWN", "SERVICE_TRIGGER_TYPE_DOMAIN_JOIN", "&SubTypeUnknownGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT", "SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT", "NULL"),
+            ("IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT_OPEN", "SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT", "&FirewallPortOpenGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT_CLOSE", "SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT", "&FirewallPortCloseGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT_UNKNOWN", "SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT", "&SubTypeUnknownGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_CHANGE", "SERVICE_TRIGGER_TYPE_GROUP_POLICY", "NULL"),
+            ("IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_MACHINE", "SERVICE_TRIGGER_TYPE_GROUP_POLICY", "&MachinePolicyPresentGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_USER", "SERVICE_TRIGGER_TYPE_GROUP_POLICY", "&UserPolicyPresentGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_UNKNOWN", "SERVICE_TRIGGER_TYPE_GROUP_POLICY", "&SubTypeUnknownGuid"),
+            ("IDS_ES_TRIGGER_TYPE_NETWORK_ENDPOINT", "SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT", "NULL"),
+            ("IDS_ES_TRIGGER_SUBTYPE_NETWORK_ENDPOINT_RPC", "SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT", "&RpcInterfaceEventGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_NETWORK_ENDPOINT_NAMED_PIPE", "SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT", "&NamedPipeEventGuid"),
+            ("IDS_ES_TRIGGER_SUBTYPE_NETWORK_ENDPOINT_UNKNOWN", "SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT", "&SubTypeUnknownGuid"),
+        ]
+        expected_action_entries = [
+            ("IDS_ES_TRIGGER_ACTION_START_SERVICE", "SERVICE_TRIGGER_ACTION_SERVICE_START"),
+            ("IDS_ES_TRIGGER_ACTION_STOP_SERVICE", "SERVICE_TRIGGER_ACTION_SERVICE_STOP"),
+        ]
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(
+            re.findall(r"\{ (IDS_ES_TRIGGER_[A-Z0-9_]+), (SERVICE_TRIGGER_TYPE_[A-Z0-9_]+) \}", source),
+            expected_type_entries,
+        )
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_ES_TRIGGER_[A-Z0-9_]+), (SERVICE_TRIGGER_TYPE_[A-Z0-9_]+), ([^ }]+) \}",
+                source,
+            ),
+            expected_subtype_entries,
+        )
+        self.assertEqual(
+            re.findall(r"\{ (IDS_ES_TRIGGER_ACTION_[A-Z0-9_]+), (SERVICE_TRIGGER_ACTION_[A-Z0-9_]+) \}", source),
+            expected_action_entries,
+        )
+        for action_text in ("Start service", "Stop service"):
+            self.assertIn(action_text, translation_data["native_strings"])
+            self.assertNotIn(action_text, translation_data["strings"])
+
+        for resource_id in {
+            *(entry[0] for entry in expected_type_entries),
+            *(entry[0] for entry in expected_subtype_entries),
+            *(entry[0] for entry in expected_action_entries),
+            "IDS_ES_TRIGGER_UNKNOWN",
+        }:
+            with self.subTest(trigger_resource=resource_id):
+                self.assertRegex(resource_script, rf"(?m)^\s*{resource_id}\s+\"")
+
+        self.assertNotIn("EspTriggerTypeStringToInteger", source)
+        self.assertNotRegex(source, r"PhaGetDlgItemText\(WindowHandle, IDC_(?:TYPE|ACTION)\)")
+        self.assertNotRegex(source, r"PhGetWindowText\([^\n]*IDC_TYPE")
+        self.assertNotRegex(source, r"PhEqualString2\([^\n]*L\"(?:Custom|Start|Stop)\"")
+        self.assertNotRegex(source, r"ComboBox_AddString\([^\n]*L\"(?:Custom|Start|Stop)\"")
+        self.assertNotRegex(source, r"\b(?:TypeEntries|SubTypeEntries)\[i\]\.Name\b")
+        self.assertIn("ComboBox_SetItemData", source)
+        self.assertIn("ComboBox_DeleteString", source)
+        self.assertIn("ComboBox_GetItemData", source)
+        self.assertIn("EspGetSelectedTriggerComboBoxItemData", source)
+        self.assertIn("&EspCustomSubTypeEntry", source)
+
+        save_body = source.split("case IDOK:", 1)[1].split("DoNotClose:", 1)[0]
+        first_mutation = save_body.index("context->EditingInfo->Type = type")
+        self.assertLess(save_body.index("EspGetSelectedTriggerComboBoxItemData"), first_mutation)
+        self.assertLess(save_body.index("PhStringToGuid"), first_mutation)
+        self.assertLess(save_body.index("SERVICE_TRIGGER_ACTION_SERVICE_START"), first_mutation)
+
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
@@ -2972,7 +3111,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             Counter(
                 {
                     (r"bin\Release64\sys_info.exe", 271): 2,
-                    (r"bin\Release64\plugins\ExtendedServices.dll", 21): 2,
+                    (r"bin\Release64\plugins\ExtendedServices.dll", 51): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 26): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,

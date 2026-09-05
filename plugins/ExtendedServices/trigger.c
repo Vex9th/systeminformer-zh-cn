@@ -31,16 +31,22 @@ typedef struct _ES_TRIGGER_DATA
 
 typedef struct _TYPE_ENTRY
 {
+    ULONG ResourceId;
     ULONG Type;
-    PWSTR Name;
 } TYPE_ENTRY, PTYPE_ENTRY;
 
 typedef struct _SUBTYPE_ENTRY
 {
+    ULONG ResourceId;
     ULONG Type;
     PCGUID Guid;
-    PWSTR Name;
 } SUBTYPE_ENTRY, PSUBTYPE_ENTRY;
+
+typedef struct _ACTION_ENTRY
+{
+    ULONG ResourceId;
+    ULONG Action;
+} ACTION_ENTRY, PACTION_ENTRY;
 
 typedef struct _ETW_PUBLISHER_ENTRY
 {
@@ -74,43 +80,166 @@ DEFINE_GUID(RpcInterfaceEventGuid, 0xbc90d167, 0x9470, 0x4139, 0xa9, 0xba, 0xbe,
 DEFINE_GUID(NamedPipeEventGuid, 0x1f81d131, 0x3fac, 0x4537, 0x9e, 0x0c, 0x7e, 0x7b, 0x0c, 0x2f, 0x4b, 0x55);
 DEFINE_GUID(SubTypeUnknownGuid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-static TYPE_ENTRY TypeEntries[] =
+static CONST TYPE_ENTRY TypeEntries[] =
 {
-    { SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL, L"Device interface arrival" },
-    { SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, L"IP address availability" },
-    { SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, L"Domain join" },
-    { SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, L"Firewall port event" },
-    { SERVICE_TRIGGER_TYPE_GROUP_POLICY, L"Group policy" },
-    { SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, L"Network endpoint" },
-    { SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE, L"Custom system state change" },
-    { SERVICE_TRIGGER_TYPE_CUSTOM, L"Custom" }
+    { IDS_ES_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL, SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL },
+    { IDS_ES_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY },
+    { IDS_ES_TRIGGER_TYPE_DOMAIN_JOIN, SERVICE_TRIGGER_TYPE_DOMAIN_JOIN },
+    { IDS_ES_TRIGGER_TYPE_FIREWALL_PORT_EVENT, SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT },
+    { IDS_ES_TRIGGER_TYPE_GROUP_POLICY, SERVICE_TRIGGER_TYPE_GROUP_POLICY },
+    { IDS_ES_TRIGGER_TYPE_NETWORK_ENDPOINT, SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT },
+    { IDS_ES_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE, SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE },
+    { IDS_ES_TRIGGER_CUSTOM, SERVICE_TRIGGER_TYPE_CUSTOM }
 };
 
-static SUBTYPE_ENTRY SubTypeEntries[] =
+static CONST SUBTYPE_ENTRY SubTypeEntries[] =
 {
-    { SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, NULL, L"IP address" },
-    { SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, &NetworkManagerFirstIpAddressArrivalGuid, L"IP address: First arrival" },
-    { SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, &NetworkManagerLastIpAddressRemovalGuid, L"IP address: Last removal" },
-    { SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, &SubTypeUnknownGuid, L"IP address: Unknown" },
-    { SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, NULL, L"Domain" },
-    { SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, &DomainJoinGuid, L"Domain: Join" },
-    { SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, &DomainLeaveGuid, L"Domain: Leave" },
-    { SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, &SubTypeUnknownGuid, L"Domain: Unknown" },
-    { SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, NULL, L"Firewall port" },
-    { SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, &FirewallPortOpenGuid, L"Firewall port: Open" },
-    { SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, &FirewallPortCloseGuid, L"Firewall port: Close" },
-    { SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, &SubTypeUnknownGuid, L"Firewall port: Unknown" },
-    { SERVICE_TRIGGER_TYPE_GROUP_POLICY, NULL, L"Group policy change" },
-    { SERVICE_TRIGGER_TYPE_GROUP_POLICY, &MachinePolicyPresentGuid, L"Group policy change: Machine" },
-    { SERVICE_TRIGGER_TYPE_GROUP_POLICY, &UserPolicyPresentGuid, L"Group policy change: User" },
-    { SERVICE_TRIGGER_TYPE_GROUP_POLICY, &SubTypeUnknownGuid, L"Group policy change: Unknown" },
-    { SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, NULL, L"Network endpoint" },
-    { SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, &RpcInterfaceEventGuid, L"Network endpoint: RPC interface" },
-    { SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, &NamedPipeEventGuid, L"Network endpoint: Named pipe" },
-    { SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, &SubTypeUnknownGuid, L"Network endpoint: Unknown" }
+    { IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS, SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, NULL },
+    { IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS_FIRST_ARRIVAL, SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, &NetworkManagerFirstIpAddressArrivalGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS_LAST_REMOVAL, SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, &NetworkManagerLastIpAddressRemovalGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_IP_ADDRESS_UNKNOWN, SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY, &SubTypeUnknownGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_DOMAIN, SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, NULL },
+    { IDS_ES_TRIGGER_SUBTYPE_DOMAIN_JOIN, SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, &DomainJoinGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_DOMAIN_LEAVE, SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, &DomainLeaveGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_DOMAIN_UNKNOWN, SERVICE_TRIGGER_TYPE_DOMAIN_JOIN, &SubTypeUnknownGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT, SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, NULL },
+    { IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT_OPEN, SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, &FirewallPortOpenGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT_CLOSE, SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, &FirewallPortCloseGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_FIREWALL_PORT_UNKNOWN, SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT, &SubTypeUnknownGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_CHANGE, SERVICE_TRIGGER_TYPE_GROUP_POLICY, NULL },
+    { IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_MACHINE, SERVICE_TRIGGER_TYPE_GROUP_POLICY, &MachinePolicyPresentGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_USER, SERVICE_TRIGGER_TYPE_GROUP_POLICY, &UserPolicyPresentGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_GROUP_POLICY_UNKNOWN, SERVICE_TRIGGER_TYPE_GROUP_POLICY, &SubTypeUnknownGuid },
+    { IDS_ES_TRIGGER_TYPE_NETWORK_ENDPOINT, SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, NULL },
+    { IDS_ES_TRIGGER_SUBTYPE_NETWORK_ENDPOINT_RPC, SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, &RpcInterfaceEventGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_NETWORK_ENDPOINT_NAMED_PIPE, SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, &NamedPipeEventGuid },
+    { IDS_ES_TRIGGER_SUBTYPE_NETWORK_ENDPOINT_UNKNOWN, SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT, &SubTypeUnknownGuid }
+};
+
+static CONST ACTION_ENTRY ActionEntries[] =
+{
+    { IDS_ES_TRIGGER_ACTION_START_SERVICE, SERVICE_TRIGGER_ACTION_SERVICE_START },
+    { IDS_ES_TRIGGER_ACTION_STOP_SERVICE, SERVICE_TRIGGER_ACTION_SERVICE_STOP }
+};
+
+static CONST SUBTYPE_ENTRY EspCustomSubTypeEntry =
+{
+    IDS_ES_TRIGGER_CUSTOM,
+    0,
+    NULL
 };
 
 static CONST PH_STRINGREF PublishersKeyName = PH_STRINGREF_INIT(L"Software\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Publishers\\");
+
+static INT EspAddTriggerComboBoxItem(
+    _In_ HWND ComboBoxHandle,
+    _In_ PCWSTR Text,
+    _In_opt_ PVOID ItemData
+    )
+{
+    INT itemIndex;
+
+    itemIndex = ComboBox_AddString(ComboBoxHandle, Text);
+
+    if (itemIndex >= 0)
+    {
+        if (ComboBox_SetItemData(ComboBoxHandle, itemIndex, ItemData) != CB_ERR)
+            return itemIndex;
+
+        ComboBox_DeleteString(ComboBoxHandle, itemIndex);
+    }
+
+    return CB_ERR;
+}
+
+static INT EspAddTriggerComboBoxResourceItem(
+    _In_ HWND ComboBoxHandle,
+    _In_ ULONG ResourceId,
+    _In_opt_ PVOID ItemData
+    )
+{
+    PPH_STRING text;
+    INT itemIndex;
+
+    text = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+    itemIndex = EspAddTriggerComboBoxItem(ComboBoxHandle, PhGetString(text), ItemData);
+    PhDereferenceObject(text);
+
+    return itemIndex;
+}
+
+static BOOLEAN EspGetSelectedTriggerComboBoxItemData(
+    _In_ HWND ComboBoxHandle,
+    _Out_ PVOID *ItemData
+    )
+{
+    INT selectedIndex;
+    LRESULT selectedData;
+
+    selectedIndex = ComboBox_GetCurSel(ComboBoxHandle);
+
+    if (selectedIndex == CB_ERR)
+        return FALSE;
+
+    selectedData = ComboBox_GetItemData(ComboBoxHandle, selectedIndex);
+
+    if (selectedData == CB_ERR)
+        return FALSE;
+
+    *ItemData = (PVOID)selectedData;
+    return TRUE;
+}
+
+static BOOLEAN EspSelectTriggerComboBoxItemData(
+    _In_ HWND ComboBoxHandle,
+    _In_opt_ PVOID ItemData
+    )
+{
+    INT numberOfItems;
+
+    numberOfItems = ComboBox_GetCount(ComboBoxHandle);
+
+    for (INT i = 0; i < numberOfItems; i++)
+    {
+        LRESULT currentItemData;
+
+        currentItemData = ComboBox_GetItemData(ComboBoxHandle, i);
+
+        if (currentItemData != CB_ERR && (PVOID)currentItemData == ItemData)
+        {
+            ComboBox_SetCurSel(ComboBoxHandle, i);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static CONST TYPE_ENTRY* EspFindTriggerTypeEntry(
+    _In_ ULONG Type
+    )
+{
+    for (ULONG i = 0; i < ARRAYSIZE(TypeEntries); i++)
+    {
+        if (TypeEntries[i].Type == Type)
+            return &TypeEntries[i];
+    }
+
+    return NULL;
+}
+
+static CONST ACTION_ENTRY* EspFindTriggerActionEntry(
+    _In_ ULONG Action
+    )
+{
+    for (ULONG i = 0; i < ARRAYSIZE(ActionEntries); i++)
+    {
+        if (ActionEntries[i].Action == Action)
+            return &ActionEntries[i];
+    }
+
+    return NULL;
+}
 
 PES_TRIGGER_DATA EspCreateTriggerData(
     _In_opt_ PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM DataItem
@@ -455,125 +584,146 @@ BOOLEAN EspLookupEtwPublisherGuid(
 
 VOID EspFormatTriggerInfo(
     _In_ PES_TRIGGER_INFO Info,
-    _Out_ PWSTR *TriggerString,
-    _Out_ PWSTR *ActionString,
-    _Out_ PPH_STRING *StringUsed
+    _Out_ PPH_STRING *TriggerString,
+    _Out_ PPH_STRING *ActionString
     )
 {
-    PPH_STRING stringUsed = NULL;
-    PWSTR triggerString = NULL;
-    PWSTR actionString;
+    PPH_STRING triggerString = NULL;
+    PPH_STRING actionString;
+    CONST ACTION_ENTRY* actionEntry;
     ULONG i;
-    BOOLEAN typeFound;
-    BOOLEAN subTypeFound;
 
     switch (Info->Type)
     {
     case SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL:
         {
+            PPH_STRING typeString;
             PPH_STRING guidString;
+
+            typeString = PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_ES_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL,
+                NULL
+                );
 
             if (!Info->Subtype)
             {
-                triggerString = L"Device interface arrival";
+                triggerString = typeString;
             }
             else
             {
                 guidString = PhFormatGuid(Info->Subtype);
-                stringUsed = PhConcatStrings2(L"Device interface arrival: ", guidString->Buffer);
-                triggerString = stringUsed->Buffer;
+                triggerString = PhFormatString(
+                    L"%s: %s",
+                    PhGetString(typeString),
+                    PhGetString(guidString)
+                    );
+                PhDereferenceObject(typeString);
+                PhDereferenceObject(guidString);
             }
         }
         break;
     case SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE:
         {
+            PPH_STRING typeString;
             PPH_STRING guidString;
+
+            typeString = PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_ES_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE,
+                NULL
+                );
 
             if (!Info->Subtype)
             {
-                triggerString = L"Custom system state change";
+                triggerString = typeString;
             }
             else
             {
                 guidString = PhFormatGuid(Info->Subtype);
-                stringUsed = PhConcatStrings2(L"Custom system state change: ", guidString->Buffer);
-                triggerString = stringUsed->Buffer;
+                triggerString = PhFormatString(
+                    L"%s: %s",
+                    PhGetString(typeString),
+                    PhGetString(guidString)
+                    );
+                PhDereferenceObject(typeString);
+                PhDereferenceObject(guidString);
             }
         }
         break;
     case SERVICE_TRIGGER_TYPE_CUSTOM:
         {
+            PPH_STRING typeString;
+
+            typeString = PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_ES_TRIGGER_CUSTOM,
+                NULL
+                );
+
             if (Info->Subtype)
             {
                 PPH_STRING publisherName;
 
                 // Try to lookup the publisher name from the GUID. (wj32)
                 publisherName = PhGetEtwPublisherName(Info->Subtype);
-                stringUsed = PhConcatStrings2(L"Custom: ", publisherName->Buffer);
+                triggerString = PhFormatString(
+                    L"%s: %s",
+                    PhGetString(typeString),
+                    PhGetString(publisherName)
+                    );
+                PhDereferenceObject(typeString);
                 PhDereferenceObject(publisherName);
-                triggerString = stringUsed->Buffer;
             }
             else
             {
-                triggerString = L"Custom";
+                triggerString = typeString;
             }
         }
         break;
     default:
         {
-            typeFound = FALSE;
-            subTypeFound = FALSE;
+            CONST SUBTYPE_ENTRY* subTypeEntry = NULL;
 
-            for (i = 0; i < sizeof(SubTypeEntries) / sizeof(SUBTYPE_ENTRY); i++)
+            for (i = 0; i < ARRAYSIZE(SubTypeEntries); i++)
             {
                 if (SubTypeEntries[i].Type == Info->Type)
                 {
-                    typeFound = TRUE;
-
                     if (!Info->Subtype && !SubTypeEntries[i].Guid)
                     {
-                        subTypeFound = TRUE;
-                        triggerString = SubTypeEntries[i].Name;
+                        subTypeEntry = &SubTypeEntries[i];
                         break;
                     }
                     else if (Info->Subtype && SubTypeEntries[i].Guid && IsEqualGUID(Info->Subtype, SubTypeEntries[i].Guid))
                     {
-                        subTypeFound = TRUE;
-                        triggerString = SubTypeEntries[i].Name;
+                        subTypeEntry = &SubTypeEntries[i];
                         break;
                     }
-                    else if (!subTypeFound && SubTypeEntries[i].Guid == &SubTypeUnknownGuid)
+                    else if (!subTypeEntry && SubTypeEntries[i].Guid == &SubTypeUnknownGuid)
                     {
-                        triggerString = SubTypeEntries[i].Name;
-                        break;
+                        subTypeEntry = &SubTypeEntries[i];
                     }
                 }
             }
 
-            if (!typeFound)
-            {
-                triggerString = L"Unknown";
-            }
+            triggerString = PhLoadUiString(
+                PluginInstance->DllBase,
+                subTypeEntry ? subTypeEntry->ResourceId : IDS_ES_TRIGGER_UNKNOWN,
+                NULL
+                );
         }
         break;
     }
 
-    switch (Info->Action)
-    {
-    case SERVICE_TRIGGER_ACTION_SERVICE_START:
-        actionString = L"Start";
-        break;
-    case SERVICE_TRIGGER_ACTION_SERVICE_STOP:
-        actionString = L"Stop";
-        break;
-    default:
-        actionString = L"Unknown";
-        break;
-    }
+    actionEntry = EspFindTriggerActionEntry(Info->Action);
+    actionString = PhLoadUiString(
+        PluginInstance->DllBase,
+        actionEntry ? actionEntry->ResourceId : IDS_ES_TRIGGER_UNKNOWN,
+        NULL
+        );
 
     *TriggerString = triggerString;
     *ActionString = actionString;
-    *StringUsed = stringUsed;
 }
 
 VOID EsLoadServiceTriggerInfo(
@@ -592,21 +742,20 @@ VOID EsLoadServiceTriggerInfo(
         {
             PSERVICE_TRIGGER trigger = &triggerInfo->pTriggers[i];
             PES_TRIGGER_INFO info;
-            PWSTR triggerString;
-            PWSTR actionString;
-            PPH_STRING stringUsed;
+            PPH_STRING triggerString;
+            PPH_STRING actionString;
             INT lvItemIndex;
 
             info = EspCreateTriggerInfo(trigger);
             PhAddItemList(Context->InfoList, info);
 
-            EspFormatTriggerInfo(info, &triggerString, &actionString, &stringUsed);
+            EspFormatTriggerInfo(info, &triggerString, &actionString);
 
-            lvItemIndex = PhAddListViewItem(Context->TriggersLv, MAXINT, triggerString, info);
-            PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 1, actionString);
+            lvItemIndex = PhAddListViewItem(Context->TriggersLv, MAXINT, PhGetString(triggerString), info);
+            PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 1, PhGetString(actionString));
 
-            if (stringUsed)
-                PhDereferenceObject(stringUsed);
+            PhDereferenceObject(triggerString);
+            PhDereferenceObject(actionString);
         }
 
         Context->InitialNumberOfTriggers = triggerInfo->cTriggers;
@@ -786,21 +935,20 @@ VOID EsHandleEventServiceTrigger(
                 Context
                 ) == IDOK)
             {
-                PWSTR triggerString;
-                PWSTR actionString;
-                PPH_STRING stringUsed;
+                PPH_STRING triggerString;
+                PPH_STRING actionString;
                 INT lvItemIndex;
 
                 Context->Dirty = TRUE;
                 PhAddItemList(Context->InfoList, Context->EditingInfo);
 
-                EspFormatTriggerInfo(Context->EditingInfo, &triggerString, &actionString, &stringUsed);
+                EspFormatTriggerInfo(Context->EditingInfo, &triggerString, &actionString);
 
-                lvItemIndex = PhAddListViewItem(Context->TriggersLv, MAXINT, triggerString, Context->EditingInfo);
-                PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 1, actionString);
+                lvItemIndex = PhAddListViewItem(Context->TriggersLv, MAXINT, PhGetString(triggerString), Context->EditingInfo);
+                PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 1, PhGetString(actionString));
 
-                if (stringUsed)
-                    PhDereferenceObject(stringUsed);
+                PhDereferenceObject(triggerString);
+                PhDereferenceObject(actionString);
             }
             else
             {
@@ -834,20 +982,19 @@ VOID EsHandleEventServiceTrigger(
                         Context
                         ) == IDOK)
                     {
-                        PWSTR triggerString;
-                        PWSTR actionString;
-                        PPH_STRING stringUsed;
+                        PPH_STRING triggerString;
+                        PPH_STRING actionString;
 
                         Context->Dirty = TRUE;
                         EspDestroyTriggerInfo(Context->InfoList->Items[index]);
                         Context->InfoList->Items[index] = Context->EditingInfo;
 
-                        EspFormatTriggerInfo(Context->EditingInfo, &triggerString, &actionString, &stringUsed);
-                        PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 0, triggerString);
-                        PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 1, actionString);
+                        EspFormatTriggerInfo(Context->EditingInfo, &triggerString, &actionString);
+                        PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 0, PhGetString(triggerString));
+                        PhSetListViewSubItem(Context->TriggersLv, lvItemIndex, 1, PhGetString(actionString));
 
-                        if (stringUsed)
-                            PhDereferenceObject(stringUsed);
+                        PhDereferenceObject(triggerString);
+                        PhDereferenceObject(actionString);
 
                         EspSetListViewItemParam(Context->TriggersLv, lvItemIndex, Context->EditingInfo);
                     }
@@ -897,21 +1044,6 @@ VOID EsHandleEventServiceTrigger(
     }
 }
 
-ULONG EspTriggerTypeStringToInteger(
-    _In_ PCWSTR String
-    )
-{
-    ULONG i;
-
-    for (i = 0; i < sizeof(TypeEntries) / sizeof(TYPE_ENTRY); i++)
-    {
-        if (PhEqualStringZ(TypeEntries[i].Name, String, FALSE))
-            return TypeEntries[i].Type;
-    }
-
-    return 0;
-}
-
 static int __cdecl EtwPublisherByNameCompareFunction(
     _In_ const void *elem1,
     _In_ const void *elem2
@@ -931,16 +1063,17 @@ VOID EspFixServiceTriggerControls(
     HWND typeComboBox;
     HWND subTypeComboBox;
     ULONG i;
-    PPH_STRING selectedTypeString;
+    PVOID selectedTypeData;
     ULONG type;
-    PPH_STRING selectedSubTypeString;
+    PVOID selectedSubTypeData;
 
     typeComboBox = GetDlgItem(WindowHandle, IDC_TYPE);
     subTypeComboBox = GetDlgItem(WindowHandle, IDC_SUBTYPE);
 
-    selectedTypeString = PhGetWindowText(typeComboBox);
-    type = EspTriggerTypeStringToInteger(selectedTypeString->Buffer);
-    PhDereferenceObject(selectedTypeString);
+    if (!EspGetSelectedTriggerComboBoxItemData(typeComboBox, &selectedTypeData))
+        return;
+
+    type = PtrToUlong(selectedTypeData);
 
     if (Context->LastSelectedType != type)
     {
@@ -952,12 +1085,20 @@ VOID EspFixServiceTriggerControls(
         {
         case SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL:
             {
-                ComboBox_AddString(subTypeComboBox, L"Custom");
+                EspAddTriggerComboBoxResourceItem(
+                    subTypeComboBox,
+                    EspCustomSubTypeEntry.ResourceId,
+                    (PVOID)&EspCustomSubTypeEntry
+                    );
             }
             break;
         case SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE:
             {
-                ComboBox_AddString(subTypeComboBox, L"Custom");
+                EspAddTriggerComboBoxResourceItem(
+                    subTypeComboBox,
+                    EspCustomSubTypeEntry.ResourceId,
+                    (PVOID)&EspCustomSubTypeEntry
+                    );
             }
             break;
         case SERVICE_TRIGGER_TYPE_CUSTOM:
@@ -965,7 +1106,11 @@ VOID EspFixServiceTriggerControls(
                 PETW_PUBLISHER_ENTRY entries;
                 ULONG numberOfEntries;
 
-                ComboBox_AddString(subTypeComboBox, L"Custom");
+                EspAddTriggerComboBoxResourceItem(
+                    subTypeComboBox,
+                    EspCustomSubTypeEntry.ResourceId,
+                    (PVOID)&EspCustomSubTypeEntry
+                    );
 
                 // Display a list of publishers.
                 if (NT_SUCCESS(EspEnumerateEtwPublishers(&entries, &numberOfEntries)))
@@ -975,7 +1120,11 @@ VOID EspFixServiceTriggerControls(
 
                     for (i = 0; i < numberOfEntries; i++)
                     {
-                        ComboBox_AddString(subTypeComboBox, entries[i].PublisherName->Buffer);
+                        EspAddTriggerComboBoxItem(
+                            subTypeComboBox,
+                            entries[i].PublisherName->Buffer,
+                            NULL
+                            );
                         PhDereferenceObject(entries[i].PublisherName);
                     }
 
@@ -984,11 +1133,15 @@ VOID EspFixServiceTriggerControls(
             }
             break;
         default:
-            for (i = 0; i < sizeof(SubTypeEntries) / sizeof(SUBTYPE_ENTRY); i++)
+            for (i = 0; i < ARRAYSIZE(SubTypeEntries); i++)
             {
                 if (SubTypeEntries[i].Type == type && SubTypeEntries[i].Guid && SubTypeEntries[i].Guid != &SubTypeUnknownGuid)
                 {
-                    ComboBox_AddString(subTypeComboBox, SubTypeEntries[i].Name);
+                    EspAddTriggerComboBoxResourceItem(
+                        subTypeComboBox,
+                        SubTypeEntries[i].ResourceId,
+                        (PVOID)&SubTypeEntries[i]
+                        );
                 }
             }
             break;
@@ -999,9 +1152,10 @@ VOID EspFixServiceTriggerControls(
         Context->LastSelectedType = type;
     }
 
-    selectedSubTypeString = PhGetWindowText(subTypeComboBox);
+    if (!EspGetSelectedTriggerComboBoxItemData(subTypeComboBox, &selectedSubTypeData))
+        return;
 
-    if (PhEqualString2(selectedSubTypeString, L"Custom", FALSE))
+    if (selectedSubTypeData == &EspCustomSubTypeEntry)
     {
         EnableWindow(GetDlgItem(WindowHandle, IDC_SUBTYPECUSTOM), TRUE);
         PhSetDialogItemText(WindowHandle, IDC_SUBTYPECUSTOM, Context->LastCustomSubType->Buffer);
@@ -1015,8 +1169,6 @@ VOID EspFixServiceTriggerControls(
             PhSetDialogItemText(WindowHandle, IDC_SUBTYPECUSTOM, L"");
         }
     }
-
-    PhDereferenceObject(selectedSubTypeString);
 }
 
 PPH_STRING EspConvertNullsToNewLines(
@@ -1182,25 +1334,39 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
             typeComboBox = GetDlgItem(WindowHandle, IDC_TYPE);
             actionComboBox = GetDlgItem(WindowHandle, IDC_ACTION);
 
-            for (i = 0; i < sizeof(TypeEntries) / sizeof(TYPE_ENTRY); i++)
+            for (i = 0; i < ARRAYSIZE(TypeEntries); i++)
             {
-                ComboBox_AddString(typeComboBox, TypeEntries[i].Name);
+                INT itemIndex;
 
-                if (TypeEntries[i].Type == context->EditingInfo->Type)
-                {
-                    PhSelectComboBoxString(typeComboBox, TypeEntries[i].Name, FALSE);
-                }
+                itemIndex = EspAddTriggerComboBoxResourceItem(
+                    typeComboBox,
+                    TypeEntries[i].ResourceId,
+                    UlongToPtr(TypeEntries[i].Type)
+                    );
+
+                if (itemIndex != CB_ERR && TypeEntries[i].Type == context->EditingInfo->Type)
+                    ComboBox_SetCurSel(typeComboBox, itemIndex);
             }
 
-            ComboBox_AddString(actionComboBox, L"Start");
-            ComboBox_AddString(actionComboBox, L"Stop");
-            ComboBox_SetCurSel(actionComboBox, context->EditingInfo->Action == SERVICE_TRIGGER_ACTION_SERVICE_START ? 0 : 1);
+            for (i = 0; i < ARRAYSIZE(ActionEntries); i++)
+            {
+                INT itemIndex;
+
+                itemIndex = EspAddTriggerComboBoxResourceItem(
+                    actionComboBox,
+                    ActionEntries[i].ResourceId,
+                    UlongToPtr(ActionEntries[i].Action)
+                    );
+
+                if (itemIndex != CB_ERR && ActionEntries[i].Action == context->EditingInfo->Action)
+                    ComboBox_SetCurSel(actionComboBox, itemIndex);
+            }
 
             EspFixServiceTriggerControls(WindowHandle, context);
 
             if (context->EditingInfo->Type != SERVICE_TRIGGER_TYPE_CUSTOM)
             {
-                for (i = 0; i < sizeof(SubTypeEntries) / sizeof(SUBTYPE_ENTRY); i++)
+                for (i = 0; i < ARRAYSIZE(SubTypeEntries); i++)
                 {
                     if (
                         SubTypeEntries[i].Type == context->EditingInfo->Type &&
@@ -1209,7 +1375,13 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
                         IsEqualGUID(SubTypeEntries[i].Guid, context->EditingInfo->Subtype)
                         )
                     {
-                        PhSelectComboBoxString(GetDlgItem(WindowHandle, IDC_SUBTYPE), SubTypeEntries[i].Name, FALSE);
+                        if (!EspSelectTriggerComboBoxItemData(
+                            GetDlgItem(WindowHandle, IDC_SUBTYPE),
+                            (PVOID)&SubTypeEntries[i]
+                            ))
+                        {
+                            ComboBox_SetCurSel(GetDlgItem(WindowHandle, IDC_SUBTYPE), -1);
+                        }
                         break;
                     }
                 }
@@ -1387,59 +1559,76 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
             case IDOK:
                 {
                     PH_AUTO_POOL autoPool;
+                    PVOID selectedTypeData;
+                    PVOID selectedSubTypeData;
+                    PVOID selectedActionData;
+                    CONST TYPE_ENTRY* typeEntry;
+                    CONST ACTION_ENTRY* actionEntry;
+                    CONST SUBTYPE_ENTRY* subTypeEntry;
                     PPH_STRING typeString;
-                    PPH_STRING subTypeString;
                     PPH_STRING customSubTypeString;
-                    PPH_STRING actionString;
+                    GUID subTypeBuffer;
+                    ULONG type;
+                    ULONG action;
                     ULONG i;
 
                     PhInitializeAutoPool(&autoPool);
 
-                    typeString = PhaGetDlgItemText(WindowHandle, IDC_TYPE);
-                    subTypeString = PhaGetDlgItemText(WindowHandle, IDC_SUBTYPE);
-                    customSubTypeString = PhaGetDlgItemText(WindowHandle, IDC_SUBTYPECUSTOM);
-                    actionString = PhaGetDlgItemText(WindowHandle, IDC_ACTION);
-
-                    for (i = 0; i < sizeof(TypeEntries) / sizeof(TYPE_ENTRY); i++)
+                    if (!EspGetSelectedTriggerComboBoxItemData(
+                        GetDlgItem(WindowHandle, IDC_TYPE),
+                        &selectedTypeData
+                        ))
                     {
-                        if (PhEqualStringZ(TypeEntries[i].Name, typeString->Buffer, FALSE))
-                        {
-                            context->EditingInfo->Type = TypeEntries[i].Type;
-                            break;
-                        }
+                        goto DoNotClose;
                     }
 
-                    if (!PhEqualString2(subTypeString, L"Custom", FALSE))
+                    if (!EspGetSelectedTriggerComboBoxItemData(
+                        GetDlgItem(WindowHandle, IDC_SUBTYPE),
+                        &selectedSubTypeData
+                        ))
                     {
-                        if (context->EditingInfo->Type != SERVICE_TRIGGER_TYPE_CUSTOM)
-                        {
-                            for (i = 0; i < sizeof(SubTypeEntries) / sizeof(SUBTYPE_ENTRY); i++)
-                            {
-                                if (
-                                    SubTypeEntries[i].Type == context->EditingInfo->Type &&
-                                    PhEqualString2(subTypeString, SubTypeEntries[i].Name, FALSE)
-                                    )
-                                {
-                                    context->EditingInfo->SubtypeBuffer = *SubTypeEntries[i].Guid;
-                                    context->EditingInfo->Subtype = &context->EditingInfo->SubtypeBuffer;
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (!EspLookupEtwPublisherGuid(&subTypeString->sr, &context->EditingInfo->SubtypeBuffer))
-                            {
-                                PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_FIND_ETW_PUBLISHER_GUID, NULL))), L"%s", L"");
-                                goto DoNotClose;
-                            }
-
-                            context->EditingInfo->Subtype = &context->EditingInfo->SubtypeBuffer;
-                        }
+                        goto DoNotClose;
                     }
-                    else
+
+                    if (!EspGetSelectedTriggerComboBoxItemData(
+                        GetDlgItem(WindowHandle, IDC_ACTION),
+                        &selectedActionData
+                        ))
                     {
-                        PH_STRINGREF guidString = customSubTypeString->sr;
+                        goto DoNotClose;
+                    }
+
+                    type = PtrToUlong(selectedTypeData);
+                    action = PtrToUlong(selectedActionData);
+                    typeEntry = EspFindTriggerTypeEntry(type);
+                    actionEntry = EspFindTriggerActionEntry(action);
+
+                    if (!typeEntry || !actionEntry)
+                        goto DoNotClose;
+
+                    if (
+                        action != SERVICE_TRIGGER_ACTION_SERVICE_START &&
+                        action != SERVICE_TRIGGER_ACTION_SERVICE_STOP
+                        )
+                    {
+                        goto DoNotClose;
+                    }
+
+                    if (selectedSubTypeData == &EspCustomSubTypeEntry)
+                    {
+                        PH_STRINGREF guidString;
+
+                        if (
+                            type != SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL &&
+                            type != SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE &&
+                            type != SERVICE_TRIGGER_TYPE_CUSTOM
+                            )
+                        {
+                            goto DoNotClose;
+                        }
+
+                        customSubTypeString = PhaGetDlgItemText(WindowHandle, IDC_SUBTYPECUSTOM);
+                        guidString = customSubTypeString->sr;
 
                         // Trim whitespace.
 
@@ -1454,29 +1643,66 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
                             guidString.Length -= sizeof(WCHAR);
                         }
 
-                        if (NT_SUCCESS(PhStringToGuid(&guidString, &context->EditingInfo->SubtypeBuffer)))
-                        {
-                            context->EditingInfo->Subtype = &context->EditingInfo->SubtypeBuffer;
-                        }
-                        else
+                        if (!NT_SUCCESS(PhStringToGuid(&guidString, &subTypeBuffer)))
                         {
                             PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_CUSTOM_SUBTYPE_INVALID, NULL))), L"%s", L"Please ensure that the string is a valid GUID: \"{x-x-x-x-x}\".");
                             goto DoNotClose;
                         }
                     }
+                    else if (selectedSubTypeData)
+                    {
+                        subTypeEntry = NULL;
 
-                    if (PhEqualString2(actionString, L"Start", FALSE))
-                        context->EditingInfo->Action = SERVICE_TRIGGER_ACTION_SERVICE_START;
+                        for (i = 0; i < ARRAYSIZE(SubTypeEntries); i++)
+                        {
+                            if (selectedSubTypeData == &SubTypeEntries[i])
+                            {
+                                subTypeEntry = &SubTypeEntries[i];
+                                break;
+                            }
+                        }
+
+                        if (
+                            !subTypeEntry ||
+                            subTypeEntry->Type != type ||
+                            !subTypeEntry->Guid ||
+                            subTypeEntry->Guid == &SubTypeUnknownGuid
+                            )
+                        {
+                            goto DoNotClose;
+                        }
+
+                        subTypeBuffer = *subTypeEntry->Guid;
+                    }
                     else
-                        context->EditingInfo->Action = SERVICE_TRIGGER_ACTION_SERVICE_STOP;
+                    {
+                        PPH_STRING subTypeString;
+
+                        if (type != SERVICE_TRIGGER_TYPE_CUSTOM)
+                            goto DoNotClose;
+
+                        subTypeString = PhaGetDlgItemText(WindowHandle, IDC_SUBTYPE);
+
+                        if (!EspLookupEtwPublisherGuid(&subTypeString->sr, &subTypeBuffer))
+                        {
+                            PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_UNABLE_FIND_ETW_PUBLISHER_GUID, NULL))), L"%s", L"");
+                            goto DoNotClose;
+                        }
+                    }
+
+                    typeString = PH_AUTO(PhLoadUiString(
+                        PluginInstance->DllBase,
+                        typeEntry->ResourceId,
+                        NULL
+                        ));
 
                     if (
                         context->EditingInfo->DataList &&
                         context->EditingInfo->DataList->Count != 0 &&
-                        context->EditingInfo->Type != SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL &&
-                        context->EditingInfo->Type != SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT &&
-                        context->EditingInfo->Type != SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT &&
-                        context->EditingInfo->Type != SERVICE_TRIGGER_TYPE_CUSTOM
+                        type != SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL &&
+                        type != SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT &&
+                        type != SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT &&
+                        type != SERVICE_TRIGGER_TYPE_CUSTOM
                         )
                     {
                         // This trigger has data items, but the trigger type doesn't allow them.
@@ -1484,7 +1710,7 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
                             WindowHandle,
                             TD_OK_BUTTON | TD_CANCEL_BUTTON,
                             TD_WARNING_ICON,
-                            PhaFormatString(L"The trigger type \"%s\" does not allow data items to be configured.", typeString->Buffer)->Buffer,
+                            PhaFormatString(L"The trigger type \"%s\" does not allow data items to be configured.", PhGetString(typeString))->Buffer,
                             L"%s",
                             PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_TRIGGER_DATA_REMOVAL_WARNING, NULL)))
                             ) != IDOK)
@@ -1499,6 +1725,11 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
 
                         PhClearReference(&context->EditingInfo->DataList);
                     }
+
+                    context->EditingInfo->Type = type;
+                    context->EditingInfo->SubtypeBuffer = subTypeBuffer;
+                    context->EditingInfo->Subtype = &context->EditingInfo->SubtypeBuffer;
+                    context->EditingInfo->Action = action;
 
                     EndDialog(WindowHandle, IDOK);
 

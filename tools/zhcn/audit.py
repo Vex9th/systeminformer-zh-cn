@@ -509,6 +509,108 @@ def scan_combo_box_string_arrays(text: str, scan_text: str, rel: str, entries):
                     })
 
 
+def split_c_initializer_fields(initializer: str):
+    """Split one flat C initializer using the balanced call parser."""
+    wrapped = f"AuditInitializer({initializer})"
+    call = next(find_calls(wrapped, {"AuditInitializer"}), None)
+    return call[1] if call else []
+
+
+def scan_combo_box_struct_arrays(text: str, scan_text: str, rel: str, entries):
+    """Resolve string fields from struct arrays passed to ComboBox_AddString."""
+    scopes = c_brace_scopes(scan_text)
+
+    for _, args, _, call_start in find_calls(scan_text, {"ComboBox_AddString"}):
+        if len(args) < 2:
+            continue
+
+        member_match = re.fullmatch(
+            r"\s*(?:\(\s*[^()]+\s*\)\s*)*"
+            r"([A-Za-z_][A-Za-z0-9_]*)\s*\[[^\]]+\]\s*\.\s*"
+            r"([A-Za-z_][A-Za-z0-9_]*)\s*",
+            args[1],
+        )
+        if not member_match:
+            continue
+
+        array_name, member_name = member_match.groups()
+        declaration_re = re.compile(
+            rf"\b(?:(?:static|extern|CONST|const|volatile)\s+)*"
+            rf"(?P<type>[A-Za-z_][A-Za-z0-9_]*)\s+"
+            rf"{re.escape(array_name)}\s*\[[^\]]*\]\s*=\s*"
+            rf"\{{(?P<body>.*?)\}}\s*;",
+            re.DOTALL,
+        )
+        declarations = list(declaration_re.finditer(scan_text))
+        declaration = visible_array_declaration(declarations, call_start, scopes)
+        if declaration is None:
+            continue
+
+        type_name = declaration.group("type")
+        type_re = re.compile(
+            rf"\btypedef\s+struct(?:\s+[A-Za-z_][A-Za-z0-9_]*)?\s*"
+            rf"\{{(?P<body>.*?)\}}\s*{re.escape(type_name)}\b[^;]*;",
+            re.DOTALL,
+        )
+        array_body = declaration.group("body")
+        array_body_offset = declaration.start("body")
+        member_index = None
+        type_match = type_re.search(scan_text)
+
+        if type_match is not None:
+            field_names = []
+            for field in type_match.group("body").split(";"):
+                field_match = re.search(
+                    r"([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*$",
+                    field.strip(),
+                )
+                if field_match:
+                    field_names.append(field_match.group(1))
+
+            if member_name in field_names:
+                member_index = field_names.index(member_name)
+
+        if member_index is not None:
+            for initializer_match in re.finditer(r"\{(?P<body>[^{}]*)\}", array_body):
+                fields = split_c_initializer_fields(initializer_match.group("body"))
+                if member_index >= len(fields):
+                    continue
+
+                for visible_text in literals_outside_ui_string_getters(fields[member_index]):
+                    if not is_noise(visible_text):
+                        entries.append({
+                            "category": "c_combobox",
+                            "file": rel,
+                            "line": line_of_offset(
+                                text,
+                                array_body_offset + initializer_match.start("body"),
+                            ),
+                            "english": visible_text,
+                        })
+
+        sip_field_indexes = {"Key": 0, "Value": 1}
+        sip_member_index = sip_field_indexes.get(member_name)
+
+        if sip_member_index is not None:
+            for _, sip_args, sip_spans, _ in find_calls(array_body, {"SIP"}):
+                if sip_member_index >= len(sip_args):
+                    continue
+
+                for visible_text in literals_outside_ui_string_getters(
+                    sip_args[sip_member_index]
+                ):
+                    if not is_noise(visible_text):
+                        entries.append({
+                            "category": "c_combobox",
+                            "file": rel,
+                            "line": line_of_offset(
+                                text,
+                                array_body_offset + sip_spans[sip_member_index][0],
+                            ),
+                            "english": visible_text,
+                        })
+
+
 def scan_c_file(path: str, entries):
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     try:
@@ -520,6 +622,7 @@ def scan_c_file(path: str, entries):
     scan_text = mask_c_comments(text)
 
     scan_combo_box_string_arrays(text, scan_text, rel, entries)
+    scan_combo_box_struct_arrays(text, scan_text, rel, entries)
 
     for name, args, spans, call_start in find_calls(scan_text, set(CALL_SPECS) | set(ANY_LITERAL_SPECS)):
         if name in CALL_SPECS:
