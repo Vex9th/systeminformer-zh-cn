@@ -305,7 +305,11 @@ INT_PTR CALLBACK PhpJobPageProc(
                 if (jobObjectName && jobObjectName->Length == 0)
                     jobObjectName = NULL;
 
-                PhSetDialogItemText(hwndDlg, IDC_NAME, PhGetStringOrDefault(jobObjectName, L"(unnamed job)"));
+                PhSetDialogItemText(
+                    hwndDlg,
+                    IDC_NAME,
+                    PhGetStringOrDefault(jobObjectName, PhGetApplicationUiString(IDS_PH_UNNAMED_JOB))
+                    );
 
                 // Processes
                 PhpAddJobProcesses(hwndDlg, jobHandle);

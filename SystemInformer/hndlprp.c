@@ -2475,7 +2475,7 @@ VOID PhUpdateHandlePermissionsOwnerSecurity(
             }
             else
             {
-                PhSetListViewSubItem(Context->ListViewHeader, 0, 1, L"NULL");
+                PhSetListViewSubItem(Context->ListViewHeader, 0, 1, PhGetApplicationUiString(IDS_PH_NULL_VALUE));
             }
         }
         else
@@ -2570,7 +2570,7 @@ VOID PhUpdateHandlePermissionsGroupSecurity(
             }
             else
             {
-                PhSetListViewSubItem(Context->ListViewHeader, 1, 1, L"NULL");
+                PhSetListViewSubItem(Context->ListViewHeader, 1, 1, PhGetApplicationUiString(IDS_PH_NULL_VALUE));
             }
         }
         else

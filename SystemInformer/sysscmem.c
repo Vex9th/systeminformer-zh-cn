@@ -1010,17 +1010,25 @@ VOID PhSipUpdateMemoryPanel(
             if (PhFindStringSiKeyValuePairs(MemoryFormFactors, sizeof(MemoryFormFactors), MemoryFormFactor, &string))
                 PhSetDialogItemText(MemoryPanel, IDC_ZMEMFORMFACTOR_V, string);
             else
-                PhSetDialogItemText(MemoryPanel, IDC_ZMEMFORMFACTOR_V, L"Undefined");
+                PhSetDialogItemText(
+                    MemoryPanel,
+                    IDC_ZMEMFORMFACTOR_V,
+                    PhGetApplicationUiString(IDS_PH_STATUS_UNDEFINED)
+                    );
 
             if (PhFindStringSiKeyValuePairs(MemoryTypes, sizeof(MemoryTypes), MemoryType, &string))
                 PhSetDialogItemText(MemoryPanel, IDC_ZMEMTYPE_V, string);
             else
-                PhSetDialogItemText(MemoryPanel, IDC_ZMEMTYPE_V, L"Undefined");
+                PhSetDialogItemText(MemoryPanel, IDC_ZMEMTYPE_V, PhGetApplicationUiString(IDS_PH_STATUS_UNDEFINED));
 
             if (PhFindStringSiKeyValuePairs(MemoryTechnologies, sizeof(MemoryTechnologies), MemoryTechnology, &string))
                 PhSetDialogItemText(MemoryPanel, IDC_ZMEMTECHNOLOGY_V, string);
             else
-                PhSetDialogItemText(MemoryPanel, IDC_ZMEMTECHNOLOGY_V, L"Undefined");
+                PhSetDialogItemText(
+                    MemoryPanel,
+                    IDC_ZMEMTECHNOLOGY_V,
+                    PhGetApplicationUiString(IDS_PH_STATUS_UNDEFINED)
+                    );
 
             PhInitFormatU(&format[0], MemorySpeed);
             PhInitFormatS(&format[1], L" MT/s");
@@ -1100,7 +1108,9 @@ VOID PhSipUpdateMemoryPanel(
         if (paged != MAXSIZE_T)
             pagedLimit = PhaFormatSize(paged, ULONG_MAX)->Buffer;
         else
-            pagedLimit = KsiLevel() ? L"no symbols" : L"no driver";
+            pagedLimit = KsiLevel() ?
+                PhGetApplicationUiString(IDS_PH_STATUS_NO_SYMBOLS) :
+                PhGetApplicationUiString(IDS_PH_STATUS_NO_DRIVER);
 
         if (nonPaged != MAXSIZE_T)
             nonPagedLimit = PhaFormatSize(nonPaged, ULONG_MAX)->Buffer;
@@ -1111,12 +1121,12 @@ VOID PhSipUpdateMemoryPanel(
     {
         if (KsiLevel())
         {
-            pagedLimit = L"no symbols";
+            pagedLimit = PhGetApplicationUiString(IDS_PH_STATUS_NO_SYMBOLS);
             nonPagedLimit = L"N/A";
         }
         else
         {
-            pagedLimit = L"no driver";
+            pagedLimit = PhGetApplicationUiString(IDS_PH_STATUS_NO_DRIVER);
             nonPagedLimit = L"N/A";
         }
     }

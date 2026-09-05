@@ -817,7 +817,12 @@ static NTSTATUS NTAPI PhpTokenGroupResolveWorker(
             }
         }
 
-        PhSetListViewSubItem(context->ListViewHandle, ItemIndex, PH_PROCESS_TOKEN_INDEX_NAME, PhGetStringOrDefault(sidString, L"[Unknown SID]"));
+        PhSetListViewSubItem(
+            context->ListViewHandle,
+            ItemIndex,
+            PH_PROCESS_TOKEN_INDEX_NAME,
+            PhGetStringOrDefault(sidString, PhGetApplicationUiString(IDS_PH_UNKNOWN_SID))
+            );
         PhSetListViewSubItem(context->ListViewHandle, ItemIndex, PH_PROCESS_TOKEN_INDEX_TYPE, PhGetSidAccountTypeString(context->TokenGroupSid));
 
         PhClearReference(&sidString);
@@ -1081,7 +1086,14 @@ VOID PhpUpdateTokenDangerousFlagItem(
     // Name
     itemIndex = PhAddListViewGroupItem(ListViewHandle, lvitem->GroupId, MAXINT, Name, lvitem);
     // Status
-    PhSetListViewSubItem(ListViewHandle, itemIndex, PH_PROCESS_TOKEN_INDEX_STATUS, State ? L"Enabled (modified)" : L"Disabled (modified)");
+    PhSetListViewSubItem(
+        ListViewHandle,
+        itemIndex,
+        PH_PROCESS_TOKEN_INDEX_STATUS,
+        State ?
+            PhGetApplicationUiString(IDS_PH_STATUS_ENABLED_MODIFIED) :
+            PhGetApplicationUiString(IDS_PH_STATUS_DISABLED_MODIFIED)
+        );
     // Description
     PhSetListViewSubItem(ListViewHandle, itemIndex, PH_PROCESS_TOKEN_INDEX_DESCRIPTION, Description);
     // Value
@@ -1431,12 +1443,22 @@ INT_PTR CALLBACK PhpTokenPageProc(
                     {
                         if (NT_SUCCESS(PhGetTokenIsVirtualizationEnabled(tokenHandle, &isVirtualizationEnabled)))
                         {
-                            PhSetDialogItemText(hwndDlg, IDC_VIRTUALIZED, isVirtualizationEnabled ? L"Yes" : L"No");
+                            PhSetDialogItemText(
+                                hwndDlg,
+                                IDC_VIRTUALIZED,
+                                isVirtualizationEnabled ?
+                                    PhGetApplicationUiString(IDS_PH_STATUS_YES) :
+                                    PhGetApplicationUiString(IDS_PH_STATUS_NO)
+                                );
                         }
                     }
                     else
                     {
-                        PhSetDialogItemText(hwndDlg, IDC_VIRTUALIZED, L"Not allowed");
+                        PhSetDialogItemText(
+                            hwndDlg,
+                            IDC_VIRTUALIZED,
+                            PhGetApplicationUiString(IDS_PH_STATUS_NOT_ALLOWED)
+                            );
                     }
                 }
 
@@ -2574,18 +2596,22 @@ INT_PTR CALLBACK PhpTokenGeneralPageProc(
                     {
                         if (NT_SUCCESS(PhGetTokenIsVirtualizationEnabled(tokenHandle, &isVirtualizationEnabled)))
                         {
-                            tokenVirtualization = isVirtualizationEnabled ? L"Enabled" : L"Disabled";
+                            tokenVirtualization = isVirtualizationEnabled ?
+                                PhGetApplicationUiString(IDS_PH_STATUS_ENABLED) :
+                                PhGetApplicationUiString(IDS_PH_STATUS_DISABLED);
                         }
                     }
                     else
                     {
-                        tokenVirtualization = L"Not Allowed";
+                        tokenVirtualization = PhGetApplicationUiString(IDS_PH_STATUS_NOT_ALLOWED_TITLE);
                     }
                 }
 
                 if (NT_SUCCESS(PhGetTokenUIAccess(tokenHandle, &isUIAccessEnabled)))
                 {
-                    tokenUIAccess = isUIAccessEnabled ? L"Enabled" : L"Disabled";
+                    tokenUIAccess = isUIAccessEnabled ?
+                        PhGetApplicationUiString(IDS_PH_STATUS_ENABLED) :
+                        PhGetApplicationUiString(IDS_PH_STATUS_DISABLED);
                 }
 
                 tokenPageContext->CloseObject(tokenHandle, FALSE, tokenPageContext->Context);
@@ -4506,7 +4532,14 @@ INT_PTR CALLBACK PhpTokenContainerPageProc(
                     }
 
                     PhGetTokenIsLessPrivilegedAppContainer(tokenHandle, &isLessPrivilegedAppContainer);
-                    PhSetListViewSubItem(context->ListViewHandle, 4, 1, isLessPrivilegedAppContainer ? L"True" : L"False");
+                    PhSetListViewSubItem(
+                        context->ListViewHandle,
+                        4,
+                        1,
+                        isLessPrivilegedAppContainer ?
+                            PhGetApplicationUiString(IDS_PH_STATUS_TRUE) :
+                            PhGetApplicationUiString(IDS_PH_STATUS_FALSE)
+                        );
                 }
 
                 if (NT_SUCCESS(PhGetAppContainerNamedObjectPath(tokenHandle, NULL, FALSE, &tokenNamedObjectPathString)))

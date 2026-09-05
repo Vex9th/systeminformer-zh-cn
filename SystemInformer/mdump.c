@@ -582,8 +582,8 @@ INT_PTR CALLBACK PhpProcessMiniDumpDlgProc(
             PhSetApplicationWindowIcon(hwndDlg);
             PhCenterWindow(hwndDlg, context->ParentWindowHandle);
 
-            PhSetWindowText(hwndDlg, L"Creating the dump file...");
-            PhSetDialogItemText(hwndDlg, IDC_PROGRESSTEXT, L"Creating the dump file...");
+            PhSetWindowText(hwndDlg, PhGetApplicationUiString(IDS_PH_CREATING_DUMP_FILE));
+            PhSetDialogItemText(hwndDlg, IDC_PROGRESSTEXT, PhGetApplicationUiString(IDS_PH_CREATING_DUMP_FILE));
             PhSetWindowStyle(GetDlgItem(hwndDlg, IDC_PROGRESS), PBS_MARQUEE, PBS_MARQUEE);
             SendMessage(GetDlgItem(hwndDlg, IDC_PROGRESS), PBM_SETMARQUEE, TRUE, 75);
 
@@ -627,7 +627,7 @@ INT_PTR CALLBACK PhpProcessMiniDumpDlgProc(
                 {
                     // No status message update for 2 seconds.
 
-                    PhSetDialogItemText(hwndDlg, IDC_PROGRESSTEXT, L"Creating the dump file...");
+                    PhSetDialogItemText(hwndDlg, IDC_PROGRESSTEXT, PhGetApplicationUiString(IDS_PH_CREATING_DUMP_FILE));
 
                     context->LastTickCount = currentTickCount;
                 }

@@ -1533,12 +1533,18 @@ VOID PhpRefreshTaskManagerState(
     if (PhpIsDefaultTaskManager())
     {
         PhSetWindowText(GetDlgItem(WindowHandle, IDC_DEFSTATE), L"System Informer is the default Task Manager:");
-        PhSetWindowText(GetDlgItem(WindowHandle, IDC_REPLACETASKMANAGER), L"Restore default...");
+        PhSetWindowText(
+            GetDlgItem(WindowHandle, IDC_REPLACETASKMANAGER),
+            PhGetApplicationUiString(IDS_PH_RESTORE_DEFAULT)
+            );
     }
     else
     {
         PhSetWindowText(GetDlgItem(WindowHandle, IDC_DEFSTATE), L"System Informer is not the default Task Manager:");
-        PhSetWindowText(GetDlgItem(WindowHandle, IDC_REPLACETASKMANAGER), L"Make default...");
+        PhSetWindowText(
+            GetDlgItem(WindowHandle, IDC_REPLACETASKMANAGER),
+            PhGetApplicationUiString(IDS_PH_MAKE_DEFAULT)
+            );
     }
 }
 
@@ -2448,7 +2454,7 @@ static INT_PTR CALLBACK PhpOptionsAdvancedEditDlgProc(
 
             PhSetApplicationWindowIcon(hwndDlg);
 
-            PhSetWindowText(hwndDlg, L"Setting Editor");
+            PhSetWindowText(hwndDlg, PhGetApplicationUiString(IDS_PH_SETTING_EDITOR));
             PhCenterWindow(hwndDlg, GetParent(hwndDlg));
 
             PhSetWindowContext(hwndDlg, PH_WINDOW_CONTEXT_DEFAULT, editContext);
@@ -2487,7 +2493,7 @@ static INT_PTR CALLBACK PhpOptionsAdvancedEditDlgProc(
             }
             else
             {
-                PhSetDialogItemText(hwndDlg, IDC_DESCRIPTION, L"No schema description available.");
+                PhSetDialogItemText(hwndDlg, IDC_DESCRIPTION, PhGetApplicationUiString(IDS_PH_NO_SCHEMA_DESCRIPTION));
             }
 
             if (editContext->SettingSchema)

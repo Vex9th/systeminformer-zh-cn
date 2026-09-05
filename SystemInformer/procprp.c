@@ -1071,7 +1071,7 @@ BOOLEAN PhpInitializePropSheetLayoutStage1(
         if (buttonHandle) ShowWindow(buttonHandle, SW_HIDE);
 
         // Set the Cancel button's text to "Close".
-        PhSetDialogItemText(WindowHandle, IDCANCEL, L"Close");
+        PhSetDialogItemText(WindowHandle, IDCANCEL, PhGetApplicationUiString(IDS_PH_CLOSE));
 
         Context->TabPageItem = tabPageItem;
         Context->LayoutInitialized = TRUE;

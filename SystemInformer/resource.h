@@ -1303,8 +1303,36 @@
 #define IDS_PH_TRAY_NOTIFY_MODIFIED_SERVICES                2309
 #define IDS_PH_TRAY_NOTIFY_ARRIVED_DEVICES                  2310
 #define IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES                  2311
+#define IDS_PH_STATUS_TRUE                                  2312
+#define IDS_PH_STATUS_FALSE                                 2313
+#define IDS_PH_STATUS_ENABLED                               2314
+#define IDS_PH_STATUS_DISABLED                              2315
+#define IDS_PH_STATUS_ENABLED_MODIFIED                      2316
+#define IDS_PH_STATUS_DISABLED_MODIFIED                     2317
+#define IDS_PH_STATUS_YES                                   2318
+#define IDS_PH_STATUS_NO                                    2319
+#define IDS_PH_STATUS_NOT_ALLOWED                           2320
+#define IDS_PH_STATUS_NOT_CAPABLE                           2321
+#define IDS_PH_STATUS_VIRTUAL_MACHINE                       2322
+#define IDS_PH_STATUS_DISABLED_HYPERV                       2323
+#define IDS_PH_STATUS_UNDEFINED                             2324
+#define IDS_PH_STATUS_NO_DRIVER                             2325
+#define IDS_PH_STATUS_NO_SYMBOLS                            2326
+#define IDS_PH_CREATING_DUMP_FILE                           2327
+#define IDS_PH_RESOLVING_SYMBOLS                            2328
+#define IDS_PH_SETTING_EDITOR                               2329
+#define IDS_PH_FIND                                         2330
+#define IDS_PH_CANCEL                                       2331
+#define IDS_PH_CLOSE                                        2332
+#define IDS_PH_MAKE_DEFAULT                                 2333
+#define IDS_PH_RESTORE_DEFAULT                              2334
+#define IDS_PH_NO_SCHEMA_DESCRIPTION                        2335
+#define IDS_PH_NULL_VALUE                                   2336
+#define IDS_PH_UNKNOWN_SID                                  2337
+#define IDS_PH_UNNAMED_JOB                                  2338
+#define IDS_PH_STATUS_NOT_ALLOWED_TITLE                     2339
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_TRAY_NOTIFY_REMOVED_DEVICES
+#define IDS_PH_LAST                                  IDS_PH_STATUS_NOT_ALLOWED_TITLE
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1316,6 +1344,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2312
+#define _APS_NEXT_SYMED_VALUE           2340
 #endif
 #endif

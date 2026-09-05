@@ -172,8 +172,8 @@ static VOID PhpRefreshEventPageInfo(
         )))
     {
         EVENT_BASIC_INFORMATION basicInfo;
-        PWSTR eventType = L"Unknown";
-        PWSTR eventState = L"Unknown";
+        PCWSTR eventType = L"Unknown";
+        PCWSTR eventState = L"Unknown";
 
         if (NT_SUCCESS(PhGetEventBasicInformation(eventHandle, &basicInfo)))
         {
@@ -187,7 +187,9 @@ static VOID PhpRefreshEventPageInfo(
                 break;
             }
 
-            eventState = basicInfo.EventState > 0 ? L"True" : L"False";
+            eventState = basicInfo.EventState > 0 ?
+                PhGetApplicationUiString(IDS_PH_STATUS_TRUE) :
+                PhGetApplicationUiString(IDS_PH_STATUS_FALSE);
         }
 
         PhSetDialogItemText(hwndDlg, IDC_TYPE, eventType);
@@ -490,7 +492,13 @@ static VOID PhpRefreshTimerPageInfo(
 
         if (NT_SUCCESS(PhGetTimerBasicInformation(timerHandle, &basicInfo)))
         {
-            PhSetDialogItemText(hwndDlg, IDC_SIGNALED, basicInfo.TimerState ? L"True" : L"False");
+            PhSetDialogItemText(
+                hwndDlg,
+                IDC_SIGNALED,
+                basicInfo.TimerState ?
+                    PhGetApplicationUiString(IDS_PH_STATUS_TRUE) :
+                    PhGetApplicationUiString(IDS_PH_STATUS_FALSE)
+                );
         }
         else
         {

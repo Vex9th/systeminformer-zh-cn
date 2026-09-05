@@ -1399,7 +1399,7 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
                             break;
                         }
 
-                        PhSetDialogItemText(hwndDlg, IDOK, L"Cancel");
+                        PhSetDialogItemText(hwndDlg, IDOK, PhGetApplicationUiString(IDS_PH_CANCEL));
 
                         PhSetCursor(PhLoadCursor(NULL, IDC_APPSTARTING));
                     }
@@ -1752,7 +1752,7 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
             context->SearchThreadHandle = NULL;
             context->SearchStop = FALSE;
 
-            PhSetDialogItemText(hwndDlg, IDOK, L"Find");
+            PhSetDialogItemText(hwndDlg, IDOK, PhGetApplicationUiString(IDS_PH_FIND));
             EnableWindow(GetDlgItem(hwndDlg, IDOK), TRUE);
             PhSetCursor(PhLoadCursor(NULL, IDC_ARROW));
 
