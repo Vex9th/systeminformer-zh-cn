@@ -235,7 +235,7 @@ CI 明确传入 `sys_info.exe` 和 11 个插件 DLL，逐文件比较 en-US 与 
 - [ ] **步骤 4：校验 en-US/zh-CN 字符串表 ID 和格式占位符一致**
 - [ ] **步骤 5：让新增未迁移 UI 英文字面量在 CI 中失败**
 
-进行中（2026-09-05）：审计范围已覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。当前共 617 条 en-US/zh-CN `STRINGTABLE` 项：PE Viewer 128 条，安装器 74 条，主程序 244 条，ExtendedServices 15 条，ExtendedTools 25 条，ToolStatus 103 条，UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计 13 条；PE Viewer 的菜单、列表列名、选项和弹窗提示，以及主程序选项/启动/公共错误提示、内置插件名称与说明和插件管理器动态标签已迁移，并新增扫描式守卫防止英文提示回流。审计现已覆盖窗口文字、组合框（含数组批量添加）及列表分组/项目和包装入口，并修正消息宏参数位置、注释死代码、相邻字符串、格式化后续参数和未解析变量处理；没有运行时翻译 hook 的窗口文字、组合框和分组列表项按必须迁移调用点计数，当前报告 685 条未翻译项。旧字典仍在接管大量既有文字；任务 8 及后续兼容层移除、Windows 编译与真实界面验收仍未完成。
+进行中（2026-09-05）：审计范围已覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。当前共 644 条 en-US/zh-CN `STRINGTABLE` 项：PE Viewer 128 条，安装器 74 条，主程序 271 条，ExtendedServices 15 条，ExtendedTools 25 条，ToolStatus 103 条，UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计 13 条；PE Viewer 的菜单、列表列名、选项和弹窗提示，以及主程序选项/启动/公共错误提示、内置插件名称与说明、插件管理器动态标签、常用下拉选项和服务控制按钮已迁移，并新增扫描式守卫防止英文提示回流。审计现已覆盖窗口文字、组合框（含数组批量添加）及列表分组/项目和包装入口，并修正消息宏参数位置、注释死代码、相邻字符串、格式化后续参数和未解析变量处理；没有运行时翻译 hook 的窗口文字、组合框和分组列表项按必须迁移调用点计数，当前报告 661 条未翻译项。旧字典仍在接管大量既有文字；任务 8 及后续兼容层移除、Windows 编译与真实界面验收仍未完成。
 
 ---
 

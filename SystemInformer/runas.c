@@ -133,14 +133,35 @@ BOOLEAN PhSplitUserName(
     _Out_opt_ PPH_STRING* UserPart
     );
 
-static CONST PH_KEY_VALUE_PAIR PhpLogonTypePairs[] =
+typedef struct _PHP_LOGON_TYPE_ENTRY
 {
-    SIP(L"Batch", LOGON32_LOGON_BATCH),
-    SIP(L"Interactive", LOGON32_LOGON_INTERACTIVE),
-    SIP(L"Network", LOGON32_LOGON_NETWORK),
-    SIP(L"New credentials", LOGON32_LOGON_NEW_CREDENTIALS),
-    SIP(L"Service", LOGON32_LOGON_SERVICE)
+    ULONG ResourceId;
+    ULONG LogonType;
+} PHP_LOGON_TYPE_ENTRY, *PPHP_LOGON_TYPE_ENTRY;
+
+static CONST PHP_LOGON_TYPE_ENTRY PhpLogonTypes[] =
+{
+    { IDS_PH_LOGON_BATCH, LOGON32_LOGON_BATCH },
+    { IDS_PH_LOGON_INTERACTIVE, LOGON32_LOGON_INTERACTIVE },
+    { IDS_PH_LOGON_NETWORK, LOGON32_LOGON_NETWORK },
+    { IDS_PH_LOGON_NEW_CREDENTIALS, LOGON32_LOGON_NEW_CREDENTIALS },
+    { IDS_PH_LOGON_SERVICE, LOGON32_LOGON_SERVICE }
 };
+
+static VOID PhpSelectLogonType(
+    _In_ HWND ComboBoxHandle,
+    _In_ ULONG LogonType
+    )
+{
+    for (INT i = 0; i < ComboBox_GetCount(ComboBoxHandle); i++)
+    {
+        if ((ULONG)ComboBox_GetItemData(ComboBoxHandle, i) == LogonType)
+        {
+            ComboBox_SetCurSel(ComboBoxHandle, i);
+            break;
+        }
+    }
+}
 
 static WCHAR RunAsOldServiceName[32] = L"";
 static PH_QUEUED_LOCK RunAsOldServiceLock = PH_QUEUED_LOCK_INIT;
@@ -1209,13 +1230,12 @@ VOID PhRunAsExecuteCommmand(
     PPH_STRING program = NULL;
     PPH_STRING username = NULL;
     PPH_STRING password = NULL;
-    PPH_STRING logonTypeString;
     PPH_STRING desktopName = NULL;
     INT selectionIndex = CB_ERR;
+    LRESULT selectedLogonType;
 
     program = PH_AUTO(PhGetWindowText(Context->ProgramComboBoxWindowHandle));
     username = PH_AUTO(PhGetWindowText(Context->UserComboBoxWindowHandle));
-    logonTypeString = PH_AUTO(PhGetWindowText(Context->TypeComboBoxWindowHandle));
     useLinkedToken = Button_GetCheck(GetDlgItem(Context->WindowHandle, IDC_TOGGLEELEVATION)) == BST_CHECKED;
     createSuspended = Button_GetCheck(GetDlgItem(Context->WindowHandle, IDC_TOGGLESUSPENDED)) == BST_CHECKED;
     createUIAccess = Button_GetCheck(GetDlgItem(Context->WindowHandle, IDC_TOGGLEUIACCESS)) == BST_CHECKED;
@@ -1223,6 +1243,17 @@ VOID PhRunAsExecuteCommmand(
 
     if (PhIsNullOrEmptyString(program))
         return;
+
+    selectionIndex = ComboBox_GetCurSel(Context->TypeComboBoxWindowHandle);
+
+    if (selectionIndex == CB_ERR ||
+        (selectedLogonType = ComboBox_GetItemData(Context->TypeComboBoxWindowHandle, selectionIndex)) == CB_ERR)
+    {
+        PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_START_PROGRAM), STATUS_INVALID_PARAMETER, 0);
+        return;
+    }
+
+    logonType = (ULONG)selectedLogonType;
 
     if ((selectionIndex = ComboBox_GetCurSel(Context->SessionEditWindowHandle)) != CB_ERR)
     {
@@ -1293,17 +1324,6 @@ VOID PhRunAsExecuteCommmand(
 
             PhFree(userSid);
         }
-    }
-
-    if (!PhFindIntegerSiKeyValuePairs(
-        PhpLogonTypePairs,
-        sizeof(PhpLogonTypePairs),
-        logonTypeString->Buffer,
-        &logonType
-        ))
-    {
-        PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_START_PROGRAM), STATUS_INVALID_PARAMETER, 0);
-        return;
     }
 
     if (!IsServiceAccount(username))
@@ -1523,12 +1543,29 @@ INT_PTR CALLBACK PhpRunAsDlgProc(
                 }
             }
 
-            ComboBox_AddString(context->TypeComboBoxWindowHandle, L"Batch");
-            ComboBox_AddString(context->TypeComboBoxWindowHandle, L"Interactive");
-            ComboBox_AddString(context->TypeComboBoxWindowHandle, L"Network");
-            ComboBox_AddString(context->TypeComboBoxWindowHandle, L"New credentials");
-            ComboBox_AddString(context->TypeComboBoxWindowHandle, L"Service");
-            PhSelectComboBoxString(context->TypeComboBoxWindowHandle, L"Interactive", FALSE);
+            for (ULONG i = 0; i < ARRAYSIZE(PhpLogonTypes); i++)
+            {
+                INT itemIndex;
+
+                itemIndex = ComboBox_AddString(
+                    context->TypeComboBoxWindowHandle,
+                    PhGetApplicationUiString(PhpLogonTypes[i].ResourceId)
+                    );
+
+                if (itemIndex >= 0)
+                {
+                    if (ComboBox_SetItemData(
+                        context->TypeComboBoxWindowHandle,
+                        itemIndex,
+                        UlongToPtr(PhpLogonTypes[i].LogonType)
+                        ) == CB_ERR)
+                    {
+                        ComboBox_DeleteString(context->TypeComboBoxWindowHandle, itemIndex);
+                    }
+                }
+            }
+
+            PhpSelectLogonType(context->TypeComboBoxWindowHandle, LOGON32_LOGON_INTERACTIVE);
 
             PhpAddProgramsToComboBox(context->ProgramComboBoxWindowHandle);
             PhpAddAccountsToComboBox(context->UserComboBoxWindowHandle);
@@ -1642,12 +1679,12 @@ INT_PTR CALLBACK PhpRunAsDlgProc(
                         if (IsServiceAccount(username))
                         {
                             EnableWindow(context->PasswordEditWindowHandle, FALSE);
-                            PhSelectComboBoxString(context->TypeComboBoxWindowHandle, L"Service", FALSE);
+                            PhpSelectLogonType(context->TypeComboBoxWindowHandle, LOGON32_LOGON_SERVICE);
                         }
                         else
                         {
                             EnableWindow(context->PasswordEditWindowHandle, TRUE);
-                            PhSelectComboBoxString(context->TypeComboBoxWindowHandle, L"Interactive", FALSE);
+                            PhpSelectLogonType(context->TypeComboBoxWindowHandle, LOGON32_LOGON_INTERACTIVE);
                         }
                     }
                 }

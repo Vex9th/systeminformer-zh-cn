@@ -87,6 +87,22 @@ static PPH_LIST ProcessesList = NULL;
 static ULONG NumberOfZombieProcesses;
 static ULONG NumberOfTerminatedProcesses;
 
+typedef struct _PHP_ZOMBIE_PROCESS_METHOD_ENTRY
+{
+    ULONG ResourceId;
+    PH_ZOMBIE_PROCESS_METHOD Method;
+} PHP_ZOMBIE_PROCESS_METHOD_ENTRY, *PPHP_ZOMBIE_PROCESS_METHOD_ENTRY;
+
+static CONST PHP_ZOMBIE_PROCESS_METHOD_ENTRY PhpZombieProcessMethods[] =
+{
+    { IDS_PH_HIDDEN_PROCESS_BRUTE_FORCE, BruteForceScanMethod },
+    { IDS_PH_HIDDEN_PROCESS_CSR_HANDLES, CsrHandlesScanMethod },
+    { IDS_PH_HIDDEN_PROCESS_ETW_HANDLES, EtwGuidScanMethod },
+    { IDS_PH_HIDDEN_PROCESS_PROCESS_HANDLES, ProcessHandleScanMethod },
+    { IDS_PH_HIDDEN_PROCESS_REGISTRY_HANDLES, RegistryScanMethod },
+    { IDS_PH_HIDDEN_PROCESS_NTDLL_HANDLES, NtdllScanMethod }
+};
+
 VOID PhShowZombieProcessesDialog(
     VOID
     )
@@ -203,13 +219,33 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
             ExtendedListView_AddFallbackColumn(lvHandle, 2);
             ExtendedListView_SetItemColorFunction(lvHandle, PhpZombieProcessesColorFunction);
 
-            ComboBox_AddString(methodHandle, L"Brute force");
-            ComboBox_AddString(methodHandle, L"CSR handles");
-            ComboBox_AddString(methodHandle, L"ETW handles");
-            ComboBox_AddString(methodHandle, L"Process handles");
-            ComboBox_AddString(methodHandle, L"Registry handles");
-            ComboBox_AddString(methodHandle, L"Ntdll handles");
-            PhSelectComboBoxString(methodHandle, L"Process handles", FALSE);
+            for (ULONG i = 0; i < ARRAYSIZE(PhpZombieProcessMethods); i++)
+            {
+                INT itemIndex;
+
+                itemIndex = ComboBox_AddString(
+                    methodHandle,
+                    PhGetApplicationUiString(PhpZombieProcessMethods[i].ResourceId)
+                    );
+
+                if (itemIndex >= 0)
+                {
+                    if (ComboBox_SetItemData(
+                        methodHandle,
+                        itemIndex,
+                        UlongToPtr(PhpZombieProcessMethods[i].Method)
+                        ) == CB_ERR)
+                    {
+                        ComboBox_DeleteString(methodHandle, itemIndex);
+                        continue;
+                    }
+
+                    if (PhpZombieProcessMethods[i].Method == ProcessHandleScanMethod)
+                        ComboBox_SetCurSel(methodHandle, itemIndex);
+                }
+            }
+
+            ProcessesMethod = ProcessHandleScanMethod;
 
             MinimumSize.left = 0;
             MinimumSize.top = 0;
@@ -249,26 +285,26 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
                 break;
             case IDC_SCAN:
                 {
-                    PPH_STRING method;
+                    HWND methodHandle;
+                    INT selectedIndex;
+                    LRESULT selectedMethod;
 
-                    method = PH_AUTO(PhGetWindowText(GetDlgItem(hwndDlg, IDC_METHOD)));
+                    methodHandle = GetDlgItem(hwndDlg, IDC_METHOD);
+                    selectedIndex = ComboBox_GetCurSel(methodHandle);
+
+                    if (selectedIndex == CB_ERR)
+                        break;
+
+                    selectedMethod = ComboBox_GetItemData(methodHandle, selectedIndex);
+
+                    if (selectedMethod == CB_ERR)
+                        break;
+
+                    ProcessesMethod = (PH_ZOMBIE_PROCESS_METHOD)selectedMethod;
 
                     PhZombieProcessesCleanupList(NULL);
 
                     ProcessesList = PhCreateList(40);
-
-                    if (PhEqualString2(method, L"Brute force", TRUE))
-                        ProcessesMethod = BruteForceScanMethod;
-                    else if (PhEqualString2(method, L"CSR handles", TRUE))
-                        ProcessesMethod = CsrHandlesScanMethod;
-                    else if (PhEqualString2(method, L"Process handles", TRUE))
-                        ProcessesMethod = ProcessHandleScanMethod;
-                    else if (PhEqualString2(method, L"Registry handles", TRUE))
-                        ProcessesMethod = RegistryScanMethod;
-                    else if (PhEqualString2(method, L"ETW handles", TRUE))
-                        ProcessesMethod = EtwGuidScanMethod;
-                    else if (PhEqualString2(method, L"Ntdll handles", TRUE))
-                        ProcessesMethod = NtdllScanMethod;
 
                     NumberOfZombieProcesses = 0;
                     NumberOfTerminatedProcesses = 0;

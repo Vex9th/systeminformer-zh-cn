@@ -300,7 +300,10 @@ INT_PTR CALLBACK PhpProcessAffinityDlgProc(
 
                 for (USHORT processorGroup = 0; processorGroup < PhSystemProcessorInformation.NumberOfProcessorGroups; processorGroup++)
                 {
-                    ComboBox_AddString(context->GroupComboHandle, PhaFormatString(L"Group %hu", processorGroup)->Buffer);
+                    ComboBox_AddString(context->GroupComboHandle, PhaFormatString(
+                        PhGetApplicationUiString(IDS_PH_PROCESSOR_GROUP_FORMAT),
+                        (unsigned int)processorGroup
+                        )->Buffer);
                 }
 
                 ShowWindow(context->GroupComboHandle, SW_SHOW);

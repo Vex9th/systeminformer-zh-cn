@@ -4471,10 +4471,10 @@ INT_PTR CALLBACK PhpOptionsThemesDlgProc(
             SetDlgItemCheckForSetting(hwndDlg, IDC_ENABLETHEME, SETTING_ENABLE_THEME_SUPPORT);
 
             comboHandle = GetDlgItem(hwndDlg, IDC_THEMEMODE);
-            ComboBox_AddString(comboHandle, L"Automatic");
-            ComboBox_AddString(comboHandle, L"Light");
-            ComboBox_AddString(comboHandle, L"Dark");
-            ComboBox_AddString(comboHandle, L"Custom");
+            ComboBox_AddString(comboHandle, PhGetApplicationUiString(IDS_PH_THEME_AUTOMATIC));
+            ComboBox_AddString(comboHandle, PhGetApplicationUiString(IDS_PH_THEME_LIGHT));
+            ComboBox_AddString(comboHandle, PhGetApplicationUiString(IDS_PH_THEME_DARK));
+            ComboBox_AddString(comboHandle, PhGetApplicationUiString(IDS_PH_THEME_CUSTOM));
             ComboBox_SetCurSel(comboHandle, PhGetIntegerSetting(SETTING_THEME_MODE));
             EnableWindow(comboHandle, PhGetIntegerSetting(SETTING_ENABLE_THEME_SUPPORT) != 0);
         }

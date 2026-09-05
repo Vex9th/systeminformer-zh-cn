@@ -653,7 +653,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("617 strings", result.stdout)
+        self.assertIn("644 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1003,7 +1003,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 244)
+        self.assertEqual(len(stringtable_ids(resource_script)), 271)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -1042,7 +1042,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2244)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2271)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1178,6 +1178,197 @@ class NativeResourceGenerationTests(unittest.TestCase):
         for resource_id, route_pattern in manager_routes.items():
             with self.subTest(plugin_manager_route=resource_id):
                 self.assertRegex(plugman, route_pattern)
+
+    def test_main_combo_and_service_labels_use_native_resources(self) -> None:
+        source_paths = (
+            "options.c",
+            "runas.c",
+            "hidnproc.c",
+            "sessmsg.c",
+            "findobj.c",
+            "affinity.c",
+            "memedit.c",
+            "srvctl.c",
+        )
+        source = "\n".join(
+            (REPO_ROOT / "SystemInformer" / path).read_text(encoding="utf-8-sig")
+            for path in source_paths
+        )
+        resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
+        resource_texts = dict(re.findall(
+            r'^\s*(IDS_PH_[A-Z0-9_]+)\s+"([^"]*)"',
+            resource_script,
+            re.MULTILINE,
+        ))
+        expected_routes = {
+            "IDS_PH_THEME_AUTOMATIC": ("Automatic", 1),
+            "IDS_PH_THEME_LIGHT": ("Light", 1),
+            "IDS_PH_THEME_DARK": ("Dark", 1),
+            "IDS_PH_THEME_CUSTOM": ("Custom", 1),
+            "IDS_PH_LOGON_BATCH": ("Batch", 1),
+            "IDS_PH_LOGON_INTERACTIVE": ("Interactive", 1),
+            "IDS_PH_LOGON_NETWORK": ("Network", 1),
+            "IDS_PH_LOGON_NEW_CREDENTIALS": ("New credentials", 1),
+            "IDS_PH_LOGON_SERVICE": ("Service", 1),
+            "IDS_PH_HIDDEN_PROCESS_BRUTE_FORCE": ("Brute force", 1),
+            "IDS_PH_HIDDEN_PROCESS_CSR_HANDLES": ("CSR handles", 1),
+            "IDS_PH_HIDDEN_PROCESS_ETW_HANDLES": ("ETW handles", 1),
+            "IDS_PH_HIDDEN_PROCESS_PROCESS_HANDLES": ("Process handles", 1),
+            "IDS_PH_HIDDEN_PROCESS_REGISTRY_HANDLES": ("Registry handles", 1),
+            "IDS_PH_HIDDEN_PROCESS_NTDLL_HANDLES": ("Ntdll handles", 1),
+            "IDS_PH_FIND_EVERYTHING": ("Everything", 1),
+            "IDS_PH_PROCESSOR_GROUP_FORMAT": ("Group %hu", 1),
+            "IDS_PH_MESSAGE_ICON_NONE": ("None", 1),
+            "IDS_PH_MESSAGE_ICON_INFORMATION": ("Information", 1),
+            "IDS_PH_MESSAGE_ICON_WARNING": ("Warning", 1),
+            "IDS_PH_MESSAGE_ICON_ERROR": ("Error", 1),
+            "IDS_PH_MESSAGE_ICON_QUESTION": ("Question", 1),
+            "IDS_PH_BYTES_PER_ROW_FORMAT": ("%u bytes per row", 2),
+            "IDS_PH_SERVICE_STOP": ("S&top", 2),
+            "IDS_PH_SERVICE_PAUSE": ("&Pause", 4),
+            "IDS_PH_SERVICE_CONTINUE": ("C&ontinue", 1),
+            "IDS_PH_SERVICE_START": ("&Start", 3),
+        }
+        item_data_resource_ids = {
+            resource_id
+            for resource_id in expected_routes
+            if resource_id.startswith((
+                "IDS_PH_LOGON_",
+                "IDS_PH_HIDDEN_PROCESS_",
+                "IDS_PH_MESSAGE_ICON_",
+            ))
+        }
+
+        for resource_id, (english_text, expected_count) in expected_routes.items():
+            with self.subTest(main_native_label=resource_id):
+                self.assertEqual(resource_texts.get(resource_id), english_text)
+                if resource_id in item_data_resource_ids:
+                    self.assertEqual(source.count(resource_id), 1)
+                else:
+                    self.assertEqual(
+                        source.count(
+                            f"PhGetApplicationUiString({resource_id})"
+                        ),
+                        expected_count,
+                    )
+
+        for english_text, _ in expected_routes.values():
+            with self.subTest(unrouted_main_native_label=english_text):
+                self.assertNotRegex(
+                    source,
+                    rf'(?:ComboBox_AddString|PhSetWindowText|PhaFormatString)'
+                    rf'\s*\([^;]*L"{re.escape(english_text)}"',
+                )
+
+        hidnproc = (REPO_ROOT / "SystemInformer" / "hidnproc.c").read_text(
+            encoding="utf-8-sig"
+        )
+        runas = (REPO_ROOT / "SystemInformer" / "runas.c").read_text(
+            encoding="utf-8-sig"
+        )
+        sessmsg = (REPO_ROOT / "SystemInformer" / "sessmsg.c").read_text(
+            encoding="utf-8-sig"
+        )
+
+        self.assertNotIn("PhSelectComboBoxString(methodHandle", hidnproc)
+        self.assertNotIn("PhEqualString2(method", hidnproc)
+        self.assertNotIn("PhGetWindowText(GetDlgItem(hwndDlg, IDC_METHOD))", hidnproc)
+        self.assertRegex(hidnproc, r"ComboBox_SetItemData\(\s*methodHandle")
+        self.assertRegex(hidnproc, r"ComboBox_GetItemData\(\s*methodHandle")
+        self.assertRegex(
+            hidnproc,
+            r"PhGetApplicationUiString\(PhpZombieProcessMethods\[i\]\.ResourceId\)",
+        )
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_PH_HIDDEN_PROCESS_[A-Z0-9_]+), ([A-Za-z0-9_]+) \}",
+                hidnproc,
+            ),
+            [
+                ("IDS_PH_HIDDEN_PROCESS_BRUTE_FORCE", "BruteForceScanMethod"),
+                ("IDS_PH_HIDDEN_PROCESS_CSR_HANDLES", "CsrHandlesScanMethod"),
+                ("IDS_PH_HIDDEN_PROCESS_ETW_HANDLES", "EtwGuidScanMethod"),
+                ("IDS_PH_HIDDEN_PROCESS_PROCESS_HANDLES", "ProcessHandleScanMethod"),
+                ("IDS_PH_HIDDEN_PROCESS_REGISTRY_HANDLES", "RegistryScanMethod"),
+                ("IDS_PH_HIDDEN_PROCESS_NTDLL_HANDLES", "NtdllScanMethod"),
+            ],
+        )
+        self.assertIn("ComboBox_DeleteString(methodHandle", hidnproc)
+        self.assertRegex(
+            hidnproc,
+            r"selectedIndex = ComboBox_GetCurSel\(methodHandle\);\s*"
+            r"if \(selectedIndex == CB_ERR\)\s*break;\s*"
+            r"selectedMethod = ComboBox_GetItemData\(methodHandle, selectedIndex\);\s*"
+            r"if \(selectedMethod == CB_ERR\)\s*break;",
+        )
+
+        self.assertNotIn("PhpLogonTypePairs", runas)
+        self.assertNotIn(
+            "PhGetWindowText(Context->TypeComboBoxWindowHandle)",
+            runas,
+        )
+        self.assertRegex(
+            runas,
+            r"ComboBox_SetItemData\(\s*context->TypeComboBoxWindowHandle",
+        )
+        self.assertRegex(
+            runas,
+            r"ComboBox_GetItemData\(Context->TypeComboBoxWindowHandle",
+        )
+        self.assertRegex(
+            runas,
+            r"PhGetApplicationUiString\(PhpLogonTypes\[i\]\.ResourceId\)",
+        )
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_PH_LOGON_[A-Z0-9_]+), (LOGON32_LOGON_[A-Z0-9_]+) \}",
+                runas,
+            ),
+            [
+                ("IDS_PH_LOGON_BATCH", "LOGON32_LOGON_BATCH"),
+                ("IDS_PH_LOGON_INTERACTIVE", "LOGON32_LOGON_INTERACTIVE"),
+                ("IDS_PH_LOGON_NETWORK", "LOGON32_LOGON_NETWORK"),
+                (
+                    "IDS_PH_LOGON_NEW_CREDENTIALS",
+                    "LOGON32_LOGON_NEW_CREDENTIALS",
+                ),
+                ("IDS_PH_LOGON_SERVICE", "LOGON32_LOGON_SERVICE"),
+            ],
+        )
+        self.assertIn(
+            "ComboBox_DeleteString(context->TypeComboBoxWindowHandle",
+            runas,
+        )
+
+        self.assertNotIn("PhpMessageBoxIconPairs", sessmsg)
+        self.assertNotIn("PhaGetDlgItemText(hwndDlg, IDC_TYPE)", sessmsg)
+        self.assertRegex(sessmsg, r"ComboBox_SetItemData\(\s*iconComboBox")
+        self.assertRegex(sessmsg, r"ComboBox_GetItemData\(iconComboBox")
+        self.assertRegex(
+            sessmsg,
+            r"PhGetApplicationUiString\(PhpMessageIcons\[i\]\.ResourceId\)",
+        )
+        self.assertEqual(
+            re.findall(
+                r"\{ (IDS_PH_MESSAGE_ICON_[A-Z0-9_]+), (MB_[A-Z0-9_]+) \}",
+                sessmsg,
+            ),
+            [
+                ("IDS_PH_MESSAGE_ICON_NONE", "MB_OK"),
+                ("IDS_PH_MESSAGE_ICON_INFORMATION", "MB_ICONINFORMATION"),
+                ("IDS_PH_MESSAGE_ICON_WARNING", "MB_ICONWARNING"),
+                ("IDS_PH_MESSAGE_ICON_ERROR", "MB_ICONERROR"),
+                ("IDS_PH_MESSAGE_ICON_QUESTION", "MB_ICONQUESTION"),
+            ],
+        )
+        self.assertIn("ComboBox_DeleteString(iconComboBox", sessmsg)
+        self.assertRegex(
+            sessmsg,
+            r"selectedIndex = ComboBox_GetCurSel\(iconComboBox\);\s*"
+            r"if \(selectedIndex == CB_ERR\)\s*break;\s*"
+            r"selectedIcon = ComboBox_GetItemData\(iconComboBox, selectedIndex\);\s*"
+            r"if \(selectedIcon == CB_ERR\)\s*break;",
+        )
 
     def test_main_window_creation_errors_share_native_resource(self) -> None:
         source = "\n".join(
@@ -2635,7 +2826,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 244): 2,
+                    (r"bin\Release64\sys_info.exe", 271): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,

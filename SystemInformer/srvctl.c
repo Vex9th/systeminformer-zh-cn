@@ -139,24 +139,24 @@ VOID PhpFixProcessServicesControls(
         {
         case SERVICE_RUNNING:
             {
-                PhSetWindowText(startButton, L"S&top");
-                PhSetWindowText(pauseButton, L"&Pause");
+                PhSetWindowText(startButton, PhGetApplicationUiString(IDS_PH_SERVICE_STOP));
+                PhSetWindowText(pauseButton, PhGetApplicationUiString(IDS_PH_SERVICE_PAUSE));
                 EnableWindow(startButton, ServiceItem->ControlsAccepted & SERVICE_ACCEPT_STOP);
                 EnableWindow(pauseButton, ServiceItem->ControlsAccepted & SERVICE_ACCEPT_PAUSE_CONTINUE);
             }
             break;
         case SERVICE_PAUSED:
             {
-                PhSetWindowText(startButton, L"S&top");
-                PhSetWindowText(pauseButton, L"C&ontinue");
+                PhSetWindowText(startButton, PhGetApplicationUiString(IDS_PH_SERVICE_STOP));
+                PhSetWindowText(pauseButton, PhGetApplicationUiString(IDS_PH_SERVICE_CONTINUE));
                 EnableWindow(startButton, ServiceItem->ControlsAccepted & SERVICE_ACCEPT_STOP);
                 EnableWindow(pauseButton, ServiceItem->ControlsAccepted & SERVICE_ACCEPT_PAUSE_CONTINUE);
             }
             break;
         case SERVICE_STOPPED:
             {
-                PhSetWindowText(startButton, L"&Start");
-                PhSetWindowText(pauseButton, L"&Pause");
+                PhSetWindowText(startButton, PhGetApplicationUiString(IDS_PH_SERVICE_START));
+                PhSetWindowText(pauseButton, PhGetApplicationUiString(IDS_PH_SERVICE_PAUSE));
                 EnableWindow(startButton, TRUE);
                 EnableWindow(pauseButton, FALSE);
             }
@@ -166,8 +166,8 @@ VOID PhpFixProcessServicesControls(
         case SERVICE_PAUSE_PENDING:
         case SERVICE_STOP_PENDING:
             {
-                PhSetWindowText(startButton, L"&Start");
-                PhSetWindowText(pauseButton, L"&Pause");
+                PhSetWindowText(startButton, PhGetApplicationUiString(IDS_PH_SERVICE_START));
+                PhSetWindowText(pauseButton, PhGetApplicationUiString(IDS_PH_SERVICE_PAUSE));
                 EnableWindow(startButton, FALSE);
                 EnableWindow(pauseButton, FALSE);
             }
@@ -187,8 +187,8 @@ VOID PhpFixProcessServicesControls(
     }
     else
     {
-        PhSetWindowText(startButton, L"&Start");
-        PhSetWindowText(pauseButton, L"&Pause");
+        PhSetWindowText(startButton, PhGetApplicationUiString(IDS_PH_SERVICE_START));
+        PhSetWindowText(pauseButton, PhGetApplicationUiString(IDS_PH_SERVICE_PAUSE));
         EnableWindow(startButton, FALSE);
         EnableWindow(pauseButton, FALSE);
         PhSetWindowText(descriptionLabel, L"");

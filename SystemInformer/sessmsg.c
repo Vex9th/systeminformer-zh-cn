@@ -14,13 +14,19 @@
 #include <lsasup.h>
 #include <winsta.h>
 
-static CONST PH_KEY_VALUE_PAIR PhpMessageBoxIconPairs[] =
+typedef struct _PHP_MESSAGE_ICON_ENTRY
 {
-    SIP(L"None", MB_OK),
-    SIP(L"Information", MB_ICONINFORMATION),
-    SIP(L"Warning", MB_ICONWARNING),
-    SIP(L"Error", MB_ICONERROR),
-    SIP(L"Question", MB_ICONQUESTION)
+    ULONG ResourceId;
+    ULONG Icon;
+} PHP_MESSAGE_ICON_ENTRY, *PPHP_MESSAGE_ICON_ENTRY;
+
+static CONST PHP_MESSAGE_ICON_ENTRY PhpMessageIcons[] =
+{
+    { IDS_PH_MESSAGE_ICON_NONE, MB_OK },
+    { IDS_PH_MESSAGE_ICON_INFORMATION, MB_ICONINFORMATION },
+    { IDS_PH_MESSAGE_ICON_WARNING, MB_ICONWARNING },
+    { IDS_PH_MESSAGE_ICON_ERROR, MB_ICONERROR },
+    { IDS_PH_MESSAGE_ICON_QUESTION, MB_ICONQUESTION }
 };
 
 INT_PTR CALLBACK PhpSessionSendMessageDlgProc(
@@ -42,12 +48,31 @@ INT_PTR CALLBACK PhpSessionSendMessageDlgProc(
             PhCenterWindow(hwndDlg, GetParent(hwndDlg));
 
             iconComboBox = GetDlgItem(hwndDlg, IDC_TYPE);
-            ComboBox_AddString(iconComboBox, L"None");
-            ComboBox_AddString(iconComboBox, L"Information");
-            ComboBox_AddString(iconComboBox, L"Warning");
-            ComboBox_AddString(iconComboBox, L"Error");
-            ComboBox_AddString(iconComboBox, L"Question");
-            PhSelectComboBoxString(iconComboBox, L"None", FALSE);
+            for (ULONG i = 0; i < ARRAYSIZE(PhpMessageIcons); i++)
+            {
+                INT itemIndex;
+
+                itemIndex = ComboBox_AddString(
+                    iconComboBox,
+                    PhGetApplicationUiString(PhpMessageIcons[i].ResourceId)
+                    );
+
+                if (itemIndex >= 0)
+                {
+                    if (ComboBox_SetItemData(
+                        iconComboBox,
+                        itemIndex,
+                        UlongToPtr(PhpMessageIcons[i].Icon)
+                        ) == CB_ERR)
+                    {
+                        ComboBox_DeleteString(iconComboBox, itemIndex);
+                        continue;
+                    }
+
+                    if (PhpMessageIcons[i].Icon == MB_OK)
+                        ComboBox_SetCurSel(iconComboBox, itemIndex);
+                }
+            }
 
             if (currentUserName = PhGetTokenUserString(PhGetOwnTokenAttributes().TokenHandle, TRUE))
             {
@@ -84,16 +109,26 @@ INT_PTR CALLBACK PhpSessionSendMessageDlgProc(
                     ULONG icon = 0;
                     ULONG64 timeout = 0;
                     ULONG response;
+                    HWND iconComboBox;
+                    INT selectedIndex;
+                    LRESULT selectedIcon;
 
                     title = PhaGetDlgItemText(hwndDlg, IDC_TITLE);
                     text = PhaGetDlgItemText(hwndDlg, IDC_TEXT);
+                    iconComboBox = GetDlgItem(hwndDlg, IDC_TYPE);
 
-                    PhFindIntegerSiKeyValuePairs(
-                        PhpMessageBoxIconPairs,
-                        sizeof(PhpMessageBoxIconPairs),
-                        PhaGetDlgItemText(hwndDlg, IDC_TYPE)->Buffer,
-                        &icon
-                        );
+                    selectedIndex = ComboBox_GetCurSel(iconComboBox);
+
+                    if (selectedIndex == CB_ERR)
+                        break;
+
+                    selectedIcon = ComboBox_GetItemData(iconComboBox, selectedIndex);
+
+                    if (selectedIcon == CB_ERR)
+                        break;
+
+                    icon = (ULONG)selectedIcon;
+
                     PhStringToInteger64(
                         &PhaGetDlgItemText(hwndDlg, IDC_TIMEOUT)->sr,
                         10,

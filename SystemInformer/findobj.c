@@ -698,7 +698,7 @@ VOID PhpPopulateObjectTypes(
     objectTypeList = PhCreateList(100);
 
     // Add a custom object type for searching all objects.
-    ComboBox_AddString(Context->TypeWindowHandle, L"Everything");
+    ComboBox_AddString(Context->TypeWindowHandle, PhGetApplicationUiString(IDS_PH_FIND_EVERYTHING));
     ComboBox_SetCurSel(Context->TypeWindowHandle, 0);
 
     // Enumerate the available object types.

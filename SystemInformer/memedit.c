@@ -304,7 +304,10 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
                 ULONG bytesPerRow;
 
                 for (i = 0; i < sizeof(bytesPerRowStrings) / sizeof(PWSTR); i++)
-                    bytesPerRowStrings[i] = PhaFormatString(L"%u bytes per row", 1 << (2 + i))->Buffer;
+                    bytesPerRowStrings[i] = PhaFormatString(
+                        PhGetApplicationUiString(IDS_PH_BYTES_PER_ROW_FORMAT),
+                        1u << (2 + i)
+                        )->Buffer;
 
                 PhAddComboBoxStrings(GetDlgItem(hwndDlg, IDC_BYTESPERROW),
                     bytesPerRowStrings, sizeof(bytesPerRowStrings) / sizeof(PWSTR));
@@ -315,7 +318,12 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
                 {
                     HexEdit_SetBytesPerRow(context->HexEditHandle, bytesPerRow);
                     PhSelectComboBoxString(GetDlgItem(hwndDlg, IDC_BYTESPERROW),
-                        PhaFormatString(L"%u bytes per row", bytesPerRow)->Buffer, FALSE);
+                        PhaFormatString(
+                            PhGetApplicationUiString(IDS_PH_BYTES_PER_ROW_FORMAT),
+                            (unsigned int)bytesPerRow
+                            )->Buffer,
+                        FALSE
+                        );
                 }
             }
 
