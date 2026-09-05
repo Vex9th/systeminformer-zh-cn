@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("395 strings", result.stdout)
+        self.assertIn("420 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1404,6 +1404,110 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     expected_count,
                 )
 
+    def test_extended_tools_errors_use_native_resources(self) -> None:
+        source = "\n".join(
+            (REPO_ROOT / "plugins" / "ExtendedTools" / name).read_text(
+                encoding="utf-8-sig"
+            )
+            for name in (
+                "disktab.c",
+                "firmware.c",
+                "firmware_editor.c",
+                "modsrv.c",
+                "objmgr.c",
+                "reparse.c",
+                "thrdact.c",
+                "tpm.c",
+                "tpm_editor.c",
+                "unldll.c",
+                "wbcl.c",
+                "wswatch.c",
+            )
+        )
+        literals = (
+            "Boot log entry",
+            "Failed to read TPM",
+            "There is no synchronous I/O to cancel.",
+            "Unable to cancel synchronous I/O",
+            "Unable to create the symbol provider.",
+            "Unable to delete firmware variable.",
+            "Unable to enable environment privilege.",
+            "Unable to enable WS watch.",
+            "Unable to enumerate the objects.",
+            "Unable to locate files with the SecurityId.",
+            "Unable to locate the target.",
+            "Unable to query directory object.",
+            "Unable to query firmware table.",
+            "Unable to query module references.",
+            "Unable to query the EFI variable.",
+            "Unable to query the TPM",
+            "Unable to read the log file",
+            "Unable to read the measured boot log",
+            "Unable to read TPM",
+            "Unable to remove the object identifier.",
+            "Unable to remove the reparse point.",
+            "Unable to retrieve unload event trace information.",
+            "Unable to select the process.",
+            "Unable to update the EFI variable.",
+            "Unable to write to the TPM",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}', source)
+
+        expected_ids = {
+            "IDS_ET_BOOT_LOG_ENTRY": 1,
+            "IDS_ET_FAILED_READ_TPM": 1,
+            "IDS_ET_NO_SYNCHRONOUS_IO": 1,
+            "IDS_ET_UNABLE_CANCEL_SYNCHRONOUS_IO": 1,
+            "IDS_ET_UNABLE_CREATE_SYMBOL_PROVIDER": 1,
+            "IDS_ET_UNABLE_DELETE_FIRMWARE_VARIABLE": 1,
+            "IDS_ET_UNABLE_ENABLE_ENVIRONMENT_PRIVILEGE": 1,
+            "IDS_ET_UNABLE_ENABLE_WS_WATCH": 1,
+            "IDS_ET_UNABLE_ENUMERATE_OBJECTS": 1,
+            "IDS_ET_UNABLE_LOCATE_SECURITY_ID_FILES": 1,
+            "IDS_ET_UNABLE_LOCATE_TARGET": 2,
+            "IDS_ET_UNABLE_QUERY_DIRECTORY_OBJECT": 1,
+            "IDS_ET_UNABLE_QUERY_FIRMWARE_TABLE": 1,
+            "IDS_ET_UNABLE_QUERY_MODULE_REFERENCES": 2,
+            "IDS_ET_UNABLE_QUERY_EFI_VARIABLE": 2,
+            "IDS_ET_UNABLE_QUERY_TPM": 1,
+            "IDS_ET_UNABLE_READ_LOG_FILE": 1,
+            "IDS_ET_UNABLE_READ_MEASURED_BOOT_LOG": 1,
+            "IDS_ET_UNABLE_READ_TPM": 1,
+            "IDS_ET_UNABLE_REMOVE_OBJECT_IDENTIFIER": 1,
+            "IDS_ET_UNABLE_REMOVE_REPARSE_POINT": 1,
+            "IDS_ET_UNABLE_RETRIEVE_UNLOAD_TRACE": 1,
+            "IDS_ET_UNABLE_SELECT_PROCESS": 1,
+            "IDS_ET_UNABLE_UPDATE_EFI_VARIABLE": 2,
+            "IDS_ET_UNABLE_WRITE_TPM": 1,
+        }
+
+        for resource_id, expected_count in expected_ids.items():
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", source)),
+                    expected_count,
+                )
+
+    def test_module_services_thread_does_not_use_auto_pool_before_initialization(
+        self,
+    ) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "ExtendedTools" / "modsrv.c"
+        ).read_text(encoding="utf-8-sig")
+        thread_body = source.split(
+            "NTSTATUS EtpModuleServicesDialogThreadStart", 1
+        )[1].split("VOID EtShowModuleServicesDialog", 1)[0]
+        before_initialization = thread_body.split("PhInitializeAutoPool", 1)[0]
+
+        self.assertNotIn("PH_AUTO(", before_initialization)
+        self.assertEqual(
+            before_initialization.count("PhDereferenceObject(resourceTitle);"),
+            2,
+        )
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -1599,6 +1703,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 {
                     (r"bin\Release64\sys_info.exe", 177): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
+                    (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,

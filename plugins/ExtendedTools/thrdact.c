@@ -41,12 +41,12 @@ BOOLEAN EtUiCancelIoThread(
 
     if (status == STATUS_NOT_FOUND)
     {
-        PhShowInformation2(hWnd, L"There is no synchronous I/O to cancel.", L"%s", L"");
+        PhShowInformation2(hWnd, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_NO_SYNCHRONOUS_IO, NULL))), L"%s", L"");
         return FALSE;
     }
     else if (!NT_SUCCESS(status))
     {
-        PhShowStatus(hWnd, L"Unable to cancel synchronous I/O", status, 0);
+        PhShowStatus(hWnd, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_CANCEL_SYNCHRONOUS_IO, NULL))), status, 0);
         return FALSE;
     }
 

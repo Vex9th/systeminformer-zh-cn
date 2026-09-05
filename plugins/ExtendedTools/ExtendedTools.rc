@@ -930,6 +930,40 @@ IDI_TIMER               ICON                    "resources\\timer.ico"
 
 IDI_WINSTA              ICON                    "resources\\winsta.ico"
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ET_BOOT_LOG_ENTRY           "Boot log entry"
+    IDS_ET_FAILED_READ_TPM          "Failed to read TPM"
+    IDS_ET_NO_SYNCHRONOUS_IO        "There is no synchronous I/O to cancel."
+    IDS_ET_UNABLE_CANCEL_SYNCHRONOUS_IO "Unable to cancel synchronous I/O"
+    IDS_ET_UNABLE_CREATE_SYMBOL_PROVIDER "Unable to create the symbol provider."
+    IDS_ET_UNABLE_DELETE_FIRMWARE_VARIABLE "Unable to delete firmware variable."
+    IDS_ET_UNABLE_ENABLE_ENVIRONMENT_PRIVILEGE "Unable to enable environment privilege."
+    IDS_ET_UNABLE_ENABLE_WS_WATCH   "Unable to enable WS watch."
+    IDS_ET_UNABLE_ENUMERATE_OBJECTS "Unable to enumerate the objects."
+    IDS_ET_UNABLE_LOCATE_SECURITY_ID_FILES "Unable to locate files with the SecurityId."
+    IDS_ET_UNABLE_LOCATE_TARGET     "Unable to locate the target."
+    IDS_ET_UNABLE_QUERY_DIRECTORY_OBJECT "Unable to query directory object."
+    IDS_ET_UNABLE_QUERY_FIRMWARE_TABLE "Unable to query firmware table."
+    IDS_ET_UNABLE_QUERY_MODULE_REFERENCES "Unable to query module references."
+    IDS_ET_UNABLE_QUERY_EFI_VARIABLE "Unable to query the EFI variable."
+    IDS_ET_UNABLE_QUERY_TPM         "Unable to query the TPM"
+    IDS_ET_UNABLE_READ_LOG_FILE     "Unable to read the log file"
+    IDS_ET_UNABLE_READ_MEASURED_BOOT_LOG "Unable to read the measured boot log"
+    IDS_ET_UNABLE_READ_TPM          "Unable to read TPM"
+    IDS_ET_UNABLE_REMOVE_OBJECT_IDENTIFIER "Unable to remove the object identifier."
+    IDS_ET_UNABLE_REMOVE_REPARSE_POINT "Unable to remove the reparse point."
+    IDS_ET_UNABLE_RETRIEVE_UNLOAD_TRACE "Unable to retrieve unload event trace information."
+    IDS_ET_UNABLE_SELECT_PROCESS    "Unable to select the process."
+    IDS_ET_UNABLE_UPDATE_EFI_VARIABLE "Unable to update the EFI variable."
+    IDS_ET_UNABLE_WRITE_TPM         "Unable to write to the TPM"
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -944,4 +978,3 @@ IDI_WINSTA              ICON                    "resources\\winsta.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

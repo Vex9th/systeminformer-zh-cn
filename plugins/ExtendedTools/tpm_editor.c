@@ -108,7 +108,7 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
 
             if (!NT_SUCCESS(status = EtTpmEditorRead(context)))
             {
-                PhShowStatus(context->ParentWindowHandle, L"Failed to read TPM", status, 0);
+                PhShowStatus(context->ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_FAILED_READ_TPM, NULL))), status, 0);
                 DestroyWindow(WindowHandle);
                 return TRUE;
             }
@@ -241,7 +241,7 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
                 break;
             case IDC_TPM_WRITE:
                 {
-                    PhShowWarning(NULL, L"Unable to write to the TPM", L"TPM write not yet implemented");
+                    PhShowWarning(NULL, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_WRITE_TPM, NULL))), L"TPM write not yet implemented");
                     return TRUE;
                 }
                 break;
@@ -251,7 +251,7 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
 
                     if (!NT_SUCCESS(status = EtTpmEditorRead(context)))
                     {
-                        PhShowStatus(NULL, L"Unable to read TPM", status, 0);
+                        PhShowStatus(NULL, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_READ_TPM, NULL))), status, 0);
                         return TRUE;
                     }
 

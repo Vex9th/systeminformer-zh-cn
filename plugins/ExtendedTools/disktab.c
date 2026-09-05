@@ -1347,7 +1347,7 @@ VOID EtHandleDiskCommand(
                 }
                 else
                 {
-                    PhShowError2(WindowHandle, L"Unable to select the process.", L"%s", L"The process does not exist.");
+                    PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_SELECT_PROCESS, NULL))), L"%s", L"The process does not exist.");
                 }
 
                 PhDereferenceObject(diskItem);

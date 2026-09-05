@@ -1343,7 +1343,7 @@ INT_PTR CALLBACK EtReparseDlgProc(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(WindowHandle, L"Unable to enumerate the objects.", status, 0);
+                PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_ENUMERATE_OBJECTS, NULL))), status, 0);
             }
 
             EnableWindow(GetDlgItem(WindowHandle, IDRETRY), TRUE);
@@ -1504,7 +1504,7 @@ INT_PTR CALLBACK EtReparseDlgProc(
                                                     }
                                                     else
                                                     {
-                                                        PhShowStatus(WindowHandle, L"Unable to remove the reparse point.", status, 0);
+                                                        PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_REMOVE_REPARSE_POINT, NULL))), status, 0);
                                                     }
                                                 }
                                                 break;
@@ -1520,7 +1520,7 @@ INT_PTR CALLBACK EtReparseDlgProc(
                                                     }
                                                     else
                                                     {
-                                                        PhShowStatus(WindowHandle, L"Unable to remove the object identifier.", status, 0);
+                                                        PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_REMOVE_OBJECT_IDENTIFIER, NULL))), status, 0);
                                                     }
                                                 }
                                                 break;
@@ -1540,7 +1540,7 @@ INT_PTR CALLBACK EtReparseDlgProc(
                                                     }
                                                     else
                                                     {
-                                                        PhShowStatus(WindowHandle, L"Unable to locate files with the SecurityId.", STATUS_NOT_FOUND, 0);
+                                                        PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_LOCATE_SECURITY_ID_FILES, NULL))), STATUS_NOT_FOUND, 0);
                                                     }
                                                 }
                                                 break;

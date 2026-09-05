@@ -116,7 +116,7 @@ INT_PTR CALLBACK EtFirmwareEditorDlgProc(
 
             if (!NT_SUCCESS(status = EtFirmwareQueryVariable(context, context->Name, context->GuidString)))
             {
-                PhShowStatus(context->ParentWindowHandle, L"Unable to query the EFI variable.", status, 0);
+                PhShowStatus(context->ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_EFI_VARIABLE, NULL))), status, 0);
                 DestroyWindow(WindowHandle);
                 return TRUE;
             }
@@ -268,7 +268,7 @@ INT_PTR CALLBACK EtFirmwareEditorDlgProc(
 
                     if (!NT_SUCCESS(status))
                     {
-                        PhShowStatus(NULL, L"Unable to update the EFI variable.", status, 0);
+                        PhShowStatus(NULL, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_UPDATE_EFI_VARIABLE, NULL))), status, 0);
                         return TRUE;
                     }
 
@@ -282,7 +282,7 @@ INT_PTR CALLBACK EtFirmwareEditorDlgProc(
 
                     if (!NT_SUCCESS(status))
                     {
-                        PhShowStatus(NULL, L"Unable to update the EFI variable.", status, 0);
+                        PhShowStatus(NULL, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_UPDATE_EFI_VARIABLE, NULL))), status, 0);
                         return TRUE;
                     }
 
@@ -294,7 +294,7 @@ INT_PTR CALLBACK EtFirmwareEditorDlgProc(
 
                     if (!NT_SUCCESS(status = EtFirmwareQueryVariable(context, context->Name, context->GuidString)))
                     {
-                        PhShowStatus(NULL, L"Unable to query the EFI variable.", status, 0);
+                        PhShowStatus(NULL, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_EFI_VARIABLE, NULL))), status, 0);
                         return TRUE;
                     }
 

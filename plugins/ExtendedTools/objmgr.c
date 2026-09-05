@@ -1411,7 +1411,7 @@ NTSTATUS EtEnumCurrentDirectoryObjects(
 
     if (!NT_SUCCESS(status) && status != STATUS_NO_MORE_ENTRIES)
     {
-        PhShowStatus(Context->WindowHandle, L"Unable to query directory object.", status, 0);
+        PhShowStatus(Context->WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_DIRECTORY_OBJECT, NULL))), status, 0);
     }
 
     PhSetWindowText(Context->PathControlHandle, PhGetString(Context->CurrentPath));
@@ -2469,7 +2469,7 @@ start_scan:
             }
             else
             {
-                PhShowStatus(Context->WindowHandle, L"Unable to locate the target.", STATUS_NOT_FOUND, 0);
+                PhShowStatus(Context->WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_LOCATE_TARGET, NULL))), STATUS_NOT_FOUND, 0);
             }
         }
     }
@@ -3493,7 +3493,7 @@ INT_PTR CALLBACK WinObjDlgProc(
                                     }
                                     else
                                     {
-                                        PhShowStatus(hwndDlg, L"Unable to locate the target.", STATUS_NOT_FOUND, 0);
+                                        PhShowStatus(hwndDlg, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_LOCATE_TARGET, NULL))), STATUS_NOT_FOUND, 0);
                                     }
                                 }
                                 break;

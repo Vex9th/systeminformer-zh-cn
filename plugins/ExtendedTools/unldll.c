@@ -519,7 +519,7 @@ INT_PTR CALLBACK EtpUnloadedDllsDlgProc(
 
             if (!NT_SUCCESS(status = EtpRefreshUnloadedDlls(WindowHandle, context)))
             {
-                PhShowStatus(context->ParentWindowHandle, L"Unable to retrieve unload event trace information.", status, 0);
+                PhShowStatus(context->ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_RETRIEVE_UNLOAD_TRACE, NULL))), status, 0);
                 EndDialog(WindowHandle, IDCANCEL);
                 return FALSE;
             }
@@ -641,5 +641,4 @@ INT_PTR CALLBACK EtpUnloadedDllsDlgProc(
 
     return FALSE;
 }
-
 

@@ -27,7 +27,7 @@ System Informer 的非官方简体中文、无驱动便携构建。程序名为 
 | 项目 | 当前状态 |
 |---|---|
 | 主程序静态对话框 | 106 个 en-US/zh-CN 同 ID 资源曾在历史 Windows x64 CI 中通过 PE 结构校验；当前本地新增提交尚未重新跑 Windows CI，人工界面验收仍未完成 |
-| 动态文字 | PE Viewer 菜单、列表列名、选项和弹窗提示，安装器向导文字，以及主程序的 177 条选项/启动/公共错误提示已使用原生 `STRINGTABLE`；ExtendedServices 已迁移 15 条，UserNotes 已迁移 1 条，其余动态文字仍使用兼容翻译层 |
+| 动态文字 | PE Viewer 菜单、列表列名、选项和弹窗提示，安装器向导文字，以及主程序的 177 条选项/启动/公共错误提示已使用原生 `STRINGTABLE`；ExtendedServices 已迁移 15 条、ExtendedTools 已迁移 25 条、UserNotes 已迁移 1 条，其余动态文字仍使用兼容翻译层 |
 | 生成器与源码契约 | 本地测试通过 |
 | Windows x64 构建与原生加载 | 历史远端基线曾通过；当前本地分支新增内容尚未推送，不能宣称已通过 Windows 编译、启动或 UI 响应验证 |
 | x86、ARM64、多 DPI 界面 | 尚未完成真实运行与视觉验收 |

@@ -54,13 +54,21 @@ NTSTATUS EtpModuleServicesDialogThreadStart(
 
     if (status != ERROR_SUCCESS)
     {
-        PhShowStatus(context->ParentWindowHandle, L"Unable to query module references.", 0, status);
+        PPH_STRING resourceTitle;
+
+        resourceTitle = PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_MODULE_REFERENCES, NULL);
+        PhShowStatus(context->ParentWindowHandle, PhGetString(resourceTitle), 0, status);
+        PhDereferenceObject(resourceTitle);
         return STATUS_SUCCESS;
     }
 
     if (serviceList->Count == 0)
     {
-        PhShowInformation2(context->ParentWindowHandle, L"Unable to query module references.", L"%s", L"This module was not referenced by a service.");
+        PPH_STRING resourceTitle;
+
+        resourceTitle = PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_MODULE_REFERENCES, NULL);
+        PhShowInformation2(context->ParentWindowHandle, PhGetString(resourceTitle), L"%s", L"This module was not referenced by a service.");
+        PhDereferenceObject(resourceTitle);
         PhDereferenceObject(serviceList);
         PhFree(context);
         return STATUS_SUCCESS;

@@ -923,7 +923,7 @@ VOID EtShowTpmDialog(
 {
     if (!EtTpmIsReady())
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to query the TPM", STATUS_TPM_FAIL, 0);
+        PhShowStatus(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_TPM, NULL))), STATUS_TPM_FAIL, 0);
         return;
     }
 
@@ -935,5 +935,4 @@ VOID EtShowTpmDialog(
         ParentWindowHandle
         );
 }
-
 

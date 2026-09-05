@@ -493,7 +493,7 @@ INT_PTR CALLBACK EtpWsWatchDlgProc(
 
             if (!context->SymbolProvider)
             {
-                PhShowError2(WindowHandle, L"Unable to create the symbol provider.", L"%s", L"");
+                PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_CREATE_SYMBOL_PROVIDER, NULL))), L"%s", L"");
                 EndDialog(WindowHandle, IDCANCEL);
                 break;
             }
@@ -585,7 +585,7 @@ INT_PTR CALLBACK EtpWsWatchDlgProc(
                     }
                     else
                     {
-                        PhShowStatus(WindowHandle, L"Unable to enable WS watch.", status, 0);
+                        PhShowStatus(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_ENABLE_WS_WATCH, NULL))), status, 0);
                     }
                 }
                 break;

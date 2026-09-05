@@ -179,7 +179,7 @@ VOID EtFirmwareDeleteEntry(
     }
     else
     {
-        PhShowStatus(Context->WindowHandle, L"Unable to delete firmware variable.", status, 0);
+        PhShowStatus(Context->WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_DELETE_FIRMWARE_VARIABLE, NULL))), status, 0);
     }
 }
 
@@ -442,7 +442,7 @@ BOOLEAN EtFirmwareEnablePrivilege(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to enable environment privilege.", status, 0);
+        PhShowStatus(ParentWindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_ENABLE_ENVIRONMENT_PRIVILEGE, NULL))), status, 0);
         return FALSE;
     }
 
@@ -470,7 +470,7 @@ VOID EtShowFirmwareDialog(
     {
         PhShowError2(
             ParentWindowHandle,
-            L"Unable to query firmware table.",
+            PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_FIRMWARE_TABLE, NULL))),
             L"%s",
             L"Windows was installed using legacy BIOS."
             );
@@ -478,5 +478,4 @@ VOID EtShowFirmwareDialog(
 
     EtFirmwareEnablePrivilege(ParentWindowHandle, FALSE);
 }
-
 

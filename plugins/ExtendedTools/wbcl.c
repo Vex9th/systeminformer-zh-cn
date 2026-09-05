@@ -1014,7 +1014,7 @@ VOID EtWbclLoadLiveLog(
     }
     else
     {
-        PhShowStatus(Context->WindowHandle, L"Unable to read the measured boot log", status, 0);
+        PhShowStatus(Context->WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_READ_MEASURED_BOOT_LOG, NULL))), status, 0);
     }
 }
 
@@ -1051,7 +1051,7 @@ VOID EtWbclLoadFileLog(
         }
         else
         {
-            PhShowStatus(Context->WindowHandle, L"Unable to read the log file", status, 0);
+            PhShowStatus(Context->WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_READ_LOG_FILE, NULL))), status, 0);
         }
     }
 
@@ -1101,7 +1101,7 @@ VOID EtWbclShowEntryDetails(
     }
 
     text = PhFinalStringBuilderString(&stringBuilder);
-    PhShowInformation2(Context->WindowHandle, L"Boot log entry", L"%s", text->Buffer);
+    PhShowInformation2(Context->WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_BOOT_LOG_ENTRY, NULL))), L"%s", text->Buffer);
     PhDereferenceObject(text);
 }
 
