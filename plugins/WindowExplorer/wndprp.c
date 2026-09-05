@@ -2821,61 +2821,61 @@ INT_PTR CALLBACK WepWindowAttributeDlgProc(
 typedef struct _WND_UIA_PROPERTY
 {
     const LONG* PropertyId;
-    PCWSTR Name;
+    ULONG NameResourceId;
     ULONG GroupId;
 } WND_UIA_PROPERTY, *PWND_UIA_PROPERTY;
 
 static WND_UIA_PROPERTY WndUiaProperties[] = {
     // Identification
-    { &UIA_RuntimeIdPropertyId, L"Runtime ID", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_NamePropertyId, L"Name", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_AutomationIdPropertyId, L"Automation ID", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_ClassNamePropertyId, L"Class Name", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_ControlTypePropertyId, L"Control Type", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_LocalizedControlTypePropertyId, L"Localized Control Type", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_FrameworkIdPropertyId, L"Framework ID", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_ProcessIdPropertyId, L"Process ID", WND_UIA_GROUP_IDENTIFICATION },
-    { &UIA_NativeWindowHandlePropertyId, L"Native Window Handle", WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_RuntimeIdPropertyId, IDS_WE_UIA_PROPERTY_RUNTIME_ID, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_NamePropertyId, IDS_WE_WINDOW_PROPERTY_NAME, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_AutomationIdPropertyId, IDS_WE_UIA_PROPERTY_AUTOMATION_ID, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_ClassNamePropertyId, IDS_WE_UIA_PROPERTY_CLASS_NAME, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_ControlTypePropertyId, IDS_WE_UIA_PROPERTY_CONTROL_TYPE, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_LocalizedControlTypePropertyId, IDS_WE_UIA_PROPERTY_LOCALIZED_CONTROL_TYPE, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_FrameworkIdPropertyId, IDS_WE_UIA_PROPERTY_FRAMEWORK_ID, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_ProcessIdPropertyId, IDS_WE_UIA_PROPERTY_PROCESS_ID, WND_UIA_GROUP_IDENTIFICATION },
+    { &UIA_NativeWindowHandlePropertyId, IDS_WE_UIA_PROPERTY_NATIVE_WINDOW_HANDLE, WND_UIA_GROUP_IDENTIFICATION },
 
     // State
-    { &UIA_IsEnabledPropertyId, L"Is Enabled", WND_UIA_GROUP_STATE },
-    { &UIA_IsKeyboardFocusablePropertyId, L"Is Keyboard Focusable", WND_UIA_GROUP_STATE },
-    { &UIA_HasKeyboardFocusPropertyId, L"Has Keyboard Focus", WND_UIA_GROUP_STATE },
-    { &UIA_IsOffscreenPropertyId, L"Is Offscreen", WND_UIA_GROUP_STATE },
-    { &UIA_IsPasswordPropertyId, L"Is Password", WND_UIA_GROUP_STATE },
-    { &UIA_IsRequiredForFormPropertyId, L"Is Required For Form", WND_UIA_GROUP_STATE },
-    { &UIA_OrientationPropertyId, L"Orientation", WND_UIA_GROUP_STATE },
-    { &UIA_ItemStatusPropertyId, L"Item Status", WND_UIA_GROUP_STATE },
+    { &UIA_IsEnabledPropertyId, IDS_WE_UIA_PROPERTY_IS_ENABLED, WND_UIA_GROUP_STATE },
+    { &UIA_IsKeyboardFocusablePropertyId, IDS_WE_UIA_PROPERTY_IS_KEYBOARD_FOCUSABLE, WND_UIA_GROUP_STATE },
+    { &UIA_HasKeyboardFocusPropertyId, IDS_WE_UIA_PROPERTY_HAS_KEYBOARD_FOCUS, WND_UIA_GROUP_STATE },
+    { &UIA_IsOffscreenPropertyId, IDS_WE_UIA_PROPERTY_IS_OFFSCREEN, WND_UIA_GROUP_STATE },
+    { &UIA_IsPasswordPropertyId, IDS_WE_UIA_PROPERTY_IS_PASSWORD, WND_UIA_GROUP_STATE },
+    { &UIA_IsRequiredForFormPropertyId, IDS_WE_UIA_PROPERTY_IS_REQUIRED_FOR_FORM, WND_UIA_GROUP_STATE },
+    { &UIA_OrientationPropertyId, IDS_WE_UIA_PROPERTY_ORIENTATION, WND_UIA_GROUP_STATE },
+    { &UIA_ItemStatusPropertyId, IDS_WE_UIA_PROPERTY_ITEM_STATUS, WND_UIA_GROUP_STATE },
 
     // Accessibility
-    { &UIA_AcceleratorKeyPropertyId, L"Accelerator Key", WND_UIA_GROUP_ACCESSIBILITY },
-    { &UIA_AccessKeyPropertyId, L"Access Key", WND_UIA_GROUP_ACCESSIBILITY },
-    { &UIA_HelpTextPropertyId, L"Help Text", WND_UIA_GROUP_ACCESSIBILITY },
-    { &UIA_LabeledByPropertyId, L"Labeled By", WND_UIA_GROUP_ACCESSIBILITY },
-    { &UIA_BoundingRectanglePropertyId, L"Bounding Rectangle", WND_UIA_GROUP_ACCESSIBILITY },
-    { &UIA_ClickablePointPropertyId, L"Clickable Point", WND_UIA_GROUP_ACCESSIBILITY },
-    { &UIA_ItemTypePropertyId, L"Item Type", WND_UIA_GROUP_ACCESSIBILITY },
-    { &UIA_FullDescriptionPropertyId, L"Full Description", WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_AcceleratorKeyPropertyId, IDS_WE_UIA_PROPERTY_ACCELERATOR_KEY, WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_AccessKeyPropertyId, IDS_WE_UIA_PROPERTY_ACCESS_KEY, WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_HelpTextPropertyId, IDS_WE_UIA_PROPERTY_HELP_TEXT, WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_LabeledByPropertyId, IDS_WE_UIA_PROPERTY_LABELED_BY, WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_BoundingRectanglePropertyId, IDS_WE_UIA_PROPERTY_BOUNDING_RECTANGLE, WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_ClickablePointPropertyId, IDS_WE_UIA_PROPERTY_CLICKABLE_POINT, WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_ItemTypePropertyId, IDS_WE_UIA_PROPERTY_ITEM_TYPE, WND_UIA_GROUP_ACCESSIBILITY },
+    { &UIA_FullDescriptionPropertyId, IDS_WE_UIA_PROPERTY_FULL_DESCRIPTION, WND_UIA_GROUP_ACCESSIBILITY },
 
     // Patterns
-    { &UIA_IsDockPatternAvailablePropertyId, L"Is Dock Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsExpandCollapsePatternAvailablePropertyId, L"Is Expand/Collapse Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsGridItemPatternAvailablePropertyId, L"Is Grid Item Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsGridPatternAvailablePropertyId, L"Is Grid Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsInvokePatternAvailablePropertyId, L"Is Invoke Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsMultipleViewPatternAvailablePropertyId, L"Is Multiple View Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsRangeValuePatternAvailablePropertyId, L"Is Range Value Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsSelectionItemPatternAvailablePropertyId, L"Is Selection Item Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsSelectionPatternAvailablePropertyId, L"Is Selection Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsScrollPatternAvailablePropertyId, L"Is Scroll Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsScrollItemPatternAvailablePropertyId, L"Is Scroll Item Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsTablePatternAvailablePropertyId, L"Is Table Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsTableItemPatternAvailablePropertyId, L"Is Table Item Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsTextPatternAvailablePropertyId, L"Is Text Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsTogglePatternAvailablePropertyId, L"Is Toggle Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsTransformPatternAvailablePropertyId, L"Is Transform Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsValuePatternAvailablePropertyId, L"Is Value Pattern Available", WND_UIA_GROUP_PATTERNS },
-    { &UIA_IsWindowPatternAvailablePropertyId, L"Is Window Pattern Available", WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsDockPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_DOCK_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsExpandCollapsePatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_EXPAND_COLLAPSE_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsGridItemPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_GRID_ITEM_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsGridPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_GRID_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsInvokePatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_INVOKE_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsMultipleViewPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_MULTIPLE_VIEW_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsRangeValuePatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_RANGE_VALUE_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsSelectionItemPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_SELECTION_ITEM_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsSelectionPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_SELECTION_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsScrollPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_SCROLL_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsScrollItemPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_SCROLL_ITEM_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsTablePatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_TABLE_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsTableItemPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_TABLE_ITEM_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsTextPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_TEXT_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsTogglePatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_TOGGLE_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsTransformPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_TRANSFORM_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsValuePatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_VALUE_PATTERN, WND_UIA_GROUP_PATTERNS },
+    { &UIA_IsWindowPatternAvailablePropertyId, IDS_WE_UIA_PROPERTY_WINDOW_PATTERN, WND_UIA_GROUP_PATTERNS },
 };
 
 PPH_STRING WepFormatUiaPropertyValue(
@@ -3085,7 +3085,11 @@ VOID WepUiaAddListViewItemGroups(
             ListViewHandle,
             WndUiaProperties[i].GroupId,
             i,
-            WndUiaProperties[i].Name,
+            PhGetString(PH_AUTO(PhLoadUiString(
+                PluginInstance->DllBase,
+                WndUiaProperties[i].NameResourceId,
+                NULL
+                ))),
             NULL
             );
     }

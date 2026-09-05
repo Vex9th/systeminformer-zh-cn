@@ -450,7 +450,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn("Native fallback", group_item_text)
         self.assertNotIn("Commented group item", group_item_text)
 
-    def test_audit_finds_all_window_explorer_uia_property_names(self) -> None:
+    def test_audit_does_not_count_migrated_window_explorer_uia_property_names(self) -> None:
         audit = load_audit_module()
         source_path = REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c"
         source = source_path.read_text(encoding="utf-8")
@@ -468,12 +468,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             if entry["category"] == "c_listview_group_item"
             and first_line <= entry["line"] <= last_line
         ]
-        self.assertEqual(len(uia_entries), 43)
-        self.assertIn("Runtime ID", {entry["english"] for entry in uia_entries})
-        self.assertIn(
-            "Is Window Pattern Available",
-            {entry["english"] for entry in uia_entries},
-        )
+        self.assertEqual(uia_entries, [])
 
     def test_audit_finds_all_main_tray_notification_names(self) -> None:
         audit = load_audit_module()
@@ -1024,7 +1019,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("828 strings", result.stdout)
+        self.assertIn("870 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3586,10 +3581,142 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     rf"PhAddListViewGroupItem\([^;]*L\"{re.escape(english_text)}\"[^;]*\);",
                 )
 
-        self.assertRegex(
-            resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12048$",
+    def test_window_explorer_uia_property_items_use_native_resources(self) -> None:
+        source = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "wndprp.c"
+        ).read_text(encoding="utf-8-sig")
+        resource_header = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "WindowExplorer.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_resource = (
+            REPO_ROOT / "plugins" / "WindowExplorer" / "WindowExplorer.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
         )
+        expected_resources = {
+            "IDS_WE_UIA_PROPERTY_RUNTIME_ID": (12048, "Runtime ID", "运行时 ID"),
+            "IDS_WE_UIA_PROPERTY_AUTOMATION_ID": (12049, "Automation ID", "自动化 ID"),
+            "IDS_WE_UIA_PROPERTY_CLASS_NAME": (12050, "Class Name", "类名"),
+            "IDS_WE_UIA_PROPERTY_CONTROL_TYPE": (12051, "Control Type", "控件类型"),
+            "IDS_WE_UIA_PROPERTY_LOCALIZED_CONTROL_TYPE": (12052, "Localized Control Type", "本地化控件类型"),
+            "IDS_WE_UIA_PROPERTY_FRAMEWORK_ID": (12053, "Framework ID", "框架 ID"),
+            "IDS_WE_UIA_PROPERTY_PROCESS_ID": (12054, "Process ID", "进程 ID"),
+            "IDS_WE_UIA_PROPERTY_NATIVE_WINDOW_HANDLE": (12055, "Native Window Handle", "原生窗口句柄"),
+            "IDS_WE_UIA_PROPERTY_IS_ENABLED": (12056, "Is Enabled", "已启用"),
+            "IDS_WE_UIA_PROPERTY_IS_KEYBOARD_FOCUSABLE": (12057, "Is Keyboard Focusable", "可获得键盘焦点"),
+            "IDS_WE_UIA_PROPERTY_HAS_KEYBOARD_FOCUS": (12058, "Has Keyboard Focus", "拥有键盘焦点"),
+            "IDS_WE_UIA_PROPERTY_IS_OFFSCREEN": (12059, "Is Offscreen", "位于屏幕外"),
+            "IDS_WE_UIA_PROPERTY_IS_PASSWORD": (12060, "Is Password", "密码控件"),
+            "IDS_WE_UIA_PROPERTY_IS_REQUIRED_FOR_FORM": (12061, "Is Required For Form", "表单必填项"),
+            "IDS_WE_UIA_PROPERTY_ORIENTATION": (12062, "Orientation", "方向"),
+            "IDS_WE_UIA_PROPERTY_ITEM_STATUS": (12063, "Item Status", "项目状态"),
+            "IDS_WE_UIA_PROPERTY_ACCELERATOR_KEY": (12064, "Accelerator Key", "加速键"),
+            "IDS_WE_UIA_PROPERTY_ACCESS_KEY": (12065, "Access Key", "访问键"),
+            "IDS_WE_UIA_PROPERTY_HELP_TEXT": (12066, "Help Text", "帮助文本"),
+            "IDS_WE_UIA_PROPERTY_LABELED_BY": (12067, "Labeled By", "标签来源"),
+            "IDS_WE_UIA_PROPERTY_BOUNDING_RECTANGLE": (12068, "Bounding Rectangle", "边界矩形"),
+            "IDS_WE_UIA_PROPERTY_CLICKABLE_POINT": (12069, "Clickable Point", "可点击点"),
+            "IDS_WE_UIA_PROPERTY_ITEM_TYPE": (12070, "Item Type", "项目类型"),
+            "IDS_WE_UIA_PROPERTY_FULL_DESCRIPTION": (12071, "Full Description", "完整描述"),
+            "IDS_WE_UIA_PROPERTY_DOCK_PATTERN": (12072, "Is Dock Pattern Available", "停靠模式可用"),
+            "IDS_WE_UIA_PROPERTY_EXPAND_COLLAPSE_PATTERN": (12073, "Is Expand/Collapse Pattern Available", "展开/折叠模式可用"),
+            "IDS_WE_UIA_PROPERTY_GRID_ITEM_PATTERN": (12074, "Is Grid Item Pattern Available", "网格项模式可用"),
+            "IDS_WE_UIA_PROPERTY_GRID_PATTERN": (12075, "Is Grid Pattern Available", "网格模式可用"),
+            "IDS_WE_UIA_PROPERTY_INVOKE_PATTERN": (12076, "Is Invoke Pattern Available", "调用模式可用"),
+            "IDS_WE_UIA_PROPERTY_MULTIPLE_VIEW_PATTERN": (12077, "Is Multiple View Pattern Available", "多视图模式可用"),
+            "IDS_WE_UIA_PROPERTY_RANGE_VALUE_PATTERN": (12078, "Is Range Value Pattern Available", "范围值模式可用"),
+            "IDS_WE_UIA_PROPERTY_SELECTION_ITEM_PATTERN": (12079, "Is Selection Item Pattern Available", "选择项模式可用"),
+            "IDS_WE_UIA_PROPERTY_SELECTION_PATTERN": (12080, "Is Selection Pattern Available", "选择模式可用"),
+            "IDS_WE_UIA_PROPERTY_SCROLL_PATTERN": (12081, "Is Scroll Pattern Available", "滚动模式可用"),
+            "IDS_WE_UIA_PROPERTY_SCROLL_ITEM_PATTERN": (12082, "Is Scroll Item Pattern Available", "滚动项模式可用"),
+            "IDS_WE_UIA_PROPERTY_TABLE_PATTERN": (12083, "Is Table Pattern Available", "表格模式可用"),
+            "IDS_WE_UIA_PROPERTY_TABLE_ITEM_PATTERN": (12084, "Is Table Item Pattern Available", "表格项模式可用"),
+            "IDS_WE_UIA_PROPERTY_TEXT_PATTERN": (12085, "Is Text Pattern Available", "文本模式可用"),
+            "IDS_WE_UIA_PROPERTY_TOGGLE_PATTERN": (12086, "Is Toggle Pattern Available", "切换模式可用"),
+            "IDS_WE_UIA_PROPERTY_TRANSFORM_PATTERN": (12087, "Is Transform Pattern Available", "变换模式可用"),
+            "IDS_WE_UIA_PROPERTY_VALUE_PATTERN": (12088, "Is Value Pattern Available", "值模式可用"),
+            "IDS_WE_UIA_PROPERTY_WINDOW_PATTERN": (12089, "Is Window Pattern Available", "窗口模式可用"),
+        }
+        expected_routes = [
+            ("UIA_RuntimeIdPropertyId", "IDS_WE_UIA_PROPERTY_RUNTIME_ID", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_NamePropertyId", "IDS_WE_WINDOW_PROPERTY_NAME", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_AutomationIdPropertyId", "IDS_WE_UIA_PROPERTY_AUTOMATION_ID", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_ClassNamePropertyId", "IDS_WE_UIA_PROPERTY_CLASS_NAME", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_ControlTypePropertyId", "IDS_WE_UIA_PROPERTY_CONTROL_TYPE", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_LocalizedControlTypePropertyId", "IDS_WE_UIA_PROPERTY_LOCALIZED_CONTROL_TYPE", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_FrameworkIdPropertyId", "IDS_WE_UIA_PROPERTY_FRAMEWORK_ID", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_ProcessIdPropertyId", "IDS_WE_UIA_PROPERTY_PROCESS_ID", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_NativeWindowHandlePropertyId", "IDS_WE_UIA_PROPERTY_NATIVE_WINDOW_HANDLE", "WND_UIA_GROUP_IDENTIFICATION"),
+            ("UIA_IsEnabledPropertyId", "IDS_WE_UIA_PROPERTY_IS_ENABLED", "WND_UIA_GROUP_STATE"),
+            ("UIA_IsKeyboardFocusablePropertyId", "IDS_WE_UIA_PROPERTY_IS_KEYBOARD_FOCUSABLE", "WND_UIA_GROUP_STATE"),
+            ("UIA_HasKeyboardFocusPropertyId", "IDS_WE_UIA_PROPERTY_HAS_KEYBOARD_FOCUS", "WND_UIA_GROUP_STATE"),
+            ("UIA_IsOffscreenPropertyId", "IDS_WE_UIA_PROPERTY_IS_OFFSCREEN", "WND_UIA_GROUP_STATE"),
+            ("UIA_IsPasswordPropertyId", "IDS_WE_UIA_PROPERTY_IS_PASSWORD", "WND_UIA_GROUP_STATE"),
+            ("UIA_IsRequiredForFormPropertyId", "IDS_WE_UIA_PROPERTY_IS_REQUIRED_FOR_FORM", "WND_UIA_GROUP_STATE"),
+            ("UIA_OrientationPropertyId", "IDS_WE_UIA_PROPERTY_ORIENTATION", "WND_UIA_GROUP_STATE"),
+            ("UIA_ItemStatusPropertyId", "IDS_WE_UIA_PROPERTY_ITEM_STATUS", "WND_UIA_GROUP_STATE"),
+            ("UIA_AcceleratorKeyPropertyId", "IDS_WE_UIA_PROPERTY_ACCELERATOR_KEY", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_AccessKeyPropertyId", "IDS_WE_UIA_PROPERTY_ACCESS_KEY", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_HelpTextPropertyId", "IDS_WE_UIA_PROPERTY_HELP_TEXT", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_LabeledByPropertyId", "IDS_WE_UIA_PROPERTY_LABELED_BY", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_BoundingRectanglePropertyId", "IDS_WE_UIA_PROPERTY_BOUNDING_RECTANGLE", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_ClickablePointPropertyId", "IDS_WE_UIA_PROPERTY_CLICKABLE_POINT", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_ItemTypePropertyId", "IDS_WE_UIA_PROPERTY_ITEM_TYPE", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_FullDescriptionPropertyId", "IDS_WE_UIA_PROPERTY_FULL_DESCRIPTION", "WND_UIA_GROUP_ACCESSIBILITY"),
+            ("UIA_IsDockPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_DOCK_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsExpandCollapsePatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_EXPAND_COLLAPSE_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsGridItemPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_GRID_ITEM_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsGridPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_GRID_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsInvokePatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_INVOKE_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsMultipleViewPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_MULTIPLE_VIEW_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsRangeValuePatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_RANGE_VALUE_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsSelectionItemPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_SELECTION_ITEM_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsSelectionPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_SELECTION_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsScrollPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_SCROLL_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsScrollItemPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_SCROLL_ITEM_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsTablePatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_TABLE_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsTableItemPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_TABLE_ITEM_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsTextPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_TEXT_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsTogglePatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_TOGGLE_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsTransformPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_TRANSFORM_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsValuePatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_VALUE_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+            ("UIA_IsWindowPatternAvailablePropertyId", "IDS_WE_UIA_PROPERTY_WINDOW_PATTERN", "WND_UIA_GROUP_PATTERNS"),
+        ]
+
+        for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
+            with self.subTest(uia_property_resource=resource_id):
+                self.assertRegex(resource_header, rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$")
+                self.assertRegex(english_resource, rf'(?m)^\s*{resource_id}\s+"{re.escape(english_text)}"$')
+                self.assertRegex(chinese_resource, rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese_text)}"$')
+                table_name = "strings" if english_text == "Process ID" else "native_strings"
+                other_table = "native_strings" if table_name == "strings" else "strings"
+                self.assertEqual(translation_data[table_name].get(english_text), chinese_text)
+                self.assertNotIn(english_text, translation_data[other_table])
+
+        actual_routes = re.findall(
+            r"\{\s*&(UIA_[A-Za-z0-9]+PropertyId),\s*(IDS_WE_[A-Z0-9_]+),\s*"
+            r"(WND_UIA_GROUP_[A-Z]+)\s*\}",
+            source,
+        )
+        self.assertEqual(actual_routes, expected_routes)
+        self.assertRegex(
+            source,
+            r"PhAddListViewGroupItem\(\s*ListViewHandle,\s*"
+            r"WndUiaProperties\[i\]\.GroupId,\s*i,\s*"
+            r"PhGetString\(PH_AUTO\(PhLoadUiString\(\s*PluginInstance->DllBase,\s*"
+            r"WndUiaProperties\[i\]\.NameResourceId,\s*NULL\s*\)\)\),\s*NULL\s*\);",
+        )
+        uia_array = source.split(
+            "static WND_UIA_PROPERTY WndUiaProperties[] = {", 1
+        )[1].split("\n};", 1)[0]
+        self.assertNotIn('L"', uia_array)
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12090$")
 
     def test_dotnet_performance_groups_use_native_resources(self) -> None:
         source = (
@@ -4867,7 +4994,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 9): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
-                    (r"bin\Release64\plugins\WindowExplorer.dll", 48): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 90): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 4): 2,
