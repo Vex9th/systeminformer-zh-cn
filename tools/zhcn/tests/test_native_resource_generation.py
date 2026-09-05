@@ -695,7 +695,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("743 strings", result.stdout)
+        self.assertIn("763 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3003,6 +3003,141 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 self.assertIn(english_text, translation_data["native_strings"])
                 self.assertNotIn(english_text, translation_data["strings"])
 
+    def test_network_tools_window_text_uses_native_resources(self) -> None:
+        audit = load_audit_module()
+        source_paths = {
+            name: REPO_ROOT / "plugins" / "NetworkTools" / name
+            for name in ("options.c", "ping.c", "tracert.c", "whois.c")
+        }
+        sources = {
+            name: audit.mask_c_comments(path.read_text(encoding="utf-8-sig"))
+            for name, path in source_paths.items()
+        }
+        resource_header = (
+            REPO_ROOT / "plugins" / "NetworkTools" / "resource.h"
+        ).read_text(encoding="utf-8-sig")
+        english_resource = (
+            REPO_ROOT / "plugins" / "NetworkTools" / "NetworkTools.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_resource = (
+            REPO_ROOT / "plugins" / "NetworkTools" / "NetworkTools.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translation_data = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        workflow = (
+            REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
+        ).read_text(encoding="utf-8-sig")
+        expected_resources = {
+            "IDS_NT_PASTE_LICENSE_KEY_HERE": (12002, "Paste the license key here:", "在此粘贴许可证密钥："),
+            "IDS_NT_PASTE_ACCOUNT_ID_HERE": (12003, "Paste the account id here:", "在此粘贴账户 ID："),
+            "IDS_NT_PING_TITLE_FORMAT": (12004, "Ping %s", "Ping %s"),
+            "IDS_NT_PING_STATUS_FORMAT": (12005, "Pinging %s with %lu bytes of data...", "正在 Ping %s，使用 %lu 字节数据..."),
+            "IDS_NT_PING_AVERAGE_FORMAT": (12006, "Average: %.2f ms", "平均值：%.2f ms"),
+            "IDS_NT_PING_MINIMUM_FORMAT": (12007, "Minimum: %.2f ms", "最小值：%.2f ms"),
+            "IDS_NT_PING_MAXIMUM_FORMAT": (12008, "Maximum: %.2f ms", "最大值：%.2f ms"),
+            "IDS_NT_PINGS_SENT_FORMAT": (12009, "Pings sent: %lu", "已发送 Ping：%lu"),
+            "IDS_NT_PINGS_LOST_FORMAT": (12010, "Pings lost: %lu (%.0f%%)", "已丢失 Ping：%lu (%.0f%%)"),
+            "IDS_NT_PING_DEVIATION_FORMAT": (12011, "Deviation: %.2f ms", "偏差：%.2f ms"),
+            "IDS_NT_BAD_REPLIES_FORMAT": (12012, "Bad replies: %lu", "错误回复：%lu"),
+            "IDS_NT_ANON_REPLIES_FORMAT": (12013, "Anon replies: %lu", "匿名回复：%lu"),
+            "IDS_NT_TRACERT_TITLE_FORMAT": (12014, "Tracing %s...", "正在跟踪 %s..."),
+            "IDS_NT_TRACERT_ROUTE_FORMAT": (12015, "Tracing route to %s with %lu bytes of data...", "正在跟踪到 %s 的路由，使用 %lu 字节数据..."),
+            "IDS_NT_TRACERT_TITLE_RESULT_FORMAT": (12016, "Tracing %s... %s", "正在跟踪 %s... %s"),
+            "IDS_NT_TRACERT_ROUTE_RESULT_FORMAT": (12017, "Tracing route to %s with %lu bytes of data... %s.", "正在跟踪到 %s 的路由，使用 %lu 字节数据... %s。"),
+            "IDS_NT_TRACERT_RESULT_ERROR": (12018, "error", "错误"),
+            "IDS_NT_TRACERT_RESULT_CONTINUOUS": (12019, "continuous ping active", "连续 Ping 已启用"),
+            "IDS_NT_TRACERT_RESULT_COMPLETE": (12020, "complete", "完成"),
+            "IDS_NT_WHOIS_TITLE_FORMAT": (12021, "Whois %s...", "WHOIS %s..."),
+        }
+        expected_calls = {
+            "IDS_NT_PASTE_LICENSE_KEY_HERE": ("options.c", 1),
+            "IDS_NT_PASTE_ACCOUNT_ID_HERE": ("options.c", 1),
+            "IDS_NT_PING_TITLE_FORMAT": ("ping.c", 1),
+            "IDS_NT_PING_STATUS_FORMAT": ("ping.c", 1),
+            "IDS_NT_PING_AVERAGE_FORMAT": ("ping.c", 1),
+            "IDS_NT_PING_MINIMUM_FORMAT": ("ping.c", 1),
+            "IDS_NT_PING_MAXIMUM_FORMAT": ("ping.c", 1),
+            "IDS_NT_PINGS_SENT_FORMAT": ("ping.c", 1),
+            "IDS_NT_PINGS_LOST_FORMAT": ("ping.c", 1),
+            "IDS_NT_PING_DEVIATION_FORMAT": ("ping.c", 1),
+            "IDS_NT_BAD_REPLIES_FORMAT": ("ping.c", 1),
+            "IDS_NT_ANON_REPLIES_FORMAT": ("ping.c", 1),
+            "IDS_NT_TRACERT_TITLE_FORMAT": ("tracert.c", 2),
+            "IDS_NT_TRACERT_ROUTE_FORMAT": ("tracert.c", 2),
+            "IDS_NT_TRACERT_TITLE_RESULT_FORMAT": ("tracert.c", 1),
+            "IDS_NT_TRACERT_ROUTE_RESULT_FORMAT": ("tracert.c", 1),
+            "IDS_NT_TRACERT_RESULT_ERROR": ("tracert.c", 1),
+            "IDS_NT_TRACERT_RESULT_CONTINUOUS": ("tracert.c", 1),
+            "IDS_NT_TRACERT_RESULT_COMPLETE": ("tracert.c", 1),
+            "IDS_NT_WHOIS_TITLE_FORMAT": ("whois.c", 1),
+        }
+        all_source = "\n".join(sources.values())
+
+        for resource_id, (numeric_id, english_text, chinese_text) in expected_resources.items():
+            with self.subTest(network_tools_window_text=resource_id):
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{re.escape(resource_id)}\s+{numeric_id}$",
+                )
+                self.assertRegex(
+                    english_resource,
+                    rf'(?m)^\s*{re.escape(resource_id)}\s+"{re.escape(english_text)}"$',
+                )
+                self.assertRegex(
+                    chinese_resource,
+                    rf'(?m)^\s*{re.escape(resource_id)}\s+"{re.escape(chinese_text)}"$',
+                )
+                self.assertEqual(
+                    translation_data["native_strings"].get(english_text),
+                    chinese_text,
+                )
+                self.assertNotIn(english_text, translation_data["strings"])
+                self.assertNotIn(f'L"{english_text}"', all_source)
+                source_name, expected_call_count = expected_calls[resource_id]
+                self.assertEqual(
+                    len(
+                        re.findall(
+                            rf"PhLoadUiString\(PluginInstance->DllBase,\s*{re.escape(resource_id)},",
+                            sources[source_name],
+                        )
+                    ),
+                    expected_call_count,
+                )
+                self.assertEqual(
+                    re.findall(r"%(?:\.\d+)?(?:l)?[suf%]", english_text),
+                    re.findall(r"%(?:\.\d+)?(?:l)?[suf%]", chinese_text),
+                )
+
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12022$")
+        migrated_resource_ids = "|".join(
+            re.escape(resource_id) for resource_id in expected_resources
+        )
+        self.assertEqual(
+            len(
+                re.findall(
+                    rf"PhLoadUiString\(PluginInstance->DllBase,\s*(?:{migrated_resource_ids}),",
+                    all_source,
+                )
+            ),
+            22,
+        )
+        self.assertEqual(
+            len(re.findall(r"IDS_NT_TRACERT_RESULT_(?:ERROR|CONTINUOUS|COMPLETE)", sources["tracert.c"])),
+            3,
+        )
+        self.assertEqual(
+            len(
+                re.findall(
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\NetworkTools\.dll=22'",
+                    workflow,
+                )
+            ),
+            2,
+        )
+
     def test_updater_launch_installer_owns_an_auto_pool(self) -> None:
         source = (
             REPO_ROOT / "plugins" / "Updater" / "toastmain.c"
@@ -3691,7 +3826,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 40): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,
-                    (r"bin\Release64\plugins\NetworkTools.dll", 2): 2,
+                    (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 10): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 2): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,

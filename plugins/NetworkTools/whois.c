@@ -910,7 +910,10 @@ INT_PTR CALLBACK WhoisDlgProc(
             WhoisSetTextFont(context);
             WhoisParseAddressString(context);
 
-            PhSetWindowText(WindowHandle, PhaFormatString(L"Whois %s...", context->RemoteAddressString)->Buffer);
+            PhSetWindowText(WindowHandle, PhaFormatString(
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_WHOIS_TITLE_FORMAT, NULL))),
+                context->RemoteAddressString
+                )->Buffer);
 
             //SendMessage(context->RichEditHandle, EM_SETBKGNDCOLOR, RGB(0, 0, 0), 0);
             SendMessage(context->RichEditHandle, EM_SETEVENTMASK, 0, SendMessage(context->RichEditHandle, EM_GETEVENTMASK, 0, 0) | ENM_LINK);

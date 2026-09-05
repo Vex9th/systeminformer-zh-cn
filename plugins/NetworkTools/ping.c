@@ -423,10 +423,15 @@ INT_PTR CALLBACK NetworkPingWndProc(
             else
                 PhCenterWindow(hwndDlg, context->ParentWindowHandle);
 
-            PhSetWindowText(hwndDlg, PhaFormatString(L"Ping %s", context->RemoteAddressString)->Buffer);
-            PhSetWindowText(context->StatusHandle, PhaFormatString(L"Pinging %s with %lu bytes of data...",
+            PhSetWindowText(hwndDlg, PhaFormatString(
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PING_TITLE_FORMAT, NULL))),
+                context->RemoteAddressString
+                )->Buffer);
+            PhSetWindowText(context->StatusHandle, PhaFormatString(
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PING_STATUS_FORMAT, NULL))),
                 context->RemoteAddressString,
-                PhGetIntegerSetting(SETTING_NAME_PING_SIZE))->Buffer
+                PhGetIntegerSetting(SETTING_NAME_PING_SIZE)
+                )->Buffer
                 );
 
             PhRegisterCallback(
@@ -525,27 +530,43 @@ INT_PTR CALLBACK NetworkPingWndProc(
             }
 
             PhSetDialogItemText(hwndDlg, IDC_ICMP_AVG, PhaFormatString(
-                L"Average: %.2f ms", pingAvgMeanValue)->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PING_AVERAGE_FORMAT, NULL))),
+                pingAvgMeanValue
+                )->Buffer);
             PhSetDialogItemText(hwndDlg, IDC_ICMP_MIN, PhaFormatString(
-                L"Minimum: %.2f ms", context->PingMinMs)->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PING_MINIMUM_FORMAT, NULL))),
+                context->PingMinMs
+                )->Buffer);
             PhSetDialogItemText(hwndDlg, IDC_ICMP_MAX, PhaFormatString(
-                L"Maximum: %.2f ms", context->PingMaxMs)->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PING_MAXIMUM_FORMAT, NULL))),
+                context->PingMaxMs
+                )->Buffer);
 
             PhSetDialogItemText(hwndDlg, IDC_PINGS_SENT, PhaFormatString(
-                L"Pings sent: %lu", context->PingSentCount)->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PINGS_SENT_FORMAT, NULL))),
+                context->PingSentCount
+                )->Buffer);
             PhSetDialogItemText(hwndDlg, IDC_PINGS_LOST, PhaFormatString(
-                L"Pings lost: %lu (%.0f%%)", context->PingLossCount,
-                ((FLOAT)context->PingLossCount / context->PingSentCount * 100))->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PINGS_LOST_FORMAT, NULL))),
+                context->PingLossCount,
+                ((FLOAT)context->PingLossCount / context->PingSentCount * 100)
+                )->Buffer);
 
             PhSetDialogItemText(hwndDlg, IDC_ICMP_STDEV, PhaFormatString(
-                L"Deviation: %.2f ms", pingDeviationValue)->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PING_DEVIATION_FORMAT, NULL))),
+                pingDeviationValue
+                )->Buffer);
             //PhSetDialogItemText(hwndDlg, IDC_ICMP_STVAR, PhaFormatString(
             //    L"Variance: %.2f ms", pingVarianceValue)->Buffer);
 
             PhSetDialogItemText(hwndDlg, IDC_BAD_HASH, PhaFormatString(
-                L"Bad replies: %lu", context->HashFailCount)->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_BAD_REPLIES_FORMAT, NULL))),
+                context->HashFailCount
+                )->Buffer);
             PhSetDialogItemText(hwndDlg, IDC_ANON_ADDR, PhaFormatString(
-                L"Anon replies: %lu", context->UnknownAddrCount)->Buffer);
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_ANON_REPLIES_FORMAT, NULL))),
+                context->UnknownAddrCount
+                )->Buffer);
         }
         break;
     case WM_NOTIFY:

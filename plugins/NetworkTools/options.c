@@ -189,12 +189,20 @@ INT_PTR CALLBACK OptionsGeoLiteDlgProc(
 
             if (id == IDC_KEYTEXT)
             {
-                PhSetDialogItemText(WindowHandle, IDC_KEYTEXT_L, L"Paste the license key here:");
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_KEYTEXT_L,
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PASTE_LICENSE_KEY_HERE, NULL)))
+                    );
                 PhSetDialogItemText(WindowHandle, IDC_KEY_EDIT, PhaGetStringSetting(SETTING_NAME_GEOLITE_API_KEY)->Buffer);
             }
             else
             {
-                PhSetDialogItemText(WindowHandle, IDC_KEYTEXT_L, L"Paste the account id here:");
+                PhSetDialogItemText(
+                    WindowHandle,
+                    IDC_KEYTEXT_L,
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_PASTE_ACCOUNT_ID_HERE, NULL)))
+                    );
                 PhSetDialogItemText(WindowHandle, IDC_KEY_EDIT, PhaGetStringSetting(SETTING_NAME_GEOLITE_API_ID)->Buffer);
             }
 

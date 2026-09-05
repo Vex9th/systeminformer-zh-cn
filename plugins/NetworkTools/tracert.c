@@ -902,10 +902,17 @@ INT_PTR CALLBACK TracertDlgProc(
             LONG dpiValue;
 
             PhSetWindowText(hwndDlg,
-                PhaFormatString(L"Tracing %s...", context->RemoteAddressString)->Buffer
+                PhaFormatString(
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_TITLE_FORMAT, NULL))),
+                    context->RemoteAddressString
+                    )->Buffer
                 );
             PhSetWindowText(GetDlgItem(hwndDlg, IDC_STATUS),
-                PhaFormatString(L"Tracing route to %s with %lu bytes of data...", context->RemoteAddressString, PhGetIntegerSetting(SETTING_NAME_PING_SIZE))->Buffer
+                PhaFormatString(
+                    PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_ROUTE_FORMAT, NULL))),
+                    context->RemoteAddressString,
+                    PhGetIntegerSetting(SETTING_NAME_PING_SIZE)
+                    )->Buffer
                 );
 
             dpiValue = PhGetWindowDpi(hwndDlg);
@@ -978,11 +985,11 @@ INT_PTR CALLBACK TracertDlgProc(
             case IDC_REFRESH:
                 {
                     PhSetWindowText(context->WindowHandle, PhaFormatString(
-                        L"Tracing %s...",
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_TITLE_FORMAT, NULL))),
                         context->RemoteAddressString
                         )->Buffer);
                     PhSetWindowText(GetDlgItem(hwndDlg, IDC_STATUS), PhaFormatString(
-                        L"Tracing route to %s with %lu bytes of data...",
+                        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_ROUTE_FORMAT, NULL))),
                         context->RemoteAddressString,
                         PhGetIntegerSetting(SETTING_NAME_PING_SIZE)
                         )->Buffer);
@@ -1131,20 +1138,36 @@ INT_PTR CALLBACK TracertDlgProc(
     case NTM_RECEIVEDFINISH:
         {
             BOOLEAN failed = (BOOLEAN)lParam;
+            PPH_STRING tracingResult;
+
+            if (failed)
+            {
+                tracingResult = PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_RESULT_ERROR, NULL);
+            }
+            else if (context->PingContinuous)
+            {
+                tracingResult = PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_RESULT_CONTINUOUS, NULL);
+            }
+            else
+            {
+                tracingResult = PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_RESULT_COMPLETE, NULL);
+            }
 
             EnableWindow(GetDlgItem(hwndDlg, IDC_REFRESH), TRUE);
 
             PhSetWindowText(context->WindowHandle, PhaFormatString(
-                L"Tracing %s... %s",
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_TITLE_RESULT_FORMAT, NULL))),
                 context->RemoteAddressString,
-                failed ? L"error" : (context->PingContinuous ? L"continuous ping active" : L"complete")
+                PhGetString(tracingResult)
                 )->Buffer);
             PhSetWindowText(GetDlgItem(hwndDlg, IDC_STATUS), PhaFormatString(
-                L"Tracing route to %s with %lu bytes of data... %s.",
+                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_NT_TRACERT_ROUTE_RESULT_FORMAT, NULL))),
                 context->RemoteAddressString,
                 PhGetIntegerSetting(SETTING_NAME_PING_SIZE),
-                failed ? L"error" : (context->PingContinuous ? L"continuous ping active" : L"complete")
+                PhGetString(tracingResult)
                 )->Buffer);
+
+            PhDereferenceObject(tracingResult);
 
             TreeNew_NodesStructured(context->TreeNewHandle);
         }

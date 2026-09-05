@@ -678,6 +678,26 @@ STRINGTABLE
 BEGIN
     IDS_NT_GEOLITE_LEGACY_WINDOWS  "The GeoLite updater doesn't support legacy versions of Windows."
     IDS_NT_UNABLE_DISPLAY_WHOIS    "Unable to display the whois window."
+    IDS_NT_PASTE_LICENSE_KEY_HERE  "Paste the license key here:"
+    IDS_NT_PASTE_ACCOUNT_ID_HERE   "Paste the account id here:"
+    IDS_NT_PING_TITLE_FORMAT       "Ping %s"
+    IDS_NT_PING_STATUS_FORMAT      "Pinging %s with %lu bytes of data..."
+    IDS_NT_PING_AVERAGE_FORMAT     "Average: %.2f ms"
+    IDS_NT_PING_MINIMUM_FORMAT     "Minimum: %.2f ms"
+    IDS_NT_PING_MAXIMUM_FORMAT     "Maximum: %.2f ms"
+    IDS_NT_PINGS_SENT_FORMAT       "Pings sent: %lu"
+    IDS_NT_PINGS_LOST_FORMAT       "Pings lost: %lu (%.0f%%)"
+    IDS_NT_PING_DEVIATION_FORMAT   "Deviation: %.2f ms"
+    IDS_NT_BAD_REPLIES_FORMAT      "Bad replies: %lu"
+    IDS_NT_ANON_REPLIES_FORMAT     "Anon replies: %lu"
+    IDS_NT_TRACERT_TITLE_FORMAT    "Tracing %s..."
+    IDS_NT_TRACERT_ROUTE_FORMAT    "Tracing route to %s with %lu bytes of data..."
+    IDS_NT_TRACERT_TITLE_RESULT_FORMAT "Tracing %s... %s"
+    IDS_NT_TRACERT_ROUTE_RESULT_FORMAT "Tracing route to %s with %lu bytes of data... %s."
+    IDS_NT_TRACERT_RESULT_ERROR    "error"
+    IDS_NT_TRACERT_RESULT_CONTINUOUS "continuous ping active"
+    IDS_NT_TRACERT_RESULT_COMPLETE "complete"
+    IDS_NT_WHOIS_TITLE_FORMAT      "Whois %s..."
 END
 
 #endif    // English (United States) resources
