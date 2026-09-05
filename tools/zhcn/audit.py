@@ -356,8 +356,8 @@ def line_of_offset(text: str, offset: int) -> int:
     return text.count("\n", 0, offset) + 1
 
 
-def literals_outside_ui_string_getters(expression: str):
-    """Return literals that are not fallbacks inside native UI getters."""
+def literal_sequences_outside_ui_string_getters(expression: str):
+    """Return maximal adjacent literal sequences and offsets outside UI getters."""
     getter_names = {
         match.group(0)
         for match in IDENT_RE.finditer(expression)
@@ -372,7 +372,32 @@ def literals_outside_ui_string_getters(expression: str):
             if masked[index] != "\n":
                 masked[index] = " "
 
-    return all_literals("".join(masked))
+    masked_expression = "".join(masked)
+    matches = list(C_LITERAL_RE.finditer(masked_expression))
+    sequences = []
+
+    for match in matches:
+        text = literal_text(match.group(0))
+
+        if sequences and not masked_expression[sequences[-1][2]:match.start()].strip():
+            previous_text, previous_offset, _ = sequences[-1]
+            sequences[-1] = (
+                previous_text + text,
+                previous_offset,
+                match.end(),
+            )
+        else:
+            sequences.append((text, match.start(), match.end()))
+
+    return [(text, offset) for text, offset, _ in sequences]
+
+
+def literals_outside_ui_string_getters(expression: str):
+    """Return literal texts that are not fallbacks inside native UI getters."""
+    return [
+        text
+        for text, _ in literal_sequences_outside_ui_string_getters(expression)
+    ]
 
 
 def c_brace_scopes(text: str):
@@ -707,58 +732,58 @@ def scan_c_file(path: str, entries):
                 if idx is None:
                     idx = len(args) - 1
                 if idx < len(args):
-                    compiled_literal = adjacent_literal_text(args[idx])
-                    literals = (
-                        [compiled_literal]
-                        if compiled_literal is not None
-                        else literals_outside_ui_string_getters(args[idx])
-                    )
-                    for t in literals:
+                    for t, relative_offset in literal_sequences_outside_ui_string_getters(
+                        args[idx]
+                    ):
                         if not is_noise(t):
                             entries.append({
                                 "category": cat, "file": rel,
-                                "line": line_of_offset(text, spans[idx][0]),
+                                "line": line_of_offset(
+                                    text,
+                                    spans[idx][0] + relative_offset,
+                                ),
                                 "english": t,
                             })
             if name in FORMAT_ARG_INDEXES:
                 format_index = FORMAT_ARG_INDEXES[name]
                 if format_index >= len(args):
                     continue
-                format_text = adjacent_literal_text(args[format_index])
-                if format_text is None:
-                    format_text = first_literal(args[format_index])
+                format_texts = [
+                    text
+                    for text, _ in literal_sequences_outside_ui_string_getters(
+                        args[format_index]
+                    )
+                ]
                 varargs = args[format_index + 1:]
-                string_argument_indexes = (
-                    printf_string_argument_indexes(format_text)
-                    if format_text is not None
-                    else []
-                )
+                string_argument_indexes = sorted({
+                    argument_index
+                    for format_text in format_texts
+                    for argument_index in printf_string_argument_indexes(format_text)
+                })
                 direct_content = (
                     name in FULL_CONTENT_TRANSLATION_CALLS
-                    and format_text == "%s"
+                    and "%s" in format_texts
                     and len(varargs) == 1
-                    and adjacent_literal_text(varargs[0]) is not None
                 )
                 for vararg_index in string_argument_indexes:
                     idx = format_index + 1 + vararg_index
                     if idx >= len(args):
                         continue
-                    compiled_literal = adjacent_literal_text(args[idx])
-                    literals = (
-                        [compiled_literal]
-                        if compiled_literal is not None
-                        else all_literals(args[idx])
-                    )
                     category = (
                         "c_msgbox"
                         if direct_content or "PhTranslateString" in args[idx]
                         else "c_msgbox_vararg"
                     )
-                    for t in literals:
+                    for t, relative_offset in literal_sequences_outside_ui_string_getters(
+                        args[idx]
+                    ):
                         if not is_noise(t):
                             entries.append({
                                 "category": category, "file": rel,
-                                "line": line_of_offset(text, spans[idx][0]),
+                                "line": line_of_offset(
+                                    text,
+                                    spans[idx][0] + relative_offset,
+                                ),
                                 "english": t,
                             })
         else:

@@ -422,6 +422,87 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ],
         )
 
+    def test_audit_merges_conditional_literal_sequences_and_tracks_lines(self) -> None:
+        audit = load_audit_module()
+        source = """
+            void update_status(BOOLEAN flag) {
+                PhSetDialogItemText(
+                    hwnd,
+                    IDC_STATUS,
+                    flag
+                        ? L"First " L"branch"
+                        : L"Other branch"
+                );
+            }
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            [
+                (entry["category"], entry["english"], entry["line"])
+                for entry in entries
+            ],
+            [
+                (
+                    "c_window_text",
+                    "First branch",
+                    source.count("\n", 0, source.index('L"First "')) + 1,
+                ),
+                (
+                    "c_window_text",
+                    "Other branch",
+                    source.count("\n", 0, source.index('L"Other branch"')) + 1,
+                ),
+            ],
+        )
+
+    def test_audit_scans_conditional_formats_without_getter_fallbacks(self) -> None:
+        audit = load_audit_module()
+        source = """
+            void show_messages(BOOLEAN flag) {
+                PhShowError(
+                    hwnd,
+                    L"%s",
+                    ToolStatusGetUiString(IDS_NATIVE, L"Getter fallback")
+                );
+                PhShowError(
+                    hwnd,
+                    flag ? L"Done" : L"%s",
+                    L"Details"
+                );
+                PhShowError(
+                    hwnd,
+                    flag ? L"%s" : L"Result: %s",
+                    L"Shared details"
+                );
+            }
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            [(entry["category"], entry["english"]) for entry in entries],
+            [
+                ("c_msgbox", "Done"),
+                ("c_msgbox_vararg", "Details"),
+                ("c_msgbox", "Result: %s"),
+                ("c_msgbox_vararg", "Shared details"),
+            ],
+        )
+
     def test_audit_does_not_count_migrated_online_checks_key_status_branches(self) -> None:
         audit = load_audit_module()
         source_path = REPO_ROOT / "plugins" / "OnlineChecks" / "options.c"
