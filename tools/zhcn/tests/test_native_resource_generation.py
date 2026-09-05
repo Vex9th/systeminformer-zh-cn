@@ -3739,14 +3739,48 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('L"Unknown network adapter"', sources["netdetails.c"])
         self.assertEqual(sources["netoptions.c"].count('L"Unknown network adapter"'), 1)
 
-        for resource_id in ("IDS_HD_CONNECTED", "IDS_HD_DISCONNECTED"):
-            with self.subTest(hardware_device_panel_state=resource_id):
-                self.assertRegex(
-                    sources["netgraph.c"],
-                    r"PhSetWindowText\(\s*Context->NetAdapterPanelStateLabel,\s*"
-                    + ui_string_expression.format(resource_id=resource_id)
-                    + r"\s*\);",
-                )
+        network_panel = sources["netgraph.c"].split(
+            "VOID NetworkDeviceUpdatePanel(", 1
+        )[1].split("INT_PTR CALLBACK NetworkDevicePanelDialogProc(", 1)[0]
+        state_condition = network_panel.index(
+            "if (mediaState == MediaConnectStateConnected)"
+        )
+        disconnected_speed = network_panel.index(
+            'PhSetWindowText(Context->NetAdapterPanelSpeedLabel, L"N/A")',
+            state_condition,
+        )
+        outer_else = network_panel.rindex(
+            "\n     else\n     {", state_condition, disconnected_speed
+        )
+        next_panel_section = network_panel.index(
+            "PhInitFormatSize(&format[0], "
+            "Context->AdapterEntry->CurrentNetworkReceive + "
+            "Context->AdapterEntry->CurrentNetworkSend)",
+            disconnected_speed,
+        )
+        connected_branch = network_panel[state_condition:outer_else]
+        disconnected_branch = network_panel[outer_else:next_panel_section]
+        panel_state_call = (
+            r"PhSetWindowText\(\s*Context->NetAdapterPanelStateLabel,\s*"
+            + ui_string_expression.format(resource_id="{resource_id}")
+            + r"\s*\);"
+        )
+        self.assertRegex(
+            connected_branch,
+            panel_state_call.format(resource_id="IDS_HD_CONNECTED"),
+        )
+        self.assertNotRegex(
+            connected_branch,
+            panel_state_call.format(resource_id="IDS_HD_DISCONNECTED"),
+        )
+        self.assertRegex(
+            disconnected_branch,
+            panel_state_call.format(resource_id="IDS_HD_DISCONNECTED"),
+        )
+        self.assertNotRegex(
+            disconnected_branch,
+            panel_state_call.format(resource_id="IDS_HD_CONNECTED"),
+        )
         self.assertNotIn('L"Connected"', sources["netgraph.c"])
         self.assertNotIn('L"Disconnected"', sources["netgraph.c"])
 
