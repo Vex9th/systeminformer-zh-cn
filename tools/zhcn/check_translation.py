@@ -178,8 +178,10 @@ def validate_manifest(manifest: dict) -> None:
         )
     if not isinstance(manifest.get("unique_strings"), list):
         raise ValueError("unique_strings must be a list")
-    if not isinstance(manifest.get("total_occurrences"), int):
+    if type(manifest.get("total_occurrences")) is not int:
         raise ValueError("total_occurrences must be an integer")
+    if manifest["total_occurrences"] < 0:
+        raise ValueError("total_occurrences must not be negative")
 
     canonical_keys = set()
     location_count = 0
@@ -199,11 +201,14 @@ def validate_manifest(manifest: dict) -> None:
         for location in locations:
             if not isinstance(location, dict):
                 raise ValueError(f"entry {category}/{english!r} has an invalid location")
-            if not isinstance(location.get("file"), str) or not isinstance(
-                location.get("line"), int
+            line = location.get("line")
+            if (
+                not isinstance(location.get("file"), str)
+                or type(line) is not int
+                or line < 1
             ):
                 raise ValueError(
-                    f"entry {category}/{english!r} locations need file and line"
+                    f"entry {category}/{english!r} locations need file and positive line"
                 )
 
         if category in CALLSITE_MIGRATION_CATEGORIES:

@@ -165,6 +165,26 @@ class TranslationManifestContractTests(unittest.TestCase):
         self.assertEqual([entry["module"] for entry in after], ["plugins/B"])
         self.assertEqual(after[0]["locations"], [{"file": "plugins/B/b.c", "line": 2}])
 
+    def test_audit_preserves_duplicate_source_occurrences(self) -> None:
+        audit = load_module("audit")
+        occurrence = {
+            "category": "c_emenu",
+            "english": "Repeated occurrence",
+            "file": "SystemInformer/main.c",
+            "line": 1,
+        }
+
+        manifest = audit.build_manifest([occurrence, dict(occurrence)])
+
+        self.assertEqual(manifest["total_occurrences"], 2)
+        self.assertEqual(
+            manifest["unique_strings"][0]["locations"],
+            [
+                {"file": "SystemInformer/main.c", "line": 1},
+                {"file": "SystemInformer/main.c", "line": 1},
+            ],
+        )
+
     def test_audit_rejects_unknown_categories(self) -> None:
         audit = load_module("audit")
 
@@ -472,6 +492,56 @@ class TranslationCheckerContractTests(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_checker_rejects_boolean_occurrence_and_line_values(self) -> None:
+        translations = {"strings": {}, "native_strings": {}}
+        cases = {
+            "boolean total": {
+                "schema_version": 2,
+                "total_occurrences": True,
+                "unique_strings": [
+                    {
+                        "category": "c_emenu",
+                        "english": "Invalid total",
+                        "locations": [
+                            {"file": "SystemInformer/main.c", "line": 1}
+                        ],
+                    }
+                ],
+            },
+            "boolean line": {
+                "schema_version": 2,
+                "total_occurrences": 1,
+                "unique_strings": [
+                    {
+                        "category": "c_emenu",
+                        "english": "Invalid line",
+                        "locations": [
+                            {"file": "SystemInformer/main.c", "line": True}
+                        ],
+                    }
+                ],
+            },
+            "zero line": {
+                "schema_version": 2,
+                "total_occurrences": 1,
+                "unique_strings": [
+                    {
+                        "category": "c_emenu",
+                        "english": "Invalid line",
+                        "locations": [
+                            {"file": "SystemInformer/main.c", "line": 0}
+                        ],
+                    }
+                ],
+            },
+        }
+
+        for name, manifest in cases.items():
+            with self.subTest(name=name):
+                result, _ = self.run_checker(manifest, translations)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("error: invalid manifest", result.stdout)
 
 
 if __name__ == "__main__":
