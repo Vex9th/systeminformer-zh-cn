@@ -560,7 +560,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("588 strings", result.stdout)
+        self.assertIn("612 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -910,7 +910,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 215)
+        self.assertEqual(len(stringtable_ids(resource_script)), 239)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -949,7 +949,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2215)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2239)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -976,6 +976,84 @@ class NativeResourceGenerationTests(unittest.TestCase):
                         set(re.findall(r'L"(?:[^"\\]|\\.)*"', call)),
                         {'L""', 'L"%s"'},
                     )
+
+    def test_plugin_manager_metadata_uses_native_string_resources(self) -> None:
+        plugman = (REPO_ROOT / "SystemInformer" / "plugman.c").read_text(
+            encoding="utf-8-sig"
+        )
+        resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
+        resource_texts = dict(re.findall(
+            r'^\s*(IDS_PH_[A-Z0-9_]+)\s+"([^"]*)"',
+            resource_script,
+            re.MULTILINE,
+        ))
+        plugin_modules = (
+            "UserNotes",
+            "ExtendedTools",
+            "ExtendedNotifications",
+            "DotNetTools",
+            "OnlineChecks",
+            "Updater",
+            "NetworkTools",
+            "HardwareDevices",
+            "WindowExplorer",
+            "ToolStatus",
+            "ExtendedServices",
+        )
+        expected_plugins = []
+        for module_name in plugin_modules:
+            plugin_directory = REPO_ROOT / "plugins" / module_name
+            plugin_headers = "\n".join(
+                path.read_text(encoding="utf-8-sig")
+                for path in plugin_directory.glob("*.h")
+            )
+            plugin_main = (plugin_directory / "main.c").read_text(
+                encoding="utf-8-sig"
+            )
+            internal_name = re.search(
+                r'^#define\s+PLUGIN_NAME\s+L"([^"]+)"',
+                plugin_headers,
+                re.MULTILINE,
+            ).group(1)
+            display_name = re.search(
+                r'info->DisplayName\s*=\s*L"([^"]+)"',
+                plugin_main,
+            ).group(1)
+            description_assignment = re.search(
+                r'info->Description\s*=\s*((?:L"[^"]*"\s*)+);',
+                plugin_main,
+                re.DOTALL,
+            ).group(1)
+            description = "".join(re.findall(r'L"([^"]*)"', description_assignment))
+            expected_plugins.append((internal_name, display_name, description))
+        routed_plugins = re.findall(
+            r'\{\s*L"([^"]+)",\s*(IDS_PH_PLUGIN_[A-Z0-9_]+_NAME),\s*'
+            r'(IDS_PH_PLUGIN_[A-Z0-9_]+_DESCRIPTION)\s*\}',
+            plugman,
+        )
+
+        self.assertEqual(len(routed_plugins), len(expected_plugins))
+        for (internal_name, display_name, description), route in zip(
+            expected_plugins,
+            routed_plugins,
+        ):
+            with self.subTest(plugin_internal_name=internal_name):
+                self.assertEqual(route[0], internal_name)
+                self.assertEqual(resource_texts[route[1]], display_name)
+                self.assertEqual(resource_texts[route[2]], description)
+
+        add_node = plugman[
+            plugman.index("PPH_PLUGIN_TREE_ROOT_NODE AddPluginsNode("):
+            plugman.index("PPH_PLUGIN_TREE_ROOT_NODE FindPluginsNode(")
+        ]
+        refresh_details = plugman[
+            plugman.rindex("VOID PhpRefreshPluginDetails("):
+            plugman.rindex("INT_PTR CALLBACK PhpPluginPropertiesDlgProc(")
+        ]
+        self.assertIn("PhpGetPluginLocalizedInformation", add_node)
+        self.assertIn("PhpGetPluginLocalizedInformation", refresh_details)
+        self.assertIn("IDS_PH_PLUGIN_UNNAMED", refresh_details)
+        self.assertIn("IDS_PH_PLUGIN_VERSION_UNKNOWN", refresh_details)
 
     def test_main_window_creation_errors_share_native_resource(self) -> None:
         source = "\n".join(
@@ -2433,7 +2511,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 215): 2,
+                    (r"bin\Release64\sys_info.exe", 239): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 15): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 25): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 1): 2,

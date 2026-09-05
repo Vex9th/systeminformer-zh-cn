@@ -1206,8 +1206,32 @@
 #define IDS_PH_ACTION_FLUSH_PROCESS_HEAPS                    2212
 #define IDS_PH_ACTION_CLOSE_HANDLE                           2213
 #define IDS_PH_ACTION_SET_HANDLE_ATTRIBUTES                  2214
+#define IDS_PH_PLUGIN_USER_NOTES_NAME                        2215
+#define IDS_PH_PLUGIN_USER_NOTES_DESCRIPTION                 2216
+#define IDS_PH_PLUGIN_EXTENDED_TOOLS_NAME                    2217
+#define IDS_PH_PLUGIN_EXTENDED_TOOLS_DESCRIPTION             2218
+#define IDS_PH_PLUGIN_EXTENDED_NOTIFICATIONS_NAME            2219
+#define IDS_PH_PLUGIN_EXTENDED_NOTIFICATIONS_DESCRIPTION     2220
+#define IDS_PH_PLUGIN_DOTNET_TOOLS_NAME                      2221
+#define IDS_PH_PLUGIN_DOTNET_TOOLS_DESCRIPTION               2222
+#define IDS_PH_PLUGIN_ONLINE_CHECKS_NAME                     2223
+#define IDS_PH_PLUGIN_ONLINE_CHECKS_DESCRIPTION              2224
+#define IDS_PH_PLUGIN_UPDATE_CHECKER_NAME                    2225
+#define IDS_PH_PLUGIN_UPDATE_CHECKER_DESCRIPTION             2226
+#define IDS_PH_PLUGIN_NETWORK_TOOLS_NAME                     2227
+#define IDS_PH_PLUGIN_NETWORK_TOOLS_DESCRIPTION              2228
+#define IDS_PH_PLUGIN_HARDWARE_DEVICES_NAME                  2229
+#define IDS_PH_PLUGIN_HARDWARE_DEVICES_DESCRIPTION           2230
+#define IDS_PH_PLUGIN_WINDOW_EXPLORER_NAME                   2231
+#define IDS_PH_PLUGIN_WINDOW_EXPLORER_DESCRIPTION            2232
+#define IDS_PH_PLUGIN_TOOL_STATUS_NAME                       2233
+#define IDS_PH_PLUGIN_TOOL_STATUS_DESCRIPTION                2234
+#define IDS_PH_PLUGIN_EXTENDED_SERVICES_NAME                 2235
+#define IDS_PH_PLUGIN_EXTENDED_SERVICES_DESCRIPTION          2236
+#define IDS_PH_PLUGIN_UNNAMED                                2237
+#define IDS_PH_PLUGIN_VERSION_UNKNOWN                        2238
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_ACTION_SET_HANDLE_ATTRIBUTES
+#define IDS_PH_LAST                                  IDS_PH_PLUGIN_VERSION_UNKNOWN
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1219,6 +1243,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2215
+#define _APS_NEXT_SYMED_VALUE           2239
 #endif
 #endif

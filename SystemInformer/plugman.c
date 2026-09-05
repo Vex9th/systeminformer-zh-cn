@@ -61,6 +61,50 @@ typedef struct _PH_PLUGIN_TREE_ROOT_NODE
     PH_STRINGREF TextCache[PH_PLUGIN_TREE_COLUMN_ITEM_MAXIMUM];
 } PH_PLUGIN_TREE_ROOT_NODE, *PPH_PLUGIN_TREE_ROOT_NODE;
 
+typedef struct _PH_PLUGIN_LOCALIZED_INFORMATION
+{
+    PCWSTR InternalName;
+    ULONG DisplayNameResourceId;
+    ULONG DescriptionResourceId;
+} PH_PLUGIN_LOCALIZED_INFORMATION, *PPH_PLUGIN_LOCALIZED_INFORMATION;
+
+static CONST PH_PLUGIN_LOCALIZED_INFORMATION PhpPluginLocalizedInformation[] =
+{
+    { L"UserNotes", IDS_PH_PLUGIN_USER_NOTES_NAME, IDS_PH_PLUGIN_USER_NOTES_DESCRIPTION },
+    { L"ExtendedTools", IDS_PH_PLUGIN_EXTENDED_TOOLS_NAME, IDS_PH_PLUGIN_EXTENDED_TOOLS_DESCRIPTION },
+    { L"ExtendedNotifications", IDS_PH_PLUGIN_EXTENDED_NOTIFICATIONS_NAME, IDS_PH_PLUGIN_EXTENDED_NOTIFICATIONS_DESCRIPTION },
+    { L"DotNetTools", IDS_PH_PLUGIN_DOTNET_TOOLS_NAME, IDS_PH_PLUGIN_DOTNET_TOOLS_DESCRIPTION },
+    { L"OnlineChecks", IDS_PH_PLUGIN_ONLINE_CHECKS_NAME, IDS_PH_PLUGIN_ONLINE_CHECKS_DESCRIPTION },
+    { L"UpdateChecker", IDS_PH_PLUGIN_UPDATE_CHECKER_NAME, IDS_PH_PLUGIN_UPDATE_CHECKER_DESCRIPTION },
+    { L"NetworkTools", IDS_PH_PLUGIN_NETWORK_TOOLS_NAME, IDS_PH_PLUGIN_NETWORK_TOOLS_DESCRIPTION },
+    { L"HardwareDevices", IDS_PH_PLUGIN_HARDWARE_DEVICES_NAME, IDS_PH_PLUGIN_HARDWARE_DEVICES_DESCRIPTION },
+    { L"WindowExplorer", IDS_PH_PLUGIN_WINDOW_EXPLORER_NAME, IDS_PH_PLUGIN_WINDOW_EXPLORER_DESCRIPTION },
+    { L"ToolStatus", IDS_PH_PLUGIN_TOOL_STATUS_NAME, IDS_PH_PLUGIN_TOOL_STATUS_DESCRIPTION },
+    { L"ExtendedServices", IDS_PH_PLUGIN_EXTENDED_SERVICES_NAME, IDS_PH_PLUGIN_EXTENDED_SERVICES_DESCRIPTION }
+};
+
+static VOID PhpGetPluginLocalizedInformation(
+    _In_ PPH_PLUGIN Plugin,
+    _Out_ PCWSTR *DisplayName,
+    _Out_ PCWSTR *Description
+    )
+{
+    *DisplayName = Plugin->Information.DisplayName;
+    *Description = Plugin->Information.Description;
+
+    for (ULONG i = 0; i < RTL_NUMBER_OF(PhpPluginLocalizedInformation); i++)
+    {
+        const PH_PLUGIN_LOCALIZED_INFORMATION *information = &PhpPluginLocalizedInformation[i];
+
+        if (PhEqualStringRef2(&Plugin->Name, information->InternalName, TRUE))
+        {
+            *DisplayName = PhGetApplicationUiString(information->DisplayNameResourceId);
+            *Description = PhGetApplicationUiString(information->DescriptionResourceId);
+            break;
+        }
+    }
+}
+
 INT_PTR CALLBACK PhpPluginPropertiesDlgProc(
     _In_ HWND hwndDlg,
     _In_ UINT uMsg,
@@ -173,6 +217,8 @@ PPH_PLUGIN_TREE_ROOT_NODE AddPluginsNode(
     PPH_PLUGIN_TREE_ROOT_NODE pluginNode;
     PH_IMAGE_VERSION_INFO versionInfo;
     PPH_STRING fileName;
+    PCWSTR displayName;
+    PCWSTR description;
 
     pluginNode = PhAllocate(sizeof(PH_PLUGIN_TREE_ROOT_NODE));
     memset(pluginNode, 0, sizeof(PH_PLUGIN_TREE_ROOT_NODE));
@@ -186,10 +232,11 @@ PPH_PLUGIN_TREE_ROOT_NODE AddPluginsNode(
     pluginNode->PluginInstance = Plugin;
     pluginNode->PluginOptions = Plugin->Information.HasOptions;
     pluginNode->InternalName = PhCreateString2(&Plugin->Name);
-    if (Plugin->Information.DisplayName)
-        pluginNode->Name = PhCreateString(Plugin->Information.DisplayName);
-    if (Plugin->Information.Description)
-        pluginNode->Description = PhCreateString(Plugin->Information.Description);
+    PhpGetPluginLocalizedInformation(Plugin, &displayName, &description);
+    if (displayName)
+        pluginNode->Name = PhCreateString(displayName);
+    if (description)
+        pluginNode->Description = PhCreateString(description);
 
     if (fileName = PhGetPluginFileName(Plugin))
     {
@@ -921,25 +968,28 @@ VOID PhpRefreshPluginDetails(
     PPH_STRING fileName = NULL;
     PPH_STRING baseName = NULL;
     PH_IMAGE_VERSION_INFO versionInfo;
+    PCWSTR displayName;
+    PCWSTR description;
 
     if (fileName = PhGetPluginFileName(SelectedPlugin))
         baseName = PH_AUTO(PhGetBaseName(fileName));
 
-    PhSetDialogItemText(hwndDlg, IDC_NAME, SelectedPlugin->Information.DisplayName ? SelectedPlugin->Information.DisplayName : L"(unnamed)");
+    PhpGetPluginLocalizedInformation(SelectedPlugin, &displayName, &description);
+    PhSetDialogItemText(hwndDlg, IDC_NAME, displayName ? displayName : PhGetApplicationUiString(IDS_PH_PLUGIN_UNNAMED));
     PhSetDialogItemText(hwndDlg, IDC_INTERNALNAME, SelectedPlugin->Name.Buffer);
     PhSetDialogItemText(hwndDlg, IDC_AUTHOR, SelectedPlugin->Information.Author);
     PhSetDialogItemText(hwndDlg, IDC_FILENAME, PhGetStringOrEmpty(baseName));
-    PhSetDialogItemText(hwndDlg, IDC_DESCRIPTION, SelectedPlugin->Information.Description);
+    PhSetDialogItemText(hwndDlg, IDC_DESCRIPTION, description);
     PhSetDialogItemText(hwndDlg, IDC_URL, SelectedPlugin->Information.Url);
 
     if (fileName && NT_SUCCESS(PhInitializeImageVersionInfoEx(&versionInfo, &fileName->sr, FALSE)))
     {
-        PhSetDialogItemText(hwndDlg, IDC_VERSION, PhGetStringOrDefault(versionInfo.FileVersion, L"Unknown"));
+        PhSetDialogItemText(hwndDlg, IDC_VERSION, PhGetStringOrDefault(versionInfo.FileVersion, PhGetApplicationUiString(IDS_PH_PLUGIN_VERSION_UNKNOWN)));
         PhDeleteImageVersionInfo(&versionInfo);
     }
     else
     {
-        PhSetDialogItemText(hwndDlg, IDC_VERSION, L"Unknown");
+        PhSetDialogItemText(hwndDlg, IDC_VERSION, PhGetApplicationUiString(IDS_PH_PLUGIN_VERSION_UNKNOWN));
     }
 
     ShowWindow(GetDlgItem(hwndDlg, IDC_OPENURL), SelectedPlugin->Information.Url ? SW_SHOW : SW_HIDE);
