@@ -1302,7 +1302,7 @@ VOID PhRunAsExecuteCommmand(
         &logonType
         ))
     {
-        PhShowStatus(Context->WindowHandle, L"Unable to start the program.", STATUS_INVALID_PARAMETER, 0);
+        PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_START_PROGRAM), STATUS_INVALID_PARAMETER, 0);
         return;
     }
 
@@ -1435,16 +1435,16 @@ VOID PhRunAsExecuteCommmand(
             {
                 PhShowError2(
                     Context->WindowHandle,
-                    L"Unable to start the program.",
+                    PhGetApplicationUiString(IDS_PH_UNABLE_START_PROGRAM),
                     L"%s",
-                    L"Unable to start the execution alias with a process token."
+                    PhGetApplicationUiString(IDS_PH_UNABLE_START_EXECUTION_ALIAS)
                     );
             }
             else
             {
                 PhShowStatus(
                     Context->WindowHandle,
-                    L"Unable to start the program.",
+                    PhGetApplicationUiString(IDS_PH_UNABLE_START_PROGRAM),
                     status,
                     0
                     );
@@ -3178,7 +3178,7 @@ INT_PTR CALLBACK PhpRunFileWndProc(
                         {
                             if (!(NT_NTWIN32(status) && WIN32_FROM_NTSTATUS(status) == ERROR_CANCELLED))
                             {
-                                PhShowStatus(hwndDlg, L"Unable to execute the command.", status, 0);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_COMMAND), status, 0);
                             }
                         }
 

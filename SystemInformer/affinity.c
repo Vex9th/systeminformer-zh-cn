@@ -154,7 +154,7 @@ static BOOLEAN PhpShowProcessErrorAffinity(
     return PhShowContinueStatus(
         hWnd,
         PhaFormatString(
-        L"Unable to change affinity of process %lu",
+        PhGetApplicationUiString(IDS_PH_UNABLE_CHANGE_PROCESS_AFFINITY),
         HandleToUlong(Process->ProcessId)
         )->Buffer,
         Status,
@@ -172,7 +172,7 @@ static BOOLEAN PhpShowThreadErrorAffinity(
     return PhShowContinueStatus(
         hWnd,
         PhaFormatString(
-        L"Unable to change affinity of thread %lu",
+        PhGetApplicationUiString(IDS_PH_UNABLE_CHANGE_THREAD_AFFINITY),
         HandleToUlong(Thread->ThreadId)
         )->Buffer,
         Status,
@@ -194,7 +194,7 @@ VOID PhpShowThreadErrorAffinityList(
         PhAppendFormatStringBuilder(
             &stringBuilder,
             L"%s\n",
-            PhGetStringOrDefault(AffinityErrorsList->Items[i], L"An unknown error occurred.")
+            PhGetStringOrDefault(AffinityErrorsList->Items[i], PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR_OCCURRED))
             );
     }
 
@@ -203,8 +203,8 @@ VOID PhpShowThreadErrorAffinityList(
 
     PhShowInformation2(
         Context->WindowHandle,
-        L"Unable to update affinity for thread(s)",
-        L"Unable to update affinity for thread(s):\r\n%s",
+        PhGetApplicationUiString(IDS_PH_UNABLE_UPDATE_THREAD_AFFINITY),
+        PhGetApplicationUiString(IDS_PH_UNABLE_UPDATE_THREAD_AFFINITY_CONTENT),
         PhGetString(PhFinalStringBuilderString(&stringBuilder))
         );
 
@@ -471,7 +471,7 @@ INT_PTR CALLBACK PhpProcessAffinityDlgProc(
 
             if (!NT_SUCCESS(status))
             {
-                PhShowStatus(hwndDlg, L"Unable to query the current affinity.", status, 0);
+                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_CURRENT_AFFINITY), status, 0);
                 EndDialog(hwndDlg, IDCANCEL);
                 break;
             }
@@ -552,7 +552,7 @@ INT_PTR CALLBACK PhpProcessAffinityDlgProc(
 
                     if (affinityMask == 0)
                     {
-                        PhShowError2(hwndDlg, L"Unable to change affinity settings.", L"%s", L"You must select at least one CPU.");
+                        PhShowError2(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CHANGE_AFFINITY_SETTINGS), L"%s", PhGetApplicationUiString(IDS_PH_CPU_SELECTION_REQUIRED));
                         break;
                     }
 

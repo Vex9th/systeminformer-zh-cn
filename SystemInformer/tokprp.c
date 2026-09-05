@@ -1694,27 +1694,31 @@ INT_PTR CALLBACK PhpTokenPageProc(
                             }
                             else
                             {
-                                PWSTR action = L"set";
+                                PCWSTR action = PhGetApplicationUiString(IDS_PH_ACTION_SET);
 
                                 switch (GET_WM_COMMAND_ID(wParam, lParam))
                                 {
                                 case ID_PRIVILEGE_ENABLE:
-                                    action = L"enable";
+                                    action = PhGetApplicationUiString(IDS_PH_ACTION_ENABLE);
                                     break;
                                 case ID_PRIVILEGE_DISABLE:
-                                    action = L"disable";
+                                    action = PhGetApplicationUiString(IDS_PH_ACTION_DISABLE);
                                     break;
                                 case ID_PRIVILEGE_RESET:
-                                    action = L"reset";
+                                    action = PhGetApplicationUiString(IDS_PH_ACTION_RESET);
                                     break;
                                 case ID_PRIVILEGE_REMOVE:
-                                    action = L"remove";
+                                    action = PhGetApplicationUiString(IDS_PH_ACTION_REMOVE);
                                     break;
                                 }
 
                                 if (!PhShowContinueStatus(
                                     hwndDlg,
-                                    PhaFormatString(L"Unable to %s %s.", action, PhGetStringOrDefault(privilegeName, L"privilege"))->Buffer,
+                                    PhaFormatString(
+                                        PhGetApplicationUiString(IDS_PH_UNABLE_APPLY_TOKEN_ACTION),
+                                        action,
+                                        PhGetStringOrDefault(privilegeName, PhGetApplicationUiString(IDS_PH_TOKEN_PRIVILEGE))
+                                        )->Buffer,
                                     STATUS_UNSUCCESSFUL,
                                     0
                                     ))
@@ -1729,7 +1733,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to open the token.", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_TOKEN), status, 0);
                     }
 
                     PhFree(listViewItems);
@@ -1833,24 +1837,28 @@ INT_PTR CALLBACK PhpTokenPageProc(
                             }
                             else
                             {
-                                PWSTR action = L"set";
+                                PCWSTR action = PhGetApplicationUiString(IDS_PH_ACTION_SET);
 
                                 switch (GET_WM_COMMAND_ID(wParam, lParam))
                                 {
                                 case ID_GROUP_ENABLE:
-                                    action = L"enable";
+                                    action = PhGetApplicationUiString(IDS_PH_ACTION_ENABLE);
                                     break;
                                 case ID_GROUP_DISABLE:
-                                    action = L"disable";
+                                    action = PhGetApplicationUiString(IDS_PH_ACTION_DISABLE);
                                     break;
                                 case ID_GROUP_RESET:
-                                    action = L"reset";
+                                    action = PhGetApplicationUiString(IDS_PH_ACTION_RESET);
                                     break;
                                 }
 
                                 if (!PhShowContinueStatus(
                                     hwndDlg,
-                                    PhaFormatString(L"Unable to %s %s.", action, L"group")->Buffer,
+                                    PhaFormatString(
+                                        PhGetApplicationUiString(IDS_PH_UNABLE_APPLY_TOKEN_ACTION),
+                                        action,
+                                        PhGetApplicationUiString(IDS_PH_TOKEN_GROUP)
+                                        )->Buffer,
                                     status,
                                     0
                                     ))
@@ -1869,7 +1877,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to open the token.", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_TOKEN), status, 0);
                     }
 
                     PhFree(listViewItems);
@@ -1943,7 +1951,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                         }
                         else
                         {
-                            PhShowStatus(hwndDlg, L"Unable to disable UIAccess flag.", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_DISABLE_UIACCESS), status, 0);
                         }
 
                         ExtendedListView_SortItems(tokenPageContext->ListViewHandle);
@@ -1957,7 +1965,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to open the token.", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_TOKEN), status, 0);
                     }
 
                     PhFree(listViewItems);
@@ -2170,7 +2178,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                             }
 
                             if (!NT_SUCCESS(status))
-                                PhShowStatus(hwndDlg, L"Unable to set the integrity level", status, 0);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_SET_INTEGRITY_LEVEL), status, 0);
                         }
                     }
 
@@ -2675,7 +2683,7 @@ INT_PTR CALLBACK PhpTokenGeneralPageProc(
                     }
                     else
                     {
-                        PhShowStatus(hwndDlg, L"Unable to open the token", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_OPEN_TOKEN), status, 0);
                     }
                 }
                 break;

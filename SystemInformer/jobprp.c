@@ -473,7 +473,7 @@ INT_PTR CALLBACK PhpJobPageProc(
                         }
 
                         if (!NT_SUCCESS(status))
-                            PhShowStatus(hwndDlg, L"Unable to terminate the job", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_TERMINATE_JOB), status, 0);
                     }
                 }
                 break;
@@ -519,7 +519,7 @@ INT_PTR CALLBACK PhpJobPageProc(
                         if (NT_SUCCESS(status))
                             break;
                         else
-                            PhShowStatus(hwndDlg, L"Unable to add the process to the job", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_ADD_PROCESS_TO_JOB), status, 0);
                     }
                 }
                 break;

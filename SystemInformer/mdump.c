@@ -243,7 +243,7 @@ VOID PhUiCreateDumpFileProcess(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(WindowHandle, L"Unable to access the dump file", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_ACCESS_DUMP_FILE), status, 0);
         PhDereferenceObject(context);
         return;
     }
@@ -639,7 +639,7 @@ INT_PTR CALLBACK PhpProcessMiniDumpDlgProc(
         context->LastTickCount = NtGetTickCount64();
         break;
     case WM_PH_MINIDUMP_ERROR:
-        PhShowStatus(hwndDlg, L"Unable to create the minidump", 0, (ULONG)lParam);
+        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_MINIDUMP), 0, (ULONG)lParam);
         break;
     case WM_PH_MINIDUMP_COMPLETED:
         EndDialog(hwndDlg, IDOK);
@@ -719,8 +719,8 @@ LRESULT CALLBACK PhpProcessMiniDumpTaskDialogSubclassProc(
             config.pfCallback = PhpProcessMiniDumpErrorPageCallbackProc;
             config.lpCallbackData = (LONG_PTR)context;
             config.pszWindowTitle = PhApplicationName;
-            config.pszMainInstruction = L"Unable to create the minidump.";
-            config.pszContent = PhGetStringOrDefault(context->ErrorMessage, L"Unknown error.");
+            config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_MINIDUMP);
+            config.pszContent = PhGetStringOrDefault(context->ErrorMessage, PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR));
 
             PhTaskDialogNavigatePage(context->WindowHandle, &config);
         }

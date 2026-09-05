@@ -929,7 +929,7 @@ VOID PhpSearchMemoryStrings(
             Context->ProcessItem->ProcessId
             )))
         {
-            PhShowStatus(Context->WindowHandle, L"Unable to clone the process", status, 0);
+            PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_CLONE_PROCESS), status, 0);
             return;
         }
     }
@@ -1335,7 +1335,7 @@ INT_PTR CALLBACK PhpMemoryStringsMinimumLengthDlgProc(
 
                     if (!minimumLength || minimumLength > MAXULONG32)
                     {
-                        PhShowError2(hwndDlg, L"Unable to update the length.", L"%s", L"The minimum length is invalid.");
+                        PhShowError2(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_UPDATE_LENGTH), L"%s", PhGetApplicationUiString(IDS_PH_MINIMUM_LENGTH_INVALID));
                         break;
                     }
 
@@ -1406,7 +1406,7 @@ INT_PTR CALLBACK PhpMemoryStringsThreadCountDlgProc(
                 PhStringToInteger64(&PhaGetDlgItemText(hwndDlg, IDC_MINIMUMLENGTH)->sr, 0, &count);
                 if (count > 64)
                 {
-                    PhShowError2(hwndDlg, L"Invalid value.", L"%s", L"Enter a value between 0 and 64.");
+                    PhShowError2(hwndDlg, PhGetApplicationUiString(IDS_PH_INVALID_VALUE), L"%s", PhGetApplicationUiString(IDS_PH_VALUE_RANGE_0_TO_64));
                     break;
                 }
                 *threadCount = (ULONG)count;

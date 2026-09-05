@@ -123,7 +123,7 @@ VOID PhShowMemoryEditorDialog(
 
                 if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(OwnerWindow, L"Unable to read memory", status, 0);
+                    PhShowStatus(OwnerWindow, PhGetApplicationUiString(IDS_PH_UNABLE_READ_MEMORY), status, 0);
                     return;
                 }
             }
@@ -488,7 +488,7 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
 
                             if (!NT_SUCCESS(status))
                             {
-                                PhShowStatus(hwndDlg, L"Unable to write memory", status, 0);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_WRITE_MEMORY), status, 0);
                             }
                         }
                         else
@@ -523,7 +523,7 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
 
                         if (!NT_SUCCESS(status))
                         {
-                            PhShowStatus(hwndDlg, L"Unable to read memory", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_READ_MEMORY), status, 0);
                         }
                     }
                     else

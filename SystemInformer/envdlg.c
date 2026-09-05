@@ -1145,7 +1145,7 @@ static VOID EtEnvironmentAdd(
     }
     else
     {
-        PhShowStatus(Context->WindowHandle, L"Unable to set the environment variable.", status, 0);
+        PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SET_ENVIRONMENT_VARIABLE), status, 0);
     }
 
     PhClearReference(&name);
@@ -1189,7 +1189,7 @@ static VOID EtEnvironmentEdit(
             }
             else
             {
-                PhShowStatus(Context->WindowHandle, L"Unable to set the environment variable.", status, 0);
+                PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SET_ENVIRONMENT_VARIABLE), status, 0);
             }
 
             PhClearReference(&newValue);
@@ -1228,7 +1228,7 @@ static VOID EtEnvironmentEdit(
             }
             else
             {
-                PhShowStatus(Context->WindowHandle, L"Unable to set the environment variable.", status, 0);
+                PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SET_ENVIRONMENT_VARIABLE), status, 0);
             }
 
             PhClearReference(&name);
@@ -1277,7 +1277,7 @@ static VOID EtEnvironmentDelete(
     }
     else
     {
-        PhShowStatus(Context->WindowHandle, L"Unable to delete the environment variable.", status, 0);
+        PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_DELETE_ENVIRONMENT_VARIABLE), status, 0);
     }
 }
 

@@ -970,7 +970,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
 
                         if (!NT_SUCCESS(status))
                         {
-                            PhShowStatus(hwndDlg, L"Unable to set the integrity label", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_SET_INTEGRITY_LABEL), status, 0);
                         }
                     }
 

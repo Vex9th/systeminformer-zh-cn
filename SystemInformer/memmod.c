@@ -601,7 +601,7 @@ INT_PTR CALLBACK PhPageModifiedDlgProc(
 
                 if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(context->ParentWindowHandle, L"Unable to perform the scan", status, 0);
+                    PhShowStatus(context->ParentWindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_SCAN), status, 0);
                     EndDialog(WindowHandle, IDCANCEL);
                 }
             }
@@ -672,7 +672,7 @@ INT_PTR CALLBACK PhPageModifiedDlgProc(
 
                         if (!NT_SUCCESS(status))
                         {
-                            PhShowStatus(WindowHandle, L"Unable to perform the scan", status, 0);
+                            PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_SCAN), status, 0);
                         }
                     }
                 }

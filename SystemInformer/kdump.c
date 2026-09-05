@@ -207,7 +207,7 @@ HRESULT CALLBACK PhpLiveDumpProgressDialogCallbackProc(
                     config.pfCallback = PhpLiveDumpPageCallbackProc;
                     config.lpCallbackData = (LONG_PTR)context;
                     config.pszWindowTitle = PhApplicationName;
-                    config.pszMainInstruction = L"Unable to save the live kernel dump.";
+                    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_UNABLE_SAVE_LIVE_KERNEL_DUMP);
 
                     statusMessage = PhGetStatusMessage(context->LastStatus, 0);
                     config.pszContent = PhGetString(statusMessage);
@@ -256,7 +256,7 @@ NTSTATUS PhpLiveDumpTaskDialogThread(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(NULL, L"Unable to save the live kernel dump.", status, 0);
+        PhShowStatus(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_SAVE_LIVE_KERNEL_DUMP), status, 0);
         return status;
     }
 
@@ -390,7 +390,7 @@ INT_PTR CALLBACK PhpLiveDumpDlgProc(
 
                     if (!PhGetOwnTokenAttributes().Elevated)
                     {
-                        PhShowStatus(hwndDlg, L"Unable to create live kernel dump.", 0, ERROR_ELEVATION_REQUIRED);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_LIVE_KERNEL_DUMP), 0, ERROR_ELEVATION_REQUIRED);
                         break;
                     }
 

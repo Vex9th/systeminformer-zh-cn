@@ -358,7 +358,7 @@ VOID PhpShowPluginErrorMessage(
             &stringBuilder,
             L"%s: %s (0x%lx)\n\n",
             baseName->Buffer,
-            PhGetStringOrDefault(loadError->ErrorMessage, L"An unknown error occurred."),
+            PhGetStringOrDefault(loadError->ErrorMessage, PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR_OCCURRED)),
             loadError->Status
             );
 

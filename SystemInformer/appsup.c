@@ -1189,7 +1189,7 @@ VOID PhShellExecuteUserString(
                 ntMessage = PhGetNtMessage(status);
                 PhShowError2(
                     WindowHandle,
-                    L"Unable to execute the command.",
+                    PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_COMMAND),
                     L"%s\n%s",
                     PhGetStringOrDefault(ntMessage, PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR_OCCURRED)),
                     ErrorMessage
@@ -1198,7 +1198,7 @@ VOID PhShellExecuteUserString(
             }
             else
             {
-                PhShowStatus(WindowHandle, L"Unable to execute the command.", status, 0);
+                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_COMMAND), status, 0);
             }
         }
     }

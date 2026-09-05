@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("301 strings", result.stdout)
+        self.assertIn("344 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 97)
+        self.assertEqual(len(stringtable_ids(resource_script)), 140)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2097)))
+        self.assertEqual(numeric_ids, list(range(2000, 2140)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1099,6 +1099,91 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 stem = re.escape(literal.removesuffix("."))
                 self.assertNotRegex(source, rf'L"{stem}\.?[ \t]*"')
 
+    def test_main_process_environment_and_dump_errors_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        source = "\n".join(
+            audit.mask_c_comments(path.read_text(encoding="utf-8-sig"))
+            for path in (REPO_ROOT / "SystemInformer").glob("*.c")
+        )
+        literals = (
+            "Unable to access the dump file",
+            "Unable to create the minidump",
+            "Unable to change affinity settings.",
+            "Unable to create live kernel dump.",
+            "Unable to perform the scan",
+            "Unable to set the environment variable.",
+            "Unable to delete the environment variable.",
+            "Unable to disable UIAccess flag.",
+            "Unable to set the integrity level",
+            "Unable to read memory",
+            "Unable to write memory",
+            "Unable to set the integrity label",
+            "Unable to terminate the process",
+            "Unable to create a process structure for the selected process.",
+            "Unable to terminate the job",
+            "Unable to add the process to the job",
+            "Unable to terminate the task.",
+            "Unable to clone the process",
+            "Unable to update the length.",
+            "Unable to query the process.",
+            "Unable to start the program.",
+            "You must select at least one CPU.",
+            "The minimum length is invalid.",
+            "Unable to start the execution alias with a process token.",
+            "Unable to save the live kernel dump.",
+            "Unable to query the current affinity.",
+            "Unable to open the token",
+            "Unable to execute the command.",
+            "Invalid value.",
+            "Enter a value between 0 and 64.",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                stem = re.escape(literal.removesuffix("."))
+                self.assertNotRegex(source, rf'L"{stem}\.?[ \t]*"')
+
+    def test_main_affinity_and_token_dynamic_errors_use_native_resources(self) -> None:
+        audit = load_audit_module()
+        source = "\n".join(
+            audit.mask_c_comments(path.read_text(encoding="utf-8-sig"))
+            for path in (
+                REPO_ROOT / "SystemInformer" / "affinity.c",
+                REPO_ROOT / "SystemInformer" / "plugin.c",
+                REPO_ROOT / "SystemInformer" / "tokprp.c",
+            )
+        )
+        literals = (
+            "Unable to change affinity of process %lu",
+            "Unable to change affinity of thread %lu",
+            "Unable to update affinity for thread(s)",
+            "Unable to update affinity for thread(s):\\r\\n%s",
+            "Unable to %s %s.",
+            "An unknown error occurred.",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}"', source)
+
+        token_properties = (
+            REPO_ROOT / "SystemInformer" / "tokprp.c"
+        ).read_text(encoding="utf-8-sig")
+        self.assertNotRegex(
+            token_properties,
+            r'action\s*=\s*L"(?:set|enable|disable|reset|remove)"',
+        )
+        self.assertNotIn('L"privilege"', token_properties)
+        self.assertNotIn('L"group"', token_properties)
+
+        service_actions = (
+            REPO_ROOT / "SystemInformer" / "actions.c"
+        ).read_text(encoding="utf-8-sig")
+        self.assertNotIn(
+            "PhGetApplicationUiString(IDS_PH_UNABLE_APPLY_TOKEN_ACTION)",
+            service_actions,
+        )
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -1292,7 +1377,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 97): 2,
+                    (r"bin\Release64\sys_info.exe", 140): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

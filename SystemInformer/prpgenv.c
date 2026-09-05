@@ -789,12 +789,12 @@ INT_PTR CALLBACK PhpEditEnvDlgProc(
 
                             if (!NT_SUCCESS(status))
                             {
-                                PhShowStatus(hwndDlg, L"Unable to set the environment variable.", status, 0);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_SET_ENVIRONMENT_VARIABLE), status, 0);
                                 break;
                             }
                             else if (status == STATUS_TIMEOUT)
                             {
-                                PhShowStatus(hwndDlg, L"Unable to delete the environment variable.", 0, WAIT_TIMEOUT);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_DELETE_ENVIRONMENT_VARIABLE), 0, WAIT_TIMEOUT);
                                 break;
                             }
 
@@ -950,11 +950,11 @@ BOOLEAN PhpEditEnvironmentNode(
 
                 if (status == STATUS_TIMEOUT)
                 {
-                    PhShowStatus(Context->WindowHandle, L"Unable to set the environment variable.", 0, WAIT_TIMEOUT);
+                    PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SET_ENVIRONMENT_VARIABLE), 0, WAIT_TIMEOUT);
                 }
                 else if (!NT_SUCCESS(status))
                 {
-                    PhShowStatus(Context->WindowHandle, L"Unable to set the environment variable.", status, 0);
+                    PhShowStatus(Context->WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_SET_ENVIRONMENT_VARIABLE), status, 0);
                 }
                 else
                 {
@@ -1985,11 +1985,11 @@ INT_PTR CALLBACK PhpProcessEnvironmentDlgProc(
 
                     if (status == STATUS_TIMEOUT)
                     {
-                        PhShowStatus(hwndDlg, L"Unable to delete the environment variable.", 0, WAIT_TIMEOUT);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_DELETE_ENVIRONMENT_VARIABLE), 0, WAIT_TIMEOUT);
                     }
                     else if (!NT_SUCCESS(status))
                     {
-                        PhShowStatus(hwndDlg, L"Unable to delete the environment variable.", status, 0);
+                        PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_DELETE_ENVIRONMENT_VARIABLE), status, 0);
                     }
                 }
                 break;

@@ -1000,7 +1000,7 @@ INT_PTR CALLBACK PhRunAsPackageWndProc(
                             }
                             else
                             {
-                                PhShowStatus(WindowHandle, L"Unable to execute the command.", 0, status);
+                                PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_COMMAND), 0, status);
                             }
 
                             PhClearReference(&directoryString);

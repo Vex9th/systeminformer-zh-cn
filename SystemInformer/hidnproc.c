@@ -331,7 +331,7 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
                                 }
                                 else
                                 {
-                                    PhShowStatus(hwndDlg, L"Unable to terminate the process", status, 0);
+                                    PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_TERMINATE_PROCESS), status, 0);
                                 }
                             }
 
@@ -483,7 +483,7 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
                             }
                             else
                             {
-                                PhShowStatus(hwndDlg, L"Unable to create a process structure for the selected process.", status, 0);
+                                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_PROCESS_STRUCTURE), status, 0);
                             }
                         }
                     }
@@ -590,7 +590,7 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
             }
             else
             {
-                PhShowStatus(hwndDlg, L"Unable to perform the scan", status, 0);
+                PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_PERFORM_SCAN), status, 0);
             }
 
             EnableWindow(GetDlgItem(hwndDlg, IDC_SCAN), TRUE);

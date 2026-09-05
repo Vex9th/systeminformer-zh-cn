@@ -737,7 +737,7 @@ INT_PTR CALLBACK PhpProcessHandlesDlgProc(
 
                          if (!NT_SUCCESS(status))
                         {
-                            PhShowStatus(hwndDlg, L"Unable to query the process.", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_QUERY_PROCESS), status, 0);
                         }
                     }
                 }

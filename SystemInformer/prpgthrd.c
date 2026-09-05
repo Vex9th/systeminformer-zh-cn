@@ -1409,7 +1409,7 @@ INT_PTR CALLBACK PhpProcessThreadsDlgProc(
 
                         if (!NT_SUCCESS(status))
                         {
-                            PhShowStatus(hwndDlg, L"Unable to change the thread critical status.", status, 0);
+                            PhShowStatus(hwndDlg, PhGetApplicationUiString(IDS_PH_UNABLE_CHANGE_THREAD_CRITICAL_STATUS), status, 0);
                         }
                     }
                 }
