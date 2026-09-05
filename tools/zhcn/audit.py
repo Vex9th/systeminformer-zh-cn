@@ -707,15 +707,19 @@ def scan_c_file(path: str, entries):
                 if idx is None:
                     idx = len(args) - 1
                 if idx < len(args):
-                    t = adjacent_literal_text(args[idx])
-                    if t is None:
-                        t = first_literal(args[idx])
-                    if t is not None and not is_noise(t):
-                        entries.append({
-                            "category": cat, "file": rel,
-                            "line": line_of_offset(text, spans[idx][0]),
-                            "english": t,
-                        })
+                    compiled_literal = adjacent_literal_text(args[idx])
+                    literals = (
+                        [compiled_literal]
+                        if compiled_literal is not None
+                        else literals_outside_ui_string_getters(args[idx])
+                    )
+                    for t in literals:
+                        if not is_noise(t):
+                            entries.append({
+                                "category": cat, "file": rel,
+                                "line": line_of_offset(text, spans[idx][0]),
+                                "english": t,
+                            })
             if name in FORMAT_ARG_INDEXES:
                 format_index = FORMAT_ARG_INDEXES[name]
                 if format_index >= len(args):

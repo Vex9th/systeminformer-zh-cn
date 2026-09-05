@@ -369,6 +369,81 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn("Unrelated local choice", scanned_text)
         self.assertNotIn("Unrelated shadow assignment", scanned_text)
 
+    def test_audit_scans_all_visible_literals_in_target_argument(self) -> None:
+        audit = load_audit_module()
+        source = """
+            void update_status(BOOLEAN configured) {
+                PhSetDialogItemText(
+                    hwnd,
+                    IDC_STATUS,
+                    configured ? L"Configured status" : L"Optional status"
+                );
+                PhSetDialogItemText(
+                    hwnd,
+                    IDC_ADJACENT,
+                    L"Adjacent " L"status"
+                );
+                PhSetDialogItemText(
+                    hwnd,
+                    IDC_NATIVE,
+                    configured
+                        ? PhGetString(PH_AUTO(PhLoadUiString(
+                            module, IDS_NATIVE, L"Native load fallback")))
+                        : ToolStatusGetUiString(
+                            IDS_PLUGIN_NATIVE, L"Plugin getter fallback")
+                );
+                PhSetDialogItemText(
+                    L"Non-target window",
+                    configured ? L"Non-target control" : L"Other control",
+                    dynamic_text
+                );
+                PhShowError(hwnd, L"%s", L"Visible vararg exactly once.");
+            }
+        """
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write(source)
+            source_file.flush()
+            audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(
+            [
+                (entry["category"], entry["english"])
+                for entry in entries
+            ],
+            [
+                ("c_window_text", "Configured status"),
+                ("c_window_text", "Optional status"),
+                ("c_window_text", "Adjacent status"),
+                ("c_msgbox_vararg", "Visible vararg exactly once."),
+            ],
+        )
+
+    def test_audit_finds_both_online_checks_key_status_branches(self) -> None:
+        audit = load_audit_module()
+        source_path = REPO_ROOT / "plugins" / "OnlineChecks" / "options.c"
+        entries = []
+
+        audit.scan_c_file(str(source_path), entries)
+
+        status_entries = Counter(
+            entry["english"]
+            for entry in entries
+            if entry["file"] == "plugins/OnlineChecks/options.c"
+            and entry["category"] == "c_window_text"
+            and entry["english"] in {
+                "Set - using your key",
+                "Unset - optional",
+            }
+        )
+        self.assertEqual(
+            status_entries,
+            Counter({"Set - using your key": 1, "Unset - optional": 1}),
+        )
+
     def test_audit_scans_qualified_macro_struct_combobox_arrays(self) -> None:
         audit = load_audit_module()
         source = """
