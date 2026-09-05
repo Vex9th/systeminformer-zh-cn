@@ -2533,7 +2533,7 @@ VOID PhShellOpenKey(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(WindowHandle, L"Unable to execute the program.", status, 0);
+        PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_PROGRAM), status, 0);
         return;
     }
 
@@ -2563,7 +2563,7 @@ VOID PhShellOpenKey(
 
         if (!NT_SUCCESS(status))
         {
-            PhShowStatus(WindowHandle, L"Unable to execute the program.", status, 0);
+            PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_PROGRAM), status, 0);
         }
     }
     else
@@ -2581,7 +2581,7 @@ VOID PhShellOpenKey(
 
         if (!NT_SUCCESS(status))
         {
-            PhShowStatus(WindowHandle, L"Unable to execute the program.", status, 0);
+            PhShowStatus(WindowHandle, PhGetApplicationUiString(IDS_PH_UNABLE_EXECUTE_PROGRAM), status, 0);
         }
     }
 

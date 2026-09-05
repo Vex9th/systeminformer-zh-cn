@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("344 strings", result.stdout)
+        self.assertIn("356 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 140)
+        self.assertEqual(len(stringtable_ids(resource_script)), 152)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2140)))
+        self.assertEqual(numeric_ids, list(range(2000, 2152)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1184,6 +1184,47 @@ class NativeResourceGenerationTests(unittest.TestCase):
             service_actions,
         )
 
+    def test_main_thread_and_program_errors_use_native_resources(self) -> None:
+        sources = {
+            name: (REPO_ROOT / "SystemInformer" / name).read_text(encoding="utf-8-sig")
+            for name in ("actions.c", "appsup.c", "prpgthrd.c")
+        }
+        combined = "\n".join(sources.values())
+
+        self.assertNotIn('L"Unable to execute the program."', combined)
+        self.assertNotRegex(combined, r'L"Unable to [^"]*thread %lu"')
+        self.assertIn("_In_ ULONG MessageId", sources["actions.c"])
+        self.assertIn(
+            "PhGetApplicationUiString(MessageId)",
+            sources["actions.c"],
+        )
+
+        expected_ids = {
+            "IDS_PH_UNABLE_TERMINATE_THREAD": 3,
+            "IDS_PH_UNABLE_SUSPEND_THREAD": 3,
+            "IDS_PH_UNABLE_RESUME_THREAD": 3,
+            "IDS_PH_UNABLE_FREEZE_THREAD": 1,
+            "IDS_PH_UNABLE_THAW_THREAD": 1,
+            "IDS_PH_UNABLE_CHANGE_THREAD_BOOST_PRIORITY": 1,
+            "IDS_PH_UNABLE_SET_THREAD_BOOST_PRIORITY": 2,
+            "IDS_PH_UNABLE_CHANGE_THREAD_PRIORITY": 1,
+            "IDS_PH_UNABLE_SET_THREAD_PRIORITY": 1,
+            "IDS_PH_UNABLE_SET_THREAD_IO_PRIORITY": 3,
+            "IDS_PH_UNABLE_SET_THREAD_PAGE_PRIORITY": 1,
+            "IDS_PH_UNABLE_EXECUTE_PROGRAM": 3,
+        }
+
+        for resource_id, expected_count in expected_ids.items():
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(combined.count(resource_id), expected_count)
+
+        localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
+        self.assertIn(
+            'IDS_PH_UNABLE_SUSPEND_THREAD                       "无法挂起线程 %lu"',
+            localized,
+        )
+        self.assertNotIn('"无法暂停线程 %lu"', localized)
+
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
         unresolved = []
@@ -1377,7 +1418,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 140): 2,
+                    (r"bin\Release64\sys_info.exe", 152): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

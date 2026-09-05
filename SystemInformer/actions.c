@@ -6424,7 +6424,7 @@ static BOOLEAN PhpShowContinueMessageThreads(
 
 static BOOLEAN PhpShowErrorThread(
     _In_ HWND WindowHandle,
-    _In_ PWSTR Verb,
+    _In_ ULONG MessageId,
     _In_ PPH_THREAD_ITEM Thread,
     _In_ NTSTATUS Status,
     _In_opt_ ULONG Win32Result
@@ -6433,8 +6433,7 @@ static BOOLEAN PhpShowErrorThread(
     return PhShowContinueStatus(
         WindowHandle,
         PhaFormatString(
-        L"Unable to %s thread %lu",
-        Verb,
+        PhGetApplicationUiString(MessageId),
         HandleToUlong(Thread->ThreadId)
         )->Buffer,
         Status,
@@ -6497,7 +6496,7 @@ BOOLEAN PhUiTerminateThreads(
 
             if (!cancelled && PhpShowErrorAndConnectToPhSvc(
                 WindowHandle,
-                PhaFormatString(L"Unable to terminate thread %lu", HandleToUlong(Threads[i]->ThreadId))->Buffer,
+                PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_TERMINATE_THREAD), HandleToUlong(Threads[i]->ThreadId))->Buffer,
                 status,
                 &connected,
                 &cancelled
@@ -6508,7 +6507,7 @@ BOOLEAN PhUiTerminateThreads(
                     if (NT_SUCCESS(status = PhSvcCallControlThread(Threads[i]->ThreadId, PhSvcControlThreadTerminate, 0)))
                         success = TRUE;
                     else
-                        PhpShowErrorThread(WindowHandle, L"terminate", Threads[i], status, 0);
+                        PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_TERMINATE_THREAD, Threads[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -6522,7 +6521,7 @@ BOOLEAN PhUiTerminateThreads(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorThread(WindowHandle, L"terminate", Threads[i], status, 0))
+                if (!PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_TERMINATE_THREAD, Threads[i], status, 0))
                     break;
             }
         }
@@ -6564,7 +6563,7 @@ BOOLEAN PhUiSuspendThreads(
 
             if (!cancelled && PhpShowErrorAndConnectToPhSvc(
                 WindowHandle,
-                PhaFormatString(L"Unable to suspend thread %lu", HandleToUlong(Threads[i]->ThreadId))->Buffer,
+                PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_SUSPEND_THREAD), HandleToUlong(Threads[i]->ThreadId))->Buffer,
                 status,
                 &connected,
                 &cancelled
@@ -6575,7 +6574,7 @@ BOOLEAN PhUiSuspendThreads(
                     if (NT_SUCCESS(status = PhSvcCallControlThread(Threads[i]->ThreadId, PhSvcControlThreadSuspend, 0)))
                         success = TRUE;
                     else
-                        PhpShowErrorThread(WindowHandle, L"suspend", Threads[i], status, 0);
+                        PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_SUSPEND_THREAD, Threads[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -6589,7 +6588,7 @@ BOOLEAN PhUiSuspendThreads(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorThread(WindowHandle, L"suspend", Threads[i], status, 0))
+                if (!PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_SUSPEND_THREAD, Threads[i], status, 0))
                     break;
             }
         }
@@ -6631,7 +6630,7 @@ BOOLEAN PhUiResumeThreads(
 
             if (!cancelled && PhpShowErrorAndConnectToPhSvc(
                 WindowHandle,
-                PhaFormatString(L"Unable to resume thread %lu", HandleToUlong(Threads[i]->ThreadId))->Buffer,
+                PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_RESUME_THREAD), HandleToUlong(Threads[i]->ThreadId))->Buffer,
                 status,
                 &connected,
                 &cancelled
@@ -6642,7 +6641,7 @@ BOOLEAN PhUiResumeThreads(
                     if (NT_SUCCESS(status = PhSvcCallControlThread(Threads[i]->ThreadId, PhSvcControlThreadResume, 0)))
                         success = TRUE;
                     else
-                        PhpShowErrorThread(WindowHandle, L"resume", Threads[i], status, 0);
+                        PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_RESUME_THREAD, Threads[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -6656,7 +6655,7 @@ BOOLEAN PhUiResumeThreads(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorThread(WindowHandle, L"resume", Threads[i], status, 0))
+                if (!PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_RESUME_THREAD, Threads[i], status, 0))
                     break;
             }
         }
@@ -6690,7 +6689,7 @@ BOOLEAN PhUiFreezeThreads(
         {
             success = FALSE;
 
-            if (!PhpShowErrorThread(WindowHandle, L"freeze", Threads[i], status, 0))
+            if (!PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_FREEZE_THREAD, Threads[i], status, 0))
                 break;
         }
         else if (freezeHandle = InterlockedExchangePointer(&Threads[i]->FreezeHandle, freezeHandle))
@@ -6727,7 +6726,7 @@ BOOLEAN PhUiThawThreads(
         {
             success = FALSE;
 
-            if (!PhpShowErrorThread(WindowHandle, L"thaw", Threads[i], status, 0))
+            if (!PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_THAW_THREAD, Threads[i], status, 0))
                 break;
         }
         else if (freezeHandle = InterlockedExchangePointer(&Threads[i]->FreezeHandle, NULL))
@@ -6770,7 +6769,7 @@ BOOLEAN PhUiSetBoostPriorityThreads(
         {
             success = FALSE;
 
-            if (!PhpShowErrorThread(WindowHandle, L"change boost priority of", Threads[i], status, 0))
+            if (!PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_CHANGE_THREAD_BOOST_PRIORITY, Threads[i], status, 0))
                 break;
         }
     }
@@ -6799,7 +6798,7 @@ BOOLEAN PhUiSetBoostPriorityThread(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorThread(WindowHandle, L"set the boost priority of", Thread, status, 0);
+        PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_SET_THREAD_BOOST_PRIORITY, Thread, status, 0);
         return FALSE;
     }
 
@@ -6843,7 +6842,7 @@ BOOLEAN PhUiSetPriorityThreads(
         {
             success = FALSE;
 
-            if (!PhpShowErrorThread(WindowHandle, L"change priority of", Threads[i], status, 0))
+            if (!PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_CHANGE_THREAD_PRIORITY, Threads[i], status, 0))
                 break;
         }
     }
@@ -6872,7 +6871,7 @@ BOOLEAN PhUiSetPriorityThread(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorThread(WindowHandle, L"set the priority of", Thread, status, 0);
+        PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_SET_THREAD_PRIORITY, Thread, status, 0);
         return FALSE;
     }
 
@@ -6909,7 +6908,7 @@ BOOLEAN PhUiSetIoPriorityThread(
         // The operation may have failed due to the lack of SeIncreaseBasePriorityPrivilege.
         if (PhpShowErrorAndConnectToPhSvc(
             WindowHandle,
-            PhaFormatString(L"Unable to set the I/O priority of thread %lu", HandleToUlong(Thread->ThreadId))->Buffer,
+            PhaFormatString(PhGetApplicationUiString(IDS_PH_UNABLE_SET_THREAD_IO_PRIORITY), HandleToUlong(Thread->ThreadId))->Buffer,
             status,
             &connected,
             &cancelled
@@ -6920,14 +6919,14 @@ BOOLEAN PhUiSetIoPriorityThread(
                 if (NT_SUCCESS(status = PhSvcCallControlThread(Thread->ThreadId, PhSvcControlThreadIoPriority, IoPriority)))
                     success = TRUE;
                 else
-                    PhpShowErrorThread(WindowHandle, L"set the I/O priority of", Thread, status, 0);
+                    PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_SET_THREAD_IO_PRIORITY, Thread, status, 0);
 
                 PhUiDisconnectFromPhSvc();
             }
         }
         else
         {
-            PhpShowErrorThread(WindowHandle, L"set the I/O priority of", Thread, status, 0);
+            PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_SET_THREAD_IO_PRIORITY, Thread, status, 0);
         }
     }
 
@@ -6956,7 +6955,7 @@ BOOLEAN PhUiSetPagePriorityThread(
 
     if (!NT_SUCCESS(status))
     {
-        PhpShowErrorThread(WindowHandle, L"set the page priority of", Thread, status, 0);
+        PhpShowErrorThread(WindowHandle, IDS_PH_UNABLE_SET_THREAD_PAGE_PRIORITY, Thread, status, 0);
         return FALSE;
     }
 

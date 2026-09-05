@@ -1349,8 +1349,7 @@ INT_PTR CALLBACK PhpProcessThreadsDlgProc(
                         else
                         {
                             PhShowStatus(hwndDlg, PhaFormatString(
-                                L"Unable to %s thread %lu", // string pooling optimization (dmex)
-                                L"set the boost priority of",
+                                PhGetApplicationUiString(IDS_PH_UNABLE_SET_THREAD_BOOST_PRIORITY),
                                 HandleToUlong(threadItem->ThreadId)
                                 )->Buffer, status, 0);
                         }

@@ -2738,6 +2738,18 @@ BEGIN
     IDS_PH_ACTION_REMOVE                               "remove"
     IDS_PH_TOKEN_PRIVILEGE                             "privilege"
     IDS_PH_TOKEN_GROUP                                 "group"
+    IDS_PH_UNABLE_TERMINATE_THREAD                     "Unable to terminate thread %lu"
+    IDS_PH_UNABLE_SUSPEND_THREAD                       "Unable to suspend thread %lu"
+    IDS_PH_UNABLE_RESUME_THREAD                        "Unable to resume thread %lu"
+    IDS_PH_UNABLE_FREEZE_THREAD                        "Unable to freeze thread %lu"
+    IDS_PH_UNABLE_THAW_THREAD                          "Unable to thaw thread %lu"
+    IDS_PH_UNABLE_CHANGE_THREAD_BOOST_PRIORITY         "Unable to change boost priority of thread %lu"
+    IDS_PH_UNABLE_SET_THREAD_BOOST_PRIORITY            "Unable to set the boost priority of thread %lu"
+    IDS_PH_UNABLE_CHANGE_THREAD_PRIORITY               "Unable to change priority of thread %lu"
+    IDS_PH_UNABLE_SET_THREAD_PRIORITY                  "Unable to set the priority of thread %lu"
+    IDS_PH_UNABLE_SET_THREAD_IO_PRIORITY               "Unable to set the I/O priority of thread %lu"
+    IDS_PH_UNABLE_SET_THREAD_PAGE_PRIORITY             "Unable to set the page priority of thread %lu"
+    IDS_PH_UNABLE_EXECUTE_PROGRAM                      "Unable to execute the program."
 END
 
 /////////////////////////////////////////////////////////////////////////////

@@ -2344,6 +2344,18 @@
     "Unable to %s %s.": "无法%s%s。",
     "reset": "重置",
     "privilege": "权限",
-    "group": "组"
+    "group": "组",
+    "Unable to terminate thread %lu": "无法终止线程 %lu",
+    "Unable to suspend thread %lu": "无法挂起线程 %lu",
+    "Unable to resume thread %lu": "无法恢复线程 %lu",
+    "Unable to freeze thread %lu": "无法冻结线程 %lu",
+    "Unable to thaw thread %lu": "无法解冻线程 %lu",
+    "Unable to change boost priority of thread %lu": "无法更改线程 %lu 的优先级提升状态",
+    "Unable to set the boost priority of thread %lu": "无法设置线程 %lu 的优先级提升状态",
+    "Unable to change priority of thread %lu": "无法更改线程 %lu 的优先级",
+    "Unable to set the priority of thread %lu": "无法设置线程 %lu 的优先级",
+    "Unable to set the I/O priority of thread %lu": "无法设置线程 %lu 的 I/O 优先级",
+    "Unable to set the page priority of thread %lu": "无法设置线程 %lu 的页面优先级",
+    "Unable to execute the program.": "无法执行程序。"
   }
 }

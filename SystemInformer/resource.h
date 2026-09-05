@@ -1134,8 +1134,20 @@
 #define IDS_PH_ACTION_REMOVE                               2137
 #define IDS_PH_TOKEN_PRIVILEGE                             2138
 #define IDS_PH_TOKEN_GROUP                                 2139
+#define IDS_PH_UNABLE_TERMINATE_THREAD                     2140
+#define IDS_PH_UNABLE_SUSPEND_THREAD                       2141
+#define IDS_PH_UNABLE_RESUME_THREAD                        2142
+#define IDS_PH_UNABLE_FREEZE_THREAD                        2143
+#define IDS_PH_UNABLE_THAW_THREAD                          2144
+#define IDS_PH_UNABLE_CHANGE_THREAD_BOOST_PRIORITY         2145
+#define IDS_PH_UNABLE_SET_THREAD_BOOST_PRIORITY            2146
+#define IDS_PH_UNABLE_CHANGE_THREAD_PRIORITY               2147
+#define IDS_PH_UNABLE_SET_THREAD_PRIORITY                  2148
+#define IDS_PH_UNABLE_SET_THREAD_IO_PRIORITY               2149
+#define IDS_PH_UNABLE_SET_THREAD_PAGE_PRIORITY             2150
+#define IDS_PH_UNABLE_EXECUTE_PROGRAM                      2151
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_TOKEN_GROUP
+#define IDS_PH_LAST                                  IDS_PH_UNABLE_EXECUTE_PROGRAM
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1147,6 +1159,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2140
+#define _APS_NEXT_SYMED_VALUE           2152
 #endif
 #endif
