@@ -1331,8 +1331,46 @@
 #define IDS_PH_UNKNOWN_SID                                  2337
 #define IDS_PH_UNNAMED_JOB                                  2338
 #define IDS_PH_STATUS_NOT_ALLOWED_TITLE                     2339
+#define IDS_PH_STAT_CPU                                     2340
+#define IDS_PH_STAT_CPUUSER                                 2341
+#define IDS_PH_STAT_CPUKERNEL                               2342
+#define IDS_PH_STAT_CPUAVERAGE                              2343
+#define IDS_PH_STAT_CPURELATIVE                             2344
+#define IDS_PH_STAT_CYCLES                                  2345
+#define IDS_PH_STAT_CYCLESDELTA                             2346
+#define IDS_PH_STAT_CONTEXTSWITCHES                         2347
+#define IDS_PH_STAT_CONTEXTSWITCHESDELTA                    2348
+#define IDS_PH_STAT_KERNELTIME                              2349
+#define IDS_PH_STAT_KERNELDELTA                             2350
+#define IDS_PH_STAT_USERTIME                                2351
+#define IDS_PH_STAT_USERDELTA                               2352
+#define IDS_PH_STAT_TOTALTIME                               2353
+#define IDS_PH_STAT_TOTALDELTA                              2354
+#define IDS_PH_STAT_PRIORITY                                2355
+#define IDS_PH_STAT_PRIVATEBYTES                            2356
+#define IDS_PH_STAT_PRIVATEBYTESDELTA                       2357
+#define IDS_PH_STAT_PEAKPRIVATEBYTES                        2358
+#define IDS_PH_STAT_VIRTUALSIZE                             2359
+#define IDS_PH_STAT_PEAKVIRTUALSIZE                         2360
+#define IDS_PH_STAT_PAGEFAULTS                              2361
+#define IDS_PH_STAT_PAGEFAULTSDELTA                         2362
+#define IDS_PH_STAT_HARDFAULTS                              2363
+#define IDS_PH_STAT_HARDFAULTSDELTA                         2364
+#define IDS_PH_STAT_WORKINGSET                              2365
+#define IDS_PH_STAT_PEAKWORKINGSET                          2366
+#define IDS_PH_STAT_PRIVATEWS                               2367
+#define IDS_PH_STAT_SHAREABLEWS                             2368
+#define IDS_PH_STAT_SHAREDWS                                2369
+#define IDS_PH_STAT_PAGEDPOOL                               2370
+#define IDS_PH_STAT_PEAKPAGEDPOOL                           2371
+#define IDS_PH_STAT_NONPAGED                                2372
+#define IDS_PH_STAT_PEAKNONPAGED                            2373
+#define IDS_PH_STAT_SHAREDCOMMIT                            2374
+#define IDS_PH_STAT_PRIVATECOMMIT                           2375
+#define IDS_PH_STAT_PEAKPRIVATECOMMIT                       2376
+#define IDS_PH_STAT_PAGEPRIORITY                            2377
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_STATUS_NOT_ALLOWED_TITLE
+#define IDS_PH_LAST                                  IDS_PH_STAT_PAGEPRIORITY
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1344,6 +1382,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2340
+#define _APS_NEXT_SYMED_VALUE           2378
 #endif
 #endif

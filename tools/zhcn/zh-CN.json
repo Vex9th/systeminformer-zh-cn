@@ -562,7 +562,19 @@
     "Reproducible hash": "可重现构建哈希",
     "File identifier": "文件标识符",
     "File object identifier": "文件对象标识符",
-    "File last USN": "文件最新 USN"
+    "File last USN": "文件最新 USN",
+    "Kernel delta": "内核时间增量",
+    "User delta": "用户时间增量",
+    "Total time": "总时间",
+    "Total delta": "总时间增量",
+    "Hard faults": "硬错误",
+    "Hard faults delta": "硬错误增量",
+    "Paged pool bytes": "分页池字节数",
+    "Peak paged pool bytes": "分页池字节数峰值",
+    "Nonpaged pool bytes": "非分页池字节数",
+    "Peak nonpaged pool bytes": "非分页池字节数峰值",
+    "Private commit": "专用提交",
+    "Peak private commit": "专用提交峰值"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
