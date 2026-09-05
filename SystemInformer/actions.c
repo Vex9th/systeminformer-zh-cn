@@ -2597,8 +2597,7 @@ BOOLEAN PhUiRestartProcess(
             WindowHandle,
             L"restart",
             Process->ProcessName->Buffer,
-            L"The process will be restarted with the same command line, "
-            L"working directory and privileges.",
+            PhGetApplicationUiString(IDS_PH_PROCESS_RESTART_NOTICE),
             FALSE
             );
     }
@@ -3530,8 +3529,7 @@ BOOLEAN PhUiSetVirtualizationProcess(
             WindowHandle,
             L"set",
             L"virtualization for the process",
-            L"Enabling or disabling virtualization for a process may "
-            L"alter its functionality and produce undesirable effects.",
+            PhGetApplicationUiString(IDS_PH_PROCESS_VIRTUALIZATION_WARNING),
             FALSE
             );
     }
@@ -6038,8 +6036,7 @@ BOOLEAN PhUiDeleteService(
         WindowHandle,
         L"delete",
         Service->Name->Buffer,
-        L"Deleting a service can prevent the system from starting "
-        L"or functioning properly.",
+        PhGetApplicationUiString(IDS_PH_SERVICE_DELETION_WARNING),
         TRUE
         ))
         return FALSE;

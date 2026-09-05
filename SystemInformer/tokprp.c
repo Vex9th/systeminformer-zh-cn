@@ -1601,8 +1601,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                             hwndDlg,
                             L"remove",
                             L"the selected privilege(s)",
-                            L"Removing privileges may reduce the functionality of the process, "
-                            L"and is permanent for the lifetime of the process.",
+                            PhGetApplicationUiString(IDS_PH_REMOVE_PRIVILEGES_WARNING),
                             FALSE
                             ))
                         {
@@ -1913,8 +1912,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                         hwndDlg,
                         L"remove",
                         L"the UIAccess flag",
-                        L"Removing this flag may reduce the functionality of the process "
-                        L"provided it is an accessibility application.",
+                        PhGetApplicationUiString(IDS_PH_REMOVE_UIACCESS_WARNING),
                         FALSE
                         ))
                     {

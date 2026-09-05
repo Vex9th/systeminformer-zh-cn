@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2256] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -474,6 +474,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
     { L"Delayed start", L"延迟启动", },
     { L"Delete", L"删除", },
     { L"Deleting a service can prevent the system from starting ", L"删除服务可能导致系统无法启动", },
+    { L"Deleting a service can prevent the system from starting or functioning properly.", L"删除服务可能导致系统无法启动或无法正常运行。", },
     { L"Deltas", L"增量", },
     { L"Description", L"描述", },
     { L"Description:", L"描述：", },
@@ -605,6 +606,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
     { L"Enable warnings", L"启用警告", },
     { L"Enabled", L"已启用", },
     { L"Enabling or disabling virtualization for a process may ", L"启用或禁用进程虚拟化可能", },
+    { L"Enabling or disabling virtualization for a process may alter its functionality and produce undesirable effects.", L"启用或禁用进程虚拟化可能会改变其行为并产生意外后果。", },
     { L"Enabling the 'start as admin' option", L"启用“以管理员身份启动”选项", },
     { L"Enclave base address", L"Enclave 基址", },
     { L"Enclave size", L"Enclave 大小", },
@@ -1438,7 +1440,9 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
     { L"Removing previous Windows integration...", L"正在移除旧的 Windows 集成...", },
     { L"Removing previous shortcuts...", L"正在移除旧快捷方式...", },
     { L"Removing privileges may reduce the functionality of the process, ", L"移除特权可能会降低进程的功能，", },
+    { L"Removing privileges may reduce the functionality of the process, and is permanent for the lifetime of the process.", L"移除特权可能会削弱进程功能，并且在进程存续期间无法恢复。", },
     { L"Removing this flag may reduce the functionality of the process ", L"移除此标志可能会降低进程的功能", },
+    { L"Removing this flag may reduce the functionality of the process provided it is an accessibility application.", L"如果该进程属于辅助功能应用，移除此标志可能会降低其功能。", },
     { L"Rename", L"重命名", },
     { L"Repair", L"修复", },
     { L"Reparse tag", L"重分析标记", },
@@ -1769,6 +1773,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
     { L"Terminated due to job limits", L"因作业限制而终止", },
     { L"Terminated:", L"已终止：", },
     { L"Terminating a Zombie process may cause the system to become unstable ", L"终止僵尸进程可能导致系统不稳定", },
+    { L"Terminating a Zombie process may cause the system to become unstable or crash.", L"终止僵尸进程可能导致系统不稳定或崩溃。", },
     { L"Terminating a job will terminate all processes assigned to it.", L"终止作业将终止分配给该作业的所有进程。", },
     { L"Terminating a process tree will cause the process and its descendants to be terminated.", L"终止进程树将使该进程及其子进程一并终止。", },
     { L"Text", L"文本", },
@@ -1791,6 +1796,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
     { L"The process is not being debugged.", L"该进程未被调试。", },
     { L"The process priority will be applied by Windows even when System Informer isn't currently running. ", L"即使 sys_info 当前未运行，Windows 也会应用该进程优先级。", },
     { L"The process will be restarted with the same command line, ", L"该进程将以相同的命令行、", },
+    { L"The process will be restarted with the same command line, working directory and privileges.", L"该进程将使用相同的命令行、工作目录和特权重新启动。", },
     { L"The property name is empty.", L"属性名称为空。", },
     { L"The repase point will be permanently deleted.", L"该重分析点将被永久删除。", },
     { L"The section size is greater than 32 MB. Only the first 32 MB will be available.", L"节大小超过 32 MB。仅前 32 MB 可用。", },
@@ -1807,6 +1813,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
     { L"Themes", L"主题", },
     { L"There are no policies to display.", L"没有可显示的策略。", },
     { L"Third failure:", L"第三次失败：", },
+    { L"This filter cannot function because digital signature checking is not enabled.\r\n%s", L"未启用数字签名检查，此筛选器无法工作。\r\n%s", },
     { L"This kernel version is not yet supported. ", L"尚不支持此内核版本。", },
     { L"This looks like a wildcard path, not a regular expression.", L"这看起来是通配符路径，而不是正则表达式。", },
     { L"This machine does not have UEFI support.", L"此计算机不支持 UEFI。", },
@@ -2226,7 +2233,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2249] =
     { L"minutes", L"分钟", },
     { L"not connected", L"未连接", },
     { L"of ", L"的", },
-    { L"privilege", L"权限", },
+    { L"privilege", L"特权", },
     { L"process memory", L"进程内存", },
     { L"remove", L"移除", },
     { L"reset", L"重置", },

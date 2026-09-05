@@ -1164,8 +1164,15 @@
 #define IDS_PH_UNABLE_UNLOAD_NAMED_MODULE                  2167
 #define IDS_PH_UNABLE_UNLOAD_NAMED_MODULE_ADMIN            2168
 #define IDS_PH_UNABLE_UNMAP_SECTION_AT_ADDRESS             2169
+#define IDS_PH_SERVICE_DELETION_WARNING                    2170
+#define IDS_PH_PROCESS_VIRTUALIZATION_WARNING              2171
+#define IDS_PH_REMOVE_PRIVILEGES_WARNING                   2172
+#define IDS_PH_REMOVE_UIACCESS_WARNING                     2173
+#define IDS_PH_ZOMBIE_TERMINATION_WARNING                  2174
+#define IDS_PH_PROCESS_RESTART_NOTICE                      2175
+#define IDS_PH_SIGNATURE_FILTER_REQUIRES_CHECKING          2176
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_UNABLE_UNMAP_SECTION_AT_ADDRESS
+#define IDS_PH_LAST                                  IDS_PH_SIGNATURE_FILTER_REQUIRES_CHECKING
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1177,6 +1184,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2170
+#define _APS_NEXT_SYMED_VALUE           2177
 #endif
 #endif

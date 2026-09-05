@@ -288,7 +288,7 @@ VOID PhMwpToggleSignedProcessTreeFilter(
             PhShowInformation2(
                 WindowHandle,
                 NULL,
-                L"This filter cannot function because digital signature checking is not enabled.\r\n%s",
+                PhGetApplicationUiString(IDS_PH_SIGNATURE_FILTER_REQUIRES_CHECKING),
                 PhGetApplicationUiString(IDS_PH_ENABLE_SIGNATURE_CHECKING)
                 );
             return;

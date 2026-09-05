@@ -291,8 +291,7 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
                             hwndDlg,
                             L"terminate",
                             L"the selected process(es)",
-                            L"Terminating a Zombie process may cause the system to become unstable "
-                            L"or crash.",
+                            PhGetApplicationUiString(IDS_PH_ZOMBIE_TERMINATION_WARNING),
                             TRUE
                             ))
                         {

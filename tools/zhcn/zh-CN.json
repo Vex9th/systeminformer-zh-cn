@@ -2343,7 +2343,7 @@
     "Unable to update affinity for thread(s):\r\n%s": "无法更新线程的处理器关联：\r\n%s",
     "Unable to %s %s.": "无法%s%s。",
     "reset": "重置",
-    "privilege": "权限",
+    "privilege": "特权",
     "group": "组",
     "Unable to terminate thread %lu": "无法终止线程 %lu",
     "Unable to suspend thread %lu": "无法挂起线程 %lu",
@@ -2373,6 +2373,13 @@
     "Unable to unload the module": "无法卸载模块",
     "Unable to unload %s": "无法卸载 %s",
     "Unable to unload %s. Make sure System Informer is running with administrative privileges.": "无法卸载 %s。请确保 sys_info 正以管理员权限运行。",
-    "Unable to unmap the section view at 0x%p": "无法取消映射位于 0x%p 的节视图"
+    "Unable to unmap the section view at 0x%p": "无法取消映射位于 0x%p 的节视图",
+    "Deleting a service can prevent the system from starting or functioning properly.": "删除服务可能导致系统无法启动或无法正常运行。",
+    "Enabling or disabling virtualization for a process may alter its functionality and produce undesirable effects.": "启用或禁用进程虚拟化可能会改变其行为并产生意外后果。",
+    "Removing privileges may reduce the functionality of the process, and is permanent for the lifetime of the process.": "移除特权可能会削弱进程功能，并且在进程存续期间无法恢复。",
+    "Removing this flag may reduce the functionality of the process provided it is an accessibility application.": "如果该进程属于辅助功能应用，移除此标志可能会降低其功能。",
+    "Terminating a Zombie process may cause the system to become unstable or crash.": "终止僵尸进程可能导致系统不稳定或崩溃。",
+    "The process will be restarted with the same command line, working directory and privileges.": "该进程将使用相同的命令行、工作目录和特权重新启动。",
+    "This filter cannot function because digital signature checking is not enabled.\r\n%s": "未启用数字签名检查，此筛选器无法工作。\r\n%s"
   }
 }

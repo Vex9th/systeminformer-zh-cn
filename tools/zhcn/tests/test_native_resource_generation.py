@@ -480,7 +480,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("374 strings", result.stdout)
+        self.assertIn("381 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -830,7 +830,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 170)
+        self.assertEqual(len(stringtable_ids(resource_script)), 177)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -861,7 +861,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(numeric_ids, list(range(2000, 2170)))
+        self.assertEqual(numeric_ids, list(range(2000, 2177)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -1176,6 +1176,12 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('L"privilege"', token_properties)
         self.assertNotIn('L"group"', token_properties)
 
+        localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
+        self.assertIn(
+            'IDS_PH_TOKEN_PRIVILEGE                             "特权"',
+            localized,
+        )
+
         service_actions = (
             REPO_ROOT / "SystemInformer" / "actions.c"
         ).read_text(encoding="utf-8-sig")
@@ -1293,6 +1299,52 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     len(re.findall(rf"\b{re.escape(resource_id)}\b", combined)),
                     expected_count,
                 )
+
+    def test_main_confirmation_warnings_use_native_resources(self) -> None:
+        source = "\n".join(
+            (REPO_ROOT / "SystemInformer" / name).read_text(encoding="utf-8-sig")
+            for name in ("actions.c", "hidnproc.c", "mwpgproc.c", "tokprp.c")
+        )
+        literals = (
+            "Deleting a service can prevent the system from starting or functioning properly.",
+            "Enabling or disabling virtualization for a process may alter its functionality and produce undesirable effects.",
+            "Removing privileges may reduce the functionality of the process, and is permanent for the lifetime of the process.",
+            "Removing this flag may reduce the functionality of the process provided it is an accessibility application.",
+            "Terminating a Zombie process may cause the system to become unstable or crash.",
+            "The process will be restarted with the same command line, working directory and privileges.",
+            "This filter cannot function because digital signature checking is not enabled.\\r\\n%s",
+        )
+
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.assertNotIn(f'L"{literal}"', source)
+
+        resource_ids = (
+            "IDS_PH_SERVICE_DELETION_WARNING",
+            "IDS_PH_PROCESS_VIRTUALIZATION_WARNING",
+            "IDS_PH_REMOVE_PRIVILEGES_WARNING",
+            "IDS_PH_REMOVE_UIACCESS_WARNING",
+            "IDS_PH_ZOMBIE_TERMINATION_WARNING",
+            "IDS_PH_PROCESS_RESTART_NOTICE",
+            "IDS_PH_SIGNATURE_FILTER_REQUIRES_CHECKING",
+        )
+
+        for resource_id in resource_ids:
+            with self.subTest(resource_id=resource_id):
+                self.assertEqual(
+                    len(re.findall(rf"\b{re.escape(resource_id)}\b", source)),
+                    1,
+                )
+
+        localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
+        self.assertIn(
+            'IDS_PH_REMOVE_PRIVILEGES_WARNING                   "移除特权可能会削弱进程功能，并且在进程存续期间无法恢复。"',
+            localized,
+        )
+        self.assertIn(
+            'IDS_PH_PROCESS_RESTART_NOTICE                      "该进程将使用相同的命令行、工作目录和特权重新启动。"',
+            localized,
+        )
 
     def test_main_status_calls_do_not_hide_unresolved_variable_messages(self) -> None:
         audit = load_audit_module()
@@ -1487,7 +1539,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 170): 2,
+                    (r"bin\Release64\sys_info.exe", 177): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 1): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 1): 2,
                     (r"bin\Release64\peview.exe", 128): 2,

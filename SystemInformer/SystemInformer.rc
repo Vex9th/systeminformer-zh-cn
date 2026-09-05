@@ -2768,6 +2768,13 @@ BEGIN
     IDS_PH_UNABLE_UNLOAD_NAMED_MODULE                  "Unable to unload %s"
     IDS_PH_UNABLE_UNLOAD_NAMED_MODULE_ADMIN            "Unable to unload %s. Make sure System Informer is running with administrative privileges."
     IDS_PH_UNABLE_UNMAP_SECTION_AT_ADDRESS             "Unable to unmap the section view at 0x%p"
+    IDS_PH_SERVICE_DELETION_WARNING                    "Deleting a service can prevent the system from starting or functioning properly."
+    IDS_PH_PROCESS_VIRTUALIZATION_WARNING              "Enabling or disabling virtualization for a process may alter its functionality and produce undesirable effects."
+    IDS_PH_REMOVE_PRIVILEGES_WARNING                   "Removing privileges may reduce the functionality of the process, and is permanent for the lifetime of the process."
+    IDS_PH_REMOVE_UIACCESS_WARNING                     "Removing this flag may reduce the functionality of the process provided it is an accessibility application."
+    IDS_PH_ZOMBIE_TERMINATION_WARNING                  "Terminating a Zombie process may cause the system to become unstable or crash."
+    IDS_PH_PROCESS_RESTART_NOTICE                      "The process will be restarted with the same command line, working directory and privileges."
+    IDS_PH_SIGNATURE_FILTER_REQUIRES_CHECKING          "This filter cannot function because digital signature checking is not enabled.\r\n%s"
 END
 
 /////////////////////////////////////////////////////////////////////////////
