@@ -1883,8 +1883,20 @@
 #define IDS_PH_ACTION_WRITE                                            2903
 #define IDS_PH_PROCESS_MEMORY_OBJECT                                   2904
 #define IDS_PH_MEMORY_EDIT_WARNING                                     2905
+#define IDS_PH_MENU_HIDE_DEFAULT_SERVICES                              2906
+#define IDS_PH_MENU_HIDE_DRIVER_SERVICES                               2907
+#define IDS_PH_MENU_DELETE_SHORTCUT                                    2908
+#define IDS_PH_MENU_GO_TO_PROCESS                                      2909
+#define IDS_PH_MENU_OPEN_KEY                                           2910
+#define IDS_PH_MENU_OPEN_FILE_LOCATION_SHORTCUT                        2911
+#define IDS_PH_MENU_PROPERTIES_SHORTCUT                                2912
+#define IDS_PH_MENU_COPY_SHORTCUT                                      2913
+#define IDS_PH_MENU_HIDE_WAITING_CONNECTIONS                           2914
+#define IDS_PH_MENU_GO_TO_PROCESS_SHORTCUT                             2915
+#define IDS_PH_MENU_GO_TO_SERVICE                                      2916
+#define IDS_PH_MENU_CLOSE                                              2917
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_MEMORY_EDIT_WARNING
+#define IDS_PH_LAST                                  IDS_PH_MENU_CLOSE
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1896,6 +1908,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2906
+#define _APS_NEXT_SYMED_VALUE           2918
 #endif
 #endif

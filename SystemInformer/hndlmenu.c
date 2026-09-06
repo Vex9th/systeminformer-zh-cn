@@ -53,7 +53,7 @@ VOID PhInsertHandleObjectPropertiesEMenuItems(
     }
     else if (PhEqualString2(Info->TypeName, L"Key", TRUE))
     {
-        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(L"Open &key", EnableShortcut), NULL, NULL), indexInParent);
+        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(PhGetApplicationUiString(IDS_PH_MENU_OPEN_KEY), EnableShortcut), NULL, NULL), indexInParent);
         PhInsertEMenuItem(parentItem, PhCreateEMenuSeparator(), indexInParent + 1);
     }
     else if (PhEqualString2(Info->TypeName, L"Process", TRUE))

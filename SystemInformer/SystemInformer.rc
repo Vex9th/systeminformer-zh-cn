@@ -3504,6 +3504,18 @@ BEGIN
     IDS_PH_ACTION_WRITE                                            "write"
     IDS_PH_PROCESS_MEMORY_OBJECT                                   "process memory"
     IDS_PH_MEMORY_EDIT_WARNING                                     "Some programs may restrict access or ban your account when editing the memory of the process."
+    IDS_PH_MENU_HIDE_DEFAULT_SERVICES                              "Hide default services"
+    IDS_PH_MENU_HIDE_DRIVER_SERVICES                               "&Hide driver services"
+    IDS_PH_MENU_DELETE_SHORTCUT                                    "&Delete\bDel"
+    IDS_PH_MENU_GO_TO_PROCESS                                      "&Go to process"
+    IDS_PH_MENU_OPEN_KEY                                           "Open &key"
+    IDS_PH_MENU_OPEN_FILE_LOCATION_SHORTCUT                        "Open &file location\bCtrl+Enter"
+    IDS_PH_MENU_PROPERTIES_SHORTCUT                                "P&roperties\bEnter"
+    IDS_PH_MENU_COPY_SHORTCUT                                      "&Copy\bCtrl+C"
+    IDS_PH_MENU_HIDE_WAITING_CONNECTIONS                           "&Hide waiting connections"
+    IDS_PH_MENU_GO_TO_PROCESS_SHORTCUT                             "&Go to process\bEnter"
+    IDS_PH_MENU_GO_TO_SERVICE                                      "Go to service"
+    IDS_PH_MENU_CLOSE                                              "C&lose"
 END
 
 /////////////////////////////////////////////////////////////////////////////

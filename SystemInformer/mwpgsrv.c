@@ -98,11 +98,11 @@ BOOLEAN PhMwpServicesPageCallback(
             PPH_EMENU menu;
             PPH_EMENU_ITEM menuItem;
 
-            menu = PhCreateEMenuItem(0, 0, L"Services", NULL, NULL);
+            menu = PhCreateEMenuItem(0, 0, PhGetApplicationUiString(IDS_PH_GROUP_SERVICES), NULL, NULL);
             PhInsertEMenuItem(menuInfo->Menu, menu, menuInfo->StartIndex);
 
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEMICROSOFTSERVICES, L"Hide default services", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEDRIVERSERVICES, L"&Hide driver services", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEMICROSOFTSERVICES, PhGetApplicationUiString(IDS_PH_MENU_HIDE_DEFAULT_SERVICES), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEDRIVERSERVICES, PhGetApplicationUiString(IDS_PH_MENU_HIDE_DRIVER_SERVICES), NULL, NULL), ULONG_MAX);
 
             if (DriverFilterEntry && (menuItem = PhFindEMenuItem(menu, 0, NULL, ID_VIEW_HIDEDRIVERSERVICES)))
                 menuItem->Flags |= PH_EMENU_CHECKED;
@@ -320,19 +320,19 @@ VOID PhShowServiceContextMenu(
         PPH_EMENU_ITEM item;
 
         menu = PhCreateEMenu();
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_START, L"&Start", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_CONTINUE, L"C&ontinue", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_PAUSE, L"&Pause", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_STOP, L"S&top", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_DELETE, L"&Delete\bDel", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_START, PhGetApplicationUiString(IDS_PH_SERVICE_START), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_CONTINUE, PhGetApplicationUiString(IDS_PH_SERVICE_CONTINUE), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_PAUSE, PhGetApplicationUiString(IDS_PH_SERVICE_PAUSE), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_STOP, PhGetApplicationUiString(IDS_PH_SERVICE_STOP), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_DELETE, PhGetApplicationUiString(IDS_PH_MENU_DELETE_SHORTCUT), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_GOTOPROCESS, L"&Go to process", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_GOTOPROCESS, PhGetApplicationUiString(IDS_PH_MENU_GO_TO_PROCESS), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_OPENKEY, L"Open &key", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_OPENFILELOCATION, L"Open &file location\bCtrl+Enter", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_PROPERTIES, L"P&roperties\bEnter", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_OPENKEY, PhGetApplicationUiString(IDS_PH_MENU_OPEN_KEY), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_OPENFILELOCATION, PhGetApplicationUiString(IDS_PH_MENU_OPEN_FILE_LOCATION_SHORTCUT), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_PROPERTIES, PhGetApplicationUiString(IDS_PH_MENU_PROPERTIES_SHORTCUT), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_COPY, L"&Copy\bCtrl+C", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_SERVICE_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY_SHORTCUT), NULL, NULL), ULONG_MAX);
         PhSetFlagsEMenuItem(menu, ID_SERVICE_PROPERTIES, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
         PhMwpInitializeServiceMenu(menu, services, numberOfServices);
         PhInsertCopyCellEMenuItem(menu, ID_SERVICE_COPY, PhMwpServiceTreeNewHandle, ContextMenu->Column);
@@ -383,19 +383,19 @@ VOID PhServiceListInsertContextMenu(
 {
     PH_PLUGIN_MENU_INFORMATION menuInfo;
 
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_START, L"&Start", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_CONTINUE, L"C&ontinue", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_PAUSE, L"&Pause", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_STOP, L"S&top", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_DELETE, L"&Delete\bDel", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_START, PhGetApplicationUiString(IDS_PH_SERVICE_START), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_CONTINUE, PhGetApplicationUiString(IDS_PH_SERVICE_CONTINUE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_PAUSE, PhGetApplicationUiString(IDS_PH_SERVICE_PAUSE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_STOP, PhGetApplicationUiString(IDS_PH_SERVICE_STOP), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_DELETE, PhGetApplicationUiString(IDS_PH_MENU_DELETE_SHORTCUT), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(Menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_GOTOPROCESS, L"&Go to process", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_GOTOPROCESS, PhGetApplicationUiString(IDS_PH_MENU_GO_TO_PROCESS), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(Menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_OPENKEY, L"Open &key", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_OPENFILELOCATION, L"Open &file location\bCtrl+Enter", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_PROPERTIES, L"P&roperties\bEnter", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_OPENKEY, PhGetApplicationUiString(IDS_PH_MENU_OPEN_KEY), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_OPENFILELOCATION, PhGetApplicationUiString(IDS_PH_MENU_OPEN_FILE_LOCATION_SHORTCUT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_PROPERTIES, PhGetApplicationUiString(IDS_PH_MENU_PROPERTIES_SHORTCUT), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(Menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_COPY, L"&Copy\bCtrl+C", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_SERVICE_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY_SHORTCUT), NULL, NULL), ULONG_MAX);
     PhSetFlagsEMenuItem(Menu, ID_SERVICE_PROPERTIES, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
     PhMwpInitializeServiceMenu(Menu, Services, NumberOfServices);
 
