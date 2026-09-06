@@ -428,7 +428,11 @@ VOID EtHandlePropertiesWindowInitialized(
             PPH_STRING driverName;
             KPH_DRIVER_BASIC_INFORMATION basicInfo;
 
-            PhAddListViewGroup(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DRIVER, L"Driver information");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                OBJECT_GENERAL_CATEGORY_DRIVER,
+                EtGetUiString(IDS_ET_GROUP_DRIVER_INFORMATION, L"Driver information")
+                );
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DRIVER, OBJECT_GENERAL_INDEX_DRIVERIMAGE,
                 EtGetUiString(IDS_ET_DRIVER_IMAGE, L"Driver Image"), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DRIVER, OBJECT_GENERAL_INDEX_DRIVERSERVICE,
@@ -495,7 +499,11 @@ VOID EtHandlePropertiesWindowInitialized(
             OBJECT_ATTRIBUTES objectAttributes;
             UNICODE_STRING objectName;
 
-            PhAddListViewGroup(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DEVICE, L"Device information");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                OBJECT_GENERAL_CATEGORY_DEVICE,
+                EtGetUiString(IDS_ET_GROUP_DEVICE_INFORMATION, L"Device information")
+                );
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DEVICE, OBJECT_GENERAL_INDEX_DEVICEDRVLOW,
                 EtGetUiString(IDS_ET_LOWER_EDGE_DRIVER, L"Lower-edge driver"), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DEVICE, OBJECT_GENERAL_INDEX_DEVICEDRVLOWPATH,
@@ -584,7 +592,11 @@ VOID EtHandlePropertiesWindowInitialized(
             PH_STRINGREF stationName;
             PH_STRINGREF pathPart;
 
-            PhAddListViewGroup(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_WINDOWSTATION, L"Window Station information");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                OBJECT_GENERAL_CATEGORY_WINDOWSTATION,
+                EtGetUiString(IDS_ET_GROUP_WINDOW_STATION_INFORMATION, L"Window Station information")
+                );
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_WINDOWSTATION, OBJECT_GENERAL_INDEX_WINSTATYPE,
                 EtGetUiString(IDS_ET_TYPE, L"Type"), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_WINDOWSTATION, OBJECT_GENERAL_INDEX_WINSTAVISIBLE,
@@ -624,7 +636,11 @@ VOID EtHandlePropertiesWindowInitialized(
         {
             HDESK hDesktop;
 
-            PhAddListViewGroup(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DESKTOP, L"Desktop information");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                OBJECT_GENERAL_CATEGORY_DESKTOP,
+                EtGetUiString(IDS_ET_GROUP_DESKTOP_INFORMATION, L"Desktop information")
+                );
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DESKTOP, OBJECT_GENERAL_INDEX_DESKTOPIO,
                 EtGetUiString(IDS_ET_INPUT_DESKTOP, L"Input desktop"), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_DESKTOP, OBJECT_GENERAL_INDEX_DESKTOPSID,
@@ -675,7 +691,11 @@ VOID EtHandlePropertiesWindowInitialized(
             PPH_STRING accessString;
             PH_STRING_BUILDER stringBuilder;
 
-            PhAddListViewGroup(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_TYPE, L"Type information");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                OBJECT_GENERAL_CATEGORY_TYPE,
+                EtGetUiString(IDS_ET_GROUP_TYPE_INFORMATION, L"Type information")
+                );
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_TYPE, OBJECT_GENERAL_INDEX_TYPEINDEX,
                 EtGetUiString(IDS_ET_INDEX, L"Index"), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_TYPE, OBJECT_GENERAL_INDEX_TYPEOBJECTS,
@@ -732,7 +752,11 @@ VOID EtHandlePropertiesWindowInitialized(
                             PhPrintUInt32(string, objectType->DefaultNonPagedPoolCharge);
                             PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_TYPENPAGECHARGE, 1, string);
 
-                            PhAddListViewGroup(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_TYPE_ACCESS, L"Type access information");
+                            PhAddListViewGroup(
+                                context->ListViewHandle,
+                                OBJECT_GENERAL_CATEGORY_TYPE_ACCESS,
+                                EtGetUiString(IDS_ET_GROUP_TYPE_ACCESS_INFORMATION, L"Type access information")
+                                );
                             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_TYPE_ACCESS, OBJECT_GENERAL_INDEX_TYPEVALIDMASK,
                                 EtGetUiString(IDS_ET_VALID_ACCESS_MASK, L"Valid Access Mask"), NULL);
                             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_TYPE_ACCESS, OBJECT_GENERAL_INDEX_TYPEGENERICREAD,
@@ -803,7 +827,11 @@ VOID EtHandlePropertiesWindowInitialized(
             ULONG sessionId;
             SYSTEMTIME systemTime;
 
-            PhAddListViewGroup(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_SESSION, L"Session information");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                OBJECT_GENERAL_CATEGORY_SESSION,
+                EtGetUiString(IDS_ET_GROUP_SESSION_INFORMATION, L"Session information")
+                );
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_SESSION, OBJECT_GENERAL_INDEX_SESSIONNAME,
                 EtGetUiString(IDS_ET_SESSION_NAME, L"Session Name"), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, OBJECT_GENERAL_CATEGORY_SESSION, OBJECT_GENERAL_INDEX_SESSIONID,

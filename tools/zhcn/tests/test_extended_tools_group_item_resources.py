@@ -79,6 +79,23 @@ RESOURCE_ROWS = (
     ("IDS_ET_LAST_INPUT_TIME", 61103, "Last input time", "上次输入时间"),
 )
 
+GROUP_RESOURCE_ROWS = (
+    ("IDS_ET_GROUP_GPU", 61104, "GPU", "GPU"),
+    ("IDS_ET_GROUP_DISK_IO", 61105, "Disk I/O", "磁盘 I/O"),
+    ("IDS_ET_GROUP_NETWORK_IO", 61106, "Network I/O", "网络 I/O"),
+    ("IDS_ET_GROUP_NPU", 61107, "NPU", "NPU"),
+    ("IDS_ET_GROUP_GPU_ADAPTER", 61108, "GPU adapter", "GPU 适配器"),
+    ("IDS_ET_GROUP_DRIVER_INFORMATION", 61109, "Driver information", "驱动程序信息"),
+    ("IDS_ET_GROUP_DEVICE_INFORMATION", 61110, "Device information", "设备信息"),
+    ("IDS_ET_GROUP_WINDOW_STATION_INFORMATION", 61111, "Window Station information", "窗口站信息"),
+    ("IDS_ET_GROUP_DESKTOP_INFORMATION", 61112, "Desktop information", "桌面信息"),
+    ("IDS_ET_GROUP_TYPE_INFORMATION", 61113, "Type information", "类型信息"),
+    ("IDS_ET_GROUP_TYPE_ACCESS_INFORMATION", 61114, "Type access information", "类型访问权限信息"),
+    ("IDS_ET_GROUP_SESSION_INFORMATION", 61115, "Session information", "会话信息"),
+)
+
+ALL_RESOURCE_ROWS = RESOURCE_ROWS + GROUP_RESOURCE_ROWS
+
 RUNTIME_DICTIONARY_OWNED = {
     "Dedicated memory", "Shared memory", "Commit memory", "Reads",
     "Read bytes", "Read bytes delta", "Writes", "Write bytes",
@@ -86,6 +103,7 @@ RUNTIME_DICTIONARY_OWNED = {
     "Receive bytes", "Receive bytes delta", "Sends", "Send bytes",
     "Send bytes delta", "Type", "Visible", "Index", "Objects", "Handles",
     "Session ID", "User name", "State", "Logon time",
+    "GPU", "Disk I/O", "Network I/O", "NPU",
 }
 
 MAIN_ROUTES = (
@@ -165,6 +183,21 @@ OBJ_ROUTES = (
     ("OBJECT_GENERAL_CATEGORY_SESSION", "OBJECT_GENERAL_INDEX_SESSIONLASTINPUT", "IDS_ET_LAST_INPUT_TIME", "Last input time"),
 )
 
+GROUP_ROUTES = (
+    ("main.c", "block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_GPU]", "listViewHandle", "(LONG)ListView_GetGroupCount(listViewHandle)", "IDS_ET_GROUP_GPU", "GPU"),
+    ("main.c", "block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_DISK]", "listViewHandle", "(LONG)ListView_GetGroupCount(listViewHandle)", "IDS_ET_GROUP_DISK_IO", "Disk I/O"),
+    ("main.c", "block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_NETWORK]", "listViewHandle", "(LONG)ListView_GetGroupCount(listViewHandle)", "IDS_ET_GROUP_NETWORK_IO", "Network I/O"),
+    ("main.c", "block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_NPU]", "listViewHandle", "(LONG)ListView_GetGroupCount(listViewHandle)", "IDS_ET_GROUP_NPU", "NPU"),
+    ("main.c", "block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_GPUADAPTER]", "listViewHandle", "(LONG)ListView_GetGroupCount(listViewHandle)", "IDS_ET_GROUP_GPU_ADAPTER", "GPU adapter"),
+    ("objprp.c", "", "context->ListViewHandle", "OBJECT_GENERAL_CATEGORY_DRIVER", "IDS_ET_GROUP_DRIVER_INFORMATION", "Driver information"),
+    ("objprp.c", "", "context->ListViewHandle", "OBJECT_GENERAL_CATEGORY_DEVICE", "IDS_ET_GROUP_DEVICE_INFORMATION", "Device information"),
+    ("objprp.c", "", "context->ListViewHandle", "OBJECT_GENERAL_CATEGORY_WINDOWSTATION", "IDS_ET_GROUP_WINDOW_STATION_INFORMATION", "Window Station information"),
+    ("objprp.c", "", "context->ListViewHandle", "OBJECT_GENERAL_CATEGORY_DESKTOP", "IDS_ET_GROUP_DESKTOP_INFORMATION", "Desktop information"),
+    ("objprp.c", "", "context->ListViewHandle", "OBJECT_GENERAL_CATEGORY_TYPE", "IDS_ET_GROUP_TYPE_INFORMATION", "Type information"),
+    ("objprp.c", "", "context->ListViewHandle", "OBJECT_GENERAL_CATEGORY_TYPE_ACCESS", "IDS_ET_GROUP_TYPE_ACCESS_INFORMATION", "Type access information"),
+    ("objprp.c", "", "context->ListViewHandle", "OBJECT_GENERAL_CATEGORY_SESSION", "IDS_ET_GROUP_SESSION_INFORMATION", "Session information"),
+)
+
 
 def load_tool(name: str):
     path = REPO_ROOT / "tools" / "zhcn" / f"{name}.py"
@@ -191,9 +224,9 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
 
-        self.assertEqual(len(RESOURCE_ROWS), 64)
-        self.assertEqual([row[1] for row in RESOURCE_ROWS], list(range(61040, 61104)))
-        for resource_id, numeric_id, english, chinese in RESOURCE_ROWS:
+        self.assertEqual(len(ALL_RESOURCE_ROWS), 76)
+        self.assertEqual([row[1] for row in ALL_RESOURCE_ROWS], list(range(61040, 61116)))
+        for resource_id, numeric_id, english, chinese in ALL_RESOURCE_ROWS:
             with self.subTest(resource_id=resource_id):
                 self.assertRegex(header, rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$")
                 self.assertRegex(english_rc, rf'(?m)^\s*{resource_id}\s+"{re.escape(english)}"$')
@@ -204,9 +237,9 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
                 self.assertNotIn(english, translations[other_table])
 
         self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_RESOURCE_VALUE\s+60043$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61104$")
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', english_rc)), 104)
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', chinese_rc)), 104)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61116$")
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', english_rc)), 116)
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', chinese_rc)), 116)
 
     def parse_routes(self, filename: str):
         source = self.audit.mask_c_comments(
@@ -280,6 +313,91 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
         self.assertIn("Fallback", helper)
         self.assertNotIn("PH_AUTO", helper)
         self.assertIn("PCWSTR EtGetUiString(", obj_source)
+        self.assertRegex(
+            main_source,
+            r"static PPH_STRING EtUiStrings\[\s*"
+            r"IDS_ET_GROUP_SESSION_INFORMATION\s*-\s*IDS_ET_DEDICATED_MEMORY\s*\+\s*1\s*\]",
+        )
+        self.assertRegex(
+            helper,
+            r"ResourceId\s*>\s*IDS_ET_GROUP_SESSION_INFORMATION",
+        )
+        self.assertRegex(
+            helper,
+            r"resourceId\s*<=\s*IDS_ET_GROUP_SESSION_INFORMATION",
+        )
+
+    def test_all_12_groups_keep_exact_routes_assignments_and_fallbacks(self) -> None:
+        resource_by_english = {
+            english: resource_id
+            for resource_id, _numeric_id, english, _chinese in GROUP_RESOURCE_ROWS
+        }
+        resource_ids = set(resource_by_english.values())
+        actual = []
+
+        for filename in ("main.c", "objprp.c"):
+            source = self.audit.mask_c_comments(
+                (PLUGIN_ROOT / filename).read_text(encoding="utf-8-sig")
+            )
+            for _name, args, _spans, call_start in self.audit.find_calls(
+                source, {"PhAddListViewGroup"}
+            ):
+                if len(args) != 3:
+                    continue
+
+                literal_match = re.fullmatch(r'\s*L"([^"]+)"\s*', args[2], re.S)
+                getter_match = re.fullmatch(
+                    r'\s*EtGetUiString\(\s*(IDS_ET_[A-Z0-9_]+)\s*,\s*L"([^"]+)"\s*\)\s*',
+                    args[2],
+                    re.S,
+                )
+                english = None
+                resource_id = None
+                if literal_match and literal_match.group(1) in resource_by_english:
+                    english = literal_match.group(1)
+                elif getter_match and getter_match.group(1) in resource_ids:
+                    resource_id, english = getter_match.groups()
+                else:
+                    continue
+
+                prefix = source[max(0, call_start - 180):call_start]
+                assignment_match = re.search(
+                    r"(block->ListViewGroupCache\[\s*[A-Z0-9_]+\s*\])\s*=\s*$",
+                    prefix,
+                )
+                actual.append(
+                    (
+                        filename,
+                        normalize(assignment_match.group(1)) if assignment_match else "",
+                        normalize(args[0]),
+                        normalize(args[1]),
+                        resource_id,
+                        english,
+                    )
+                )
+
+        expected = [
+            (
+                filename,
+                normalize(assignment),
+                normalize(list_view),
+                normalize(group),
+                resource_id,
+                fallback,
+            )
+            for filename, assignment, list_view, group, resource_id, fallback in GROUP_ROUTES
+        ]
+        self.assertEqual(actual, expected)
+
+    def test_migrated_group_literals_leave_the_fresh_audit(self) -> None:
+        remaining = []
+        for filename in ("main.c", "objprp.c"):
+            entries = []
+            self.audit.scan_c_file(str(PLUGIN_ROOT / filename), entries)
+            remaining.extend(
+                entry for entry in entries if entry["category"] == "c_listview_group"
+            )
+        self.assertEqual(remaining, [])
 
     def test_migrated_group_item_literals_leave_the_fresh_audit(self) -> None:
         expected_english = {row[2] for row in RESOURCE_ROWS}
@@ -295,15 +413,15 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
             )
         self.assertEqual(remaining, [])
 
-    def test_ci_requires_all_104_extended_tools_strings(self) -> None:
+    def test_ci_requires_all_116_extended_tools_strings(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
         self.assertEqual(
-            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=104"),
+            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=116"),
             2,
         )
-        self.assertNotIn("bin\\Release64\\plugins\\ExtendedTools.dll=40", workflow)
+        self.assertNotIn("bin\\Release64\\plugins\\ExtendedTools.dll=104", workflow)
 
 
 if __name__ == "__main__":

@@ -1041,6 +1041,18 @@ BEGIN
     IDS_ET_CONNECT_TIME             "Connect time"
     IDS_ET_DISCONNECT_TIME          "Disconnect time"
     IDS_ET_LAST_INPUT_TIME          "Last input time"
+    IDS_ET_GROUP_GPU                "GPU"
+    IDS_ET_GROUP_DISK_IO            "Disk I/O"
+    IDS_ET_GROUP_NETWORK_IO         "Network I/O"
+    IDS_ET_GROUP_NPU                "NPU"
+    IDS_ET_GROUP_GPU_ADAPTER        "GPU adapter"
+    IDS_ET_GROUP_DRIVER_INFORMATION "Driver information"
+    IDS_ET_GROUP_DEVICE_INFORMATION "Device information"
+    IDS_ET_GROUP_WINDOW_STATION_INFORMATION "Window Station information"
+    IDS_ET_GROUP_DESKTOP_INFORMATION "Desktop information"
+    IDS_ET_GROUP_TYPE_INFORMATION   "Type information"
+    IDS_ET_GROUP_TYPE_ACCESS_INFORMATION "Type access information"
+    IDS_ET_GROUP_SESSION_INFORMATION "Session information"
 END
 
 #endif    // English (United States) resources

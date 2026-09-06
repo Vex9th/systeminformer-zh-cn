@@ -693,7 +693,15 @@
     "TrustLevel": "信任级别",
     "Profile": "配置文件",
     "System ID": "系统 ID",
-    "Parent": "父级"
+    "Parent": "父级",
+    "GPU adapter": "GPU 适配器",
+    "Driver information": "驱动程序信息",
+    "Device information": "设备信息",
+    "Window Station information": "窗口站信息",
+    "Desktop information": "桌面信息",
+    "Type information": "类型信息",
+    "Type access information": "类型访问权限信息",
+    "Session information": "会话信息"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

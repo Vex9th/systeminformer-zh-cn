@@ -61,7 +61,7 @@ BOOLEAN EtEnableScaleText = FALSE;
 BOOLEAN EtPropagateCpuUsage = FALSE;
 BOOLEAN EtEnableAvxSupport = FALSE;
 static PH_INITONCE EtUiStringsInitOnce = PH_INITONCE_INIT;
-static PPH_STRING EtUiStrings[IDS_ET_LAST_INPUT_TIME - IDS_ET_DEDICATED_MEMORY + 1];
+static PPH_STRING EtUiStrings[IDS_ET_GROUP_SESSION_INFORMATION - IDS_ET_DEDICATED_MEMORY + 1];
 
 EXTENDEDTOOLS_INTERFACE PluginInterface =
 {
@@ -77,12 +77,12 @@ PCWSTR EtGetUiString(
     _In_ PCWSTR Fallback
     )
 {
-    if (ResourceId < IDS_ET_DEDICATED_MEMORY || ResourceId > IDS_ET_LAST_INPUT_TIME)
+    if (ResourceId < IDS_ET_DEDICATED_MEMORY || ResourceId > IDS_ET_GROUP_SESSION_INFORMATION)
         return Fallback;
 
     if (PhBeginInitOnce(&EtUiStringsInitOnce))
     {
-        for (ULONG resourceId = IDS_ET_DEDICATED_MEMORY; resourceId <= IDS_ET_LAST_INPUT_TIME; resourceId++)
+        for (ULONG resourceId = IDS_ET_DEDICATED_MEMORY; resourceId <= IDS_ET_GROUP_SESSION_INFORMATION; resourceId++)
         {
             EtUiStrings[resourceId - IDS_ET_DEDICATED_MEMORY] = PhLoadUiString(
                 PluginInstance->DllBase,
@@ -749,7 +749,8 @@ VOID NTAPI ProcessStatsEventCallback(
                 break;
 
             block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_GPU] = PhAddListViewGroup(
-                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle), L"GPU");
+                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle),
+                EtGetUiString(IDS_ET_GROUP_GPU, L"GPU"));
             block->ListViewRowCache[ET_PROCESS_STATISTICS_INDEX_GPUTOTALDEDICATED] = PhAddListViewGroupItem(
                 listViewHandle, block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_GPU], MAXINT,
                 EtGetUiString(IDS_ET_DEDICATED_MEMORY, L"Dedicated memory"), NULL);
@@ -772,7 +773,8 @@ VOID NTAPI ProcessStatsEventCallback(
                 UlongToPtr(ET_PROCESS_STATISTICS_PARAM(ET_PROCESS_STATISTICS_INDEX_GPUTOTAL)));
 
             block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_DISK] = PhAddListViewGroup(
-                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle), L"Disk I/O");
+                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle),
+                EtGetUiString(IDS_ET_GROUP_DISK_IO, L"Disk I/O"));
             block->ListViewRowCache[ET_PROCESS_STATISTICS_INDEX_DISKREADS] = PhAddListViewGroupItem(
                 listViewHandle, block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_DISK], MAXINT,
                 EtGetUiString(IDS_ET_READS, L"Reads"), NULL);
@@ -820,7 +822,8 @@ VOID NTAPI ProcessStatsEventCallback(
                 UlongToPtr(ET_PROCESS_STATISTICS_PARAM(ET_PROCESS_STATISTICS_INDEX_DISKTOTALBYTESDELTA)));
 
             block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_NETWORK] = PhAddListViewGroup(
-                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle), L"Network I/O");
+                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle),
+                EtGetUiString(IDS_ET_GROUP_NETWORK_IO, L"Network I/O"));
             block->ListViewRowCache[ET_PROCESS_STATISTICS_INDEX_NETWORKREADS] = PhAddListViewGroupItem(
                 listViewHandle, block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_NETWORK], MAXINT,
                 EtGetUiString(IDS_ET_RECEIVES, L"Receives"), NULL);
@@ -868,7 +871,8 @@ VOID NTAPI ProcessStatsEventCallback(
                 UlongToPtr(ET_PROCESS_STATISTICS_PARAM(ET_PROCESS_STATISTICS_INDEX_NETWORKTOTALBYTESDELTA)));
 
             block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_NPU] = PhAddListViewGroup(
-                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle), L"NPU");
+                listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle),
+                EtGetUiString(IDS_ET_GROUP_NPU, L"NPU"));
             block->ListViewRowCache[ET_PROCESS_STATISTICS_INDEX_NPUTOTALDEDICATED] = PhAddListViewGroupItem(
                 listViewHandle, block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_NPU], MAXINT,
                 EtGetUiString(IDS_ET_DEDICATED_MEMORY, L"Dedicated memory"), NULL);
@@ -893,7 +897,8 @@ VOID NTAPI ProcessStatsEventCallback(
             if (EtGpuAdapterStatsEnabled)
             {
                 block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_GPUADAPTER] = PhAddListViewGroup(
-                    listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle), L"GPU adapter");
+                    listViewHandle, (LONG)ListView_GetGroupCount(listViewHandle),
+                    EtGetUiString(IDS_ET_GROUP_GPU_ADAPTER, L"GPU adapter"));
                 block->ListViewRowCache[ET_PROCESS_STATISTICS_INDEX_GPUVIRTUALMEMORY] = PhAddListViewGroupItem(
                     listViewHandle, block->ListViewGroupCache[ET_PROCESS_STATISTICS_CATEGORY_GPUADAPTER], MAXINT,
                     EtGetUiString(IDS_ET_VIRTUAL_MEMORY, L"Virtual memory"), NULL);
