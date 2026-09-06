@@ -502,6 +502,18 @@ PhShowConfirmMessage(
     _In_ BOOLEAN Warning
     );
 
+#if defined(_PHLIB_)
+BOOLEAN
+NTAPI
+PhShowConfirmMessageRawObject(
+    _In_ HWND WindowHandle,
+    _In_ PCWSTR Verb,
+    _In_ PCWSTR Object,
+    _In_opt_ PCWSTR Message,
+    _In_ BOOLEAN Warning
+    );
+#endif
+
 /**
  * Finds an integer in an array of string-integer pairs.
  *

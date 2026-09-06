@@ -1611,14 +1611,16 @@ BOOLEAN PhShowContinueStatus(
  * \param Object The object of the operation, e.g. "the process".
  * \param Message A message describing the operation.
  * \param Warning TRUE to display the confirmation message as a warning, otherwise FALSE.
+ * \param TranslateObject TRUE to translate Object, otherwise use it verbatim.
  * \return TRUE if the user wishes to continue, otherwise FALSE.
  */
-BOOLEAN PhShowConfirmMessage(
+static BOOLEAN PhpShowConfirmMessage(
     _In_ HWND WindowHandle,
     _In_ PCWSTR Verb,
     _In_ PCWSTR Object,
     _In_opt_ PCWSTR Message,
-    _In_ BOOLEAN Warning
+    _In_ BOOLEAN Warning,
+    _In_ BOOLEAN TranslateObject
     )
 {
     PPH_STRING verb;
@@ -1635,7 +1637,7 @@ BOOLEAN PhShowConfirmMessage(
 
     // "terminate", "the process" -> "terminate the process"; the Chinese
     // translation joins the phrases without a separating space.
-    object = PhTranslateString(Object);
+    object = TranslateObject ? PhTranslateString(Object) : Object;
 
     if (PhTranslationEnabled)
         action = PhaConcatStrings(2, verb->Buffer, object);
@@ -1689,6 +1691,42 @@ BOOLEAN PhShowConfirmMessage(
 
         return FALSE;
     }
+}
+
+BOOLEAN PhShowConfirmMessage(
+    _In_ HWND WindowHandle,
+    _In_ PCWSTR Verb,
+    _In_ PCWSTR Object,
+    _In_opt_ PCWSTR Message,
+    _In_ BOOLEAN Warning
+    )
+{
+    return PhpShowConfirmMessage(
+        WindowHandle,
+        Verb,
+        Object,
+        Message,
+        Warning,
+        TRUE
+        );
+}
+
+BOOLEAN PhShowConfirmMessageRawObject(
+    _In_ HWND WindowHandle,
+    _In_ PCWSTR Verb,
+    _In_ PCWSTR Object,
+    _In_opt_ PCWSTR Message,
+    _In_ BOOLEAN Warning
+    )
+{
+    return PhpShowConfirmMessage(
+        WindowHandle,
+        Verb,
+        Object,
+        Message,
+        Warning,
+        FALSE
+        );
 }
 
 /**

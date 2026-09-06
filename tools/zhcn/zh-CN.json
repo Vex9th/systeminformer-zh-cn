@@ -796,6 +796,7 @@
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
+    " and ": " 和 ",
     " and its descendants": "及其子进程",
     "100000": "100000",
     "&About": "关于(&A)",

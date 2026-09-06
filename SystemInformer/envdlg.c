@@ -1257,10 +1257,10 @@ static VOID EtEnvironmentDelete(
     if (entry->System && !Context->Elevated)
         return;
 
-    if (!PhShowConfirmMessage(
+    if (!PhShowConfirmMessageRawObject(
         Context->WindowHandle,
         L"delete",
-        PhaFormatString(L"the environment variable \"%s\"", PhGetString(entry->Name))->Buffer,
+        PhaFormatString(PhTranslateString(L"the environment variable \"%s\""), PhGetString(entry->Name))->Buffer,
         NULL,
         FALSE
         ))

@@ -11,9 +11,10 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2355] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
+    { L" and ", L" 和 ", },
     { L" and its descendants", L"及其子进程", },
     { L"\"%s\" at position %zu.", L"“%s”，位置 %zu。", },
     { L"\"%s\" is not one of the supported values (%s).\r\nThe value was applied anyway.", L"\"%s\" 不是受支持的值之一（%s）。\r\n仍已应用该值。", },

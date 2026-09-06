@@ -1606,6 +1606,20 @@ BOOLEAN PhIsTerminalServerSystemProcess(
 }
 #endif
 
+static BOOLEAN PhpShowConfirmMessageObject(
+    _In_ HWND WindowHandle,
+    _In_ PCWSTR Verb,
+    _In_ PCWSTR Object,
+    _In_opt_ PCWSTR Message,
+    _In_ BOOLEAN Warning,
+    _In_ BOOLEAN RawObject
+    )
+{
+    return RawObject ?
+        PhShowConfirmMessageRawObject(WindowHandle, Verb, Object, Message, Warning) :
+        PhShowConfirmMessage(WindowHandle, Verb, Object, Message, Warning);
+}
+
 /**
  * Checks if the user wants to proceed with an operation.
  *
@@ -1635,6 +1649,7 @@ static BOOLEAN PhpShowContinueMessageProcesses(
     BOOLEAN critical = FALSE;
     BOOLEAN dangerous = FALSE;
     BOOLEAN cont = FALSE;
+    BOOLEAN rawObject;
 
     if (NumberOfProcesses == 0)
         return FALSE;
@@ -1673,34 +1688,38 @@ static BOOLEAN PhpShowContinueMessageProcesses(
         if (NumberOfProcesses == 1)
         {
             object = Processes[0]->ProcessName->Buffer;
+            rawObject = TRUE;
         }
         else if (NumberOfProcesses == 2)
         {
             object = PhaConcatStrings(
                 3,
                 Processes[0]->ProcessName->Buffer,
-                L" and ",
+                PhTranslateString(L" and "),
                 Processes[1]->ProcessName->Buffer
                 )->Buffer;
+            rawObject = TRUE;
         }
         else
         {
             object = L"the selected processes";
+            rawObject = FALSE;
         }
 
         if (!dangerous)
         {
-            cont = PhShowConfirmMessage(
+            cont = PhpShowConfirmMessageObject(
                 WindowHandle,
                 Verb,
                 object,
                 Message,
-                FALSE
+                FALSE,
+                rawObject
                 );
         }
         else if (!critical)
         {
-            cont = PhShowConfirmMessage(
+            cont = PhpShowConfirmMessageObject(
                 WindowHandle,
                 Verb,
                 object,
@@ -1710,7 +1729,8 @@ static BOOLEAN PhpShowContinueMessageProcesses(
                 Verb,
                 L" one or more system processes."
                 )->Buffer,
-                TRUE
+                TRUE,
+                rawObject
                 );
         }
         else
@@ -1736,12 +1756,13 @@ static BOOLEAN PhpShowContinueMessageProcesses(
                     );
             }
 
-            cont = PhShowConfirmMessage(
+            cont = PhpShowConfirmMessageObject(
                 WindowHandle,
                 Verb,
                 object,
                 message->Buffer,
-                TRUE
+                TRUE,
+                rawObject
                 );
         }
     }
@@ -1996,10 +2017,10 @@ BOOLEAN PhUiTerminateTreeProcess(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        cont = PhShowConfirmMessage(
+        cont = PhShowConfirmMessageRawObject(
             WindowHandle,
             L"terminate",
-            PhaConcatStrings2(Process->ProcessName->Buffer, L" and its descendants")->Buffer,
+            PhaConcatStrings2(Process->ProcessName->Buffer, PhTranslateString(L" and its descendants"))->Buffer,
             L"Terminating a process tree will cause the process and its descendants to be terminated.",
             FALSE
             );
@@ -2217,10 +2238,10 @@ BOOLEAN PhUiSuspendTreeProcess(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        result = PhShowConfirmMessage(
+        result = PhShowConfirmMessageRawObject(
             WindowHandle,
             L"suspend",
-            PhaConcatStrings2(Process->ProcessName->Buffer, L" and its descendants")->Buffer,
+            PhaConcatStrings2(Process->ProcessName->Buffer, PhTranslateString(L" and its descendants"))->Buffer,
             L"Suspending a process tree will cause the process and its descendants to be suspended.",
             FALSE
             );
@@ -2438,10 +2459,10 @@ BOOLEAN PhUiResumeTreeProcess(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        result = PhShowConfirmMessage(
+        result = PhShowConfirmMessageRawObject(
             WindowHandle,
             L"resume",
-            PhConcatStringRefZ(&Process->ProcessName->sr, L" and its descendants")->Buffer,
+            PhaConcatStrings2(Process->ProcessName->Buffer, PhTranslateString(L" and its descendants"))->Buffer,
             L"Resuming a process tree will cause the process and its descendants to be resumed.",
             FALSE
             );
@@ -2487,7 +2508,7 @@ BOOLEAN PhUiFreezeTreeProcess(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        result = PhShowConfirmMessage(
+        result = PhShowConfirmMessageRawObject(
             WindowHandle,
             L"freeze",
             Process->ProcessName->Buffer,
@@ -2593,7 +2614,7 @@ BOOLEAN PhUiRestartProcess(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        result = PhShowConfirmMessage(
+        result = PhShowConfirmMessageRawObject(
             WindowHandle,
             L"restart",
             Process->ProcessName->Buffer,
@@ -3742,10 +3763,10 @@ BOOLEAN PhUiSetExecutionRequiredProcess(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        if (!PhShowConfirmMessage(
+        if (!PhShowConfirmMessageRawObject(
             WindowHandle,
             L"change the execution required state",
-            PhaConcatStrings2(L"of ", Process->ProcessName->Buffer)->Buffer,
+            PhaConcatStrings2(PhTranslateString(L"of "), Process->ProcessName->Buffer)->Buffer,
             L"The process continues to run instead of being suspended or terminated by process lifetime management (PLM).",
             FALSE
             ))
@@ -6032,7 +6053,7 @@ BOOLEAN PhUiDeleteService(
     BOOLEAN success = FALSE;
 
     // Warnings cannot be disabled for service deletion.
-    if (!PhShowConfirmMessage(
+    if (!PhShowConfirmMessageRawObject(
         WindowHandle,
         L"delete",
         Service->Name->Buffer,
@@ -7006,7 +7027,7 @@ BOOLEAN PhUiUnloadModule(
             return FALSE;
         }
 
-        cont = PhShowConfirmMessage(
+        cont = PhShowConfirmMessageRawObject(
             WindowHandle,
             verb,
             Module->Name->Buffer,
