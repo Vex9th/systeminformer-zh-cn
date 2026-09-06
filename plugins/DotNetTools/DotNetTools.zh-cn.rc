@@ -137,4 +137,9 @@ BEGIN
     IDS_DN_MENU_HIGHLIGHT_NATIVE    "高亮本机映像"
     IDS_DN_COLUMN_COUNTER           "计数器"
     IDS_DN_COLUMN_VALUE             "值"
+    IDS_DN_COLUMN_APP_DOMAIN        "应用程序域"
+    IDS_DN_LOADING_ASSEMBLIES       "正在加载 .NET 程序集..."
+    IDS_DN_NO_ASSEMBLIES            "没有可显示的程序集。"
+    IDS_DN_UNABLE_START_TRACE_PREFIX "无法启动事件跟踪会话："
+    IDS_DN_UNKNOWN_ERROR            "未知错误"
 END

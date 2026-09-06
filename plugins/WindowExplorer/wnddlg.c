@@ -35,8 +35,30 @@ VOID WepRemoveWindowNode(
 HWND WepWindowsDialogHandle = NULL;
 HANDLE WepWindowsDialogThreadHandle = NULL;
 PH_EVENT WepWindowsInitializedEvent = PH_EVENT_INIT;
-PH_STRINGREF WepEmptyWindowsText = PH_STRINGREF_INIT(L"There are no windows to display.");
+static PH_INITONCE WepEmptyWindowsTextInitOnce = PH_INITONCE_INIT;
+static PPH_STRING WepEmptyWindowsText = NULL;
 #define WE_WM_FINDWINDOW (WM_APP + 502)
+
+static PPH_STRINGREF WepGetEmptyWindowsText(
+    VOID
+    )
+{
+    if (PhBeginInitOnce(&WepEmptyWindowsTextInitOnce))
+    {
+        WepEmptyWindowsText = PhLoadUiString(
+            PluginInstance->DllBase,
+            IDS_WE_NO_WINDOWS,
+            NULL
+            );
+
+        if (!WepEmptyWindowsText)
+            WepEmptyWindowsText = PhCreateString(L"There are no windows to display.");
+
+        PhEndInitOnce(&WepEmptyWindowsTextInitOnce);
+    }
+
+    return &WepEmptyWindowsText->sr;
+}
 
 _Function_class_(USER_THREAD_START_ROUTINE)
 NTSTATUS WepShowWindowsDialogThread(
@@ -1224,7 +1246,7 @@ INT_PTR CALLBACK WepWindowsDlgProc(
             WeInitializeWindowTree(WindowHandle, context->TreeNewHandle, &context->TreeContext);
             context->TreeContext.ColorNew = context->ColorNew;
             context->TreeContext.ColorRemoved = context->ColorRemoved;
-            TreeNew_SetEmptyText(context->TreeNewHandle, &WepEmptyWindowsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, WepGetEmptyWindowsText(), 0);
             SetWindowFont(context->TreeNewHandle, context->TreeWindowFont, TRUE);
             WeInitializeWindowTreeImageList(&context->TreeContext, &context->Selector);
 
@@ -2310,7 +2332,7 @@ INT_PTR CALLBACK WepWindowsPageProc(
             WeInitializeWindowTree(WindowHandle, context->TreeNewHandle, &context->TreeContext);
             context->TreeContext.ColorNew = context->ColorNew;
             context->TreeContext.ColorRemoved = context->ColorRemoved;
-            TreeNew_SetEmptyText(context->TreeNewHandle, &WepEmptyWindowsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, WepGetEmptyWindowsText(), 0);
             SetWindowFont(context->TreeNewHandle, context->TreeWindowFont, TRUE);
             WeInitializeWindowTreeImageList(&context->TreeContext, &context->Selector);
 
@@ -2418,7 +2440,7 @@ INT_PTR CALLBACK WepWindowsPageProc(
             //WeInitializeWindowTree(WindowHandle, context->TreeNewHandle, &context->TreeContext);
             //context->TreeContext.ColorNew = context->ColorNew;
             //context->TreeContext.ColorRemoved = context->ColorRemoved;
-            //TreeNew_SetEmptyText(context->TreeNewHandle, &WepEmptyWindowsText, 0);
+            //TreeNew_SetEmptyText(context->TreeNewHandle, WepGetEmptyWindowsText(), 0);
             //WeInitializeWindowTreeImageList(&context->TreeContext, &context->Selector);
 
             ////if (context->EnableWindowProvider)

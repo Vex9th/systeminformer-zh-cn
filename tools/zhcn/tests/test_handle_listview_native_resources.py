@@ -236,7 +236,7 @@ class HandleListViewNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("3206 strings", result.stdout)
+        self.assertIn("3235 strings", result.stdout)
 
 
 if __name__ == "__main__":

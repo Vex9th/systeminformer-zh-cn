@@ -229,6 +229,7 @@
 #define IDS_WE_ACTION_REMOVE            12165
 #define IDS_WE_OBJECT_WINDOW_PROPERTY   12166
 #define IDS_WE_WINDOW_PROPERTY_DELETE_WARNING 12167
+#define IDS_WE_NO_WINDOWS              12168
 
 // Next default values for new objects
 //
@@ -237,6 +238,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40039
 #define _APS_NEXT_CONTROL_VALUE         1037
-#define _APS_NEXT_SYMED_VALUE           12168
+#define _APS_NEXT_SYMED_VALUE           12169
 #endif
 #endif

@@ -30,6 +30,11 @@
 
 extern PPH_PLUGIN PluginInstance;
 
+PCWSTR DotNetGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 #define DN_ASM_MENU_HIDE_DYNAMIC_OPTION 1
 #define DN_ASM_MENU_HIGHLIGHT_DYNAMIC_OPTION 2
 #define DN_ASM_MENU_HIDE_NATIVE_OPTION 3

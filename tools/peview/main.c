@@ -54,6 +54,20 @@ PCWSTR PvpLoadUiString(
     return PhGetString(PvpUiStrings[ResourceId - IDS_PV_FIRST]);
 }
 
+PPH_STRINGREF PvpLoadUiStringRef(
+    _In_ ULONG ResourceId
+    )
+{
+    static PH_STRINGREF emptyString = PH_STRINGREF_INIT(L"");
+
+    assert(ResourceId >= IDS_PV_FIRST && ResourceId <= IDS_PV_LAST);
+
+    if (ResourceId < IDS_PV_FIRST || ResourceId > IDS_PV_LAST)
+        return &emptyString;
+
+    return &PvpUiStrings[ResourceId - IDS_PV_FIRST]->sr;
+}
+
 BOOLEAN PvInitializeExceptionPolicy(
     VOID
     );

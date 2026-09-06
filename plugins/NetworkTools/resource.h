@@ -339,6 +339,13 @@
 #define IDS_NT_COLUMN_IP_ADDRESS       12052
 #define IDS_NT_COLUMN_HOSTNAME         12053
 #define IDS_NT_COLUMN_COUNTRY          12054
+#define IDS_NT_COLUMN_LOCAL_SERVICE    12055
+#define IDS_NT_COLUMN_REMOTE_SERVICE   12056
+#define IDS_NT_COLUMN_TOTAL_BYTES_IN   12057
+#define IDS_NT_COLUMN_TOTAL_BYTES_OUT  12058
+#define IDS_NT_COLUMN_PACKET_LOSS      12059
+#define IDS_NT_COLUMN_JITTER_MS        12060
+#define IDS_NT_COLUMN_LATENCY_MS       12061
 
 // Next default values for new objects
 // 
@@ -347,6 +354,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        112
 #define _APS_NEXT_COMMAND_VALUE         40006
 #define _APS_NEXT_CONTROL_VALUE         1045
-#define _APS_NEXT_SYMED_VALUE           12055
+#define _APS_NEXT_SYMED_VALUE           12062
 #endif
 #endif

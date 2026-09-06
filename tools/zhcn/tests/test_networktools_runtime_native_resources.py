@@ -164,12 +164,12 @@ class NetworkToolsRuntimeNativeResourceTests(unittest.TestCase):
                 self.assertEqual(chinese.get(symbol), zh)
 
         self.assertEqual([row[1] for row in RESOURCE_DATA], list(range(12027, 12055)))
-        self.assertEqual(sorted(defines.values()), list(range(12000, 12055)))
+        self.assertEqual(sorted(defines.values()), list(range(12000, 12062)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 55)
-        self.assertEqual(len(chinese), 55)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12055$")
+        self.assertEqual(len(english), 62)
+        self.assertEqual(len(chinese), 62)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12062$")
 
         for table in (english, chinese):
             self.assertEqual(table["IDS_NT_GEOLITE_DOWNLOAD_PROGRESS"].count("~"), 4)

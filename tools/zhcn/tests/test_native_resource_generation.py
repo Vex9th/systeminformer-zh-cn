@@ -1595,7 +1595,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("3206 strings", result.stdout)
+        self.assertIn("3235 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1828,7 +1828,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertIn("PvpLoadUiString", peview_header)
         self.assertIn("IDS_PV_MENU_DISPLAY_RESOURCE", resource_header)
         self.assertIn("IDS_PV_MENU_SAVE_CERTIFICATE", resource_header)
-        self.assertEqual(len(stringtable_ids(resource_script)), 311)
+        self.assertEqual(len(stringtable_ids(resource_script)), 327)
 
         migrated_labels = (
             "ANSI",
@@ -1980,14 +1980,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PV_LAST\s+IDS_PV_CERTIFICATE_SIZE_FORMAT$",
+            r"(?m)^#define\s+IDS_PV_LAST\s+IDS_PV_LOADING_STRINGS$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3298$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3314$",
         )
-        self.assertEqual(len(stringtable_ids(english_rc)), 311)
-        self.assertEqual(len(stringtable_ids(chinese_rc)), 311)
+        self.assertEqual(len(stringtable_ids(english_rc)), 327)
+        self.assertEqual(len(stringtable_ids(chinese_rc)), 327)
 
     def test_peview_options_and_error_messages_use_native_string_resources(self) -> None:
         source = "\n".join(
@@ -3586,7 +3586,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             },
         }
         expected_aps = {
-            "WindowExplorer": 12168,
+            "WindowExplorer": 12169,
             "OnlineChecks": 12022,
             "Updater": 12056,
         }
@@ -4951,11 +4951,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2108$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2113$",
         )
         self.assertEqual(
             workflow.count(
-                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=108'"
+                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=113'"
             ),
             2,
         )
@@ -5089,7 +5089,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2108$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2113$",
         )
         self.assertNotRegex(
             resource_header,
@@ -5101,7 +5101,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         self.assertEqual(
             workflow.count(
-                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=108'"
+                "--expect-string-count-in 'bin\\Release64\\plugins\\DotNetTools.dll=113'"
             ),
             2,
         )
@@ -5341,7 +5341,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertLess(status_update, result_release)
         self.assertLess(result_release, tree_update)
 
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12055$")
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12062$")
         migrated_resource_ids = "|".join(
             re.escape(resource_id) for resource_id in expected_resources
         )
@@ -5361,7 +5361,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(
             len(
                 re.findall(
-                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\NetworkTools\.dll=55'",
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\NetworkTools\.dll=62'",
                     workflow,
                 )
             ),
@@ -6306,17 +6306,17 @@ class NativeResourceGenerationTests(unittest.TestCase):
             Counter(
                 {
                     (r"bin\Release64\sys_info.exe", 1296): 2,
-                    (r"bin\Release64\plugins\DotNetTools.dll", 108): 2,
+                    (r"bin\Release64\plugins\DotNetTools.dll", 113): 2,
                     (r"bin\Release64\plugins\ExtendedNotifications.dll", 4): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 90): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 470): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 396): 2,
-                    (r"bin\Release64\plugins\NetworkTools.dll", 55): 2,
-                    (r"bin\Release64\plugins\WindowExplorer.dll", 168): 2,
+                    (r"bin\Release64\plugins\NetworkTools.dll", 62): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 169): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 22): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 104): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 52): 2,
-                    (r"bin\Release64\peview.exe", 311): 2,
+                    (r"bin\Release64\peview.exe", 327): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
                 }

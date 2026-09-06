@@ -161,12 +161,12 @@ class WindowExplorerDynamicUiResourceTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual(sorted(defines.values()), list(range(12000, 12168)))
+        self.assertEqual(sorted(defines.values()), list(range(12000, 12169)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 168)
-        self.assertEqual(len(chinese), 168)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12168$")
+        self.assertEqual(len(english), 169)
+        self.assertEqual(len(chinese), 169)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12169$")
 
     def test_every_resource_menu_item_owns_its_text(self) -> None:
         actual = Counter()

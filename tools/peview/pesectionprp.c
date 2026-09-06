@@ -15,8 +15,6 @@
 #include "../thirdparty/ssdeep/fuzzy.h"
 #include "../thirdparty/tlsh/tlsh_wrapper.h"
 
-static PH_STRINGREF EmptySectionsText = PH_STRINGREF_INIT(L"There are no sections to display.");
-static PH_STRINGREF LoadingSectionsText = PH_STRINGREF_INIT(L"Loading sections from image...");
 
 typedef enum _PV_SECTION_TREE_COLUMN_ITEM
 {
@@ -484,7 +482,7 @@ INT_PTR CALLBACK PvPeSectionsDlgProc(
             PhLoadSettingsSectionList(context);
             PvConfigTreeBorders(context->TreeNewHandle);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &LoadingSectionsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_LOADING_SECTIONS), 0);
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
             PhAddLayoutItem(&context->LayoutManager, context->SearchHandle, NULL, PH_ANCHOR_TOP | PH_ANCHOR_RIGHT);
@@ -621,7 +619,7 @@ INT_PTR CALLBACK PvPeSectionsDlgProc(
         {
             PvAddPendingSectionNodes(context);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &EmptySectionsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_SECTIONS), 0);
 
             TreeNew_NodesStructured(context->TreeNewHandle);
         }

@@ -155,17 +155,17 @@ jobs:
         )
         python tools\zhcn\validate_templates.py @resourceTargets `
           --expect-string-count-in 'bin\Release64\sys_info.exe=1296' `
-          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=108' `
+          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=113' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=470' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=396' `
-          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=55' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=62' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=22' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=52' `
-          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=168' `
-          --expect-string-count-in 'bin\Release64\peview.exe=311'
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=169' `
+          --expect-string-count-in 'bin\Release64\peview.exe=327'
 
     - name: Assert driverless output (no .sys / .inf)
       shell: pwsh
@@ -317,17 +317,17 @@ jobs:
           --require-strings-in 'build\output\systeminformer-build-release-setup.exe' `
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
           --expect-string-count-in 'bin\Release64\sys_info.exe=1296' `
-          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=108' `
+          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=113' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=470' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=396' `
-          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=55' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=62' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=22' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=52' `
-          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=168' `
-          --expect-string-count-in 'bin\Release64\peview.exe=311' `
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=169' `
+          --expect-string-count-in 'bin\Release64\peview.exe=327' `
           --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=74' `
           --expect-string-count-in 'build\output\systeminformer-build-canary-setup.exe=74'
 

@@ -179,11 +179,11 @@ class WindowExplorerRemainingSemanticResourceTests(unittest.TestCase):
                 self.assertEqual(translations["native_strings"].get(en), zh)
                 self.assertNotIn(en, translations["strings"])
 
-        self.assertEqual(len(english), 168)
-        self.assertEqual(len(chinese), 168)
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12168$")
+        self.assertEqual(len(english), 169)
+        self.assertEqual(len(chinese), 169)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12169$")
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=168"), 2)
+        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=169"), 2)
         self.assertNotIn(r"plugins\WindowExplorer.dll=111", workflow)
 
     def test_format_helper_has_null_safe_explicit_lifetime(self) -> None:
@@ -282,7 +282,7 @@ class WindowExplorerRemainingSemanticResourceTests(unittest.TestCase):
 
     def test_native_generator_total_is_synchronized(self) -> None:
         generator_test = (REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py").read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("3206 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("3235 strings", result.stdout)', generator_test)
         self.assertNotIn('self.assertIn("1726 strings", result.stdout)', generator_test)
 
 

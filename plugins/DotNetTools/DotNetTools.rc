@@ -210,6 +210,11 @@ BEGIN
     IDS_DN_MENU_HIGHLIGHT_NATIVE    "Highlight native"
     IDS_DN_COLUMN_COUNTER           "Counter"
     IDS_DN_COLUMN_VALUE             "Value"
+    IDS_DN_COLUMN_APP_DOMAIN        "AppDomain"
+    IDS_DN_LOADING_ASSEMBLIES       "Loading .NET assemblies..."
+    IDS_DN_NO_ASSEMBLIES            "There are no assemblies to display."
+    IDS_DN_UNABLE_START_TRACE_PREFIX "Unable to start the event tracing session: "
+    IDS_DN_UNKNOWN_ERROR            "Unknown error"
 END
 
 

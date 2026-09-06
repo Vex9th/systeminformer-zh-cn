@@ -27,6 +27,38 @@ PH_CALLBACK_REGISTRATION ProcessesUpdatedCallbackRegistration;
 HWND NetworkTreeNewHandle = NULL;
 BOOLEAN NetworkExtensionEnabled = FALSE;
 RTL_STATIC_LIST_HEAD(NetworkExtensionListHead);
+static PH_INITONCE NetworkToolsUiStringsInitOnce = PH_INITONCE_INIT;
+static PPH_STRING NetworkToolsUiStrings[
+    IDS_NT_COLUMN_LATENCY_MS - IDS_NT_COLUMN_COUNTRY + 1
+];
+
+static PCWSTR NetworkToolsGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    if (ResourceId < IDS_NT_COLUMN_COUNTRY || ResourceId > IDS_NT_COLUMN_LATENCY_MS)
+        return Fallback;
+
+    if (PhBeginInitOnce(&NetworkToolsUiStringsInitOnce))
+    {
+        for (ULONG resourceId = IDS_NT_COLUMN_COUNTRY; resourceId <= IDS_NT_COLUMN_LATENCY_MS; resourceId++)
+        {
+            NetworkToolsUiStrings[resourceId - IDS_NT_COLUMN_COUNTRY] = PhLoadUiString(
+                PluginInstance->DllBase,
+                resourceId,
+                NULL
+                );
+        }
+
+        PhEndInitOnce(&NetworkToolsUiStringsInitOnce);
+    }
+
+    return PhGetStringOrDefault(
+        NetworkToolsUiStrings[ResourceId - IDS_NT_COLUMN_COUNTRY],
+        Fallback
+        );
+}
 
 NETWORKTOOLS_INTERFACE PluginInterface =
 {
@@ -421,50 +453,50 @@ VOID NTAPI NetworkTreeNewInitializingCallback(
     *(HWND*)Context = info->TreeNewHandle;
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Country";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_COUNTRY, L"Country");
     column.Width = 140;
     column.Alignment = PH_ALIGN_LEFT;
     column.CustomDraw = TRUE; // Owner-draw this column to show country flags
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_REMOTE_COUNTRY, NULL, NetworkServiceSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Local service";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_LOCAL_SERVICE, L"Local service");
     column.Width = 140;
     column.Alignment = PH_ALIGN_LEFT;
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_LOCAL_SERVICE, NULL, NetworkServiceSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Remote service";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_REMOTE_SERVICE, L"Remote service");
     column.Width = 140;
     column.Alignment = PH_ALIGN_LEFT;
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_REMOTE_SERVICE, NULL, NetworkServiceSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Total bytes in";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_TOTAL_BYTES_IN, L"Total bytes in");
     column.Width = 80;
     column.Alignment = PH_ALIGN_LEFT;
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_BYTES_IN, NULL, NetworkServiceSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Total bytes out";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_TOTAL_BYTES_OUT, L"Total bytes out");
     column.Width = 80;
     column.Alignment = PH_ALIGN_LEFT;
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_BYTES_OUT, NULL, NetworkServiceSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Packet loss";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_PACKET_LOSS, L"Packet loss");
     column.Width = 80;
     column.Alignment = PH_ALIGN_LEFT;
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_PACKETLOSS, NULL, NetworkServiceSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Jitter (ms)";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_JITTER_MS, L"Jitter (ms)");
     column.Width = 80;
     column.Alignment = PH_ALIGN_LEFT;
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_JITTER, NULL, NetworkServiceSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Latency (ms)";
+    column.Text = NetworkToolsGetUiString(IDS_NT_COLUMN_LATENCY_MS, L"Latency (ms)");
     column.Width = 80;
     column.Alignment = PH_ALIGN_LEFT;
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, NETWORK_COLUMN_ID_LATENCY, NULL, NetworkServiceSortFunction);

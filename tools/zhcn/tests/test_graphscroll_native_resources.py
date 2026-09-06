@@ -105,13 +105,13 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
         self.assertRegex(peview_header, r"(?m)^#include\s+<phappresourceid\.h>$")
         self.assertEqual(len(system_en), 1296)
         self.assertEqual(len(system_zh), 1296)
-        self.assertEqual(len(peview_en), 311)
-        self.assertEqual(len(peview_zh), 311)
+        self.assertEqual(len(peview_en), 327)
+        self.assertEqual(len(peview_zh), 327)
         self.assertRegex(system_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_TREENEW_WINDOW_TITLE$")
         self.assertRegex(system_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3296$")
         self.assertRegex(peview_header, r"(?m)^#define IDS_PV_FIRST\s+IDS_PV_MENU_ANSI$")
-        self.assertRegex(peview_header, r"(?m)^#define IDS_PV_LAST\s+IDS_PV_CERTIFICATE_SIZE_FORMAT$")
-        self.assertRegex(peview_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3298$")
+        self.assertRegex(peview_header, r"(?m)^#define IDS_PV_LAST\s+IDS_PV_LOADING_STRINGS$")
+        self.assertRegex(peview_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3314$")
 
     def test_helper_returns_owned_copy_after_null_safe_resource_release(self) -> None:
         body = function_body(self.graph_source, "PhpScrollNewGetUiString", self.audit)
@@ -220,10 +220,10 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
         generator_test = (REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py").read_text(encoding="utf-8")
 
         self.assertEqual(workflow.count(r"sys_info.exe=1296"), 2)
-        self.assertEqual(workflow.count(r"peview.exe=311"), 2)
+        self.assertEqual(workflow.count(r"peview.exe=327"), 2)
         self.assertNotIn(r"sys_info.exe=598", workflow)
         self.assertNotIn(r"peview.exe=298", workflow)
-        self.assertIn('self.assertIn("3206 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("3235 strings", result.stdout)', generator_test)
         self.assertNotIn('self.assertIn("1737 strings", result.stdout)', generator_test)
 
 

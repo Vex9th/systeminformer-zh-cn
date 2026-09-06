@@ -2265,7 +2265,9 @@ VOID DotNetAsmRefreshTraceQuery(
     _In_ BOOLEAN EnableTrace
     )
 {
-    PhMoveReference(&Context->TreeErrorMessage, PhCreateString(L"Loading .NET assemblies..."));
+    PhMoveReference(&Context->TreeErrorMessage, PhCreateString(
+        DotNetGetUiString(IDS_DN_LOADING_ASSEMBLIES, L"Loading .NET assemblies...")
+        ));
     TreeNew_SetEmptyText(Context->TreeNewHandle, &Context->TreeErrorMessage->sr, 0);
 
     // Note: Process suspension cannot be reliably determined on Windows NT. (dmex)
@@ -2565,7 +2567,9 @@ INT_PTR CALLBACK DotNetAsmPageDlgProc(
                         );
                 }
 
-                PhMoveReference(&context->TreeErrorMessage, PhCreateString(L"There are no assemblies to display."));
+                PhMoveReference(&context->TreeErrorMessage, PhCreateString(
+                    DotNetGetUiString(IDS_DN_NO_ASSEMBLIES, L"There are no assemblies to display.")
+                    ));
                 TreeNew_SetEmptyText(context->TreeNewHandle, &context->TreeErrorMessage->sr, 0);
 
                 PhApplyTreeNewFilters(&context->TreeFilterSupport);
@@ -2576,8 +2580,14 @@ INT_PTR CALLBACK DotNetAsmPageDlgProc(
                 PPH_STRING errorMessage = PhGetWin32Message(result);
 
                 PhMoveReference(&context->TreeErrorMessage, PhConcatStrings2(
-                    L"Unable to start the event tracing session: ",
-                    PhGetStringOrDefault(errorMessage, L"Unknown error")
+                    DotNetGetUiString(
+                        IDS_DN_UNABLE_START_TRACE_PREFIX,
+                        L"Unable to start the event tracing session: "
+                        ),
+                    PhGetStringOrDefault(
+                        errorMessage,
+                        DotNetGetUiString(IDS_DN_UNKNOWN_ERROR, L"Unknown error")
+                        )
                     ));
                 TreeNew_SetEmptyText(context->TreeNewHandle, &context->TreeErrorMessage->sr, 0);
                 TreeNew_NodesStructured(context->TreeNewHandle);

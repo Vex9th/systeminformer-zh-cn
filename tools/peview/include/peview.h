@@ -50,6 +50,10 @@ PCWSTR PvpLoadUiString(
     _In_ ULONG ResourceId
     );
 
+PPH_STRINGREF PvpLoadUiStringRef(
+    _In_ ULONG ResourceId
+    );
+
 FORCEINLINE PCWSTR PvpGetStringOrNa(
     _In_opt_ PPH_STRING String
     )

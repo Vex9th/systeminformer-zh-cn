@@ -41,6 +41,38 @@ static PH_CALLBACK_REGISTRATION SearchChangedRegistration;
 
 static PTOOLSTATUS_INTERFACE ToolStatusInterface = NULL;
 static COLORREF ProcessCustomColors[16] = { 0 };
+static PH_INITONCE UserNotesUiStringsInitOnce = PH_INITONCE_INIT;
+static PPH_STRING UserNotesUiStrings[
+    IDS_UN_COLUMN_AFFINITY - IDS_UN_COLUMN_COMMENT + 1
+];
+
+PCWSTR UserNotesGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    if (ResourceId < IDS_UN_COLUMN_COMMENT || ResourceId > IDS_UN_COLUMN_AFFINITY)
+        return Fallback;
+
+    if (PhBeginInitOnce(&UserNotesUiStringsInitOnce))
+    {
+        for (ULONG resourceId = IDS_UN_COLUMN_COMMENT; resourceId <= IDS_UN_COLUMN_AFFINITY; resourceId++)
+        {
+            UserNotesUiStrings[resourceId - IDS_UN_COLUMN_COMMENT] = PhLoadUiString(
+                PluginInstance->DllBase,
+                resourceId,
+                NULL
+                );
+        }
+
+        PhEndInitOnce(&UserNotesUiStringsInitOnce);
+    }
+
+    return PhGetStringOrDefault(
+        UserNotesUiStrings[ResourceId - IDS_UN_COLUMN_COMMENT],
+        Fallback
+        );
+}
 
 HWND ProcessTreeNewHandle = NULL;
 LIST_ENTRY ProcessListHead = { &ProcessListHead, &ProcessListHead };
@@ -2459,12 +2491,12 @@ VOID ProcessTreeNewInitializingCallback(
     ProcessTreeNewHandle = info->TreeNewHandle;
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Comment";
+    column.Text = UserNotesGetUiString(IDS_UN_COLUMN_COMMENT, L"Comment");
     column.Width = 120;
     column.Alignment = PH_ALIGN_LEFT;
 
     memset(&affinity, 0, sizeof(PH_TREENEW_COLUMN));
-    affinity.Text = L"Affinity";
+    affinity.Text = UserNotesGetUiString(IDS_UN_COLUMN_AFFINITY, L"Affinity");
     affinity.Width = 120;
     affinity.Alignment = PH_ALIGN_LEFT;
 
@@ -2515,7 +2547,7 @@ VOID ServicePropertiesInitializingCallback(
         propSheetPage.dwFlags = PSP_USETITLE;
         propSheetPage.hInstance = PluginInstance->DllBase;
         propSheetPage.pszTemplate = MAKEINTRESOURCE(IDD_SRVCOMMENT);
-        propSheetPage.pszTitle = L"Comment";
+        propSheetPage.pszTitle = UserNotesGetUiString(IDS_UN_COLUMN_COMMENT, L"Comment");
         propSheetPage.pfnDlgProc = ServiceCommentPageDlgProc;
         propSheetPage.lParam = (LPARAM)objectProperties->Parameter;
         objectProperties->Pages[objectProperties->NumberOfPages++] = PhCreatePropertySheetPage(&propSheetPage);
@@ -2554,7 +2586,7 @@ VOID ServiceTreeNewInitializingCallback(
     ServiceTreeNewHandle = info->TreeNewHandle;
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Comment";
+    column.Text = UserNotesGetUiString(IDS_UN_COLUMN_COMMENT, L"Comment");
     column.Width = 120;
     column.Alignment = PH_ALIGN_LEFT;
 

@@ -731,6 +731,13 @@ BEGIN
     IDS_NT_COLUMN_IP_ADDRESS       "IP Address"
     IDS_NT_COLUMN_HOSTNAME         "Hostname"
     IDS_NT_COLUMN_COUNTRY          "Country"
+    IDS_NT_COLUMN_LOCAL_SERVICE    "Local service"
+    IDS_NT_COLUMN_REMOTE_SERVICE   "Remote service"
+    IDS_NT_COLUMN_TOTAL_BYTES_IN   "Total bytes in"
+    IDS_NT_COLUMN_TOTAL_BYTES_OUT  "Total bytes out"
+    IDS_NT_COLUMN_PACKET_LOSS      "Packet loss"
+    IDS_NT_COLUMN_JITTER_MS        "Jitter (ms)"
+    IDS_NT_COLUMN_LATENCY_MS       "Latency (ms)"
 END
 
 #endif    // English (United States) resources

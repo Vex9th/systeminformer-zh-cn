@@ -15,8 +15,6 @@
 #include "../thirdparty/ssdeep/fuzzy.h"
 #include "../thirdparty/tlsh/tlsh_wrapper.h"
 
-static PH_STRINGREF EmptyDirectoriesText = PH_STRINGREF_INIT(L"There are no directories to display.");
-static PH_STRINGREF LoadingDirectoriesText = PH_STRINGREF_INIT(L"Loading directories from image...");
 
 typedef enum _PV_DIRECTORY_TREE_COLUMN_ITEM
 {
@@ -441,7 +439,7 @@ INT_PTR CALLBACK PvPeDirectoryDlgProc(
             PhLoadSettingsDirectoryList(context);
             PvConfigTreeBorders(context->TreeNewHandle);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &LoadingDirectoriesText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_LOADING_DIRECTORIES), 0);
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
             PhAddLayoutItem(&context->LayoutManager, context->SearchHandle, NULL, PH_ANCHOR_TOP | PH_ANCHOR_RIGHT);
@@ -498,7 +496,7 @@ INT_PTR CALLBACK PvPeDirectoryDlgProc(
         {
             PvAddPendingDirectoryNodes(context);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &EmptyDirectoriesText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_DIRECTORIES), 0);
 
             TreeNew_NodesStructured(context->TreeNewHandle);
         }

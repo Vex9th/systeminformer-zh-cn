@@ -27,6 +27,38 @@ PH_CALLBACK_REGISTRATION ProcessTreeNewInitializingCallbackRegistration;
 PH_CALLBACK_REGISTRATION ThreadTreeNewInitializingCallbackRegistration;
 PH_CALLBACK_REGISTRATION ThreadTreeNewUninitializingCallbackRegistration;
 PH_CALLBACK_REGISTRATION ThreadStackControlCallbackRegistration;
+static PH_INITONCE DotNetUiStringsInitOnce = PH_INITONCE_INIT;
+static PPH_STRING DotNetUiStrings[
+    IDS_DN_UNKNOWN_ERROR - IDS_DN_COLUMN_APP_DOMAIN + 1
+];
+
+PCWSTR DotNetGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    if (ResourceId < IDS_DN_COLUMN_APP_DOMAIN || ResourceId > IDS_DN_UNKNOWN_ERROR)
+        return Fallback;
+
+    if (PhBeginInitOnce(&DotNetUiStringsInitOnce))
+    {
+        for (ULONG resourceId = IDS_DN_COLUMN_APP_DOMAIN; resourceId <= IDS_DN_UNKNOWN_ERROR; resourceId++)
+        {
+            DotNetUiStrings[resourceId - IDS_DN_COLUMN_APP_DOMAIN] = PhLoadUiString(
+                PluginInstance->DllBase,
+                resourceId,
+                NULL
+                );
+        }
+
+        PhEndInitOnce(&DotNetUiStringsInitOnce);
+    }
+
+    return PhGetStringOrDefault(
+        DotNetUiStrings[ResourceId - IDS_DN_COLUMN_APP_DOMAIN],
+        Fallback
+        );
+}
 
 _Function_class_(PH_CALLBACK_FUNCTION)
 VOID NTAPI LoadCallback(

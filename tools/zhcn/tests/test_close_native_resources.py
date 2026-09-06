@@ -142,14 +142,14 @@ class CloseNativeResourceTests(unittest.TestCase):
         )
 
         self.assertRegex(header, r"(?m)^#define\s+IDS_WE_CLOSE\s+12110$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12168$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12169$")
         self.assertEqual(english.get("IDS_WE_CLOSE"), "Close")
         self.assertEqual(chinese.get("IDS_WE_CLOSE"), "关闭")
-        self.assertEqual(len(english), 168)
-        self.assertEqual(len(chinese), 168)
+        self.assertEqual(len(english), 169)
+        self.assertEqual(len(chinese), 169)
         self.assertEqual(translations["strings"].get("Close"), "关闭")
         self.assertNotIn("Close", translations["native_strings"])
-        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=168"), 2)
+        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=169"), 2)
         self.assertNotIn(r"plugins\WindowExplorer.dll=110", workflow)
 
     def test_window_explorer_menu_owns_duplicate_after_resource_release(self):

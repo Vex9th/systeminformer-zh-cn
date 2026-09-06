@@ -121,7 +121,12 @@ INT_PTR CALLBACK ProcessCommentPageDlgProc(
                     // Prevent deadlocks.
                     UnlockDb();
 
-                    if (MessageBox(WindowHandle, message->Buffer, L"Comment", MB_ICONQUESTION | MB_YESNO) == IDNO)
+                    if (MessageBox(
+                        WindowHandle,
+                        message->Buffer,
+                        UserNotesGetUiString(IDS_UN_COLUMN_COMMENT, L"Comment"),
+                        MB_ICONQUESTION | MB_YESNO
+                        ) == IDNO)
                     {
                         done = TRUE;
                     }

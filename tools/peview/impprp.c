@@ -13,8 +13,6 @@
 #include <peview.h>
 #include "colmgr.h"
 
-static PH_STRINGREF EmptyImportsText = PH_STRINGREF_INIT(L"There are no imports to display.");
-static PH_STRINGREF LoadingImportsText = PH_STRINGREF_INIT(L"Loading imports from image...");
 
 typedef enum _PV_IMPORT_TREE_COLUMN_ITEM
 {
@@ -477,7 +475,7 @@ INT_PTR CALLBACK PvPeImportsDlgProc(
             PhLoadSettingsImportList(context);
             PvConfigTreeBorders(context->TreeNewHandle);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &LoadingImportsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_LOADING_IMPORTS), 0);
             TreeNew_SetRowHeight(context->TreeNewHandle, PvpGetTreeNewRowHeight());
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
@@ -535,7 +533,7 @@ INT_PTR CALLBACK PvPeImportsDlgProc(
         {
             PvAddPendingImportNodes(context);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &EmptyImportsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_IMPORTS), 0);
 
             TreeNew_NodesStructured(context->TreeNewHandle);
         }

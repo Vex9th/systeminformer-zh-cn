@@ -12,8 +12,6 @@
 #include <peview.h>
 #include "colmgr.h"
 
-static PH_STRINGREF EmptyResourcesText = PH_STRINGREF_INIT(L"There are no resources to display.");
-static PH_STRINGREF LoadingResourcesText = PH_STRINGREF_INIT(L"Loading resources from image...");
 
 typedef enum _PV_RESOURCES_TREE_COLUMN_ITEM
 {
@@ -607,7 +605,7 @@ INT_PTR CALLBACK PvPeResourcesDlgProc(
             PhLoadSettingsResourcesList(context);
             PvConfigTreeBorders(context->TreeNewHandle);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &LoadingResourcesText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_LOADING_RESOURCES), 0);
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
             PhAddLayoutItem(&context->LayoutManager, context->SearchHandle, NULL, PH_ANCHOR_TOP | PH_ANCHOR_RIGHT);
@@ -667,7 +665,7 @@ INT_PTR CALLBACK PvPeResourcesDlgProc(
         {
             PvAddPendingResourcesNodes(context);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &EmptyResourcesText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_RESOURCES), 0);
 
             TreeNew_NodesStructured(context->TreeNewHandle);
         }

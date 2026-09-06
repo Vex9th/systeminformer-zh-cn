@@ -66,8 +66,6 @@ typedef struct _PV_PE_DYNRELOC_CONTEXT
     BOOLEAN Cancel;
 } PV_PE_DYNRELOC_CONTEXT, *PPV_PE_DYNRELOC_CONTEXT;
 
-static PH_STRINGREF LoadingDynRelocText = PH_STRINGREF_INIT(L"Loading dynamic relocations from image...");
-static PH_STRINGREF EmptyDynRelocText = PH_STRINGREF_INIT(L"There are no dynamic relocations to display.");
 
 typedef struct _PV_DYNRELOC_OVERRIDE_GROUP
 {
@@ -1540,7 +1538,7 @@ INT_PTR CALLBACK PvpPeDynamicRelocationDlgProc(
             PhAddLayoutItem(&context->LayoutManager, context->SearchHandle, NULL, PH_ANCHOR_TOP | PH_ANCHOR_RIGHT);
             PhAddLayoutItem(&context->LayoutManager, context->TreeNewHandle, NULL, PH_ANCHOR_ALL);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &LoadingDynRelocText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_LOADING_DYNAMIC_RELOCATIONS), 0);
 
             // Loading must be set before the worker starts: it is what keeps UI-thread readers off
             // NodeList/NodeRootList while the worker appends to them.
@@ -1550,7 +1548,7 @@ INT_PTR CALLBACK PvpPeDynamicRelocationDlgProc(
             {
                 context->ThreadHandle = NULL;
                 context->Loading = FALSE;
-                TreeNew_SetEmptyText(context->TreeNewHandle, &EmptyDynRelocText, 0);
+                TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_DYNAMIC_RELOCATIONS), 0);
             }
 
             PhInitializeWindowTheme(hwndDlg, PhEnableThemeSupport);
@@ -1603,7 +1601,7 @@ INT_PTR CALLBACK PvpPeDynamicRelocationDlgProc(
 
             TreeNew_SetRedraw(context->TreeNewHandle, TRUE);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &EmptyDynRelocText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_DYNAMIC_RELOCATIONS), 0);
         }
         break;
     case WM_DPICHANGED:

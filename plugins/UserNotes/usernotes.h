@@ -105,6 +105,11 @@ typedef struct _SERVICE_COMMENT_PAGE_CONTEXT
     PH_LAYOUT_MANAGER LayoutManager;
 } SERVICE_COMMENT_PAGE_CONTEXT, *PSERVICE_COMMENT_PAGE_CONTEXT;
 
+PCWSTR UserNotesGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 PDB_OBJECT FindDbObjectForProcess(
     _In_ PPH_PROCESS_ITEM ProcessItem,
     _In_ ULONG Intent

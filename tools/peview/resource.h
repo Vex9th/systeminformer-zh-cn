@@ -418,8 +418,24 @@
 #define IDS_PV_UNVERIFIED_COMPANY_FORMAT              3295
 #define IDS_PV_PROPERTIES_TITLE_FORMAT                3296
 #define IDS_PV_CERTIFICATE_SIZE_FORMAT                3297
+#define IDS_PV_EMPTY_EXPORTS                          3298
+#define IDS_PV_LOADING_EXPORTS                        3299
+#define IDS_PV_EMPTY_IMPORTS                          3300
+#define IDS_PV_LOADING_IMPORTS                        3301
+#define IDS_PV_EMPTY_SYMBOLS                          3302
+#define IDS_PV_LOADING_SYMBOLS                        3303
+#define IDS_PV_EMPTY_DIRECTORIES                      3304
+#define IDS_PV_LOADING_DIRECTORIES                    3305
+#define IDS_PV_EMPTY_DYNAMIC_RELOCATIONS              3306
+#define IDS_PV_LOADING_DYNAMIC_RELOCATIONS            3307
+#define IDS_PV_EMPTY_SECTIONS                         3308
+#define IDS_PV_LOADING_SECTIONS                       3309
+#define IDS_PV_EMPTY_RESOURCES                        3310
+#define IDS_PV_LOADING_RESOURCES                      3311
+#define IDS_PV_EMPTY_STRINGS                          3312
+#define IDS_PV_LOADING_STRINGS                        3313
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_CERTIFICATE_SIZE_FORMAT
+#define IDS_PV_LAST                                IDS_PV_LOADING_STRINGS
 
 // Next default values for new objects
 //
@@ -428,6 +444,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3298
+#define _APS_NEXT_SYMED_VALUE           3314
 #endif
 #endif

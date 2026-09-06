@@ -239,4 +239,5 @@ BEGIN
     IDS_WE_ACTION_REMOVE            "移除"
     IDS_WE_OBJECT_WINDOW_PROPERTY   "该窗口属性"
     IDS_WE_WINDOW_PROPERTY_DELETE_WARNING "该窗口属性将被永久删除。"
+    IDS_WE_NO_WINDOWS              "没有可显示的窗口。"
 END

@@ -143,4 +143,11 @@ BEGIN
     IDS_NT_COLUMN_IP_ADDRESS       "IP 地址"
     IDS_NT_COLUMN_HOSTNAME         "主机名"
     IDS_NT_COLUMN_COUNTRY          "国家/地区"
+    IDS_NT_COLUMN_LOCAL_SERVICE    "本地服务"
+    IDS_NT_COLUMN_REMOTE_SERVICE   "远程服务"
+    IDS_NT_COLUMN_TOTAL_BYTES_IN   "接收总字节数"
+    IDS_NT_COLUMN_TOTAL_BYTES_OUT  "发送总字节数"
+    IDS_NT_COLUMN_PACKET_LOSS      "丢包数"
+    IDS_NT_COLUMN_JITTER_MS        "抖动（毫秒）"
+    IDS_NT_COLUMN_LATENCY_MS       "延迟（毫秒）"
 END

@@ -327,6 +327,7 @@ BEGIN
     IDS_WE_ACTION_REMOVE            "remove"
     IDS_WE_OBJECT_WINDOW_PROPERTY   "the window property"
     IDS_WE_WINDOW_PROPERTY_DELETE_WARNING "The window property will be permanently deleted."
+    IDS_WE_NO_WINDOWS              "There are no windows to display."
 END
 
 #endif    // English (United States) resources

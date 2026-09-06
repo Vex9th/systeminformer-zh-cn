@@ -12,8 +12,6 @@
 #include <peview.h>
 #include <strsrch.h>
 
-static PH_STRINGREF EmptyStringsText = PH_STRINGREF_INIT(L"There are no strings to display.");
-static PH_STRINGREF LoadingStringsText = PH_STRINGREF_INIT(L"Loading strings from image...");
 
 typedef struct _PV_STRINGS_SETTINGS
 {
@@ -838,7 +836,7 @@ VOID PvpSearchStrings(
     Context->EndPointer = PTR_ADD_OFFSET(Context->ReadPointer, PvMappedImage.ViewSize);
     Context->RegionSkips = PhCreateList(5);
 
-    TreeNew_SetEmptyText(Context->TreeNewHandle, &LoadingStringsText, 0);
+    TreeNew_SetEmptyText(Context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_LOADING_STRINGS), 0);
     TreeNew_NodesStructured(Context->TreeNewHandle);
     TreeNew_SetRedraw(Context->TreeNewHandle, TRUE);
 
@@ -1086,7 +1084,7 @@ INT_PTR CALLBACK PvStringsDlgProc(
         {
             PvpAddPendingStringsNodes(context);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &EmptyStringsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_STRINGS), 0);
 
             TreeNew_NodesStructured(context->TreeNewHandle);
         }

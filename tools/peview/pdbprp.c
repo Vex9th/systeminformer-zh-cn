@@ -13,8 +13,6 @@
 #include <emenu.h>
 #include "colmgr.h"
 
-static PH_STRINGREF EmptySymbolsText = PH_STRINGREF_INIT(L"There are no symbols to display.");
-static PH_STRINGREF LoadingSymbolsText = PH_STRINGREF_INIT(L"Loading symbols...");
 
 BOOLEAN SymbolNodeHashtableCompareFunction(
     _In_ PVOID Entry1,
@@ -926,7 +924,7 @@ INT_PTR CALLBACK PvpSymbolsDlgProc(
             SearchResults = PhCreateList(0x1000);
             context->UdtList = PhCreateList(0x100);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &LoadingSymbolsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_LOADING_SYMBOLS), 0);
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
             PhAddLayoutItem(&context->LayoutManager, context->SearchHandle, NULL, PH_ANCHOR_TOP | PH_ANCHOR_RIGHT);
@@ -1098,7 +1096,7 @@ INT_PTR CALLBACK PvpSymbolsDlgProc(
 
             PvAddPendingSymbolNodes(context);
 
-            TreeNew_SetEmptyText(context->TreeNewHandle, &EmptySymbolsText, 0);
+            TreeNew_SetEmptyText(context->TreeNewHandle, PvpLoadUiStringRef(IDS_PV_EMPTY_SYMBOLS), 0);
 
             TreeNew_NodesStructured(context->TreeNewHandle);
         }

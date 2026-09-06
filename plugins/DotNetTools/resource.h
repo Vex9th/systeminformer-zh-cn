@@ -118,6 +118,11 @@
 #define IDS_DN_MENU_HIGHLIGHT_NATIVE    2105
 #define IDS_DN_COLUMN_COUNTER           2106
 #define IDS_DN_COLUMN_VALUE             2107
+#define IDS_DN_COLUMN_APP_DOMAIN        2108
+#define IDS_DN_LOADING_ASSEMBLIES       2109
+#define IDS_DN_NO_ASSEMBLIES            2110
+#define IDS_DN_UNABLE_START_TRACE_PREFIX 2111
+#define IDS_DN_UNKNOWN_ERROR            2112
 #define IDC_OPTIONS                     1002
 #define IDC_COUNTERS                    1003
 #define IDC_REFRESH                     1003
@@ -131,6 +136,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40004
 #define _APS_NEXT_CONTROL_VALUE         1007
-#define _APS_NEXT_SYMED_VALUE           2108
+#define _APS_NEXT_SYMED_VALUE           2113
 #endif
 #endif

@@ -263,7 +263,18 @@ VOID ThreadTreeNewInitializing(
         }
     }
 
-    AddTreeNewColumn(info, context, DNTHTNC_APPDOMAIN, FALSE, L"AppDomain", 120, PH_ALIGN_LEFT, 0, FALSE, ThreadTreeNewSortFunction);
+    AddTreeNewColumn(
+        info,
+        context,
+        DNTHTNC_APPDOMAIN,
+        FALSE,
+        DotNetGetUiString(IDS_DN_COLUMN_APP_DOMAIN, L"AppDomain"),
+        120,
+        PH_ALIGN_LEFT,
+        0,
+        FALSE,
+        ThreadTreeNewSortFunction
+        );
 }
 
 VOID ThreadTreeNewUninitializing(
