@@ -255,6 +255,20 @@ BEGIN
     IDS_WE_GROUP_GENERAL            "General"
     IDS_WE_GROUP_CLASS              "Class"
     IDS_WE_GROUP_STATE              "State"
+    IDS_WE_NOT_AVAILABLE            "N/A"
+    IDS_WE_UNKNOWN                  "Unknown"
+    IDS_WE_YES                      "Yes"
+    IDS_WE_NO                       "No"
+    IDS_WE_DPI_UNAWARE              "Unaware"
+    IDS_WE_DPI_SYSTEM_AWARE         "System aware"
+    IDS_WE_DPI_PER_MONITOR_AWARE    "Per-monitor aware"
+    IDS_WE_DPI_PER_MONITOR_V2       "Per-monitor V2"
+    IDS_WE_DPI_UNAWARE_GDI_SCALED   "Unaware (GDI scaled)"
+    IDS_WE_TRUE                     "true"
+    IDS_WE_FALSE                    "false"
+    IDS_WE_FAILED_TO_QUERY          "Failed to query"
+    IDS_WE_NO_AUTOMATION_ELEMENT    "Error: No automation element"
+    IDS_WE_UIA_COM_CREATION_FAILED  "Error: UIA COM creation failed"
 END
 
 #endif    // English (United States) resources

@@ -135,6 +135,26 @@ typedef enum _WINDOW_PROPERTIES_INDEX
     WINDOW_PROPERTIES_INDEX_CLASS_SAVEBITS,
 } WINDOW_PROPERTIES_INDEX;
 
+static VOID WepSetListViewSubItemUiString(
+    _In_ HWND ListViewHandle,
+    _In_ INT ItemIndex,
+    _In_ INT SubItemIndex,
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    PPH_STRING text;
+
+    text = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+    PhSetListViewSubItem(
+        ListViewHandle,
+        ItemIndex,
+        SubItemIndex,
+        PhGetStringOrDefault(text, Fallback)
+        );
+    PhClearReference(&text);
+}
+
 _Function_class_(USER_THREAD_START_ROUTINE)
 NTSTATUS WepPropertiesThreadStart(
     _In_ PVOID Parameter
@@ -798,7 +818,7 @@ VOID PhD3DKMTQueryVidPnExclusiveOwnership(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_D3DKMT_EXCLUSIVE, 1, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_D3DKMT_EXCLUSIVE, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
     }
 }
 
@@ -847,7 +867,7 @@ VOID WepRefreshWindowGeneralInfoSymbols(
     else if (Context->WndProc != 0)
         PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDPROC, 1, PhaFormatString(L"0x%Ix", Context->WndProc)->Buffer);
     else
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDPROC, 1, L"Unknown");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDPROC, 1, IDS_WE_UNKNOWN, L"Unknown");
 
     if (Context->DlgProcResolving != 0)
         PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, PhaFormatString(L"0x%Ix (resolving...)", Context->DlgProc)->Buffer);
@@ -856,9 +876,9 @@ VOID WepRefreshWindowGeneralInfoSymbols(
     else if (Context->DlgProc != 0)
         PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, PhaFormatString(L"0x%Ix", Context->DlgProc)->Buffer);
     else if (Context->WndProc != 0)
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
     else
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, L"Unknown");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, IDS_WE_UNKNOWN, L"Unknown");
 }
 
 VOID WepRefreshWindowGeneralInfo(
@@ -909,8 +929,8 @@ VOID WepRefreshWindowGeneralInfo(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_RECT, 1, L"N/A");
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLIENTRECT, 1, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_RECT, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLIENTRECT, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
     }
 
     if (GetWindowPlacement(Context->WindowHandle, &windowPlacement))
@@ -928,7 +948,7 @@ VOID WepRefreshWindowGeneralInfo(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_NORMALRECT, 1, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_NORMALRECT, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
     }
 
     if (NT_SUCCESS(PhOpenProcess(&processHandle, PROCESS_QUERY_LIMITED_INFORMATION, Context->ClientId.UniqueProcess)))
@@ -961,7 +981,10 @@ VOID WepRefreshWindowGeneralInfo(
 
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_MENUHANDLE, 1, PhaFormatString(L"0x%Ix", (ULONG_PTR)menuHandle)->Buffer);
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_USERDATA, 1, PhaFormatString(L"0x%Ix", (ULONG_PTR)userdataHandle)->Buffer);
-    PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_UNICODE, 1, IsWindowUnicode(Context->WindowHandle) ? L"Yes" : L"No");
+    if (IsWindowUnicode(Context->WindowHandle))
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_UNICODE, 1, IDS_WE_YES, L"Yes");
+    else
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_UNICODE, 1, IDS_WE_NO, L"No");
     //PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDTEXT, 1, Context->MessageOnlyWindow ? L"N/A" : PhGetStringOrEmpty(PH_AUTO(PhGetWindowText(Context->WindowHandle))));
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDHANDLE, 1, PhaFormatString(L"0x%Ix", (ULONG_PTR)Context->WindowHandle)->Buffer);
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDUNIQID, 1, PhaFormatString(L"0x%x", PhGetWindowUniqueId(Context->WindowHandle))->Buffer);
@@ -984,11 +1007,11 @@ VOID WepRefreshWindowGeneralInfo(
             if (GetObject((HFONT)result, sizeof(LOGFONT), &logFont))
                 PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_FONTNAME, 1, logFont.lfFaceName);
             else
-                PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_FONTNAME, 1, L"N/A");
+                WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_FONTNAME, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
         }
         else
         {
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_FONTNAME, 1, L"N/A");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_FONTNAME, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
         }
     }
 
@@ -1045,11 +1068,11 @@ VOID WepRefreshWindowGeneralInfo(
     {
         if (WeIsTopLevelWindow(Context->WindowHandle))
         {
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_TOPLEVEL, 1, L"Yes");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_TOPLEVEL, 1, IDS_WE_YES, L"Yes");
         }
         else
         {
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_TOPLEVEL, 1, L"No");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_TOPLEVEL, 1, IDS_WE_NO, L"No");
         }
     }
 
@@ -1057,11 +1080,11 @@ VOID WepRefreshWindowGeneralInfo(
     {
         if (WeIsWindowCloaked(Context->WindowHandle))
         {
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLOAKED, 1, L"Yes");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLOAKED, 1, IDS_WE_YES, L"Yes");
         }
         else
         {
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLOAKED, 1, L"No");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLOAKED, 1, IDS_WE_NO, L"No");
         }
     }
 
@@ -1147,7 +1170,7 @@ VOID WepRefreshWindowGeneralInfo(
         }
         else
         {
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_IAMID, 1, L"N/A");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_IAMID, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
         }
     }
 
@@ -1241,8 +1264,8 @@ VOID WepRefreshWindowStyles(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_STYLES, 1, L"N/A");
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_EXSTYLES, 1, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_STYLES, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_EXSTYLES, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
     }
 }
 
@@ -1280,8 +1303,20 @@ VOID WepRefreshClassStyles(
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_STYLES, 1, PhFinalStringBuilderString(&stringBuilder)->Buffer);
     PhDeleteStringBuilder(&stringBuilder);
 
-    PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_DROPSHADOW, 1, (Context->ClassInfo.style & CS_DROPSHADOW) ? L"Yes" : L"No");
-    PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_SAVEBITS, 1, (Context->ClassInfo.style & CS_SAVEBITS) ? L"Yes" : L"No");
+    WepSetListViewSubItemUiString(
+        ListViewHandle,
+        WINDOW_PROPERTIES_INDEX_CLASS_DROPSHADOW,
+        1,
+        (Context->ClassInfo.style & CS_DROPSHADOW) ? IDS_WE_YES : IDS_WE_NO,
+        (Context->ClassInfo.style & CS_DROPSHADOW) ? L"Yes" : L"No"
+        );
+    WepSetListViewSubItemUiString(
+        ListViewHandle,
+        WINDOW_PROPERTIES_INDEX_CLASS_SAVEBITS,
+        1,
+        (Context->ClassInfo.style & CS_SAVEBITS) ? IDS_WE_YES : IDS_WE_NO,
+        (Context->ClassInfo.style & CS_SAVEBITS) ? L"Yes" : L"No"
+        );
 }
 
 VOID WepRefreshClassModule(
@@ -1351,7 +1386,7 @@ VOID WepRefreshWindowClassInfoSymbols(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_WNDPROC, 1, L"Unknown");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_WNDPROC, 1, IDS_WE_UNKNOWN, L"Unknown");
     }
 }
 
@@ -1476,9 +1511,9 @@ VOID WepRefreshAutomationProvider(
     //else
     {
         if (WeWindowHasAutomationProvider(Context->WindowHandle))
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_AUTOMATION, 1, L"Yes");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_AUTOMATION, 1, IDS_WE_YES, L"Yes");
         else
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_AUTOMATION, 1, L"No");
+            WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_AUTOMATION, 1, IDS_WE_NO, L"No");
     }
 }
 
@@ -1507,7 +1542,7 @@ VOID WepRefreshDpiContext(
     // Windows 10, version 1607+
     if (!(GetWindowDpiAwarenessContext_I && AreDpiAwarenessContextsEqual_I))
     {
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DPICONTEXT, 1, L"N/A");
+        WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_DPICONTEXT, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
     }
     else
     {
@@ -1515,46 +1550,51 @@ VOID WepRefreshDpiContext(
 
         if (AreDpiAwarenessContextsEqual_I(dpiContext, DPI_AWARENESS_CONTEXT_UNAWARE))
         {
-            PhSetListViewSubItem(
+            WepSetListViewSubItemUiString(
                 ListViewHandle,
                 WINDOW_PROPERTIES_INDEX_DPICONTEXT,
                 1,
+                IDS_WE_DPI_UNAWARE,
                 L"Unaware"
                 );
         }
         else if (AreDpiAwarenessContextsEqual_I(dpiContext, DPI_AWARENESS_CONTEXT_SYSTEM_AWARE))
         {
-            PhSetListViewSubItem (
+            WepSetListViewSubItemUiString(
                 ListViewHandle,
                 WINDOW_PROPERTIES_INDEX_DPICONTEXT,
                 1,
+                IDS_WE_DPI_SYSTEM_AWARE,
                 L"System aware"
                 );
         }
         else if (AreDpiAwarenessContextsEqual_I(dpiContext,DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE))
         {
-            PhSetListViewSubItem (
+            WepSetListViewSubItemUiString(
                 ListViewHandle,
                 WINDOW_PROPERTIES_INDEX_DPICONTEXT,
                 1,
+                IDS_WE_DPI_PER_MONITOR_AWARE,
                 L"Per-monitor aware"
                 );
         }
         else if (AreDpiAwarenessContextsEqual_I(dpiContext, DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
         {
-            PhSetListViewSubItem(
+            WepSetListViewSubItemUiString(
                 ListViewHandle,
                 WINDOW_PROPERTIES_INDEX_DPICONTEXT,
                 1,
+                IDS_WE_DPI_PER_MONITOR_V2,
                 L"Per-monitor V2"
                 );
         }
         else if (AreDpiAwarenessContextsEqual_I(dpiContext, DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED))
         {
-            PhSetListViewSubItem(
+            WepSetListViewSubItemUiString(
                 ListViewHandle,
                 WINDOW_PROPERTIES_INDEX_DPICONTEXT,
                 1,
+                IDS_WE_DPI_UNAWARE_GDI_SCALED,
                 L"Unaware (GDI scaled)"
                 );
         }
@@ -2842,7 +2882,7 @@ VOID WepRefreshWindowPropertyStorage(
                         if (SUCCEEDED(PSStringFromPropertyKey(&propkey, propKeyString, RTL_NUMBER_OF(propKeyString))))
                             PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, propKeyString);
                         else
-                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"Unknown");
+                            WepSetListViewSubItemUiString(Context->ListViewHandle, lvItemIndex, 1, IDS_WE_UNKNOWN, L"Unknown");
                     }
 
                     if (SUCCEEDED(IPropertyStore_GetValue(propstore, &propkey, &propKeyVariant)))
@@ -3044,7 +3084,13 @@ VOID WepQueryWindowAttributes(
         }
         else
         {
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, *(PBOOL)buffer ? L"true" : L"false");
+            WepSetListViewSubItemUiString(
+                Context->ListViewHandle,
+                lvItemIndex,
+                2,
+                *(PBOOL)buffer ? IDS_WE_TRUE : IDS_WE_FALSE,
+                *(PBOOL)buffer ? L"true" : L"false"
+                );
         }
     }
     else
@@ -3584,13 +3630,13 @@ VOID WepRefreshWindowUiaProperties(
                     }
                     else
                     {
-                        PhSetListViewSubItem(Context->ListViewHandle, i, 1, L"N/A");
+                        WepSetListViewSubItemUiString(Context->ListViewHandle, i, 1, IDS_WE_NOT_AVAILABLE, L"N/A");
                     }
                     VariantClear(&value);
                 }
                 else
                 {
-                    PhSetListViewSubItem(Context->ListViewHandle, i, 1, L"Failed to query");
+                    WepSetListViewSubItemUiString(Context->ListViewHandle, i, 1, IDS_WE_FAILED_TO_QUERY, L"Failed to query");
                 }
             }
             IUIAutomationElement_Release(element);
@@ -3599,7 +3645,7 @@ VOID WepRefreshWindowUiaProperties(
         {
             for (ULONG i = 0; i < RTL_NUMBER_OF(WndUiaProperties); i++)
             {
-                PhSetListViewSubItem(Context->ListViewHandle, i, 1, L"Error: No automation element");
+                WepSetListViewSubItemUiString(Context->ListViewHandle, i, 1, IDS_WE_NO_AUTOMATION_ELEMENT, L"Error: No automation element");
             }
         }
         IUIAutomation_Release(uia);
@@ -3608,7 +3654,7 @@ VOID WepRefreshWindowUiaProperties(
     {
         for (ULONG i = 0; i < RTL_NUMBER_OF(WndUiaProperties); i++)
         {
-            PhSetListViewSubItem(Context->ListViewHandle, i, 1, L"Error: UIA COM creation failed");
+            WepSetListViewSubItemUiString(Context->ListViewHandle, i, 1, IDS_WE_UIA_COM_CREATION_FAILED, L"Error: UIA COM creation failed");
         }
     }
 

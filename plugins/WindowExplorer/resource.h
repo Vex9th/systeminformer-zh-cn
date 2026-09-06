@@ -157,6 +157,20 @@
 #define IDS_WE_GROUP_GENERAL            12093
 #define IDS_WE_GROUP_CLASS              12094
 #define IDS_WE_GROUP_STATE              12095
+#define IDS_WE_NOT_AVAILABLE            12096
+#define IDS_WE_UNKNOWN                  12097
+#define IDS_WE_YES                      12098
+#define IDS_WE_NO                       12099
+#define IDS_WE_DPI_UNAWARE              12100
+#define IDS_WE_DPI_SYSTEM_AWARE         12101
+#define IDS_WE_DPI_PER_MONITOR_AWARE    12102
+#define IDS_WE_DPI_PER_MONITOR_V2       12103
+#define IDS_WE_DPI_UNAWARE_GDI_SCALED   12104
+#define IDS_WE_TRUE                     12105
+#define IDS_WE_FALSE                    12106
+#define IDS_WE_FAILED_TO_QUERY          12107
+#define IDS_WE_NO_AUTOMATION_ELEMENT    12108
+#define IDS_WE_UIA_COM_CREATION_FAILED  12109
 
 // Next default values for new objects
 //
@@ -165,6 +179,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40039
 #define _APS_NEXT_CONTROL_VALUE         1037
-#define _APS_NEXT_SYMED_VALUE           12096
+#define _APS_NEXT_SYMED_VALUE           12110
 #endif
 #endif

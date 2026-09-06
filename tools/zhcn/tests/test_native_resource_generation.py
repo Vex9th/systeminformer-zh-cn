@@ -1598,7 +1598,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1624 strings", result.stdout)
+        self.assertIn("1638 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3558,7 +3558,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             },
         }
         expected_aps = {
-            "WindowExplorer": 12096,
+            "WindowExplorer": 12110,
             "OnlineChecks": 12005,
             "Updater": 12009,
         }
@@ -6268,7 +6268,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ExtendedTools.dll", 200): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 98): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
-                    (r"bin\Release64\plugins\WindowExplorer.dll", 96): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 110): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 5): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 9): 2,
