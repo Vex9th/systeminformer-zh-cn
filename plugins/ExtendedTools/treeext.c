@@ -34,7 +34,8 @@ LONG EtpNetworkTreeNewSortFunction(
 typedef struct _COLUMN_INFO
 {
     ULONG SubId;
-    PWSTR Text;
+    ULONG TextResourceId;
+    PCWSTR Text;
     ULONG Width;
     ULONG Alignment;
     ULONG TextFlags;
@@ -48,7 +49,7 @@ static PPH_LIST EtGpuNodeColumnTextList;
 VOID EtpAddTreeNewColumn(
     _In_ PPH_PLUGIN_TREENEW_INFORMATION TreeNewInfo,
     _In_ ULONG SubId,
-    _In_ PWSTR Text,
+    _In_ PCWSTR Text,
     _In_ ULONG Width,
     _In_ ULONG Alignment,
     _In_ ULONG TextFlags,
@@ -60,7 +61,7 @@ VOID EtpAddTreeNewColumn(
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
     column.SortDescending = SortDescending;
-    column.Text = Text;
+    column.Text = (PWSTR)Text;
     column.Width = Width;
     column.Alignment = Alignment;
     column.TextFlags = TextFlags;
@@ -81,49 +82,49 @@ VOID EtProcessTreeNewInitializing(
 {
     const static COLUMN_INFO columns[] =
     {
-        { ETPRTNC_DISKREADS, L"Disk reads", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKWRITES, L"Disk writes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKREADBYTES, L"Disk read bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKWRITEBYTES, L"Disk write bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKTOTALBYTES, L"Disk total bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKREADSDELTA, L"Disk reads delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKWRITESDELTA, L"Disk writes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKREADBYTESDELTA, L"Disk read bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKWRITEBYTESDELTA, L"Disk write bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKTOTALBYTESDELTA, L"Disk total bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKRECEIVES, L"Network receives", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKSENDS, L"Network sends", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKRECEIVEBYTES, L"Network receive bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKSENDBYTES, L"Network send bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKTOTALBYTES, L"Network total bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKRECEIVESDELTA, L"Network receives delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKSENDSDELTA, L"Network sends delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKRECEIVEBYTESDELTA, L"Network receive bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKSENDBYTESDELTA, L"Network send bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKTOTALBYTESDELTA, L"Network total bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_HARDFAULTS, L"Hard faults", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_HARDFAULTSDELTA, L"Hard faults delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_PEAKTHREADS, L"Peak threads", 45, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_GPUDEDICATEDBYTES, L"GPU dedicated bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_GPUSHAREDBYTES, L"GPU shared bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKREADRATE, L"Disk read rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKWRITERATE, L"Disk write rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_DISKTOTALRATE, L"Disk total rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKRECEIVERATE, L"Network receive rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKSENDRATE, L"Network send rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NETWORKTOTALRATE, L"Network total rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_FPS, L"FPS", 50, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NPU, L"NPU", 45, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NPUDEDICATEDBYTES, L"NPU dedicated bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NPUSHAREDBYTES, L"NPU shared bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_GPUDEDICATEDCOMMITTEDBYTES, L"GPU dedicated bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_GPUSHAREDCOMMITTEDBYTES, L"GPU shared bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NPUDEDICATEDCOMMITTEDBYTES, L"NPU dedicated bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_NPUSHAREDCOMMITTEDBYTES, L"NPU shared bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_FIREWALLALLOWS, L"Firewall allows", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_FIREWALLBLOCKS, L"Firewall blocks", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_FIREWALLALLOWSDELTA, L"Firewall allows delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETPRTNC_FIREWALLBLOCKSDELTA, L"Firewall blocks delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKREADS, IDS_ET_PROCESS_COLUMN_DISK_READS, L"Disk reads", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKWRITES, IDS_ET_PROCESS_COLUMN_DISK_WRITES, L"Disk writes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKREADBYTES, IDS_ET_PROCESS_COLUMN_DISK_READ_BYTES, L"Disk read bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKWRITEBYTES, IDS_ET_PROCESS_COLUMN_DISK_WRITE_BYTES, L"Disk write bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKTOTALBYTES, IDS_ET_PROCESS_COLUMN_DISK_TOTAL_BYTES, L"Disk total bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKREADSDELTA, IDS_ET_PROCESS_COLUMN_DISK_READS_DELTA, L"Disk reads delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKWRITESDELTA, IDS_ET_PROCESS_COLUMN_DISK_WRITES_DELTA, L"Disk writes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKREADBYTESDELTA, IDS_ET_PROCESS_COLUMN_DISK_READ_BYTES_DELTA, L"Disk read bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKWRITEBYTESDELTA, IDS_ET_PROCESS_COLUMN_DISK_WRITE_BYTES_DELTA, L"Disk write bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKTOTALBYTESDELTA, IDS_ET_PROCESS_COLUMN_DISK_TOTAL_BYTES_DELTA, L"Disk total bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKRECEIVES, IDS_ET_PROCESS_COLUMN_NETWORK_RECEIVES, L"Network receives", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKSENDS, IDS_ET_PROCESS_COLUMN_NETWORK_SENDS, L"Network sends", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKRECEIVEBYTES, IDS_ET_PROCESS_COLUMN_NETWORK_RECEIVE_BYTES, L"Network receive bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKSENDBYTES, IDS_ET_PROCESS_COLUMN_NETWORK_SEND_BYTES, L"Network send bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKTOTALBYTES, IDS_ET_PROCESS_COLUMN_NETWORK_TOTAL_BYTES, L"Network total bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKRECEIVESDELTA, IDS_ET_PROCESS_COLUMN_NETWORK_RECEIVES_DELTA, L"Network receives delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKSENDSDELTA, IDS_ET_PROCESS_COLUMN_NETWORK_SENDS_DELTA, L"Network sends delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKRECEIVEBYTESDELTA, IDS_ET_PROCESS_COLUMN_NETWORK_RECEIVE_BYTES_DELTA, L"Network receive bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKSENDBYTESDELTA, IDS_ET_PROCESS_COLUMN_NETWORK_SEND_BYTES_DELTA, L"Network send bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKTOTALBYTESDELTA, IDS_ET_PROCESS_COLUMN_NETWORK_TOTAL_BYTES_DELTA, L"Network total bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_HARDFAULTS, IDS_ET_PROCESS_COLUMN_HARD_FAULTS, L"Hard faults", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_HARDFAULTSDELTA, IDS_ET_PROCESS_COLUMN_HARD_FAULTS_DELTA, L"Hard faults delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_PEAKTHREADS, IDS_ET_PROCESS_COLUMN_PEAK_THREADS, L"Peak threads", 45, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_GPUDEDICATEDBYTES, IDS_ET_PROCESS_COLUMN_GPU_DEDICATED_RESIDENT, L"GPU dedicated bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_GPUSHAREDBYTES, IDS_ET_PROCESS_COLUMN_GPU_SHARED_RESIDENT, L"GPU shared bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKREADRATE, IDS_ET_PROCESS_COLUMN_DISK_READ_RATE, L"Disk read rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKWRITERATE, IDS_ET_PROCESS_COLUMN_DISK_WRITE_RATE, L"Disk write rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_DISKTOTALRATE, IDS_ET_PROCESS_COLUMN_DISK_TOTAL_RATE, L"Disk total rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKRECEIVERATE, IDS_ET_PROCESS_COLUMN_NETWORK_RECEIVE_RATE, L"Network receive rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKSENDRATE, IDS_ET_PROCESS_COLUMN_NETWORK_SEND_RATE, L"Network send rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NETWORKTOTALRATE, IDS_ET_PROCESS_COLUMN_NETWORK_TOTAL_RATE, L"Network total rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_FPS, IDS_ET_PROCESS_COLUMN_FPS, L"FPS", 50, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NPU, IDS_ET_GROUP_NPU, L"NPU", 45, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NPUDEDICATEDBYTES, IDS_ET_PROCESS_COLUMN_NPU_DEDICATED_RESIDENT, L"NPU dedicated bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NPUSHAREDBYTES, IDS_ET_PROCESS_COLUMN_NPU_SHARED_RESIDENT, L"NPU shared bytes (resident)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_GPUDEDICATEDCOMMITTEDBYTES, IDS_ET_PROCESS_COLUMN_GPU_DEDICATED_COMMITTED, L"GPU dedicated bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_GPUSHAREDCOMMITTEDBYTES, IDS_ET_PROCESS_COLUMN_GPU_SHARED_COMMITTED, L"GPU shared bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NPUDEDICATEDCOMMITTEDBYTES, IDS_ET_PROCESS_COLUMN_NPU_DEDICATED_COMMITTED, L"NPU dedicated bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_NPUSHAREDCOMMITTEDBYTES, IDS_ET_PROCESS_COLUMN_NPU_SHARED_COMMITTED, L"NPU shared bytes (committed)", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_FIREWALLALLOWS, IDS_ET_PROCESS_COLUMN_FIREWALL_ALLOWS, L"Firewall allows", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_FIREWALLBLOCKS, IDS_ET_PROCESS_COLUMN_FIREWALL_BLOCKS, L"Firewall blocks", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_FIREWALLALLOWSDELTA, IDS_ET_PROCESS_COLUMN_FIREWALL_ALLOWS_DELTA, L"Firewall allows delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETPRTNC_FIREWALLBLOCKSDELTA, IDS_ET_PROCESS_COLUMN_FIREWALL_BLOCKS_DELTA, L"Firewall blocks delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
     };
 
     PPH_PLUGIN_TREENEW_INFORMATION treeNewInfo = Parameter;
@@ -131,7 +132,7 @@ VOID EtProcessTreeNewInitializing(
 
     for (i = 0; i < RTL_NUMBER_OF(columns); i++)
     {
-        EtpAddTreeNewColumn(treeNewInfo, columns[i].SubId, columns[i].Text, columns[i].Width, columns[i].Alignment,
+        EtpAddTreeNewColumn(treeNewInfo, columns[i].SubId, EtGetUiString(columns[i].TextResourceId, columns[i].Text), columns[i].Width, columns[i].Alignment,
             columns[i].TextFlags, columns[i].SortDescending, EtpProcessTreeNewSortFunction);
     }
 
@@ -147,7 +148,7 @@ VOID EtProcessTreeNewInitializing(
         {
             PPH_STRING columnText;
 
-            columnText = PhFormatString(L"GPU %lu", i);
+            columnText = PhFormatString(EtGetUiString(IDS_ET_GPU_ADAPTER_COLUMN_FORMAT, L"GPU %lu"), i);
             PhAddItemList(EtGpuNodeColumnTextList, columnText);
             EtpAddTreeNewColumn(
                 treeNewInfo,
@@ -178,9 +179,9 @@ VOID EtProcessTreeNewInitializing(
             previousAdapterIndex = adapterIndex;
 
             if (nodeName && nodeName->Length)
-                columnText = PhFormatString(L"GPU %lu node %lu (%s)", adapterIndex, adapterNodeIndex, nodeName->Buffer);
+                columnText = PhFormatString(EtGetUiString(IDS_ET_GPU_NODE_COLUMN_NAMED_FORMAT, L"GPU %lu node %lu (%s)"), adapterIndex, adapterNodeIndex, nodeName->Buffer);
             else
-                columnText = PhFormatString(L"GPU %lu node %lu", adapterIndex, adapterNodeIndex);
+                columnText = PhFormatString(EtGetUiString(IDS_ET_GPU_NODE_COLUMN_FORMAT, L"GPU %lu node %lu"), adapterIndex, adapterNodeIndex);
 
             PhAddItemList(EtGpuNodeColumnTextList, columnText);
             EtpAddTreeNewColumn(
@@ -197,6 +198,18 @@ VOID EtProcessTreeNewInitializing(
     }
 
     PhPluginEnableTreeNewNotify(PluginInstance, treeNewInfo->CmData);
+}
+
+VOID EtUninitializeTreeNewColumns(
+    VOID
+    )
+{
+    if (EtGpuNodeColumnTextList)
+    {
+        PhDereferenceObjects(EtGpuNodeColumnTextList->Items, EtGpuNodeColumnTextList->Count);
+        PhDereferenceObject(EtGpuNodeColumnTextList);
+        EtGpuNodeColumnTextList = NULL;
+    }
 }
 
 static VOID PhpAggregateFieldIfNeeded(
@@ -1576,20 +1589,20 @@ VOID EtNetworkTreeNewInitializing(
 {
     const static COLUMN_INFO columns[] =
     {
-        { ETNETNC_RECEIVES, L"Receives", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_SENDS, L"Sends", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_RECEIVEBYTES, L"Receive bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_SENDBYTES, L"Send bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_TOTALBYTES, L"Total bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_RECEIVESDELTA, L"Receives delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_SENDSDELTA, L"Sends delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_RECEIVEBYTESDELTA, L"Receive bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_SENDBYTESDELTA, L"Send bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_TOTALBYTESDELTA, L"Total bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_FIREWALLSTATUS, L"Firewall status", 170, PH_ALIGN_LEFT, 0, FALSE },
-        { ETNETNC_RECEIVERATE, L"Receive rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_SENDRATE, L"Send rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
-        { ETNETNC_TOTALRATE, L"Total rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE }
+        { ETNETNC_RECEIVES, IDS_ET_RECEIVES, L"Receives", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_SENDS, IDS_ET_SENDS, L"Sends", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_RECEIVEBYTES, IDS_ET_RECEIVE_BYTES, L"Receive bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_SENDBYTES, IDS_ET_SEND_BYTES, L"Send bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_TOTALBYTES, IDS_ET_TOTAL_BYTES, L"Total bytes", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_RECEIVESDELTA, IDS_ET_NETWORK_COLUMN_RECEIVES_DELTA, L"Receives delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_SENDSDELTA, IDS_ET_NETWORK_COLUMN_SENDS_DELTA, L"Sends delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_RECEIVEBYTESDELTA, IDS_ET_RECEIVE_BYTES_DELTA, L"Receive bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_SENDBYTESDELTA, IDS_ET_SEND_BYTES_DELTA, L"Send bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_TOTALBYTESDELTA, IDS_ET_TOTAL_BYTES_DELTA, L"Total bytes delta", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_FIREWALLSTATUS, IDS_ET_NETWORK_COLUMN_FIREWALL_STATUS, L"Firewall status", 170, PH_ALIGN_LEFT, 0, FALSE },
+        { ETNETNC_RECEIVERATE, IDS_ET_NETWORK_COLUMN_RECEIVE_RATE, L"Receive rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_SENDRATE, IDS_ET_NETWORK_COLUMN_SEND_RATE, L"Send rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE },
+        { ETNETNC_TOTALRATE, IDS_ET_DISK_COLUMN_TOTAL_RATE, L"Total rate", 70, PH_ALIGN_RIGHT, DT_RIGHT, TRUE }
     };
 
     PPH_PLUGIN_TREENEW_INFORMATION treeNewInfo = Parameter;
@@ -1597,7 +1610,7 @@ VOID EtNetworkTreeNewInitializing(
 
     for (i = 0; i < sizeof(columns) / sizeof(COLUMN_INFO); i++)
     {
-        EtpAddTreeNewColumn(treeNewInfo, columns[i].SubId, columns[i].Text, columns[i].Width, columns[i].Alignment,
+        EtpAddTreeNewColumn(treeNewInfo, columns[i].SubId, EtGetUiString(columns[i].TextResourceId, columns[i].Text), columns[i].Width, columns[i].Alignment,
             columns[i].TextFlags, columns[i].SortDescending, EtpNetworkTreeNewSortFunction);
     }
 }

@@ -26,20 +26,30 @@ def load_audit_module():
 
 def assert_section_routes(test: unittest.TestCase, source: str) -> None:
     source = compact(source)
-    expected_routes = (
-        'PhInitializeStringRef(&section.Name,EtGetUiString(IDS_ET_SECTION_DISK,L"Disk"));',
-        'PhInitializeStringRef(&section.Name,EtGetUiString(IDS_ET_SECTION_NETWORK,L"Network"));',
+    expected_identity_routes = (
+        'PhInitializeStringRef(&section.Name,L"Disk");',
+        'PhInitializeStringRef(&section.Name,L"Network");',
+    )
+    expected_display_routes = (
+        'drawPanel->Title=PhCreateString(EtGetUiString(IDS_ET_SECTION_DISK,L"Disk"));',
+        'drawPanel->Title=PhCreateString(EtGetUiString(IDS_ET_SECTION_NETWORK,L"Network"));',
     )
 
-    for route in expected_routes:
+    for route in expected_identity_routes + expected_display_routes:
         test.assertEqual(source.count(compact(route)), 1)
 
-    test.assertNotIn(compact('PhInitializeStringRef(&section.Name,L"Disk");'), source)
-    test.assertNotIn(compact('PhInitializeStringRef(&section.Name,L"Network");'), source)
+    test.assertNotIn(
+        compact('PhInitializeStringRef(&section.Name,EtGetUiString(IDS_ET_SECTION_DISK,L"Disk"));'),
+        source,
+    )
+    test.assertNotIn(
+        compact('PhInitializeStringRef(&section.Name,EtGetUiString(IDS_ET_SECTION_NETWORK,L"Network"));'),
+        source,
+    )
 
 
 class ExtendedToolsEtwSysSectionResourceTests(unittest.TestCase):
-    def test_disk_and_network_section_names_use_existing_module_resources(self) -> None:
+    def test_disk_and_network_keep_raw_identity_and_localized_display(self) -> None:
         source = ETWSYS_PATH.read_text(encoding="utf-8")
         assert_section_routes(self, source)
 
@@ -84,18 +94,13 @@ class ExtendedToolsEtwSysSectionResourceTests(unittest.TestCase):
                 numeric_defines["IDS_ET_OPTIONS_SECTION"],
             )
 
-    def test_directed_audit_has_no_disk_or_network_window_text(self) -> None:
+    def test_directed_audit_excludes_proven_disk_and_network_identity(self) -> None:
         audit = load_audit_module()
         entries = []
         audit.scan_c_file(ETWSYS_PATH, entries)
 
         self.assertEqual(
-            [
-                (entry["category"], entry["english"], entry["line"])
-                for entry in entries
-                if entry["category"] == "c_window_text"
-                and entry["english"] in {"Disk", "Network"}
-            ],
+            [(entry["english"], entry["line"]) for entry in entries if entry["category"] == "c_window_text"],
             [],
         )
 
@@ -103,13 +108,13 @@ class ExtendedToolsEtwSysSectionResourceTests(unittest.TestCase):
         source = ETWSYS_PATH.read_text(encoding="utf-8")
         mutations = (
             source.replace(
-                "IDS_ET_SECTION_DISK, L\"Disk\"",
-                "IDS_ET_SECTION_NETWORK, L\"Disk\"",
+                "PhInitializeStringRef(&section.Name, L\"Disk\")",
+                "PhInitializeStringRef(&section.Name, L\"Network\")",
                 1,
             ),
             source.replace(
-                "EtGetUiString(IDS_ET_SECTION_DISK",
-                "WrongGetUiString(IDS_ET_SECTION_DISK",
+                "EtGetUiString(IDS_ET_SECTION_DISK, L\"Disk\")",
+                "EtGetUiString(IDS_ET_SECTION_NETWORK, L\"Disk\")",
                 1,
             ),
             source.replace(

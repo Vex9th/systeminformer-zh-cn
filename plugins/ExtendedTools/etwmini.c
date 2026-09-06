@@ -25,12 +25,12 @@ VOID EtEtwMiniInformationInitializing(
 
     memset(&section, 0, sizeof(PH_MINIINFO_LIST_SECTION));
     section.Callback = EtpDiskListSectionCallback;
-    Pointers->CreateListSection(L"Disk", 0, &section);
+    Pointers->CreateListSection2(L"Disk", EtGetUiString(IDS_ET_SECTION_DISK, L"Disk"), 0, &section);
 
     memset(&section, 0, sizeof(PH_MINIINFO_LIST_SECTION));
     section.Callback = EtpNetworkListSectionCallback;
 
-    Pointers->CreateListSection(L"Network", 0, &section);
+    Pointers->CreateListSection2(L"Network", EtGetUiString(IDS_ET_SECTION_NETWORK, L"Network"), 0, &section);
 }
 
 /**
@@ -318,4 +318,3 @@ int __cdecl EtpNetworkListSectionNodeCompareFunction(
 
     return uint64cmp(data2->UserData[0] + data2->UserData[1], data1->UserData[0] + data1->UserData[1]);
 }
-

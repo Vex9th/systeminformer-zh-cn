@@ -87,7 +87,7 @@ PLUGIN_CALLS = {
 EXPECTED_COUNTS = {
     "sys_info.exe": 1296,
     "ExtendedNotifications.dll": 4,
-    "ExtendedTools.dll": 397,
+    "ExtendedTools.dll": 470,
     "HardwareDevices.dll": 199,
     "NetworkTools.dll": 55,
     "OnlineChecks.dll": 22,
@@ -98,7 +98,7 @@ EXPECTED_COUNTS = {
 EXPECTED_NEXT_SYMED_VALUES = {
     "SystemInformer": 3296,
     "UserNotes": 2052,
-    "ExtendedTools": 61397,
+    "ExtendedTools": 61470,
     "ExtendedNotifications": 12004,
     "HardwareDevices": 12199,
     "OnlineChecks": 12022,
@@ -316,7 +316,7 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(native.returncode, 0, native.stdout + native.stderr)
-        self.assertIn("2936 strings", native.stdout)
+        self.assertIn("3009 strings", native.stdout)
 
         runtime = subprocess.run(
             [sys.executable, str(REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"), "--check"],
@@ -325,7 +325,7 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(runtime.returncode, 0, runtime.stdout + runtime.stderr)
-        self.assertIn("1936 entries", runtime.stdout)
+        self.assertIn("1929 entries", runtime.stdout)
 
 
 if __name__ == "__main__":

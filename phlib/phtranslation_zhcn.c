@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1936] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1929] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L"\"%s\" at position %zu.", L"“%s”，位置 %zu。", },
@@ -114,7 +114,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1936] =
     { L"&Slow (5s)", L"慢速(&S) (5s)", },
     { L"&Start", L"启动(&S)", },
     { L"&Suspend", L"挂起(&S)", },
-    { L"&System", L"系统(&S)", },
     { L"&Tools", L"工具(&T)", },
     { L"&Traceroute", L"路由跟踪(&T)", },
     { L"&Tray icons", L"托盘图标(&T)", },
@@ -431,9 +430,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1936] =
     { L"Disk", L"磁盘", },
     { L"Disk Drives", L"磁盘驱动器", },
     { L"Disk I/O", L"磁盘 I/O", },
-    { L"Disk monitoring requires System Informer to be restarted with administrative privileges.", L"磁盘监控需要以管理员权限重启 sys_info。", },
-    { L"Disk reads", L"磁盘读取数", },
-    { L"Disk writes", L"磁盘写入数", },
     { L"Display name", L"显示名称", },
     { L"Display name:", L"显示名称：", },
     { L"Display resource...", L"显示资源...", },
@@ -582,8 +578,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1936] =
     { L"Find window", L"查找窗口", },
     { L"Find window and kill", L"查找窗口并终止", },
     { L"Find window and thread", L"查找窗口和线程", },
-    { L"Firewall", L"防火墙", },
-    { L"Firewall monitoring requires System Informer to be restarted with administrative privileges.", L"防火墙监控需要以管理员权限重启 sys_info。", },
     { L"Firmware Table", L"固件表", },
     { L"First failure:", L"第一次失败：", },
     { L"Flags", L"标志", },
@@ -1150,7 +1144,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1936] =
     { L"Receive bytes:", L"接收字节数：", },
     { L"Receive:", L"接收：", },
     { L"Receives", L"接收数", },
-    { L"Receives delta", L"接收数增量", },
     { L"Recovery", L"恢复", },
     { L"Refresh", L"刷新", },
     { L"RefreshF5", L"刷新F5", },
@@ -1298,7 +1291,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[1936] =
     { L"Send bytes:", L"发送字节数：", },
     { L"Send:", L"发送：", },
     { L"Sends", L"发送数", },
-    { L"Sends delta", L"发送数增量", },
+    { L"Ser&vices", L"服务(&V)", },
     { L"Server", L"服务器", },
     { L"Service", L"服务", },
     { L"Service Control Manager", L"服务控制管理器", },

@@ -233,6 +233,29 @@ def adjacent_literal_text(arg: str):
     return "".join(literal_text(match.group(0)) for match in matches)
 
 
+def is_resource_ui_getter(expression: str, fallback: str, resource_id=None):
+    """Return whether an expression is exactly a native UI getter call."""
+    getter_names = {
+        match.group(0)
+        for match in IDENT_RE.finditer(expression)
+        if match.group(0).endswith("GetUiString")
+    }
+    calls = list(find_calls(expression, getter_names))
+
+    if len(calls) != 1:
+        return False
+
+    _name, args, spans, call_start = calls[0]
+    if len(args) < 2:
+        return False
+    if expression[:call_start].strip() or expression[spans[-1][1] + 1:].strip():
+        return False
+    if resource_id is not None and args[0].strip() != resource_id:
+        return False
+
+    return adjacent_literal_text(args[1]) == fallback
+
+
 def printf_string_argument_indexes(format_text: str):
     """Return zero-based vararg indexes consumed by string conversions."""
     argument_index = 0
@@ -2203,6 +2226,14 @@ def append_runtime_target_entries(
         entries.append(entry)
 
 
+SYSINFO_IDENTITY_DISPLAY_ROUTES = {
+    "plugins/ExtendedTools/etwsys.c": {
+        "Disk": ("EtpDiskSysInfoSectionCallback", "IDS_ET_SECTION_DISK"),
+        "Network": ("EtpNetworkSysInfoSectionCallback", "IDS_ET_SECTION_NETWORK"),
+    },
+}
+
+
 def scan_sysinfo_text_sinks(text: str, scan_text: str, rel: str, entries, one_hop_seen):
     """Scan custom System Information titles that bypass window-text setters."""
     syntax_text = mask_c_literals(scan_text)
@@ -2326,6 +2357,62 @@ def scan_sysinfo_text_sinks(text: str, scan_text: str, rel: str, entries, one_ho
             offset,
         )
 
+    def is_whitelisted_identity_display_route(identifier, value, offset):
+        route = SYSINFO_IDENTITY_DISPLAY_ROUTES.get(rel, {}).get(value)
+        if not route:
+            return False
+
+        callback_name, resource_id = route
+        scope = innermost_c_scope(scopes, offset)
+        if scope is None:
+            return False
+        body = scan_text[scope[0] + 1:scope[1]]
+        if not re.search(
+            rf"\b{re.escape(identifier)}\s*\.\s*Callback\s*=\s*"
+            rf"{re.escape(callback_name)}\s*;",
+            body,
+        ):
+            return False
+        if not re.search(
+            rf"\b[A-Za-z_][A-Za-z0-9_]*\s*->\s*CreateSection\s*"
+            rf"\(\s*&\s*{re.escape(identifier)}\s*\)",
+            body,
+        ):
+            return False
+
+        signature = re.search(
+            rf"\b{re.escape(callback_name)}\s*\([^;]*?\)\s*\{{",
+            syntax_text,
+            re.DOTALL,
+        )
+        if not signature:
+            return False
+        callback_scope = next(
+            (
+                candidate
+                for candidate in scopes
+                if candidate[0] == signature.end() - 1
+            ),
+            None,
+        )
+        if callback_scope is None:
+            return False
+        callback_body = scan_text[callback_scope[0] + 1:callback_scope[1]]
+        display_assignment = re.search(
+            r"\b[A-Za-z_][A-Za-z0-9_]*\s*->\s*Title\s*=\s*"
+            r"PhCreateString\s*\((?P<value>.*?)\)\s*;",
+            callback_body,
+            re.DOTALL,
+        )
+        return bool(
+            display_assignment
+            and is_resource_ui_getter(
+                display_assignment.group("value"),
+                value,
+                resource_id,
+            )
+        )
+
     for name, args, spans, call_start in find_calls(
         scan_text, {"PhMoveReference", "PhSetReference"}
     ):
@@ -2366,6 +2453,16 @@ def scan_sysinfo_text_sinks(text: str, scan_text: str, rel: str, entries, one_ho
             section_declarations,
             target_match.group(1),
             call_start,
+        ):
+            continue
+        identity = adjacent_literal_text(args[1])
+        if (
+            identity is not None
+            and is_whitelisted_identity_display_route(
+                target_match.group(1),
+                identity,
+                call_start,
+            )
         ):
             continue
         append_runtime_target_entries(
@@ -2751,14 +2848,105 @@ def scan_page_names(path: str, entries):
     rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         text = mask_c_comments(f.read())
+
+    def is_resource_backed_tab_identity(variable, identity):
+        assignment_re = re.compile(
+            rf"\b(?P<page>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Name\s*=\s*"
+            rf"{re.escape(variable)}\s*;"
+        )
+        page_assignments = list(assignment_re.finditer(text))
+
+        for assignment in page_assignments:
+            page = assignment.group("page")
+            next_assignment = re.search(
+                rf"\b{re.escape(page)}\s*\.\s*Name\s*=",
+                text[assignment.end():],
+            )
+            route_end = (
+                assignment.end() + next_assignment.start()
+                if next_assignment
+                else len(text)
+            )
+            route_text = text[assignment.end():route_end]
+            route = next(
+                find_calls(route_text, {"PhPluginCreateTabPage2"}),
+                None,
+            )
+            if not route or len(route[1]) < 2:
+                continue
+            if not re.fullmatch(
+                rf"\s*&\s*{re.escape(page)}\s*",
+                route[1][0],
+            ):
+                continue
+            display_match = re.fullmatch(
+                r"\s*&\s*([A-Za-z_][A-Za-z0-9_]*)\s*",
+                route[1][1],
+            )
+            if not display_match:
+                continue
+            display_variable = display_match.group(1)
+
+            for _, args, _, _ in find_calls(
+                text, {"PhInitializeStringRefLongHint"}
+            ):
+                if len(args) < 2 or not re.fullmatch(
+                    rf"\s*&\s*{re.escape(display_variable)}\s*",
+                    args[0],
+                ):
+                    continue
+                if is_resource_ui_getter(args[1], identity):
+                    return True
+
+        return False
+
     for m in PAGE_NAME_RE.finditer(text):
         t = literal_text(m.group(2))
         if is_noise(t):
+            continue
+        if is_resource_backed_tab_identity(m.group(1), t):
             continue
         entries.append({
             "category": "c_tab", "file": rel,
             "line": line_of_offset(text, m.start()), "english": t,
         })
+
+    for name, args, spans, call_start in find_calls(
+        text, {"CreateListSection", "CreateListSection2"}
+    ):
+        if not args:
+            continue
+        identity = adjacent_literal_text(args[0])
+        if identity is None or is_noise(identity):
+            continue
+
+        display_is_native = (
+            name == "CreateListSection2"
+            and len(args) >= 2
+            and is_resource_ui_getter(args[1], identity)
+        )
+        if not display_is_native:
+            entries.append({
+                "category": "c_window_text",
+                "file": rel,
+                "line": line_of_offset(text, spans[0][0]),
+                "english": identity,
+            })
+
+        if name == "CreateListSection2" and len(args) >= 2:
+            for display_text, display_offset in literal_sequences_outside_ui_string_getters(
+                args[1]
+            ):
+                if not is_noise(display_text):
+                    entries.append({
+                        "category": "c_window_text",
+                        "file": rel,
+                        "line": line_of_offset(
+                            text,
+                            spans[1][0] + display_offset,
+                        ),
+                        "english": display_text,
+                    })
 
 
 def scan_translated_calls(path: str, entries):

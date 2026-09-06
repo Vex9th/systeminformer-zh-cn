@@ -4800,6 +4800,7 @@ PPH_MAIN_TAB_PAGE PhMwpCreatePage(
 {
     PPH_MAIN_TAB_PAGE page;
     PPH_STRING name;
+    PCPH_STRINGREF displayName;
     PH_TABNEW_INSERTITEM item;
     //HDWP deferHandle;
 
@@ -4811,7 +4812,8 @@ PPH_MAIN_TAB_PAGE PhMwpCreatePage(
 
     PhAddItemList(PageList, page);
 
-    name = PhCreateString2(&page->Name);
+    displayName = Template->Reserved[0] ? (PCPH_STRINGREF)Template->Reserved[0] : &page->Name;
+    name = PhCreateString2(displayName);
     item.Text = name->Buffer;
     item.ImageIndex = LONG_ERROR;
     item.Param = (LPARAM)page;

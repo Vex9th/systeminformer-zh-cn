@@ -620,6 +620,7 @@ VOID PhMipOnShowWindow(
         pointers.CreateSection = PhMipCreateSection;
         pointers.FindSection = PhMipFindSection;
         pointers.CreateListSection = PhMipCreateListSection;
+        pointers.CreateListSection2 = PhMipCreateListSection2;
         PhInvokeCallback(PhGetGeneralCallback(GeneralCallbackMiniInformationInitializing), &pointers);
     }
 
@@ -996,6 +997,7 @@ PPH_MINIINFO_SECTION PhMipCreateSection(
 
     section = PhAllocateZero(sizeof(PH_MINIINFO_SECTION));
     section->Name = Template->Name;
+    section->Reserved1[0] = Template->Reserved1[0];
     section->Flags = Template->Flags;
     section->Callback = Template->Callback;
     section->Context = Template->Context;
@@ -1126,6 +1128,13 @@ VOID PhMipUpdateSectionText(
     _In_ PPH_MINIINFO_SECTION Section
     )
 {
+    PH_STRINGREF displayName;
+
+    if (Section->Reserved1[0])
+        PhInitializeStringRefLongHint(&displayName, Section->Reserved1[0]);
+    else
+        displayName = Section->Name;
+
     if (Section->Text)
     {
         PhSetDialogItemText(PhMipWindow, IDC_SECTION,
@@ -1134,7 +1143,7 @@ VOID PhMipUpdateSectionText(
     else
     {
         PhSetDialogItemText(PhMipWindow, IDC_SECTION,
-            PH_AUTO_T(PH_STRING, PhConcatStringRef2(&DownArrowPrefix, &Section->Name))->Buffer);
+            PH_AUTO_T(PH_STRING, PhConcatStringRef2(&DownArrowPrefix, &displayName))->Buffer);
     }
 }
 
@@ -1265,11 +1274,17 @@ VOID PhMipShowSectionMenu(
 
     for (i = 0; i < SectionList->Count; i++)
     {
+        PH_STRINGREF displayName;
+
         section = SectionList->Items[i];
+        if (section->Reserved1[0])
+            PhInitializeStringRefLongHint(&displayName, section->Reserved1[0]);
+        else
+            displayName = section->Name;
         menuItem = PhCreateEMenuItem(
             (section == CurrentSection ? (PH_EMENU_CHECKED | PH_EMENU_RADIOCHECK) : 0),
             0,
-            PH_AUTO_T(PH_STRING, PhCreateString2(&section->Name))->Buffer,
+            PH_AUTO_T(PH_STRING, PhCreateString2(&displayName))->Buffer,
             NULL,
             section
             );
@@ -1513,6 +1528,16 @@ PPH_MINIINFO_LIST_SECTION PhMipCreateListSection(
     _In_ PPH_MINIINFO_LIST_SECTION Template
     )
 {
+    return PhMipCreateListSection2(Name, Name, Flags, Template);
+}
+
+PPH_MINIINFO_LIST_SECTION PhMipCreateListSection2(
+    _In_ PCWSTR Name,
+    _In_ PCWSTR DisplayName,
+    _In_ ULONG Flags,
+    _In_ PPH_MINIINFO_LIST_SECTION Template
+    )
+{
     PPH_MINIINFO_LIST_SECTION listSection;
     PH_MINIINFO_SECTION section;
 
@@ -1522,6 +1547,7 @@ PPH_MINIINFO_LIST_SECTION PhMipCreateListSection(
 
     memset(&section, 0, sizeof(PH_MINIINFO_SECTION));
     PhInitializeStringRefLongHint(&section.Name, Name);
+    section.Reserved1[0] = (PVOID)DisplayName;
     section.Flags = PH_MINIINFO_SECTION_NO_UPPER_MARGINS;
     section.Callback = PhMipListSectionCallback;
     section.Context = listSection;

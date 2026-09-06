@@ -256,26 +256,26 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
                 self.assertNotIn(en, data[other])
 
         self.assertEqual([row[1] for row in RESOURCES], list(range(61188, 61200)))
-        self.assertEqual(sorted(defines.values()), list(range(61000, 61397)))
+        self.assertEqual(sorted(defines.values()), list(range(61000, 61470)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 397)
-        self.assertEqual(len(chinese), 397)
+        self.assertEqual(len(english), 470)
+        self.assertEqual(len(chinese), 470)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_CONFIRM_THREAD_IO$",
+            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
         )
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61397$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61470$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=397"), 2)
+        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=470"), 2)
 
         generator_test = (
             REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py"
         ).read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("2936 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("3009 strings", result.stdout)', generator_test)
 
     def test_migrated_enum_literals_leave_the_fresh_audit(self):
         audit = load_audit_module()

@@ -72,6 +72,15 @@ EXTERN_C BOOLEAN EtEnableScaleText;
 EXTERN_C BOOLEAN EtPropagateCpuUsage;
 EXTERN_C BOOLEAN EtEnableAvxSupport;
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
+VOID EtUninitializeTreeNewColumns(
+    VOID
+    );
+
 #define PLUGIN_NAME L"ExtendedTools"
 #define SETTING_NAME_FIRST_RUN (PLUGIN_NAME L".FirstRun")
 #define SETTING_NAME_DISK_TREE_LIST_COLUMNS (PLUGIN_NAME L".DiskTreeListColumns")

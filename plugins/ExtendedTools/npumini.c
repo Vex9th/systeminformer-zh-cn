@@ -22,7 +22,7 @@ VOID EtNpuMiniInformationInitializing(
 
     memset(&section, 0, sizeof(PH_MINIINFO_LIST_SECTION));
     section.Callback = EtpNpuListSectionCallback;
-    Pointers->CreateListSection(L"NPU", 0, &section);
+    Pointers->CreateListSection2(L"NPU", EtGetUiString(IDS_ET_GROUP_NPU, L"NPU"), 0, &section);
 }
 
 BOOLEAN EtpNpuListSectionCallback(

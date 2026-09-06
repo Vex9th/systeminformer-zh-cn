@@ -66,8 +66,8 @@ REUSED_RESOURCES = (
 FIXED_ROUTE_DATA = r"""
 pwrgrid.c|IDS_ET_POWER_GRID_NO_FORECAST|No forecast data available.|1
 pwrgrid.c|IDS_ET_STATE_ACTIVE|Active|1
-etwsys.c|IDS_ET_SECTION_DISK|Disk|2
-etwsys.c|IDS_ET_SECTION_NETWORK|Network|2
+etwsys.c|IDS_ET_SECTION_DISK|Disk|1
+etwsys.c|IDS_ET_SECTION_NETWORK|Network|1
 gpusys.c|IDS_ET_GROUP_GPU|GPU|1
 npusys.c|IDS_ET_GROUP_NPU|NPU|1
 pooldialogbig.c|IDS_ET_STATUS_YES|Yes|1
@@ -200,11 +200,11 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
         )
 
         self.assertEqual([row[1] for row in NEW_RESOURCES], list(range(61200, 61230)))
-        self.assertEqual(sorted(defines.values()), list(range(61000, 61397)))
+        self.assertEqual(sorted(defines.values()), list(range(61000, 61470)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 397)
-        self.assertEqual(len(chinese), 397)
+        self.assertEqual(len(english), 470)
+        self.assertEqual(len(chinese), 470)
 
         for symbol, resource_id, en, zh, owner in NEW_RESOURCES + list(REUSED_RESOURCES):
             with self.subTest(symbol=symbol):
@@ -217,18 +217,18 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
 
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_CONFIRM_THREAD_IO$",
+            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
         )
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61397$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61470$")
 
         workflow = (REPO_ROOT / ".github/workflows/zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=397"), 2)
+        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=470"), 2)
         self.assertNotIn("plugins\\ExtendedTools.dll=200", workflow)
 
     def test_all_41_visible_fixed_text_occurrences_use_the_exact_resource(self):
-        self.assertEqual(sum(row[3] for row in FIXED_ROUTES), 43)
+        self.assertEqual(sum(row[3] for row in FIXED_ROUTES), 41)
 
         for filename, symbol, fallback, expected_count in FIXED_ROUTES:
             with self.subTest(filename=filename, symbol=symbol):
@@ -263,10 +263,7 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
 
         etwsys = compact(source_text("etwsys.c"))
         self.assertIn(
-            compact(
-                'PhInitializeStringRef(&section.Name, '
-                'EtGetUiString(IDS_ET_SECTION_DISK, L"Disk"));'
-            ),
+            compact('PhInitializeStringRef(&section.Name, L"Disk");'),
             etwsys,
         )
         self.assertIn(
@@ -274,10 +271,7 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
             etwsys,
         )
         self.assertIn(
-            compact(
-                'PhInitializeStringRef(&section.Name, '
-                'EtGetUiString(IDS_ET_SECTION_NETWORK, L"Network"));'
-            ),
+            compact('PhInitializeStringRef(&section.Name, L"Network");'),
             etwsys,
         )
         self.assertIn(

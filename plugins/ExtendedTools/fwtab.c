@@ -59,9 +59,10 @@ BOOLEAN FwTreeNewCreated = FALSE;
 HWND FwTreeNewHandle = NULL;
 ULONG FwTreeNewSortColumn = FW_COLUMN_NAME;
 PH_SORT_ORDER FwTreeNewSortOrder = NoSortOrder;
-CONST PH_STRINGREF FwTreeEmptyText = PH_STRINGREF_INIT(L"Firewall monitoring requires System Informer to be restarted with administrative privileges.");
 CONST PH_STRINGREF FwTreePageText = PH_STRINGREF_INIT(L"Firewall");
-CONST PH_STRINGREF FwTreeBannerText = PH_STRINGREF_INIT(L"Search Firewall");
+PH_STRINGREF FwTreePageDisplayText;
+PH_STRINGREF FwTreeBannerText;
+PH_STRINGREF FwTreeEmptyText;
 PPH_STRING FwTreeErrorText = NULL;
 LONG FwTreeIconHeightPadding = 0;
 LONG FwTreeLeftMarginPadding = 0;
@@ -176,7 +177,7 @@ BOOLEAN FwTabPageCallback(
                     {
                         EtFwStatusText = PhFormatString(
                             L"%s %s (%lu)",
-                            L"Unable to start the firewall event tracing session: ",
+                            EtGetUiString(IDS_ET_FIREWALL_TRACE_ERROR_PREFIX, L"Unable to start the firewall event tracing session: "),
                             statusMessage->Buffer,
                             EtFwStatus);
                         PhDereferenceObject(statusMessage);
@@ -185,7 +186,7 @@ BOOLEAN FwTabPageCallback(
                     {
                         EtFwStatusText = PhFormatString(
                             L"%s (%lu)",
-                            L"Unable to start the firewall event tracing session: ",
+                            EtGetUiString(IDS_ET_FIREWALL_TRACE_ERROR_PREFIX, L"Unable to start the firewall event tracing session: "),
                             EtFwStatus);
                     }
 
@@ -292,10 +293,14 @@ VOID EtInitializeFirewallTab(
 {
     PH_MAIN_TAB_PAGE page;
 
+    PhInitializeStringRefLongHint(&FwTreePageDisplayText, EtGetUiString(IDS_ET_TAB_FIREWALL, L"Firewall"));
+    PhInitializeStringRefLongHint(&FwTreeBannerText, EtGetUiString(IDS_ET_SEARCH_FIREWALL, L"Search Firewall"));
+    PhInitializeStringRefLongHint(&FwTreeEmptyText, EtGetUiString(IDS_ET_FIREWALL_EMPTY_ADMIN_REQUIRED, L"Firewall monitoring requires System Informer to be restarted with administrative privileges."));
+
     memset(&page, 0, sizeof(PH_MAIN_TAB_PAGE));
     page.Name = FwTreePageText;
     page.Callback = FwTabPageCallback;
-    EtFwAddedTabPage = PhPluginCreateTabPage(&page);
+    EtFwAddedTabPage = PhPluginCreateTabPage2(&page, &FwTreePageDisplayText);
 
     if (EtFwToolStatusInterface = PhGetPluginInterfaceZ(TOOLSTATUS_INTERFACE_NAME, TOOLSTATUS_INTERFACE_VERSION))
     {

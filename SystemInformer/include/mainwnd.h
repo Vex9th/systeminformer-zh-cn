@@ -283,6 +283,19 @@ typedef struct _PH_MAIN_TAB_PAGE
 // end_phapppub
 
 // begin_phapppub
+FORCEINLINE
+PVOID
+PhPluginCreateTabPage2(
+    _Inout_ PPH_MAIN_TAB_PAGE Page,
+    _In_ PCPH_STRINGREF DisplayName
+    )
+{
+    Page->Reserved[0] = (PVOID)DisplayName;
+    return PhPluginCreateTabPage(Page);
+}
+// end_phapppub
+
+// begin_phapppub
 #define PH_NOTIFY_MINIMUM 0x1
 #define PH_NOTIFY_PROCESS_CREATE 0x1
 #define PH_NOTIFY_PROCESS_DELETE 0x2

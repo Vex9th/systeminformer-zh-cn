@@ -109,16 +109,16 @@ class ExtendedToolsNamedPipesDynamicUiResourceTests(unittest.TestCase):
         english = parse_stringtable(ENGLISH_RC)
         chinese = parse_stringtable(CHINESE_RC)
 
-        self.assertEqual(len(header), 397)
-        self.assertEqual(len(english), 397)
-        self.assertEqual(len(chinese), 397)
+        self.assertEqual(len(header), 470)
+        self.assertEqual(len(english), 470)
+        self.assertEqual(len(chinese), 470)
         self.assertRegex(
             header_source,
-            r"(?m)^#define\s+IDS_ET_CACHED_LAST\s+IDS_ET_CONFIRM_THREAD_IO$",
+            r"(?m)^#define\s+IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
         )
         self.assertRegex(
             header_source,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61397$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61470$",
         )
 
         for resource_id, symbol, en_text, zh_text in NEW_RESOURCES:

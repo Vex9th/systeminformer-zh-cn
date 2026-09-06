@@ -213,7 +213,7 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("1936 entries", result.stdout)
+        self.assertIn("1929 entries", result.stdout)
 
     def test_ci_and_native_generator_counts_are_exact(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
@@ -223,7 +223,7 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
         self.assertEqual(workflow.count(r"peview.exe=311"), 2)
         self.assertNotIn(r"sys_info.exe=598", workflow)
         self.assertNotIn(r"peview.exe=298", workflow)
-        self.assertIn('self.assertIn("2936 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("3009 strings", result.stdout)', generator_test)
         self.assertNotIn('self.assertIn("1737 strings", result.stdout)', generator_test)
 
 

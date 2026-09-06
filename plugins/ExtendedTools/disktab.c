@@ -25,8 +25,9 @@ static HWND DiskTreeNewHandle = NULL;
 static ULONG DiskTreeNewSortColumn = 0;
 static PH_SORT_ORDER DiskTreeNewSortOrder = NoSortOrder;
 static CONST PH_STRINGREF DiskPageText = PH_STRINGREF_INIT(L"Disk");
-static CONST PH_STRINGREF DiskBannerText = PH_STRINGREF_INIT(L"Search Disk");
-static CONST PH_STRINGREF DiskTreeEmptyText = PH_STRINGREF_INIT(L"Disk monitoring requires System Informer to be restarted with administrative privileges.");
+static PH_STRINGREF DiskPageDisplayText;
+static PH_STRINGREF DiskBannerText;
+static PH_STRINGREF DiskEmptyText;
 static PPH_STRING DiskTreeErrorText = NULL;
 
 static PPH_HASHTABLE DiskNodeHashtable = NULL; // hashtable of all nodes
@@ -51,10 +52,14 @@ VOID EtInitializeDiskTab(
 {
     PH_MAIN_TAB_PAGE page;
 
+    PhInitializeStringRefLongHint(&DiskPageDisplayText, EtGetUiString(IDS_ET_SECTION_DISK, L"Disk"));
+    PhInitializeStringRefLongHint(&DiskBannerText, EtGetUiString(IDS_ET_SEARCH_DISK, L"Search Disk"));
+    PhInitializeStringRefLongHint(&DiskEmptyText, EtGetUiString(IDS_ET_DISK_EMPTY_ADMIN_REQUIRED, L"Disk monitoring requires System Informer to be restarted with administrative privileges."));
+
     memset(&page, 0, sizeof(PH_MAIN_TAB_PAGE));
     page.Name = DiskPageText;
     page.Callback = EtpDiskPageCallback;
-    DiskPage = PhPluginCreateTabPage(&page);
+    DiskPage = PhPluginCreateTabPage2(&page, &DiskPageDisplayText);
 
     if (ToolStatusInterface = PhGetPluginInterfaceZ(TOOLSTATUS_INTERFACE_NAME, TOOLSTATUS_INTERFACE_VERSION))
     {
@@ -148,7 +153,7 @@ BOOLEAN EtpDiskPageCallback(
                     {
                         DiskTreeErrorText = PhFormatString(
                             L"%s %s (%lu)",
-                            L"Unable to start the kernel event tracing session: ",
+                            EtGetUiString(IDS_ET_DISK_TRACE_ERROR_PREFIX, L"Unable to start the kernel event tracing session: "),
                             statusMessage->Buffer,
                             EtEtwStatus
                             );
@@ -158,7 +163,7 @@ BOOLEAN EtpDiskPageCallback(
                     {
                         DiskTreeErrorText = PhFormatString(
                             L"%s (%lu)",
-                            L"Unable to start the kernel event tracing session: ",
+                            EtGetUiString(IDS_ET_DISK_TRACE_ERROR_PREFIX, L"Unable to start the kernel event tracing session: "),
                             EtEtwStatus
                             );
                     }
@@ -169,7 +174,7 @@ BOOLEAN EtpDiskPageCallback(
                 {
                     if (!PhGetOwnTokenAttributes().Elevated)
                     {
-                        TreeNew_SetEmptyText(WindowHandle, &DiskTreeEmptyText, 0);
+                        TreeNew_SetEmptyText(WindowHandle, &DiskEmptyText, 0);
                     }
                 }
             }

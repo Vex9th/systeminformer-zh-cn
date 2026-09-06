@@ -21,11 +21,11 @@ VOID EtGpuMiniInformationInitializing(
 
     memset(&section, 0, sizeof(PH_MINIINFO_LIST_SECTION));
     section.Callback = EtpGpuListSectionCallback;
-    Pointers->CreateListSection(L"GPU", 0, &section);
+    Pointers->CreateListSection2(L"GPU", EtGetUiString(IDS_ET_GROUP_GPU, L"GPU"), 0, &section);
 
     memset(&section, 0, sizeof(PH_MINIINFO_LIST_SECTION));
     section.Callback = EtpGpuMemoryListSectionCallback;
-    Pointers->CreateListSection(L"GPU Memory", 0, &section);
+    Pointers->CreateListSection2(L"GPU Memory", EtGetUiString(IDS_ET_MINI_GPU_MEMORY, L"GPU Memory"), 0, &section);
 }
 
 BOOLEAN EtpGpuListSectionCallback(

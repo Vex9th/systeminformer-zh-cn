@@ -279,6 +279,13 @@ PPH_MINIINFO_LIST_SECTION PhMipCreateListSection(
     _In_ PPH_MINIINFO_LIST_SECTION Template
     );
 
+PPH_MINIINFO_LIST_SECTION PhMipCreateListSection2(
+    _In_ PCWSTR Name,
+    _In_ PCWSTR DisplayName,
+    _In_ ULONG Flags,
+    _In_ PPH_MINIINFO_LIST_SECTION Template
+    );
+
 PPH_MINIINFO_LIST_SECTION PhMipCreateInternalListSection(
     _In_ PCWSTR Name,
     _In_ ULONG Flags,
