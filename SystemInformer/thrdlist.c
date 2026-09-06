@@ -2007,6 +2007,7 @@ BOOLEAN NTAPI PhpThreadTreeNewCallback(
                                     PhInitFormatSR(&format[5], waitTime->sr);
                                     PhInitFormatC(&format[6], L']');
                                     PhMoveReference(&node->LastSystemCallText, PhFormat(format, 7, 0x40));
+                                    PhDereferenceObject(waitTime);
                                 }
                             }
                         }
