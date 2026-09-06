@@ -1356,17 +1356,17 @@ BOOLEAN NTAPI PhpWalkThreadStackCallback(
     {
         if (threadStackContext->NewList->Count)
         {
-            PH_FORMAT format[3];
-
-            PhInitFormatS(&format[0], L"Processing stack frame #");
-            PhInitFormatU(&format[1], threadStackContext->NewList->Count);
-            PhInitFormatS(&format[2], L"...");
-
-            PhMoveReference(&threadStackContext->StatusMessage, PhFormat(format, RTL_NUMBER_OF(format), 0));
+            PhMoveReference(
+                &threadStackContext->StatusMessage,
+                PhFormatString(
+                    PhGetApplicationUiString(IDS_PH_THREAD_STACK_PROCESSING_FRAME_FORMAT),
+                    threadStackContext->NewList->Count
+                    )
+                );
         }
         else
         {
-            PhMoveReference(&threadStackContext->StatusMessage, PhCreateString(L"Processing stack frames..."));
+            PhMoveReference(&threadStackContext->StatusMessage, PhCreateString(PhGetApplicationUiString(IDS_PH_THREAD_STACK_PROCESSING_FRAMES)));
         }
     }
     PhReleaseQueuedLockExclusive(&threadStackContext->StatusLock);
@@ -1654,7 +1654,7 @@ VOID PhpSymbolProviderEventCallbackHandler(
         statusMessage = PhReferenceObject(event->EventMessage);
         break;
     case PH_SYMBOL_EVENT_TYPE_LOAD_END:
-        statusMessage = PhCreateString(L"Loading symbols...");
+        statusMessage = PhCreateString(PhGetApplicationUiString(IDS_PH_THREAD_STACK_LOADING_SYMBOLS));
         break;
     case PH_SYMBOL_EVENT_TYPE_PROGRESS:
         {
@@ -1743,8 +1743,8 @@ HRESULT CALLBACK PhpThreadStackTaskDialogCallback(
             progress = context->SymbolProgress;
             PhReleaseQueuedLockShared(&context->StatusLock);
 
-            SendMessage(context->TaskDialogHandle, TDM_SET_ELEMENT_TEXT, TDE_MAIN_INSTRUCTION, (LPARAM)PhGetStringOrDefault(message, L"Processing stack frames..."));
-            SendMessage(context->TaskDialogHandle, TDM_SET_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)PhGetStringOrDefault(content, L"Loading symbols for image..."));
+            SendMessage(context->TaskDialogHandle, TDM_SET_ELEMENT_TEXT, TDE_MAIN_INSTRUCTION, (LPARAM)PhGetStringOrDefault(message, PhGetApplicationUiString(IDS_PH_THREAD_STACK_PROCESSING_FRAMES)));
+            SendMessage(context->TaskDialogHandle, TDM_SET_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)PhGetStringOrDefault(content, PhGetApplicationUiString(IDS_PH_THREAD_STACK_LOADING_IMAGE_SYMBOLS)));
 
             PhClearReference(&message);
             PhClearReference(&content);
@@ -1825,8 +1825,8 @@ BOOLEAN PhpShowThreadStackWindow(
     config.lpCallbackData = (LONG_PTR)Context;
     config.hwndParent = Context->WindowHandle;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Processing stack frames...";
-    config.pszContent = PhGetStringOrDefault(Context->StatusContent, L"Loading symbols for image...");
+    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_THREAD_STACK_PROCESSING_FRAMES);
+    config.pszContent = PhGetStringOrDefault(Context->StatusContent, PhGetApplicationUiString(IDS_PH_THREAD_STACK_LOADING_IMAGE_SYMBOLS));
     config.cxWidth = 200;
 
     return PhShowTaskDialog(&config, &result, NULL, NULL) && result != IDCANCEL;
@@ -1840,7 +1840,7 @@ NTSTATUS PhpRefreshThreadStack(
     ULONG i;
 
     Context->StopWalk = FALSE;
-    PhMoveReference(&Context->StatusMessage, PhCreateString(L"Processing stack frames..."));
+    PhMoveReference(&Context->StatusMessage, PhCreateString(PhGetApplicationUiString(IDS_PH_THREAD_STACK_PROCESSING_FRAMES)));
 
     if (!PhpShowThreadStackWindow(Context))
     {

@@ -722,8 +722,12 @@ VOID UpdateSetDialogInitialProgressText(
 {
     if (Context->DialogHandle)
     {
+        PPH_STRING progressText;
+
+        progressText = PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOAD_PROGRESS_INITIAL, NULL);
         SendMessage(Context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_MAIN_INSTRUCTION, (LPARAM)MainInstruction);
-        SendMessage(Context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)L"Downloaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s");
+        SendMessage(Context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)PhGetStringOrEmpty(progressText));
+        PhClearReference(&progressText);
     }
     else if (Context->ToastMode)
     {

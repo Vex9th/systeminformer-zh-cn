@@ -11,6 +11,11 @@
 
 #include "exttools.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 // ACPI table structures. These map to firmware-provided structures (1-byte
 // packed). Layouts are taken from the WDK header <acpitabl.h>; we declare a
 // local subset rather than including the WDK header (which depends on WDK-only
@@ -1144,8 +1149,8 @@ INT_PTR CALLBACK EtAcpiTableDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 220, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, L"Value");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 220, EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, EtGetUiString(IDS_ET_COLUMN_VALUE, L"Value"));
             PhSetExtendedListView(context->ListViewHandle);
 
             PhInitializeLayoutManager(&context->LayoutManager, WindowHandle);
@@ -1217,7 +1222,7 @@ INT_PTR CALLBACK EtAcpiTableDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(

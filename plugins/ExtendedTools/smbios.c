@@ -14,6 +14,11 @@
 #include <phfirmware.h>
 #include <secedit.h>
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 typedef struct _SMBIOS_WINDOW_CONTEXT
 {
     HWND WindowHandle;
@@ -4259,8 +4264,8 @@ INT_PTR CALLBACK EtSMBIOSDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, L"Value");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, EtGetUiString(IDS_ET_COLUMN_VALUE, L"Value"));
             PhSetExtendedListView(context->ListViewHandle);
 
             PhInitializeLayoutManager(&context->LayoutManager, WindowHandle);
@@ -4332,7 +4337,7 @@ INT_PTR CALLBACK EtSMBIOSDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -4389,5 +4394,3 @@ VOID EtShowSMBIOSDialog(
         ParentWindowHandle
         );
 }
-
-

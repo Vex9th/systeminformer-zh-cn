@@ -159,6 +159,16 @@ namespace CustomBuildTool
                 ("ReleaseARM64\\", "arm64\\")
             };
 
+            foreach (string file in Directory.EnumerateFiles(SourceDirectoryName, "*", SearchOption.AllDirectories))
+            {
+                if (Path.GetFileName(file).Equals("Updater.dll", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException(
+                        $"Updater.dll is disabled and must not be included in release archives: {file}"
+                        );
+                }
+            }
+
             using (var fileStream = new FileStream(DestinationArchiveFileName, FileMode.Create))
             using (var writer = new ZipWriter(fileStream, CreateWriterOptions(progressReporter)))
             {

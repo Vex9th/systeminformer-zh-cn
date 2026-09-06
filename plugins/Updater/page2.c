@@ -64,7 +64,18 @@ VOID ShowCheckingForUpdatesDialog(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
+    PPH_STRING windowTitle;
+    PPH_STRING releaseChannelText;
+    PPH_STRING canaryChannelText;
+    PPH_STRING channelText;
+    PPH_STRING checkingReleaseText;
     TASKDIALOGCONFIG config;
+
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    releaseChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHECKING_RELEASE_CHANNEL, NULL));
+    canaryChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHECKING_CANARY_CHANNEL, NULL));
+    channelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHECKING_CHANNEL, NULL));
+    checkingReleaseText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHECKING_UPDATED_RELEASE, NULL));
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -75,32 +86,32 @@ VOID ShowCheckingForUpdatesDialog(
     config.pfCallback = CheckingForUpdatesCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
 
-    config.pszWindowTitle = L"System Informer - Updater";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
 
     if (Context->SwitchingChannel)
     {
         switch (Context->Channel)
         {
         case PhReleaseChannel:
-            config.pszMainInstruction = L"Checking the release channel...";
+            config.pszMainInstruction = PhGetStringOrEmpty(releaseChannelText);
             break;
         //case PhPreviewChannel:
         //    config.pszMainInstruction = L"Checking the preview channel...";
         //    break;
         case PhCanaryChannel:
-            config.pszMainInstruction = L"Checking the canary channel...";
+            config.pszMainInstruction = PhGetStringOrEmpty(canaryChannelText);
             break;
         //case PhDeveloperChannel:
         //    config.pszMainInstruction = L"Checking the developer channel...";
         //    break;
         default:
-            config.pszMainInstruction = L"Checking the channel...";
+            config.pszMainInstruction = PhGetStringOrEmpty(channelText);
             break;
         }
     }
     else
     {
-        config.pszMainInstruction = L"Checking for an updated release...";
+        config.pszMainInstruction = PhGetStringOrEmpty(checkingReleaseText);
     }
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);

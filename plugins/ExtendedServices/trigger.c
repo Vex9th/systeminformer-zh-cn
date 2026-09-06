@@ -437,8 +437,24 @@ PES_TRIGGER_CONTEXT EsCreateServiceTriggerContext(
 
     PhSetListViewStyle(TriggersLv, FALSE, TRUE);
     PhSetControlTheme(TriggersLv, L"explorer");
-    PhAddListViewColumn(TriggersLv, 0, 0, 0, LVCFMT_LEFT, 300, L"Trigger");
-    PhAddListViewColumn(TriggersLv, 1, 1, 1, LVCFMT_LEFT, 60, L"Action");
+    PhAddListViewColumn(
+        TriggersLv,
+        0,
+        0,
+        0,
+        LVCFMT_LEFT,
+        300,
+        PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_COLUMN_TRIGGER, NULL)))
+        );
+    PhAddListViewColumn(
+        TriggersLv,
+        1,
+        1,
+        1,
+        LVCFMT_LEFT,
+        60,
+        PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_COLUMN_ACTION, NULL)))
+        );
     PhSetExtendedListView(TriggersLv);
 
     EnableWindow(GetDlgItem(WindowHandle, IDC_EDIT), FALSE);
@@ -1405,7 +1421,15 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
             lvHandle = GetDlgItem(WindowHandle, IDC_LIST);
             PhSetListViewStyle(lvHandle, FALSE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
-            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 280, L"Data");
+            PhAddListViewColumn(
+                lvHandle,
+                0,
+                0,
+                0,
+                LVCFMT_LEFT,
+                280,
+                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_COLUMN_DATA, NULL)))
+                );
 
             if (context->EditingInfo->DataList)
             {
@@ -1645,7 +1669,12 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
 
                         if (!NT_SUCCESS(PhStringToGuid(&guidString, &subTypeBuffer)))
                         {
-                            PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_CUSTOM_SUBTYPE_INVALID, NULL))), L"%s", L"Please ensure that the string is a valid GUID: \"{x-x-x-x-x}\".");
+                            PhShowError2(
+                                WindowHandle,
+                                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_CUSTOM_SUBTYPE_INVALID, NULL))),
+                                L"%s",
+                                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_INVALID_GUID_HINT, NULL)))
+                                );
                             goto DoNotClose;
                         }
                     }

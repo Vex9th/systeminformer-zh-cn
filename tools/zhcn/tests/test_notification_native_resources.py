@@ -154,17 +154,17 @@ class NotificationNativeResourceTests(unittest.TestCase):
                     self.assertNotIn(en, translations["strings"])
 
         self.assertFalse(translations["strings"].keys() & translations["native_strings"].keys())
-        self.assertEqual(len(system_en), 710)
-        self.assertEqual(len(system_zh), 710)
-        self.assertEqual(len(updater_en), 18)
-        self.assertEqual(len(updater_zh), 18)
-        self.assertRegex(system_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_OPTIONS_PLUGINS$")
-        self.assertRegex(system_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2710$")
-        self.assertRegex(updater_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12018$")
+        self.assertEqual(len(system_en), 872)
+        self.assertEqual(len(system_zh), 872)
+        self.assertEqual(len(updater_en), 56)
+        self.assertEqual(len(updater_zh), 56)
+        self.assertRegex(system_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_ACTION_FALLBACK_FORMAT$")
+        self.assertRegex(system_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2872$")
+        self.assertRegex(updater_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12056$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=710"), 2)
-        self.assertEqual(workflow.count(r"plugins\Updater.dll=18"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=872"), 2)
+        self.assertNotIn(r"plugins\Updater.dll=", workflow)
 
     def test_process_notifications_format_resources_in_exact_argument_order(self) -> None:
         created = function_body(self.processes, "PhMwpOnProcessAdded", self.audit)

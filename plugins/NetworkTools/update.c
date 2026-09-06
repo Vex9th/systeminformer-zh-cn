@@ -747,7 +747,11 @@ NTSTATUS GeoLiteUpdateTaskDialogThread(
     context->ParentWindowHandle = Parameter;
 
     config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED;
-    config.pszContent = L"Initializing...";
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_INITIALIZING,
+        NULL
+        )));
     config.lpCallbackData = (LONG_PTR)context;
     config.pfCallback = GeoLiteDialogBootstrapCallback;
 
@@ -864,8 +868,16 @@ VOID ShowGeoLiteUpdateDialog(
         config.pfCallback = GeoLiteMissingKeyTaskDialogCallbackProc;
         config.cxWidth = 200;
 
-        config.pszWindowTitle = L"Network Tools - GeoLite Updater";
-        config.pszMainInstruction = L"Unable to download GeoLite database updates.";
+        config.pszWindowTitle = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+            PluginInstance->DllBase,
+            IDS_NT_GEOLITE_UPDATER_TITLE,
+            NULL
+            )));
+        config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+            PluginInstance->DllBase,
+            IDS_NT_GEOLITE_UPDATES_UNAVAILABLE,
+            NULL
+            )));
         config.pszContent = PhGetStringOrEmpty(licenseRequiredContent);
 
         PhShowTaskDialog(&config, NULL, NULL, NULL);
@@ -879,7 +891,16 @@ VOID ShowGeoLiteUpdateDialog(
         {
             if (!NT_SUCCESS(PhCreateThreadEx(&UpdateDialogThreadHandle, GeoLiteUpdateTaskDialogThread, ParentWindowHandle)))
             {
-                PhShowError2(ParentWindowHandle, L"Unable to create the window.", L"%s", L"");
+                PhShowError2(
+                    ParentWindowHandle,
+                    PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+                        PluginInstance->DllBase,
+                        IDS_NT_UNABLE_CREATE_WINDOW,
+                        NULL
+                        ))),
+                    L"%s",
+                    L""
+                    );
                 return;
             }
 

@@ -14,6 +14,11 @@
 #include <workqueue.h>
 #include <symprv.h>
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 typedef struct _WS_WATCH_CONTEXT
 {
     LONG RefCount;
@@ -84,7 +89,7 @@ VOID EtShowWsWatchDialog(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to open the process.", status, 0);
+        PhShowStatus(ParentWindowHandle, EtGetUiString(IDS_ET_ERROR_OPEN_PROCESS, L"Unable to open the process."), status, 0);
         return;
     }
 
@@ -468,9 +473,9 @@ INT_PTR CALLBACK EtpWsWatchDlgProc(
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->WindowFont, FALSE);
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 250, L"Instruction");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 80, L"Filename");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, L"Count");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 250, EtGetUiString(IDS_ET_CACHE_TYPE_INSTRUCTION, L"Instruction"));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_COLUMN_FILENAME, L"Filename"));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_COLUMN_COUNT, L"Count"));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_WSWATCH_COLUMNS, context->ListViewHandle);
             ExtendedListView_SetSort(context->ListViewHandle, 2, DescendingSortOrder);
@@ -687,11 +692,11 @@ INT_PTR CALLBACK EtpWsWatchDlgProc(
             fileNameWin32 = PhGetListViewItemText(context->ListViewHandle, lvItemIndex, 1);
 
             menu = PhCreateEMenu();
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"&Inspect", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, EtGetUiString(IDS_ET_FW_MENU_INSPECT, L"&Inspect"), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"Open &file location", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, EtGetUiString(IDS_ET_WSWATCH_MENU_OPEN_FILE_LOCATION, L"Open &file location"), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, L"&Copy", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
             PhInsertCopyListViewEMenuItem(menu, 3, context->ListViewHandle);
             PhSetFlagsEMenuItem(menu, 1, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
 

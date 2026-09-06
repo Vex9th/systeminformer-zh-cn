@@ -822,8 +822,8 @@ INT_PTR CALLBACK DotNetPerfPageDlgProc(
 
             PhSetListViewStyle(context->CountersListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->CountersListViewHandle, L"explorer");
-            PhAddListViewColumn(context->CountersListViewHandle, 0, 0, 0, LVCFMT_LEFT, 250, L"Counter");
-            PhAddListViewColumn(context->CountersListViewHandle, 1, 1, 1, LVCFMT_RIGHT, 140, L"Value");
+            PhAddListViewColumn(context->CountersListViewHandle, 0, 0, 0, LVCFMT_LEFT, 250, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_COLUMN_COUNTER, NULL))));
+            PhAddListViewColumn(context->CountersListViewHandle, 1, 1, 1, LVCFMT_RIGHT, 140, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_COLUMN_VALUE, NULL))));
             PhSetExtendedListView(context->CountersListViewHandle);
 
             DotNetPerfAddListViewGroups(context->CountersListViewHandle);
@@ -2237,7 +2237,7 @@ INT_PTR CALLBACK DotNetPerfPageDlgProc(
                 if (numberOfItems != 0)
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_COPY, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_DN_MENU_COPY, NULL))), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, ID_CLR_COPY, context->CountersListViewHandle);
 
                     item = PhShowEMenu(

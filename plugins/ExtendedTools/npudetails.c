@@ -13,6 +13,11 @@
 #include "exttools.h"
 #include "npumon.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 HWND EtNpuDetailsDialogHandle = NULL;
 HANDLE EtNpuDetailsDialogThreadHandle = NULL;
 PH_EVENT EtNpuDetailsInitializedEvent = PH_EVENT_INIT;
@@ -499,8 +504,8 @@ INT_PTR CALLBACK EtpNpuDetailsDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 230, L"Property");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Value");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 230, EtGetUiString(IDS_ET_COLUMN_PROPERTY, L"Property"));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, EtGetUiString(IDS_ET_COLUMN_VALUE, L"Value"));
             //PhSetExtendedListView(context->ListViewHandle);
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
 
@@ -590,7 +595,7 @@ INT_PTR CALLBACK EtpNpuDetailsDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, 1, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -698,7 +703,7 @@ VOID EtShowNpuDetailsDialog(
     {
         if (!NT_SUCCESS(PhCreateThreadEx(&EtNpuDetailsDialogThreadHandle, EtNpuDetailsDialogThreadStart, ParentWindowHandle)))
         {
-            PhShowError2(NULL, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(NULL, EtGetUiString(IDS_ET_OBJMGR_ERROR_CREATE_WINDOW, L"Unable to create the window."), L"%s", L"");
             return;
         }
 

@@ -323,7 +323,7 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
         self.assertEqual(
-            aliases.get("IDS_PH_LAST"), "IDS_PH_OPTIONS_PLUGINS"
+            aliases.get("IDS_PH_LAST"), "IDS_PH_CONFIRM_ACTION_FALLBACK_FORMAT"
         )
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
@@ -334,9 +334,9 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         )
         self.assertEqual({numeric[symbol] for symbol in english}, expected_ids)
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
-        self.assertEqual(len(english), 710)
-        self.assertEqual(len(chinese), 710)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2710$")
+        self.assertEqual(len(english), 872)
+        self.assertEqual(len(chinese), 872)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2872$")
 
     def test_json_uses_exact_existing_and_native_layers(self):
         data = json.loads(
@@ -376,6 +376,7 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
                 "Groups",
                 "Groups (Logon SID)",
                 "Groups (Mandatory label)",
+                "General",
                 "LUIDs",
                 "TrustLevel",
                 "Profile",
@@ -383,8 +384,8 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
                 "Parent",
             }
         }
-        self.assertEqual(len(string_keys), 20)
-        self.assertEqual(len(ALL_RESOURCES) - len(string_keys), 32)
+        self.assertEqual(len(string_keys), 19)
+        self.assertEqual(len(ALL_RESOURCES) - len(string_keys), 33)
 
         for _symbol, _resource_id, english, chinese in ALL_RESOURCES:
             table = strings if english in string_keys else native_strings
@@ -396,7 +397,7 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         workflow = (
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=710"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=872"), 2)
         self.assertNotIn("sys_info.exe=498", workflow)
 
     def test_fresh_scan_removes_all_systeminformer_groups(self):

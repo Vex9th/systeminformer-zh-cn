@@ -98,10 +98,28 @@ VOID ShowUpdateInstallDialog(
     )
 {
     PPH_STRING installButtonText;
+    PPH_STRING windowTitle;
+    PPH_STRING releaseReadyText;
+    PPH_STRING canaryReadyText;
+    PPH_STRING channelReadyText;
+    PPH_STRING updateInstalledText;
+    PPH_STRING installReadyText;
+    PPH_STRING channelVerifiedText;
+    PPH_STRING updateInstalledRestartText;
+    PPH_STRING updateVerifiedText;
     TASKDIALOG_BUTTON taskDialogButtonArray[1];
     TASKDIALOGCONFIG config;
 
     installButtonText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_BUTTON_INSTALL, NULL));
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    releaseReadyText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_SWITCH_RELEASE_READY, NULL));
+    canaryReadyText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_SWITCH_CANARY_READY, NULL));
+    channelReadyText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_SWITCH_CHANNEL_READY, NULL));
+    updateInstalledText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_UPDATE_INSTALLED, NULL));
+    installReadyText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_INSTALL_UPDATE_READY, NULL));
+    channelVerifiedText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHANNEL_VERIFIED_INSTALL, NULL));
+    updateInstalledRestartText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_UPDATE_INSTALLED_RESTART, NULL));
+    updateVerifiedText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_UPDATE_VERIFIED_INSTALL, NULL));
 
     taskDialogButtonArray[0].nButtonID = IDYES;
     taskDialogButtonArray[0].pszButtonText = PhGetStringOrEmpty(installButtonText);
@@ -117,38 +135,38 @@ VOID ShowUpdateInstallDialog(
     config.pButtons = taskDialogButtonArray;
     config.cButtons = RTL_NUMBER_OF(taskDialogButtonArray);
 
-    config.pszWindowTitle = L"System Informer - Updater";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
     if (Context->SwitchingChannel)
     {
         switch (Context->Channel)
         {
         case PhReleaseChannel:
-            config.pszMainInstruction = L"Ready to switch to the release channel?";
+            config.pszMainInstruction = PhGetStringOrEmpty(releaseReadyText);
             break;
         //case PhPreviewChannel:
         //    config.pszMainInstruction = L"Ready to switch to the preview channel?";
         //    break;
         case PhCanaryChannel:
-            config.pszMainInstruction = L"Ready to switch to the canary channel?";
+            config.pszMainInstruction = PhGetStringOrEmpty(canaryReadyText);
             break;
         //case PhDeveloperChannel:
         //    config.pszMainInstruction = L"Ready to switch to the developer channel?";
         //    break;
         default:
-            config.pszMainInstruction = L"Ready to switch the channel?";
+            config.pszMainInstruction = PhGetStringOrEmpty(channelReadyText);
             break;
         }
 
-        config.pszContent = L"The channel has been successfully downloaded and verified.\r\n\r\nClick Install to continue.";
+        config.pszContent = PhGetStringOrEmpty(channelVerifiedText);
     }
     else
     {
 #if defined(PH_BUILD_MSIX)
-        config.pszMainInstruction = L"Update installed.";
-        config.pszContent = L"The update has been downloaded and installed.\r\n\r\nRestart System Informer to apply the update.";
+        config.pszMainInstruction = PhGetStringOrEmpty(updateInstalledText);
+        config.pszContent = PhGetStringOrEmpty(updateInstalledRestartText);
 #else
-        config.pszMainInstruction = L"Ready to install update?";
-        config.pszContent = L"The update has been successfully downloaded and verified.\r\n\r\nClick Install to continue.";
+        config.pszMainInstruction = PhGetStringOrEmpty(installReadyText);
+        config.pszContent = PhGetStringOrEmpty(updateVerifiedText);
 #endif
     }
 
@@ -220,7 +238,12 @@ VOID ShowLatestVersionDialog(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
+    PPH_STRING windowTitle;
+    PPH_STRING latestVersionText;
     TASKDIALOGCONFIG config;
+
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    latestVersionText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_LATEST_VERSION, NULL));
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -231,8 +254,8 @@ VOID ShowLatestVersionDialog(
     config.pfCallback = FinalTaskDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
 
-    config.pszWindowTitle = L"System Informer - Updater";
-    config.pszMainInstruction = L"You're running the latest version.";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
+    config.pszMainInstruction = PhGetStringOrEmpty(latestVersionText);
     config.pszContent = PH_AUTO_T(PH_STRING, UpdaterGetLatestVersionText(Context))->Buffer;
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
@@ -246,7 +269,12 @@ VOID ShowNewerVersionDialog(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
+    PPH_STRING windowTitle;
+    PPH_STRING preReleaseText;
     TASKDIALOGCONFIG config;
+
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    preReleaseText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_PRE_RELEASE_BUILD, NULL));
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -257,8 +285,8 @@ VOID ShowNewerVersionDialog(
     config.pfCallback = FinalTaskDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
 
-    config.pszWindowTitle = L"System Informer - Updater";
-    config.pszMainInstruction = L"You're running a pre-release build.";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
+    config.pszMainInstruction = PhGetStringOrEmpty(preReleaseText);
     config.pszContent = PH_AUTO_T(PH_STRING, UpdaterGetLatestVersionText(Context))->Buffer;
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
@@ -276,7 +304,26 @@ VOID ShowUpdateFailedDialog(
     _In_ BOOLEAN SignatureFailed
     )
 {
+    PPH_STRING windowTitle;
+    PPH_STRING errorChannelText;
+    PPH_STRING errorUpdateText;
+    PPH_STRING signatureChannelText;
+    PPH_STRING signatureUpdateText;
+    PPH_STRING hashChannelText;
+    PPH_STRING hashUpdateText;
+    PPH_STRING retryChannelText;
+    PPH_STRING retryUpdateText;
     TASKDIALOGCONFIG config;
+
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    errorChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_ERROR_DOWNLOADING_CHANNEL, NULL));
+    errorUpdateText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_ERROR_DOWNLOADING_UPDATE, NULL));
+    signatureChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_SIGNATURE_FAILED_CHANNEL, NULL));
+    signatureUpdateText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_SIGNATURE_FAILED_UPDATE, NULL));
+    hashChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_HASH_FAILED_CHANNEL, NULL));
+    hashUpdateText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_HASH_FAILED_UPDATE, NULL));
+    retryChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_RETRY_DOWNLOAD_CHANNEL, NULL));
+    retryUpdateText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_RETRY_DOWNLOAD_UPDATE, NULL));
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -285,25 +332,25 @@ VOID ShowUpdateFailedDialog(
     config.dwCommonButtons = TDCBF_CLOSE_BUTTON | TDCBF_RETRY_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, Context->WindowDpi);
 
-    config.pszWindowTitle = L"System Informer - Updater";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
     if (Context->SwitchingChannel)
-        config.pszMainInstruction = L"Error downloading the channel.";
+        config.pszMainInstruction = PhGetStringOrEmpty(errorChannelText);
     else
-        config.pszMainInstruction = L"Error downloading the update.";
+        config.pszMainInstruction = PhGetStringOrEmpty(errorUpdateText);
 
     if (SignatureFailed)
     {
         if (Context->SwitchingChannel)
-            config.pszContent = L"Signature check failed. Click Retry to download the channel again.";
+            config.pszContent = PhGetStringOrEmpty(signatureChannelText);
         else
-            config.pszContent = L"Signature check failed. Click Retry to download the update again.";
+            config.pszContent = PhGetStringOrEmpty(signatureUpdateText);
     }
     else if (HashFailed)
     {
         if (Context->SwitchingChannel)
-            config.pszContent = L"Hash check failed. Click Retry to download the channel again.";
+            config.pszContent = PhGetStringOrEmpty(hashChannelText);
         else
-            config.pszContent = L"Hash check failed. Click Retry to download the update again.";
+            config.pszContent = PhGetStringOrEmpty(hashUpdateText);
     }
     else
     {
@@ -324,17 +371,17 @@ VOID ShowUpdateFailedDialog(
             else
             {
                 if (Context->SwitchingChannel)
-                    config.pszContent = L"Click Retry to download the channel again.";
+                    config.pszContent = PhGetStringOrEmpty(retryChannelText);
                 else
-                    config.pszContent = L"Click Retry to download the update again.";
+                    config.pszContent = PhGetStringOrEmpty(retryUpdateText);
             }
         }
         else
         {
             if (Context->SwitchingChannel)
-                config.pszContent = L"Click Retry to download the channel again.";
+                config.pszContent = PhGetStringOrEmpty(retryChannelText);
             else
-                config.pszContent = L"Click Retry to download the update again.";
+                config.pszContent = PhGetStringOrEmpty(retryUpdateText);
         }
     }
 

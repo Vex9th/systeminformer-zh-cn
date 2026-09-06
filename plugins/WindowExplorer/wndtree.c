@@ -12,6 +12,8 @@
 
 #include "wndexp.h"
 
+#define WE_WINDOW_TREE_COLUMN_TEXT_CONTEXT 0x57704354
+
 _Function_class_(PH_HASHTABLE_EQUAL_FUNCTION)
 BOOLEAN WepWindowNodeHashtableEqualFunction(
     _In_ PVOID Entry1,
@@ -93,6 +95,40 @@ BOOLEAN WeWindowTreeFilterCallback(
     return FALSE;
 }
 
+static VOID WepAddTreeNewResourceColumn(
+    _In_ HWND TreeNewHandle,
+    _Inout_ PPH_LIST ColumnTextList,
+    _In_ ULONG Id,
+    _In_ ULONG ResourceId,
+    _In_ ULONG Width,
+    _In_ ULONG Alignment,
+    _In_ ULONG DisplayIndex
+    )
+{
+    PPH_STRING columnText;
+
+    columnText = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+
+    if (PhAddTreeNewColumn(
+        TreeNewHandle,
+        Id,
+        TRUE,
+        PhGetStringOrEmpty(columnText),
+        Width,
+        Alignment,
+        DisplayIndex,
+        0
+        ))
+    {
+        if (columnText)
+            PhAddItemList(ColumnTextList, columnText);
+    }
+    else
+    {
+        PhClearReference(&columnText);
+    }
+}
+
 /**
  * Initializes a window tree.
  *
@@ -106,6 +142,7 @@ VOID WeInitializeWindowTree(
     _Out_ PWE_WINDOW_TREE_CONTEXT Context
     )
 {
+    PPH_LIST columnTextList;
     PPH_STRING settings;
 
     memset(Context, 0, sizeof(WE_WINDOW_TREE_CONTEXT));
@@ -127,12 +164,14 @@ VOID WeInitializeWindowTree(
     TreeNew_SetRedraw(TreeNewHandle, FALSE);
     TreeNew_SetCallback(TreeNewHandle, WepWindowTreeNewCallback, Context);
 
-    PhAddTreeNewColumn(TreeNewHandle, WEWNTLC_CLASS, TRUE, L"Class", 180, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(TreeNewHandle, WEWNTLC_HANDLE, TRUE, L"Handle", 70, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(TreeNewHandle, WEWNTLC_TEXT, TRUE, L"Text", 220, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(TreeNewHandle, WEWNTLC_PROCESS, TRUE, L"Process", 150, PH_ALIGN_LEFT, 3, 0);
-    PhAddTreeNewColumn(TreeNewHandle, WEWNTLC_THREAD, TRUE, L"Thread", 150, PH_ALIGN_LEFT, 4, 0);
-    PhAddTreeNewColumn(TreeNewHandle, WEWNTLC_MODULE, TRUE, L"Module", 150, PH_ALIGN_LEFT, 5, 0);
+    columnTextList = PhCreateList(WEWNTLC_MAXIMUM);
+    PhSetWindowContext(TreeNewHandle, WE_WINDOW_TREE_COLUMN_TEXT_CONTEXT, columnTextList);
+    WepAddTreeNewResourceColumn(TreeNewHandle, columnTextList, WEWNTLC_CLASS, IDS_WE_GROUP_CLASS, 180, PH_ALIGN_LEFT, 0);
+    WepAddTreeNewResourceColumn(TreeNewHandle, columnTextList, WEWNTLC_HANDLE, IDS_WE_COLUMN_HANDLE, 70, PH_ALIGN_LEFT, 1);
+    WepAddTreeNewResourceColumn(TreeNewHandle, columnTextList, WEWNTLC_TEXT, IDS_WE_COLUMN_TEXT, 220, PH_ALIGN_LEFT, 2);
+    WepAddTreeNewResourceColumn(TreeNewHandle, columnTextList, WEWNTLC_PROCESS, IDS_WE_COLUMN_PROCESS, 150, PH_ALIGN_LEFT, 3);
+    WepAddTreeNewResourceColumn(TreeNewHandle, columnTextList, WEWNTLC_THREAD, IDS_WE_WINDOW_PROPERTY_THREAD, 150, PH_ALIGN_LEFT, 4);
+    WepAddTreeNewResourceColumn(TreeNewHandle, columnTextList, WEWNTLC_MODULE, IDS_WE_COLUMN_MODULE, 150, PH_ALIGN_LEFT, 5);
 
     PhInitializeTreeNewFilterSupport(&Context->FilterSupport, Context->TreeNewHandle, Context->NodeList);
     Context->TreeFilterEntry = PhAddTreeNewFilter(&Context->FilterSupport, WeWindowTreeFilterCallback, Context);
@@ -154,6 +193,7 @@ VOID WeDeleteWindowTree(
     _In_ PWE_WINDOW_TREE_CONTEXT Context
     )
 {
+    PPH_LIST columnTextList;
     PPH_STRING settings;
     ULONG i;
 
@@ -163,6 +203,16 @@ VOID WeDeleteWindowTree(
     settings = PhCmSaveSettings(Context->TreeNewHandle);
     PhSetStringSetting2(SETTING_NAME_WINDOW_TREE_LIST_COLUMNS, &settings->sr);
     PhDereferenceObject(settings);
+
+    if (columnTextList = PhGetWindowContext(Context->TreeNewHandle, WE_WINDOW_TREE_COLUMN_TEXT_CONTEXT))
+    {
+        for (i = 0; i < WEWNTLC_MAXIMUM; i++)
+            TreeNew_RemoveColumn(Context->TreeNewHandle, i);
+
+        PhRemoveWindowContext(Context->TreeNewHandle, WE_WINDOW_TREE_COLUMN_TEXT_CONTEXT);
+        PhDereferenceObjects(columnTextList->Items, columnTextList->Count);
+        PhDereferenceObject(columnTextList);
+    }
 
     if (Context->NodeList)
     {

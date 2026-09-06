@@ -176,7 +176,7 @@ VOID ShowFileUploadProgressDialog(
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
     config.pszWindowTitle = uploadingText->Buffer;
     config.pszMainInstruction = uploadingText->Buffer;
-    config.pszContent = L"Uploaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s";
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_UPLOAD_PROGRESS_INITIAL, NULL)));
 
     config.cxWidth = 200;
     config.lpCallbackData = (LONG_PTR)Context;

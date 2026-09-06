@@ -72,17 +72,31 @@ class CloseNativeResourceTests(unittest.TestCase):
         self.assertEqual(english.get("IDS_PH_CLOSE"), "Close")
         self.assertEqual(chinese.get("IDS_PH_CLOSE"), "关闭")
 
-    def test_phlib_property_sheet_close_loads_nullable_app_resource_and_releases(self):
-        guisup = compact(function_body(source(PHLIB_ROOT / "guisup.c"), "PhModalPropSheetWindowProcedure"))
-        expected = compact(
+    def test_phlib_property_sheet_close_helper_returns_owned_text_and_releases(self):
+        guisup_source = source(PHLIB_ROOT / "guisup.c")
+        helper = compact(function_body(guisup_source, "PhpLoadPropSheetCloseText"))
+        callback = compact(function_body(guisup_source, "PhModalPropSheetWindowProcedure"))
+        load = compact(
             'closeText = PhApplicationUiResourceInstance ? PhLoadUiString('
             'PhApplicationUiResourceInstance, IDS_PH_CLOSE, NULL) : NULL;'
-            'PhSetDialogItemText(hwndDlg, IDCANCEL, '
-            'PhGetStringOrDefault(closeText, L"Close"));'
+        )
+        fallback = compact('if (!closeText) closeText = PhCreateString(L"Close");')
+        use = compact(
+            'closeText = PhpLoadPropSheetCloseText();'
+            'PhSetDialogItemText(hwndDlg, IDCANCEL, closeText->Buffer);'
             'PhClearReference(&closeText);'
         )
-        self.assertIn(expected, guisup)
-        self.assertNotIn("PH_AUTO", guisup)
+
+        self.assertIn(load, helper)
+        self.assertIn(fallback, helper)
+        self.assertIn("returncloseText;", helper)
+        self.assertIn(use, callback)
+        self.assertLess(helper.index(load), helper.index(fallback))
+        self.assertLess(
+            callback.index("closeText=PhpLoadPropSheetCloseText();"),
+            callback.index("PhClearReference(&closeText);"),
+        )
+        self.assertNotIn("PH_AUTO", helper + callback)
 
     def test_optional_graph_close_button_copies_text_before_releasing_resource(self):
         graph = compact(function_body(source(PHLIB_ROOT / "graphprp.c"), "PhPropSheetNewWndProc"))
@@ -128,37 +142,25 @@ class CloseNativeResourceTests(unittest.TestCase):
         )
 
         self.assertRegex(header, r"(?m)^#define\s+IDS_WE_CLOSE\s+12110$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12122$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12168$")
         self.assertEqual(english.get("IDS_WE_CLOSE"), "Close")
         self.assertEqual(chinese.get("IDS_WE_CLOSE"), "关闭")
-        self.assertEqual(len(english), 122)
-        self.assertEqual(len(chinese), 122)
+        self.assertEqual(len(english), 168)
+        self.assertEqual(len(chinese), 168)
         self.assertEqual(translations["strings"].get("Close"), "关闭")
         self.assertNotIn("Close", translations["native_strings"])
-        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=122"), 2)
+        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=168"), 2)
         self.assertNotIn(r"plugins\WindowExplorer.dll=110", workflow)
 
     def test_window_explorer_menu_owns_duplicate_after_resource_release(self):
         body = compact(function_body(source(WINDOW_EXPLORER_ROOT / "wnddlg.c"), "WepCreateWindowMenu"))
-        load = compact(
-            'closeText = PhLoadUiString(PluginInstance->DllBase, IDS_WE_CLOSE, NULL);'
-        )
-        duplicate = compact(
-            'closeMenuText = PhDuplicateStringZ('
-            'PhGetStringOrDefault(closeText, L"Close"));'
-        )
-        release = compact('PhClearReference(&closeText);')
-        create = compact(
-            'PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, ID_WINDOW_CLOSE, '
-            'closeMenuText, NULL, NULL)'
-        )
-
-        for value in (load, duplicate, release, create):
-            self.assertIn(value, body)
-        self.assertLess(body.index(load), body.index(duplicate))
-        self.assertLess(body.index(duplicate), body.index(release))
-        self.assertLess(body.index(release), body.index(create))
-        self.assertNotIn("PhFree(closeMenuText)", body)
+        helper = compact(function_body(source(WINDOW_EXPLORER_ROOT / "wnddlg.c"), "WepCreateResourceEMenuItem"))
+        self.assertIn(compact("menuText = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);"), helper)
+        self.assertIn(compact("ownedText = PhDuplicateStringZ(PhGetStringOrEmpty(menuText));"), helper)
+        self.assertIn(compact("PhClearReference(&menuText);"), helper)
+        self.assertIn(compact("PhCreateEMenuItem(Flags | PH_EMENU_TEXT_OWNED, Id, ownedText, NULL, NULL)"), helper)
+        self.assertIn(compact("WepCreateResourceEMenuItem(0, ID_WINDOW_CLOSE, IDS_WE_CLOSE)"), body)
+        self.assertNotIn("PhFree(ownedText)", helper)
         self.assertNotIn(
             compact('PhCreateEMenuItem(0, ID_WINDOW_CLOSE, L"Close", NULL, NULL)'),
             body,
@@ -179,10 +181,12 @@ class CloseNativeResourceTests(unittest.TestCase):
             for entry in entries
             if entry["english"] == "Close"
         ]
-        self.assertEqual(
-            close_entries,
-            [("phlib/guisup.c", "c_window_text", "Close")],
+        self.assertEqual(close_entries, [])
+        helper = function_body(
+            source(PHLIB_ROOT / "guisup.c"),
+            "PhpLoadPropSheetCloseText",
         )
+        self.assertEqual(helper.count('L"Close"'), 1)
 
 
 if __name__ == "__main__":

@@ -1828,7 +1828,7 @@ NTSTATUS OnlineChecksUploadDialogThread(
 
     config.hInstance = PluginInstance->DllBase;
     config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED;
-    config.pszContent = L"Initializing...";
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_INITIALIZING, NULL)));
     config.lpCallbackData = (LONG_PTR)context;
     config.pfCallback = OnlineChecksTaskDialogBootstrap;
     PhShowTaskDialog(&config, NULL, NULL, NULL);

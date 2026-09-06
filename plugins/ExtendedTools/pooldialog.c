@@ -12,6 +12,11 @@
 #include "exttools.h"
 #include "poolmon.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 static HWND EtPoolTagDialogHandle = NULL;
 static HANDLE EtPoolTagDialogThreadHandle = NULL;
 static PH_EVENT EtPoolTagDialogInitializedEvent = PH_EVENT_INIT;
@@ -214,7 +219,7 @@ INT_PTR CALLBACK EtPoolMonDlgProc(
             PhCreateSearchControl(
                 WindowHandle,
                 context->SearchboxHandle,
-                L"Search Pool Tags (Ctrl+K)",
+                EtGetUiString(IDS_ET_POOL_SEARCH, L"Search Pool Tags (Ctrl+K)"),
                 EtPoolMonSearchControlCallback,
                 context
                 );
@@ -347,9 +352,9 @@ INT_PTR CALLBACK EtPoolMonDlgProc(
                     if (selectedNode = EtGetSelectedPoolTagNode(context))
                     {
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Show allocations", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, EtGetUiString(IDS_ET_POOL_MENU_SHOW_ALLOCATIONS, L"Show allocations"), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"&Copy\bCtrl+C", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, EtGetUiString(IDS_ET_FW_MENU_COPY_SHORTCUT, L"&Copy\bCtrl+C"), NULL, NULL), ULONG_MAX);
                         PhInsertCopyCellEMenuItem(menu, 2, context->TreeNewHandle, contextMenuEvent->Column);
 
                         selectedItem = PhShowEMenu(
@@ -475,7 +480,7 @@ VOID EtShowPoolTableDialog(
     {
         if (!NT_SUCCESS(PhCreateThreadEx(&EtPoolTagDialogThreadHandle, EtShowPoolMonDialogThread, ParentWindowHandle)))
         {
-            PhShowError2(ParentWindowHandle, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(ParentWindowHandle, EtGetUiString(IDS_ET_OBJMGR_ERROR_CREATE_WINDOW, L"Unable to create the window."), L"%s", L"");
             return;
         }
 

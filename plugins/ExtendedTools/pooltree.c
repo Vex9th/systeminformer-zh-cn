@@ -12,6 +12,11 @@
 #include "exttools.h"
 #include "poolmon.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 #define SORT_FUNCTION(Column) EtPoolTreeNewCompare##Column
 #define BEGIN_SORT_FUNCTION(Column) static int __cdecl EtPoolTreeNewCompare##Column( \
     _In_ void *_context, \
@@ -947,33 +952,33 @@ VOID EtInitializePoolTagTree(
     TreeNew_SetRedraw(Context->TreeNewHandle, FALSE);
     TreeNew_SetCallback(Context->TreeNewHandle, EtPoolTagTreeNewCallback, Context);
 
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TAG, TRUE, L"Tag Name", 50, PH_ALIGN_LEFT, -2, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_DRIVER, TRUE, L"Driver", 82, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_DESCRIPTION, TRUE, L"Description", 140, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDALLOC, TRUE, L"Paged allocations (total)", 80, PH_ALIGN_RIGHT, 2, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDFREE, TRUE, L"Paged frees (total)", 80, PH_ALIGN_RIGHT, 3, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDCURRENT, TRUE, L"Paged current (total)", 80, PH_ALIGN_RIGHT, 4, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDTOTAL, TRUE, L"Paged bytes (total)", 80, PH_ALIGN_LEFT, 5, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDALLOC, TRUE, L"Non-paged allocations (total)", 80, PH_ALIGN_RIGHT, 6, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDFREE, TRUE, L"Non-paged frees (total)", 80, PH_ALIGN_RIGHT, 7, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDCURRENT, TRUE, L"Non-paged current (total)", 80, PH_ALIGN_RIGHT, 8, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDTOTAL, TRUE, L"Non-paged bytes (total)", 80, PH_ALIGN_LEFT, 9, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_ALLOC, FALSE, L"Allocations (total)", 80, PH_ALIGN_RIGHT, 2, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_FREE, FALSE, L"Frees (total)", 80, PH_ALIGN_RIGHT, 3, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_CURRENT, FALSE, L"Current (total)", 80, PH_ALIGN_RIGHT, 4, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TOTAL, FALSE, L"Bytes (total)", 80, PH_ALIGN_LEFT, 5, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDALLOCDELTA, FALSE, L"Paged allocations (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDFREEDELTA, FALSE, L"Paged frees (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDCURRENTDELTA, FALSE, L"Paged current (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDTOTALDELTA, FALSE, L"Paged bytes (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDALLOCDELTA, FALSE, L"Non-paged allocations (delta)", 80, PH_ALIGN_RIGHT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDFREEDELTA, FALSE, L"Non-paged frees (delta)", 80, PH_ALIGN_RIGHT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDCURRENTDELTA, FALSE, L"Non-paged current (delta)", 80, PH_ALIGN_RIGHT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDTOTALDELTA, FALSE, L"Non-paged bytes (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_ALLOCDELTA, FALSE, L"Allocations (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_FREEDELTA, FALSE, L"Frees (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_CURRENTDELTA, FALSE, L"Current (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TOTALDELTA, FALSE, L"Bytes (delta)", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TAG, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_TAG_NAME, L"Tag Name"), 50, PH_ALIGN_LEFT, -2, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_DRIVER, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_DRIVER, L"Driver"), 82, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_DESCRIPTION, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_DESCRIPTION, L"Description"), 140, PH_ALIGN_LEFT, 1, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDALLOC, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_ALLOCATIONS_TOTAL, L"Paged allocations (total)"), 80, PH_ALIGN_RIGHT, 2, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDFREE, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_FREES_TOTAL, L"Paged frees (total)"), 80, PH_ALIGN_RIGHT, 3, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDCURRENT, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_CURRENT_TOTAL, L"Paged current (total)"), 80, PH_ALIGN_RIGHT, 4, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDTOTAL, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_BYTES_TOTAL, L"Paged bytes (total)"), 80, PH_ALIGN_LEFT, 5, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDALLOC, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_ALLOCATIONS_TOTAL, L"Non-paged allocations (total)"), 80, PH_ALIGN_RIGHT, 6, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDFREE, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_FREES_TOTAL, L"Non-paged frees (total)"), 80, PH_ALIGN_RIGHT, 7, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDCURRENT, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_CURRENT_TOTAL, L"Non-paged current (total)"), 80, PH_ALIGN_RIGHT, 8, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDTOTAL, TRUE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_BYTES_TOTAL, L"Non-paged bytes (total)"), 80, PH_ALIGN_LEFT, 9, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_ALLOC, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_ALLOCATIONS_TOTAL, L"Allocations (total)"), 80, PH_ALIGN_RIGHT, 2, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_FREE, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_FREES_TOTAL, L"Frees (total)"), 80, PH_ALIGN_RIGHT, 3, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_CURRENT, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_CURRENT_TOTAL, L"Current (total)"), 80, PH_ALIGN_RIGHT, 4, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TOTAL, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_BYTES_TOTAL, L"Bytes (total)"), 80, PH_ALIGN_LEFT, 5, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDALLOCDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_ALLOCATIONS_DELTA, L"Paged allocations (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDFREEDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_FREES_DELTA, L"Paged frees (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDCURRENTDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_CURRENT_DELTA, L"Paged current (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PAGEDTOTALDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_PAGED_BYTES_DELTA, L"Paged bytes (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDALLOCDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_ALLOCATIONS_DELTA, L"Non-paged allocations (delta)"), 80, PH_ALIGN_RIGHT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDFREEDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_FREES_DELTA, L"Non-paged frees (delta)"), 80, PH_ALIGN_RIGHT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDCURRENTDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_CURRENT_DELTA, L"Non-paged current (delta)"), 80, PH_ALIGN_RIGHT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_NONPAGEDTOTALDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_NONPAGED_BYTES_DELTA, L"Non-paged bytes (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_ALLOCDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_ALLOCATIONS_DELTA, L"Allocations (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_FREEDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_FREES_DELTA, L"Frees (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_CURRENTDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_CURRENT_DELTA, L"Current (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TOTALDELTA, FALSE, EtGetUiString(IDS_ET_POOL_COLUMN_BYTES_DELTA, L"Bytes (delta)"), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
 
     PhInitializeTreeNewFilterSupport(&Context->FilterSupport, Context->TreeNewHandle, Context->NodeList);
 

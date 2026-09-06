@@ -28,6 +28,45 @@
 #define WE_WINDOW_PROPERTIES_CONTEXT_SLOT 0x57704f70
 #define WE_WINDOW_PROPERTIES_HIGHLIGHT_TIMER 0x5770
 
+static PPH_EMENU_ITEM WepCreateResourceEMenuItem(
+    _In_ ULONG Flags,
+    _In_ ULONG Id,
+    _In_ ULONG ResourceId
+    )
+{
+    PPH_STRING menuText;
+    PWSTR ownedText;
+
+    menuText = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+    ownedText = PhDuplicateStringZ(PhGetStringOrEmpty(menuText));
+    PhClearReference(&menuText);
+
+    return PhCreateEMenuItem(Flags | PH_EMENU_TEXT_OWNED, Id, ownedText, NULL, NULL);
+}
+
+static VOID WepAddListViewResourceColumn(
+    _In_ HWND ListViewHandle,
+    _In_ LONG Index,
+    _In_ LONG Format,
+    _In_ LONG Width,
+    _In_ ULONG ResourceId
+    )
+{
+    PPH_STRING columnText;
+
+    columnText = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+    PhAddListViewColumn(
+        ListViewHandle,
+        Index,
+        Index,
+        Index,
+        Format,
+        Width,
+        PhGetStringOrEmpty(columnText)
+        );
+    PhClearReference(&columnText);
+}
+
 typedef struct _SYMBOL_RESOLVE_CONTEXT
 {
     LIST_ENTRY ListEntry;
@@ -2292,8 +2331,8 @@ INT_PTR CALLBACK WepWindowGeneralDlgProc(
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->Parent->TreeWindowFont, TRUE);
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 180, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Value");
+            WepAddListViewResourceColumn(context->ListViewHandle, 0, LVCFMT_LEFT, 180, IDS_WE_WINDOW_PROPERTY_NAME);
+            WepAddListViewResourceColumn(context->ListViewHandle, 1, LVCFMT_LEFT, 200, IDS_WE_COLUMN_VALUE);
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_WINDOWS_PROPERTY_COLUMNS, context->ListViewHandle);
 
@@ -2368,7 +2407,7 @@ INT_PTR CALLBACK WepWindowGeneralDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_COPY, IDS_WE_MENU_COPY), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -2578,7 +2617,12 @@ static INT_PTR CALLBACK WepWindowPropEditDlgProc(
 
                     if (!context->WindowPropCreate && PhIsNullOrEmptyString(windowPropName))
                     {
-                        PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_ADD_WINDOW_PROPERTY, NULL))), L"%s", L"The property name is empty.");
+                        PhShowError2(
+                            WindowHandle,
+                            PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_ADD_WINDOW_PROPERTY, NULL))),
+                            L"%s",
+                            PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_PROPERTY_NAME_EMPTY, NULL)))
+                            );
                         break;
                     }
 
@@ -2730,9 +2774,9 @@ INT_PTR CALLBACK WepWindowPropListDlgProc(
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->Parent->TreeWindowFont, TRUE);
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 80, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 160, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"Value");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, L"Alias");
+            WepAddListViewResourceColumn(context->ListViewHandle, 1, LVCFMT_LEFT, 160, IDS_WE_WINDOW_PROPERTY_NAME);
+            WepAddListViewResourceColumn(context->ListViewHandle, 2, LVCFMT_LEFT, 100, IDS_WE_COLUMN_VALUE);
+            WepAddListViewResourceColumn(context->ListViewHandle, 3, LVCFMT_LEFT, 100, IDS_WE_COLUMN_ALIAS);
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_WINDOWS_PROPLIST_COLUMNS, context->ListViewHandle);
 
@@ -2788,16 +2832,16 @@ INT_PTR CALLBACK WepWindowPropListDlgProc(
                     PhGetListViewContextMenuPoint(context->ListViewHandle, &point);
 
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_ADD, L"Add", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_ADD, IDS_WE_MENU_ADD), ULONG_MAX);
 
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDD_ENVEDIT, L"Edit", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDD_ENVEDIT, IDS_WE_MENU_EDIT), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_DELETE, L"Delete", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_DELETE, IDS_WE_MENU_DELETE), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_COPY, IDS_WE_MENU_COPY), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
                 }
 
@@ -2862,9 +2906,9 @@ INT_PTR CALLBACK WepWindowPropListDlgProc(
 
                                 if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                                     WindowHandle,
-                                    L"remove",
-                                    L"the window property",
-                                    L"The window property will be permanently deleted.",
+                                    PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_ACTION_REMOVE, NULL))),
+                                    PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_OBJECT_WINDOW_PROPERTY, NULL))),
+                                    PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_WINDOW_PROPERTY_DELETE_WARNING, NULL))),
                                     FALSE
                                     ))
                                 {
@@ -3011,8 +3055,8 @@ INT_PTR CALLBACK WepWindowPropStoreDlgProc(
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->Parent->TreeWindowFont, TRUE);
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 50, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 150, L"Value");
+            WepAddListViewResourceColumn(context->ListViewHandle, 1, LVCFMT_LEFT, 200, IDS_WE_WINDOW_PROPERTY_NAME);
+            WepAddListViewResourceColumn(context->ListViewHandle, 2, LVCFMT_LEFT, 150, IDS_WE_COLUMN_VALUE);
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_WINDOWS_PROPSTORAGE_COLUMNS, context->ListViewHandle);
 
@@ -3068,7 +3112,7 @@ INT_PTR CALLBACK WepWindowPropStoreDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_COPY, IDS_WE_MENU_COPY), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -3270,8 +3314,8 @@ INT_PTR CALLBACK WepWindowAttributeDlgProc(
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->Parent->TreeWindowFont, TRUE);
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 50, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 150, L"Value");
+            WepAddListViewResourceColumn(context->ListViewHandle, 1, LVCFMT_LEFT, 200, IDS_WE_WINDOW_PROPERTY_NAME);
+            WepAddListViewResourceColumn(context->ListViewHandle, 2, LVCFMT_LEFT, 150, IDS_WE_COLUMN_VALUE);
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_WINDOWS_DWMATTRIBUTES_COLUMNS, context->ListViewHandle);
 
@@ -3327,7 +3371,7 @@ INT_PTR CALLBACK WepWindowAttributeDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_COPY, IDS_WE_MENU_COPY), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -3766,8 +3810,8 @@ INT_PTR CALLBACK WepWindowUiaDlgProc(
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->Parent->TreeWindowFont, TRUE);
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 180, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Value");
+            WepAddListViewResourceColumn(context->ListViewHandle, 0, LVCFMT_LEFT, 180, IDS_WE_WINDOW_PROPERTY_NAME);
+            WepAddListViewResourceColumn(context->ListViewHandle, 1, LVCFMT_LEFT, 200, IDS_WE_COLUMN_VALUE);
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_WINDOWS_UIA_COLUMNS, context->ListViewHandle);
 
@@ -3824,7 +3868,7 @@ INT_PTR CALLBACK WepWindowUiaDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_COPY, IDS_WE_MENU_COPY), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -4113,11 +4157,11 @@ INT_PTR CALLBACK WepWindowChildrenDlgProc(
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->Parent->TreeWindowFont, TRUE);
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 80, L"Handle");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 150, L"Class");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 250, L"Text");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_RIGHT, 80, L"Process ID");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_RIGHT, 80, L"Thread ID");
+            WepAddListViewResourceColumn(context->ListViewHandle, 0, LVCFMT_LEFT, 80, IDS_WE_COLUMN_HANDLE);
+            WepAddListViewResourceColumn(context->ListViewHandle, 1, LVCFMT_LEFT, 150, IDS_WE_GROUP_CLASS);
+            WepAddListViewResourceColumn(context->ListViewHandle, 2, LVCFMT_LEFT, 250, IDS_WE_COLUMN_TEXT);
+            WepAddListViewResourceColumn(context->ListViewHandle, 3, LVCFMT_RIGHT, 80, IDS_WE_UIA_PROPERTY_PROCESS_ID);
+            WepAddListViewResourceColumn(context->ListViewHandle, 4, LVCFMT_RIGHT, 80, IDS_WE_COLUMN_THREAD_ID);
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_WINDOWS_CHILDREN_COLUMNS, context->ListViewHandle);
 
@@ -4208,8 +4252,8 @@ INT_PTR CALLBACK WepWindowChildrenDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"&Properties", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, 1, IDS_WE_MENU_PROPERTIES_MNEMONIC), ULONG_MAX);
+                    PhInsertEMenuItem(menu, WepCreateResourceEMenuItem(0, PHAPP_IDC_COPY, IDS_WE_MENU_COPY), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(

@@ -457,7 +457,7 @@ HRESULT CALLBACK TaskDialogBootstrapCallback(
                             config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
                             config.pszMainIcon = TD_ERROR_ICON;
                             config.pszWindowTitle = SystemInformer_GetWindowName();
-                            config.pszMainInstruction = L"Unable to update the IFEO key for priority.";
+                            config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY, NULL)));
                             config.cxWidth = 200;
 
                             if (context->StatusMessage = PhGetStatusMessage(status, 0))
@@ -500,7 +500,7 @@ HRESULT CALLBACK TaskDialogBootstrapCallback(
                             config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
                             config.pszMainIcon = TD_ERROR_ICON;
                             config.pszWindowTitle = SystemInformer_GetWindowName();
-                            config.pszMainInstruction = L"Unable to update the IFEO key for priority.";
+                            config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY, NULL)));
                             config.cxWidth = 200;
 
                             if (context->StatusMessage = PhGetStatusMessage(status, 0))
@@ -543,7 +543,7 @@ HRESULT CALLBACK TaskDialogBootstrapCallback(
                             config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
                             config.pszMainIcon = TD_ERROR_ICON;
                             config.pszWindowTitle = SystemInformer_GetWindowName();
-                            config.pszMainInstruction = L"Unable to update the IFEO key for priority.";
+                            config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY, NULL)));
                             config.cxWidth = 200;
 
                             if (context->StatusMessage = PhGetStatusMessage(status, 0))
@@ -578,19 +578,19 @@ VOID ShowProcessPriorityDialog(
     _In_ PPH_STRING FileName
     )
 {
-    static TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
+    TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
     {
-        { PHAPP_ID_PRIORITY_REALTIME, L"Realtime" },
-        { PHAPP_ID_PRIORITY_HIGH, L"High" },
-        { PHAPP_ID_PRIORITY_ABOVENORMAL, L"Above normal" },
-        { PHAPP_ID_PRIORITY_NORMAL, L"Normal" },
-        { PHAPP_ID_PRIORITY_BELOWNORMAL, L"Below normal" },
-        { PHAPP_ID_PRIORITY_IDLE, L"Idle" },
+        { PHAPP_ID_PRIORITY_REALTIME, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_REALTIME, NULL))) },
+        { PHAPP_ID_PRIORITY_HIGH, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_HIGH, NULL))) },
+        { PHAPP_ID_PRIORITY_ABOVENORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_ABOVE_NORMAL, NULL))) },
+        { PHAPP_ID_PRIORITY_NORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_NORMAL, NULL))) },
+        { PHAPP_ID_PRIORITY_BELOWNORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_BELOW_NORMAL, NULL))) },
+        { PHAPP_ID_PRIORITY_IDLE, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_IDLE, NULL))) },
     };
-    static TASKDIALOG_BUTTON TaskDialogButtonArray[] =
+    TASKDIALOG_BUTTON TaskDialogButtonArray[] =
     {
-        { IDYES, L"Save" },
-        { IDCANCEL, L"Cancel" },
+        { IDYES, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_SAVE, NULL))) },
+        { IDCANCEL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_CANCEL, NULL))) },
     };
     PUSERNOTES_TASK_IFEO_CONTEXT context;
     TASKDIALOGCONFIG config;
@@ -606,9 +606,8 @@ VOID ShowProcessPriorityDialog(
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_ENABLE_HYPERLINKS | TDF_POSITION_RELATIVE_TO_WINDOW;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(MenuItem->OwnerWindow));
     config.pszWindowTitle = PhGetString(FileName);
-    config.pszMainInstruction = L"Select the default process priority.";
-    config.pszContent = L"The process priority will be applied by Windows even when System Informer isn't currently running. "
-    L"Note: Realtime priority requires the User has the SeIncreaseBasePriorityPrivilege or the process running as Administrator.";
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PROCESS_PRIORITY_INSTRUCTION, NULL)));
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PROCESS_PRIORITY_CONTENT, NULL)));
     config.nDefaultButton = IDCANCEL;
     config.pRadioButtons = TaskDialogRadioButtonArray;
     config.cRadioButtons = RTL_NUMBER_OF(TaskDialogRadioButtonArray);
@@ -663,17 +662,17 @@ VOID ShowProcessIoPriorityDialog(
     _In_ PPH_STRING FileName
     )
 {
-    static TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
+    TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
     {
-        { PHAPP_ID_IOPRIORITY_HIGH , L"High" },
-        { PHAPP_ID_IOPRIORITY_NORMAL, L"Normal" },
-        { PHAPP_ID_IOPRIORITY_LOW , L"Low" },
-        { PHAPP_ID_IOPRIORITY_VERYLOW, L"Very low" },
+        { PHAPP_ID_IOPRIORITY_HIGH, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_HIGH, NULL))) },
+        { PHAPP_ID_IOPRIORITY_NORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_NORMAL, NULL))) },
+        { PHAPP_ID_IOPRIORITY_LOW, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_LOW, NULL))) },
+        { PHAPP_ID_IOPRIORITY_VERYLOW, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_VERY_LOW, NULL))) },
     };
-    static TASKDIALOG_BUTTON TaskDialogButtonArray[] =
+    TASKDIALOG_BUTTON TaskDialogButtonArray[] =
     {
-        { IDYES, L"Save" },
-        { IDCANCEL, L"Cancel" },
+        { IDYES, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_SAVE, NULL))) },
+        { IDCANCEL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_CANCEL, NULL))) },
     };
     PUSERNOTES_TASK_IFEO_CONTEXT context;
     TASKDIALOGCONFIG config;
@@ -689,9 +688,8 @@ VOID ShowProcessIoPriorityDialog(
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_ENABLE_HYPERLINKS | TDF_POSITION_RELATIVE_TO_WINDOW;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(MenuItem->OwnerWindow));
     config.pszWindowTitle = PhGetString(FileName);
-    config.pszMainInstruction = L"Select the default process IO priority.";
-    config.pszContent = L"The IO priority will be applied by Windows even when System Informer isn't currently running. "
-    L"Note: High IO priority requires the User has the SeIncreaseBasePriorityPrivilege or the process running as Administrator.";
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_IO_PRIORITY_INSTRUCTION, NULL)));
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_IO_PRIORITY_CONTENT, NULL)));
     config.nDefaultButton = IDCANCEL;
     config.pRadioButtons = TaskDialogRadioButtonArray;
     config.cRadioButtons = RTL_NUMBER_OF(TaskDialogRadioButtonArray);
@@ -740,18 +738,18 @@ VOID ShowProcessPagePriorityDialog(
     _In_ PPH_STRING FileName
     )
 {
-    static TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
+    TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
     {
-        { PHAPP_ID_PAGEPRIORITY_NORMAL, L"Normal" },
-        { PHAPP_ID_PAGEPRIORITY_BELOWNORMAL, L"Below normal" },
-        { PHAPP_ID_PAGEPRIORITY_MEDIUM, L"Medium" },
-        { PHAPP_ID_PAGEPRIORITY_LOW , L"Low" },
-        { PHAPP_ID_PAGEPRIORITY_VERYLOW, L"Very low" },
+        { PHAPP_ID_PAGEPRIORITY_NORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_NORMAL, NULL))) },
+        { PHAPP_ID_PAGEPRIORITY_BELOWNORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_BELOW_NORMAL, NULL))) },
+        { PHAPP_ID_PAGEPRIORITY_MEDIUM, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_MEDIUM, NULL))) },
+        { PHAPP_ID_PAGEPRIORITY_LOW, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_LOW, NULL))) },
+        { PHAPP_ID_PAGEPRIORITY_VERYLOW, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_VERY_LOW, NULL))) },
     };
-    static TASKDIALOG_BUTTON TaskDialogButtonArray[] =
+    TASKDIALOG_BUTTON TaskDialogButtonArray[] =
     {
-        { IDYES, L"Save" },
-        { IDCANCEL, L"Cancel" },
+        { IDYES, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_SAVE, NULL))) },
+        { IDCANCEL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_CANCEL, NULL))) },
     };
     PUSERNOTES_TASK_IFEO_CONTEXT context;
     TASKDIALOGCONFIG config;
@@ -767,8 +765,8 @@ VOID ShowProcessPagePriorityDialog(
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_ENABLE_HYPERLINKS | TDF_POSITION_RELATIVE_TO_WINDOW;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(MenuItem->OwnerWindow));
     config.pszWindowTitle = PhGetString(FileName);
-    config.pszMainInstruction = L"Select the default process page priority.";
-    config.pszContent = L"The page priority will be applied by Windows even when System Informer isn't currently running.";
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PAGE_PRIORITY_INSTRUCTION, NULL)));
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PAGE_PRIORITY_CONTENT, NULL)));
     config.nDefaultButton = IDCANCEL;
     config.pRadioButtons = TaskDialogRadioButtonArray;
     config.cRadioButtons = RTL_NUMBER_OF(TaskDialogRadioButtonArray);
@@ -838,19 +836,19 @@ VOID ShowProcessD3DKMTPriorityDialog(
 
     if (NT_SUCCESS(status))
     {
-        static TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
+        TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
         {
-            { D3DKMT_SCHEDULINGPRIORITYCLASS_REALTIME, L"Realtime" },
-            { D3DKMT_SCHEDULINGPRIORITYCLASS_HIGH, L"High" },
-            { D3DKMT_SCHEDULINGPRIORITYCLASS_ABOVE_NORMAL, L"Above normal" },
-            { D3DKMT_SCHEDULINGPRIORITYCLASS_NORMAL, L"Normal" },
-            { D3DKMT_SCHEDULINGPRIORITYCLASS_BELOW_NORMAL, L"Below normal" },
-            { D3DKMT_SCHEDULINGPRIORITYCLASS_IDLE, L"Idle" },
+            { D3DKMT_SCHEDULINGPRIORITYCLASS_REALTIME, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_REALTIME, NULL))) },
+            { D3DKMT_SCHEDULINGPRIORITYCLASS_HIGH, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_HIGH, NULL))) },
+            { D3DKMT_SCHEDULINGPRIORITYCLASS_ABOVE_NORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_ABOVE_NORMAL, NULL))) },
+            { D3DKMT_SCHEDULINGPRIORITYCLASS_NORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_NORMAL, NULL))) },
+            { D3DKMT_SCHEDULINGPRIORITYCLASS_BELOW_NORMAL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_BELOW_NORMAL, NULL))) },
+            { D3DKMT_SCHEDULINGPRIORITYCLASS_IDLE, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_PRIORITY_IDLE, NULL))) },
         };
-        static TASKDIALOG_BUTTON TaskDialogButtonArray[] =
+        TASKDIALOG_BUTTON TaskDialogButtonArray[] =
         {
-            { IDYES, L"Save" },
-            { IDCANCEL, L"Cancel" },
+            { IDYES, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_SAVE, NULL))) },
+            { IDCANCEL, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_BUTTON_CANCEL, NULL))) },
         };
         TASKDIALOGCONFIG config;
         ULONG selectedButton = 0;
@@ -859,9 +857,9 @@ VOID ShowProcessD3DKMTPriorityDialog(
         config.cbSize = sizeof(TASKDIALOGCONFIG);
         config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_ENABLE_HYPERLINKS | TDF_POSITION_RELATIVE_TO_WINDOW;
         config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(MenuItem->OwnerWindow));
-        config.pszWindowTitle = L"D3DKMT scheduling priority";
-        config.pszMainInstruction = L"Select the graphics scheduling priority.";
-        config.pszContent = L"Note: Realtime priority requires the User has the SeIncreaseBasePriorityPrivilege or the process running as Administrator.";
+        config.pszWindowTitle = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_D3DKMT_PRIORITY_TITLE, NULL)));
+        config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_GRAPHICS_PRIORITY_INSTRUCTION, NULL)));
+        config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_REALTIME_PRIORITY_NOTE, NULL)));
         config.nDefaultButton = IDCANCEL;
         config.nDefaultRadioButton = priorityClass;
         config.pRadioButtons = TaskDialogRadioButtonArray;
@@ -1362,9 +1360,9 @@ VOID NTAPI MenuItemCallback(
                     {
                         PhShowInformation2(
                             menuItem->OwnerWindow,
-                            L"Unable to query the current affinity.",
-                            PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_MULTI_GROUP_AFFINITY, NULL))),
-                            PhGetString(PH_AUTO(PhLoadUiString(
+                            PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))),
+                            PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_MULTI_GROUP_AFFINITY, NULL))),
+                            PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
                                 PluginInstance->DllBase,
                                 IDS_UN_AFFINITY_INDIVIDUAL_THREADS,
                                 NULL
@@ -1373,7 +1371,7 @@ VOID NTAPI MenuItemCallback(
                     }
                     else
                     {
-                        PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))), status, 0);
+                        PhShowStatus(menuItem->OwnerWindow, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))), status, 0);
                     }
                 }
             }
@@ -1422,9 +1420,9 @@ VOID NTAPI MenuItemCallback(
                         {
                             PhShowInformation2(
                                 menuItem->OwnerWindow,
-                                L"Unable to query the current affinity.",
-                                PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_MULTI_GROUP_AFFINITY, NULL))),
-                                PhGetString(PH_AUTO(PhLoadUiString(
+                                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))),
+                                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_MULTI_GROUP_AFFINITY, NULL))),
+                                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
                                     PluginInstance->DllBase,
                                     IDS_UN_AFFINITY_INDIVIDUAL_THREADS,
                                     NULL
@@ -1433,7 +1431,7 @@ VOID NTAPI MenuItemCallback(
                         }
                         else
                         {
-                            PhShowStatus(menuItem->OwnerWindow, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))), status, 0);
+                            PhShowStatus(menuItem->OwnerWindow, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UN_UNABLE_QUERY_PROCESS_AFFINITY, NULL))), status, 0);
                         }
                     }
                 }

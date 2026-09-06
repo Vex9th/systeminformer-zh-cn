@@ -11,6 +11,11 @@
 
 #include "exttools.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 BOOLEAN EtUiCancelIoThread(
     _In_ HWND hWnd,
     _In_ PPH_THREAD_ITEM Thread
@@ -23,8 +28,8 @@ BOOLEAN EtUiCancelIoThread(
 
     if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
         hWnd,
-        L"end",
-        L"I/O for the selected thread",
+        EtGetUiString(IDS_ET_CONFIRM_ACTION_END, L"end"),
+        EtGetUiString(IDS_ET_CONFIRM_THREAD_IO, L"I/O for the selected thread"),
         NULL,
         FALSE
         ))

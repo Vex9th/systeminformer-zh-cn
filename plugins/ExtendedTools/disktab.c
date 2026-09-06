@@ -14,6 +14,11 @@
 #include <toolstatusintf.h>
 #include "disktabp.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 static PPH_MAIN_TAB_PAGE DiskPage = NULL;
 static BOOLEAN DiskTreeNewCreated = FALSE;
 static HWND DiskTreeNewHandle = NULL;
@@ -301,21 +306,21 @@ VOID EtInitializeDiskTreeList(
     TreeNew_SetImageList(WindowHandle, PhGetProcessSmallImageList());
 
     // Default columns
-    PhAddTreeNewColumn(WindowHandle, ETDSTNC_NAME, TRUE, L"Name", 100, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(WindowHandle, ETDSTNC_PID, TRUE, L"PID", 50, PH_ALIGN_RIGHT, 1, DT_RIGHT);
-    PhAddTreeNewColumn(WindowHandle, ETDSTNC_FILE, TRUE, L"File", 400, PH_ALIGN_LEFT, 2, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_READRATEAVERAGE, TRUE, L"Read rate average", 70, PH_ALIGN_RIGHT, 3, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_WRITERATEAVERAGE, TRUE, L"Write rate average", 70, PH_ALIGN_RIGHT, 4, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_TOTALRATEAVERAGE, TRUE, L"Total rate average", 70, PH_ALIGN_RIGHT, 5, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_READRATE, TRUE, L"Read rate", 70, PH_ALIGN_RIGHT, 6, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_WRITERATE, TRUE, L"Write rate", 70, PH_ALIGN_RIGHT, 7, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_TOTALRATE, TRUE, L"Total rate", 70, PH_ALIGN_RIGHT, 8, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_READBYTES, TRUE, L"Read bytes", 70, PH_ALIGN_RIGHT, 9, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_WRITEBYTES, TRUE, L"Write bytes", 70, PH_ALIGN_RIGHT, 10, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_TOTALBYTES, TRUE, L"Total bytes", 70, PH_ALIGN_RIGHT, 11, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_IOPRIORITY, TRUE, L"I/O priority", 70, PH_ALIGN_LEFT, 12, 0, TRUE);
-    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_RESPONSETIME, TRUE, L"Response time (ms)", 70, PH_ALIGN_RIGHT, 13, 0, TRUE);
-    PhAddTreeNewColumn(WindowHandle, ETDSTNC_ORIGINALNAME, FALSE, L"Original name", 200, PH_ALIGN_LEFT, ULONG_MAX, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(WindowHandle, ETDSTNC_NAME, TRUE, EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"), 100, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(WindowHandle, ETDSTNC_PID, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_PID, L"PID"), 50, PH_ALIGN_RIGHT, 1, DT_RIGHT);
+    PhAddTreeNewColumn(WindowHandle, ETDSTNC_FILE, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_FILE, L"File"), 400, PH_ALIGN_LEFT, 2, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_READRATEAVERAGE, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_READ_RATE_AVERAGE, L"Read rate average"), 70, PH_ALIGN_RIGHT, 3, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_WRITERATEAVERAGE, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_WRITE_RATE_AVERAGE, L"Write rate average"), 70, PH_ALIGN_RIGHT, 4, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_TOTALRATEAVERAGE, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_TOTAL_RATE_AVERAGE, L"Total rate average"), 70, PH_ALIGN_RIGHT, 5, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_READRATE, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_READ_RATE, L"Read rate"), 70, PH_ALIGN_RIGHT, 6, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_WRITERATE, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_WRITE_RATE, L"Write rate"), 70, PH_ALIGN_RIGHT, 7, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_TOTALRATE, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_TOTAL_RATE, L"Total rate"), 70, PH_ALIGN_RIGHT, 8, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_READBYTES, TRUE, EtGetUiString(IDS_ET_READ_BYTES, L"Read bytes"), 70, PH_ALIGN_RIGHT, 9, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_WRITEBYTES, TRUE, EtGetUiString(IDS_ET_WRITE_BYTES, L"Write bytes"), 70, PH_ALIGN_RIGHT, 10, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_TOTALBYTES, TRUE, EtGetUiString(IDS_ET_TOTAL_BYTES, L"Total bytes"), 70, PH_ALIGN_RIGHT, 11, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_IOPRIORITY, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_IO_PRIORITY, L"I/O priority"), 70, PH_ALIGN_LEFT, 12, 0, TRUE);
+    PhAddTreeNewColumnEx(WindowHandle, ETDSTNC_RESPONSETIME, TRUE, EtGetUiString(IDS_ET_DISK_COLUMN_RESPONSE_TIME_MS, L"Response time (ms)"), 70, PH_ALIGN_RIGHT, 13, 0, TRUE);
+    PhAddTreeNewColumn(WindowHandle, ETDSTNC_ORIGINALNAME, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_ORIGINAL_NAME, L"Original name"), 200, PH_ALIGN_LEFT, ULONG_MAX, DT_PATH_ELLIPSIS);
 
     PhInitializeTreeNewFilterSupport(&FilterSupport, WindowHandle, DiskNodeList);
 
@@ -1346,7 +1351,7 @@ VOID EtHandleDiskCommand(
                 }
                 else
                 {
-                    PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_SELECT_PROCESS, NULL))), L"%s", L"The process does not exist.");
+                    PhShowError2(WindowHandle, PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_SELECT_PROCESS, NULL))), L"%s", EtGetUiString(IDS_ET_WCT_PROCESS_NOT_FOUND, L"The process does not exist."));
                 }
 
                 PhDereferenceObject(diskItem);
@@ -1511,14 +1516,14 @@ VOID EtShowDiskContextMenu(
         PPH_EMENU_ITEM item;
 
         menu = PhCreateEMenu();
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_GOTOPROCESS, L"&Go to process", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_GOTOPROCESS, EtGetUiString(IDS_ET_FW_MENU_GO_TO_PROCESS, L"&Go to process"), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_OPENFILELOCATION, L"Open &file location\bEnter", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_OPENFILELOCATION, EtGetUiString(IDS_ET_FW_MENU_OPEN_FILE_LOCATION, L"Open &file location\bEnter"), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_INSPECT, L"&Inspect", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_PROPERTIES, L"P&roperties", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_INSPECT, EtGetUiString(IDS_ET_FW_MENU_INSPECT, L"&Inspect"), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_PROPERTIES, EtGetUiString(IDS_ET_FW_MENU_PROPERTIES, L"P&roperties"), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_COPY, L"&Copy\bCtrl+C", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DISK_COPY, EtGetUiString(IDS_ET_FW_MENU_COPY_SHORTCUT, L"&Copy\bCtrl+C"), NULL, NULL), ULONG_MAX);
         PhInsertCopyCellEMenuItem(menu, ID_DISK_COPY, TreeWindowHandle, ContextMenuEvent->Column);
         PhSetFlagsEMenuItem(menu, ID_DISK_OPENFILELOCATION, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
 

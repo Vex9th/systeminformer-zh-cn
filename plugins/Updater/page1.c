@@ -85,6 +85,9 @@ VOID ShowCheckForUpdatesDialog(
     PPH_STRING checkButtonText;
     PPH_STRING stableChannelText;
     PPH_STRING canaryChannelText;
+    PPH_STRING windowTitle;
+    PPH_STRING mainInstruction;
+    PPH_STRING content;
     TASKDIALOG_BUTTON updateTaskDialogButtonArray[1];
     //static TASKDIALOG_BUTTON SwitchTaskDialogButtonArray[] =
     //{
@@ -96,6 +99,9 @@ VOID ShowCheckForUpdatesDialog(
     checkButtonText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_BUTTON_CHECK, NULL));
     stableChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHANNEL_STABLE_RECOMMENDED, NULL));
     canaryChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHANNEL_CANARY_PREVIEW, NULL));
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    mainInstruction = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHECK_RELEASE_PROMPT, NULL));
+    content = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CLICK_CHECK_CONTINUE, NULL));
 
     updateTaskDialogButtonArray[0].nButtonID = IDOK;
     updateTaskDialogButtonArray[0].pszButtonText = PhGetStringOrEmpty(checkButtonText);
@@ -115,7 +121,7 @@ VOID ShowCheckForUpdatesDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.cxWidth = 200;
 
-    config.pszWindowTitle = L"System Informer - Updater";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
 
     switch (Context->Channel)
     {
@@ -165,8 +171,8 @@ VOID ShowCheckForUpdatesDialog(
     {
         config.pButtons = updateTaskDialogButtonArray;
         config.cButtons = RTL_NUMBER_OF(updateTaskDialogButtonArray);
-        config.pszMainInstruction = L"Check for an updated System Informer release?";
-        config.pszContent = L"Click Check to continue.";
+        config.pszMainInstruction = PhGetStringOrEmpty(mainInstruction);
+        config.pszContent = PhGetStringOrEmpty(content);
     }
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);

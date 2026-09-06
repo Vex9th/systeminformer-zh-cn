@@ -34,6 +34,35 @@
 #define DN_ASM_UPDATE_MSG (WM_APP + 1)
 #define DN_ASM_UPDATE_ERROR (WM_APP + 2)
 
+static PH_INITONCE DotNetAsmUiStringsInitOnce = PH_INITONCE_INIT;
+static PPH_STRING DotNetAsmUiStrings[
+    IDS_DN_MENU_HIGHLIGHT_NATIVE - IDS_DN_MENU_INSPECT + 1
+    ];
+
+static PCWSTR DotNetAsmGetUiString(
+    _In_ ULONG ResourceId
+    )
+{
+    if (ResourceId < IDS_DN_MENU_INSPECT || ResourceId > IDS_DN_MENU_HIGHLIGHT_NATIVE)
+        return L"";
+
+    if (PhBeginInitOnce(&DotNetAsmUiStringsInitOnce))
+    {
+        for (ULONG resourceId = IDS_DN_MENU_INSPECT; resourceId <= IDS_DN_MENU_HIGHLIGHT_NATIVE; resourceId++)
+        {
+            DotNetAsmUiStrings[resourceId - IDS_DN_MENU_INSPECT] = PhLoadUiString(
+                PluginInstance->DllBase,
+                resourceId,
+                NULL
+                );
+        }
+
+        PhEndInitOnce(&DotNetAsmUiStringsInitOnce);
+    }
+
+    return PhGetStringOrEmpty(DotNetAsmUiStrings[ResourceId - IDS_DN_MENU_INSPECT]);
+}
+
 typedef struct _DNA_NODE
 {
     PH_TREENEW_NODE Node;
@@ -667,13 +696,13 @@ VOID DotNetAsmShowContextMenu(
         return;
 
     menu = PhCreateEMenu();
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_INSPECT, L"&Inspect", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_INSPECTNATIVE, L"Inspect native image", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_INSPECT, DotNetAsmGetUiString(IDS_DN_MENU_INSPECT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_INSPECTNATIVE, DotNetAsmGetUiString(IDS_DN_MENU_INSPECT_NATIVE_IMAGE), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_OPENFILELOCATION, L"Open &file location", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_OPENNATIVELOCATION, L"Open native file location", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_OPENFILELOCATION, DotNetAsmGetUiString(IDS_DN_MENU_OPEN_FILE_LOCATION), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_OPENNATIVELOCATION, DotNetAsmGetUiString(IDS_DN_MENU_OPEN_NATIVE_FILE_LOCATION), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_CLR_COPY, DotNetAsmGetUiString(IDS_DN_MENU_COPY), NULL, NULL), ULONG_MAX);
     PhInsertCopyCellEMenuItem(menu, ID_CLR_COPY, Context->TreeNewHandle, ContextMenuEvent->Column);
     PhSetFlagsEMenuItem(menu, ID_CLR_INSPECT, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
 
@@ -1111,13 +1140,13 @@ VOID DotNetAsmInitializeTreeList(
     TreeNew_SetCallback(Context->TreeNewHandle, DotNetAsmTreeNewCallback, Context);
     SendMessage(TreeNew_GetTooltips(Context->TreeNewHandle), TTM_SETMAXTIPWIDTH, 0, MAXSHORT);
 
-    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_STRUCTURE, TRUE, L"Structure", 240, PH_ALIGN_LEFT, -2, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_ADDRESS, TRUE, L"Address", 50, PH_ALIGN_RIGHT, 1, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_FLAGS, TRUE, L"Flags", 80, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_PATH, TRUE, L"File name", 600, PH_ALIGN_LEFT, 3, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_NATIVEPATH, FALSE, L"Native image path", 600, PH_ALIGN_LEFT, 4, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_BASEADDRESS, FALSE, L"Base address", 100, PH_ALIGN_LEFT, 5, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_MVID, FALSE, L"MVID", 100, PH_ALIGN_LEFT, 6, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_STRUCTURE, TRUE, DotNetAsmGetUiString(IDS_DN_COLUMN_STRUCTURE), 240, PH_ALIGN_LEFT, -2, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_ADDRESS, TRUE, DotNetAsmGetUiString(IDS_DN_COLUMN_ADDRESS), 50, PH_ALIGN_RIGHT, 1, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_FLAGS, TRUE, DotNetAsmGetUiString(IDS_DN_COLUMN_FLAGS), 80, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_PATH, TRUE, DotNetAsmGetUiString(IDS_DN_COLUMN_FILE_NAME), 600, PH_ALIGN_LEFT, 3, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_NATIVEPATH, FALSE, DotNetAsmGetUiString(IDS_DN_COLUMN_NATIVE_IMAGE_PATH), 600, PH_ALIGN_LEFT, 4, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_BASEADDRESS, FALSE, DotNetAsmGetUiString(IDS_DN_COLUMN_BASE_ADDRESS), 100, PH_ALIGN_LEFT, 5, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(Context->TreeNewHandle, DNATNC_MVID, FALSE, DotNetAsmGetUiString(IDS_DN_COLUMN_MVID), 100, PH_ALIGN_LEFT, 6, DT_PATH_ELLIPSIS);
 
     PhInitializeTreeNewFilterSupport(&Context->TreeFilterSupport, Context->TreeNewHandle, Context->NodeList);
     Context->TreeFilterEntry = PhAddTreeNewFilter(&Context->TreeFilterSupport, DotNetAsmTreeFilterCallback, Context);
@@ -2378,7 +2407,7 @@ INT_PTR CALLBACK DotNetAsmPageDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchBoxHandle,
-                L"Search Assemblies (Ctrl+K)",
+                DotNetAsmGetUiString(IDS_DN_SEARCH_ASSEMBLIES),
                 DotNetAsmSearchControlCallback,
                 context
                 );
@@ -2460,11 +2489,11 @@ INT_PTR CALLBACK DotNetAsmPageDlgProc(
                         break;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, dynamicItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIDE_DYNAMIC_OPTION, L"Hide dynamic", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, nativeItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIDE_NATIVE_OPTION, L"Hide native", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, dynamicItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIDE_DYNAMIC_OPTION, DotNetAsmGetUiString(IDS_DN_MENU_HIDE_DYNAMIC), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, nativeItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIDE_NATIVE_OPTION, DotNetAsmGetUiString(IDS_DN_MENU_HIDE_NATIVE), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, highlightDynamicItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIGHLIGHT_DYNAMIC_OPTION, L"Highlight dynamic", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, highlightNativeItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIGHLIGHT_NATIVE_OPTION, L"Highlight native", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, highlightDynamicItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIGHLIGHT_DYNAMIC_OPTION, DotNetAsmGetUiString(IDS_DN_MENU_HIGHLIGHT_DYNAMIC), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, highlightNativeItem = PhCreateEMenuItem(0, DN_ASM_MENU_HIGHLIGHT_NATIVE_OPTION, DotNetAsmGetUiString(IDS_DN_MENU_HIGHLIGHT_NATIVE), NULL, NULL), ULONG_MAX);
 
                     if (context->HideDynamicModules)
                         dynamicItem->Flags |= PH_EMENU_CHECKED;
@@ -2573,4 +2602,3 @@ INT_PTR CALLBACK DotNetAsmPageDlgProc(
 
     return FALSE;
 }
-

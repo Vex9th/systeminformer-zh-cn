@@ -199,9 +199,21 @@ VOID ShowDbCheckForUpdatesDialog(
     config.pfCallback = CheckForUpdatesDbCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
 
-    config.pszWindowTitle = L"Network Tools - GeoLite Updater";
-    config.pszMainInstruction = L"Download the latest GeoLite database?";
-    config.pszContent = L"This product includes GeoLite2 data created by MaxMind, available from <a href=\"https://www.maxmind.com\">https://www.maxmind.com</a>\r\n\r\nSelect download to continue.";
+    config.pszWindowTitle = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_UPDATER_TITLE,
+        NULL
+        )));
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_DOWNLOAD_QUESTION,
+        NULL
+        )));
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_DOWNLOAD_SOURCE_CONTENT,
+        NULL
+        )));
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -221,9 +233,21 @@ VOID ShowDbCheckingForUpdatesDialog(
     config.pfCallback = CheckingForUpdatesDbCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
 
-    config.pszWindowTitle = L"Network Tools - GeoLite Updater";
-    config.pszMainInstruction = L"Downloading";
-    config.pszContent = L"Downloaded: ~ of ~ (~%%)\r\nSpeed: ~/s";
+    config.pszWindowTitle = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_UPDATER_TITLE,
+        NULL
+        )));
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_DOWNLOADING,
+        NULL
+        )));
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_DOWNLOAD_PROGRESS,
+        NULL
+        )));
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -254,9 +278,21 @@ VOID ShowDbInstallRestartDialog(
     config.pButtons = restartButtonArray;
     config.cButtons = ARRAYSIZE(restartButtonArray);
 
-    config.pszWindowTitle = L"Network Tools - GeoLite Updater";
-    config.pszMainInstruction = L"The GeoLite database has been updated.";
-    config.pszContent = L"Please restart System Informer for the changes to take effect...";
+    config.pszWindowTitle = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_UPDATER_TITLE,
+        NULL
+        )));
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_UPDATED,
+        NULL
+        )));
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_RESTART_REQUIRED,
+        NULL
+        )));
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }
@@ -277,8 +313,16 @@ VOID ShowDbUpdateFailedDialog(
     config.pfCallback = FinalDbTaskDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
 
-    config.pszWindowTitle = L"Network Tools - GeoLite Updater";
-    config.pszMainInstruction = L"Error downloading GeoLite database.";
+    config.pszWindowTitle = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_UPDATER_TITLE,
+        NULL
+        )));
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_DOWNLOAD_ERROR,
+        NULL
+        )));
 
     if (Context->ErrorCode)
     {
@@ -308,7 +352,11 @@ VOID ShowDbUpdateFailedDialog(
     }
     else
     {
-        config.pszContent = L"Click Retry to download the update again.";
+        config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+            PluginInstance->DllBase,
+            IDS_NT_GEOLITE_RETRY_DOWNLOAD,
+            NULL
+            )));
     }
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
@@ -325,9 +373,21 @@ VOID ShowDbInvalidSettingsDialog(
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION;
     config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
-    config.pszWindowTitle = L"Network Tools - GeoLite Updater";
-    config.pszMainInstruction = L"Unable to download GeoLite update.";
-    config.pszContent = L"Please check the Options > Network Tools > GeoLite ID or Key are configured before downloading geoLite updates.";
+    config.pszWindowTitle = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_UPDATER_TITLE,
+        NULL
+        )));
+    config.pszMainInstruction = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_UPDATE_UNAVAILABLE,
+        NULL
+        )));
+    config.pszContent = PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_GEOLITE_INVALID_SETTINGS,
+        NULL
+        )));
     config.cxWidth = 200;
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);

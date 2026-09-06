@@ -838,26 +838,26 @@ BOOLEAN NTAPI DeviceTreeCallback(
             node = (PDEVICE_NODE)contextMenuEvent->Node;
 
             menu = PhCreateEMenu();
-            PhInsertEMenuItem(menu, gotoServiceItem = PhCreateEMenuItem(0, 108, L"Go to service...", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, gotoServiceItem = PhCreateEMenuItem(0, 108, HardwareDevicesGetUiString(IDS_HD_MENU_GO_TO_SERVICE), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DEVICE_SEARCH_ONLINE, L"Search &online\bCtrl+M", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DEVICE_SEARCH_DRIVER_UPDATE, L"Search driver update", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DEVICE_SEARCH_ONLINE, HardwareDevicesGetUiString(IDS_HD_MENU_SEARCH_ONLINE), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_DEVICE_SEARCH_DRIVER_UPDATE, HardwareDevicesGetUiString(IDS_HD_MENU_SEARCH_DRIVER_UPDATE), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, enable = PhCreateEMenuItem(0, 0, L"Enable", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, disable = PhCreateEMenuItem(0, 1, L"Disable", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, restart = PhCreateEMenuItem(0, 2, L"Restart", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, uninstall = PhCreateEMenuItem(0, 3, L"Uninstall", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, enable = PhCreateEMenuItem(0, 0, HardwareDevicesGetUiString(IDS_HD_MENU_ENABLE), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, disable = PhCreateEMenuItem(0, 1, HardwareDevicesGetUiString(IDS_HD_MENU_DISABLE), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, restart = PhCreateEMenuItem(0, 2, HardwareDevicesGetUiString(IDS_HD_MENU_RESTART), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, uninstall = PhCreateEMenuItem(0, 3, HardwareDevicesGetUiString(IDS_HD_MENU_UNINSTALL), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            subMenu = PhCreateEMenuItem(0, 0, L"Open key", NULL, NULL);
-            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_HARDWARE, L"Hardware", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_SOFTWARE, L"Software", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_USER, L"User", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_CONFIG, L"Config", NULL, NULL), ULONG_MAX);
+            subMenu = PhCreateEMenuItem(0, 0, HardwareDevicesGetUiString(IDS_HD_MENU_OPEN_KEY), NULL, NULL);
+            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_HARDWARE, HardwareDevicesGetUiString(IDS_HD_MENU_HARDWARE), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_SOFTWARE, HardwareDevicesGetUiString(IDS_HD_MENU_SOFTWARE), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_USER, HardwareDevicesGetUiString(IDS_HD_MENU_USER), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(subMenu, PhCreateEMenuItem(0, HW_KEY_INDEX_CONFIG, HardwareDevicesGetUiString(IDS_HD_MENU_CONFIG), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, subMenu, ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, properties = PhCreateEMenuItem(0, 10, L"Properties", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, properties = PhCreateEMenuItem(0, 10, HardwareDevicesGetUiString(IDS_HD_MENU_PROPERTIES), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 11, L"Copy", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 11, HardwareDevicesGetUiString(IDS_HD_MENU_COPY), NULL, NULL), ULONG_MAX);
             PhInsertCopyCellEMenuItem(menu, 11, DeviceTreeHandle, contextMenuEvent->Column);
             PhSetFlagsEMenuItem(menu, 10, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
 
@@ -1574,7 +1574,7 @@ BOOLEAN DevicesTabPageCallback(
 
             assert(menuInfo);
 
-            menu = PhCreateEMenuItem(0, 0, L"Devices", NULL, NULL);
+            menu = PhCreateEMenuItem(0, 0, HardwareDevicesGetUiString(IDS_HD_MENU_DEVICES), NULL, NULL);
             PhInsertEMenuItem(menuInfo->Menu, menu, menuInfo->StartIndex);
 
             PhInsertEMenuItem(menu, PhPluginCreateEMenuItem(PluginInstance, 0, 98, L"Collapse all", NULL), ULONG_MAX);

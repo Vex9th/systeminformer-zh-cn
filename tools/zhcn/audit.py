@@ -386,6 +386,8 @@ CALL_SPECS = {
     "PhShowIconNotification": {0: "c_balloon", 1: "c_balloon"},
     "PhShowIconNotificationEx": {0: "c_balloon", 1: "c_balloon"},
     "PhShowIconNotificationRaw": {0: "c_balloon", 1: "c_balloon"},
+    "PhCreateSearchControl": {2: "c_search"},
+    "PhCreateSearchControlEx": {2: "c_search"},
 }
 
 # These business wrappers accept an already-rendered label/value. Resolve only
@@ -435,11 +437,8 @@ LOCAL_UI_TEXT_DECLARATION_RE = re.compile(
     re.DOTALL,
 )
 
-# any literal argument counts (few-literal calls)
-ANY_LITERAL_SPECS = {
-    "PhCreateSearchControl": "c_search",
-    "PhCreateSearchControlEx": "c_search",
-}
+# Calls without a stable text argument are intentionally not guessed.
+ANY_LITERAL_SPECS = {}
 
 TASKDIALOG_TEXT_FIELDS = {
     "pszMainInstruction",
@@ -468,18 +467,9 @@ TASKDIALOG_BUTTON_DECLARATION_RE = re.compile(
     re.DOTALL,
 )
 
-# Literals inside the phlib funnel implementations themselves. These are
-# covered by dedicated translation hooks; keep in sync with phlib/util.c.
-PHLIB_INTERNAL = {
-    "phlib/util.c": [
-        (1610, "Do you want to "),
-        (1612, " Are you sure you want to continue?"),
-        (1617, "Cancel"),
-        (1636, "Are you sure you want to %s?"),
-        (1231, "Don't show this message again"),
-        (1463, "Unable to perform the operation."),
-    ],
-}
+# Fixed phlib funnel text is now application-resource backed. Keep this hook
+# for any future internal literals that cannot be discovered from call sites.
+PHLIB_INTERNAL = {}
 
 
 def line_of_offset(text: str, offset: int) -> int:
@@ -498,6 +488,7 @@ def literal_sequences_outside_ui_string_getters(
         or match.group(0)
         in {
             "PhLoadUiString",
+            "PhGetApplicationUiStringOrDefault",
             "PhGetStringSetting",
             "PhaGetStringSetting",
         }

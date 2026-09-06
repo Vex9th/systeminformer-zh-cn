@@ -85,7 +85,21 @@ PCWSTR PhGetApplicationUiString(
     if (ResourceId < IDS_PH_FIRST || ResourceId > IDS_PH_LAST)
         return L"";
 
-    return PhGetString(PhApplicationUiStrings[ResourceId - IDS_PH_FIRST]);
+    return PhGetStringOrEmpty(PhApplicationUiStrings[ResourceId - IDS_PH_FIRST]);
+}
+
+PCWSTR PhGetApplicationUiStringOrDefault(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR DefaultString
+    )
+{
+    if (ResourceId < IDS_PH_FIRST || ResourceId > IDS_PH_LAST)
+        return DefaultString;
+
+    return PhGetStringOrDefault(
+        PhApplicationUiStrings[ResourceId - IDS_PH_FIRST],
+        DefaultString
+        );
 }
 
 INT WINAPI wWinMain(
@@ -988,12 +1002,12 @@ LONG CALLBACK PhpUnhandledExceptionCallback(
         TASKDIALOGCONFIG config = { sizeof(TASKDIALOGCONFIG) };
         TASKDIALOG_BUTTON buttons[6] =
         {
-            { 101, L"Full\nA complete dump of the process, rarely needed most of the time." },
-            { 102, L"Normal\nFor most purposes, this dump file is the most useful." },
-            { 103, L"Minimal\nA very limited dump with limited data." },
-            { 104, L"Restart\nRestart the application." }, // and hope it doesn't crash again.";
-            { 105, L"Ignore" },  // \nTry ignore the exception and continue.";
-            { 106, L"Exit" }, // \nTerminate the program.";
+            { 101, PhGetApplicationUiStringOrDefault(IDS_PH_CRASH_DUMP_FULL_BUTTON, L"Full\nA complete dump of the process, rarely needed most of the time.") },
+            { 102, PhGetApplicationUiStringOrDefault(IDS_PH_CRASH_DUMP_NORMAL_BUTTON, L"Normal\nFor most purposes, this dump file is the most useful.") },
+            { 103, PhGetApplicationUiStringOrDefault(IDS_PH_CRASH_DUMP_MINIMAL_BUTTON, L"Minimal\nA very limited dump with limited data.") },
+            { 104, PhGetApplicationUiStringOrDefault(IDS_PH_CRASH_RESTART_BUTTON, L"Restart\nRestart the application.") }, // and hope it doesn't crash again.";
+            { 105, PhGetApplicationUiStringOrDefault(IDS_PH_CRASH_IGNORE_BUTTON, L"Ignore") },  // \nTry ignore the exception and continue.";
+            { 106, PhGetApplicationUiStringOrDefault(IDS_PH_CRASH_EXIT_BUTTON, L"Exit") }, // \nTerminate the program.";
         };
 
         if (NT_NTWIN32(ExceptionInfo->ExceptionRecord->ExceptionCode))
@@ -1010,7 +1024,10 @@ LONG CALLBACK PhpUnhandledExceptionCallback(
         config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_USE_COMMAND_LINKS | TDF_EXPAND_FOOTER_AREA;
         config.pszWindowTitle = PhApplicationName;
         config.pszMainIcon = TD_ERROR_ICON;
-        config.pszMainInstruction = L"System Informer has crashed :(";
+        config.pszMainInstruction = PhGetApplicationUiStringOrDefault(
+            IDS_PH_CRASH_TITLE,
+            L"System Informer has crashed :("
+            );
         config.cButtons = RTL_NUMBER_OF(buttons);
         config.pButtons = buttons;
         config.nDefaultButton = 106;
@@ -1058,7 +1075,10 @@ LONG CALLBACK PhpUnhandledExceptionCallback(
             if (PhShowMessage(
                 NULL,
                 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2,
-                L"System Informer has crashed :(\r\n\r\nDo you want to create a minidump on the Desktop?"
+                PhGetApplicationUiStringOrDefault(
+                    IDS_PH_CRASH_MINIDUMP_PROMPT,
+                    L"System Informer has crashed :(\r\n\r\nDo you want to create a minidump on the Desktop?"
+                    )
                 ) == IDYES)
             {
                 PhpCreateUnhandledExceptionCrashDump(ExceptionInfo, PhTriageDumpTypeMinimal);
@@ -1075,7 +1095,10 @@ LONG CALLBACK PhpUnhandledExceptionCallback(
         else
             errorMessage = PhGetStatusMessage(ExceptionInfo->ExceptionRecord->ExceptionCode, 0);
 
-        title = PhCreateString(L"System Informer has crashed :(");
+        title = PhCreateString(PhGetApplicationUiStringOrDefault(
+            IDS_PH_CRASH_TITLE,
+            L"System Informer has crashed :("
+            ));
 #ifdef DEBUG
         message = PhFormatString(
             L"%s\r\n0x%08X (%s)\r\n%s",
@@ -1086,7 +1109,7 @@ LONG CALLBACK PhpUnhandledExceptionCallback(
             );
 #else
         message = PhFormatString(
-            L"%s\r\n0x%08X (%s)\r\n%s",
+            L"%s\r\n0x%08X (%s)",
             PhGetStringOrEmpty(title),
             ExceptionInfo->ExceptionRecord->ExceptionCode,
             PhGetStringOrEmpty(errorMessage)
@@ -1114,7 +1137,10 @@ LONG CALLBACK PhpUnhandledExceptionCallback(
         }
     }
 
-    return PhpPreviousUnhandledExceptionFilter(ExceptionInfo);
+    if (PhpPreviousUnhandledExceptionFilter)
+        return PhpPreviousUnhandledExceptionFilter(ExceptionInfo);
+
+    return EXCEPTION_CONTINUE_SEARCH;
 }
 #pragma endregion
 

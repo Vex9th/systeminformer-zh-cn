@@ -1215,7 +1215,7 @@ INT_PTR CALLBACK EtCacheLatencyDlgProc(
                     PhPrintUInt32(context->RowData[row].SizeText, 1u << row);
                 }
 
-                PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 135, L"size (KB) [cycles]");
+                PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 135, EtGetUiString(IDS_ET_CACHE_COLUMN_SIZE_KB_CYCLES, L"size (KB) [cycles]"));
 
                 for (column = 0; column < strideCount; column++)
                 {

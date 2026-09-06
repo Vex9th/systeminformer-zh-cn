@@ -305,8 +305,8 @@ VOID ScanExclusionsAddFromEdit(
             WindowHandle,
             TD_YES_BUTTON | TD_NO_BUTTON,
             TD_INFORMATION_ICON,
-            L"This looks like a wildcard path, not a regular expression.",
-            L"Convert it to a regular expression? Backslashes will be escaped and wildcards expanded."
+            PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_WILDCARD_PATH_TITLE, NULL))),
+            PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_WILDCARD_PATH_CONTENT, NULL)))
             ) == IDYES)
         {
             PhMoveReference(&pattern, ExcludePathToRegex(&pattern->sr));

@@ -104,6 +104,12 @@ PhGetApplicationUiString(
     _In_ ULONG ResourceId
     );
 
+PCWSTR
+PhGetApplicationUiStringOrDefault(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR DefaultString
+    );
+
 // begin_phapppub
 FORCEINLINE
 PPH_LIST

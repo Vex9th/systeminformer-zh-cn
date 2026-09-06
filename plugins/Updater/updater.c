@@ -998,6 +998,7 @@ NTSTATUS UpdateDownloadThread(
     ULONG bytesWritten = 0;
     ULONG_PTR totalDownloaded = 0;
     PPH_STRING string;
+    PPH_STRING progressText;
     PBYTE httpBuffer = NULL;
     ULONG httpBufferLength;
 
@@ -1044,9 +1045,11 @@ NTSTATUS UpdateDownloadThread(
     }
 
     string = PhFormatString(L"Downloading release %s...", PhGetStringOrEmpty(context->Version));
+    progressText = PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOAD_PROGRESS_INITIAL, NULL);
     SendMessage(context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_MAIN_INSTRUCTION, (LPARAM)string->Buffer);
-    SendMessage(context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)L"Downloaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s");
+    SendMessage(context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_CONTENT, (LPARAM)PhGetStringOrEmpty(progressText));
     PhDereferenceObject(string);
+    PhClearReference(&progressText);
 
     // Create temporary file.
     {
@@ -1466,6 +1469,7 @@ NTSTATUS ShowUpdateDialogThread(
 {
     PH_AUTO_POOL autoPool;
     PPH_UPDATER_CONTEXT context;
+    PPH_STRING initializingText;
     TASKDIALOGCONFIG config = { sizeof(TASKDIALOGCONFIG) };
 
     if (Parameter)
@@ -1474,11 +1478,12 @@ NTSTATUS ShowUpdateDialogThread(
         context = CreateUpdateContext(FALSE);
 
     PhInitializeAutoPool(&autoPool);
+    initializingText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_INITIALIZING, NULL));
 
     // Start TaskDialog bootstrap
     config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED;
     config.hInstance = NtCurrentImageBase();
-    config.pszContent = L"Initializing...";
+    config.pszContent = PhGetStringOrEmpty(initializingText);
     config.lpCallbackData = (LONG_PTR)context;
     config.pfCallback = TaskDialogBootstrapCallback;
     PhShowTaskDialog(&config, NULL, NULL, NULL);
@@ -1510,7 +1515,11 @@ VOID ShowUpdateDialog(
     {
         if (!NT_SUCCESS(PhCreateThreadEx(&UpdateDialogThreadHandle, ShowUpdateDialogThread, Context)))
         {
-            PhShowError2(NULL, L"Unable to create the window.", L"%s", L"");
+            PPH_STRING errorText;
+
+            errorText = PhLoadUiString(PluginInstance->DllBase, IDS_UP_UNABLE_CREATE_WINDOW, NULL);
+            PhShowError2(NULL, PhGetStringOrEmpty(errorText), L"%s", L"");
+            PhClearReference(&errorText);
             return;
         }
 
@@ -1618,10 +1627,13 @@ VOID ShowStartupUpdateDialog(
     }
 
     {
+        PPH_STRING initializingText;
         TASKDIALOGCONFIG config = { sizeof(TASKDIALOGCONFIG) };
+
+        initializingText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_INITIALIZING, NULL));
         config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED;
         config.hInstance = NtCurrentImageBase();
-        config.pszContent = L"Initializing...";
+        config.pszContent = PhGetStringOrEmpty(initializingText);
         config.lpCallbackData = (LONG_PTR)context;
         config.pfCallback = TaskDialogBootstrapCallback;
         PhShowTaskDialog(&config, NULL, NULL, NULL);

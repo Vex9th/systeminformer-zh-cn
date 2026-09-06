@@ -178,17 +178,23 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
                 self.assertEqual(translations[owner].get(en), zh)
                 self.assertNotIn(en, translations["native_strings" if owner == "strings" else "strings"])
 
-        numeric_ids = sorted(int(value) for value in re.findall(
-            r"(?m)^#define\s+IDS_PH_[A-Z0-9_]+\s+(\d+)\s*$",
+        definitions = re.findall(
+            r"(?m)^#define\s+(IDS_PH_[A-Z0-9_]+)\s+(\d+)\s*$",
             header + "\n" + app_header,
-        ))
-        self.assertEqual(numeric_ids, list(range(2000, 2710)))
-        self.assertEqual(len(english), 710)
-        self.assertEqual(len(chinese), 710)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_OPTIONS_PLUGINS$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2710$")
+        )
+        resource_ids = {}
+        for symbol, value in definitions:
+            value = int(value)
+            if symbol in resource_ids:
+                self.assertEqual(resource_ids[symbol], value)
+            resource_ids[symbol] = value
+        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2872)))
+        self.assertEqual(len(english), 872)
+        self.assertEqual(len(chinese), 872)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_ACTION_FALLBACK_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2872$")
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=710"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=872"), 2)
         self.assertNotIn("sys_info.exe=597", workflow)
 
     def test_fixed_window_text_routes_use_borrowed_or_owned_resources_correctly(self) -> None:
@@ -469,10 +475,17 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
             self.assertEqual(body.count('PhFormatString(L"0x%x: %s"'), body.count(fallback))
 
     def test_intentional_technical_literals_and_runtime_lifetimes_are_preserved(self) -> None:
-        self.assertEqual(self.sources["prpggen.c"].count('L"\\u221E"'), 1)
-        self.assertEqual(self.sources["srvprp.c"].count('L"password"'), 1)
+        self.assertEqual(self.sources["prpggen.c"].count(r'L"\u221E"'), 1)
+        self.assertEqual(self.sources["srvprp.c"].count('L"password"'), 0)
+        self.assertEqual(
+            self.sources["srvprp.c"].count(
+                "PhGetApplicationUiString(IDS_PH_SERVICE_PASSWORD_PLACEHOLDER)"
+            ),
+            1,
+        )
         actions = self.sources["actions.c"]
-        self.assertEqual(actions.count('L"%s ago (%s)"') + self.sources["ntobjprp.c"].count('L"%s ago (%s)"'), 2)
+        self.assertEqual(actions.count('L"%s ago (%s)"'), 0)
+        self.assertEqual(self.sources["ntobjprp.c"].count('L"%s ago (%s)"'), 1)
         for filename, literal, count in (
             ("tokprp.c", 'L" (APP_CONTAINER)"', 2),
             ("hndlprp.c", 'L"0x%x: %s"', 9),
@@ -494,15 +507,12 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
         runtime_composed = Counter(
             entry["english"] for entry in entries if entry["category"] == "c_runtime_composed"
         )
-        self.assertEqual(window_text, Counter({r"\u221E": 1, "password": 1}))
+        self.assertEqual(window_text, Counter())
         self.assertEqual(runtime_composed, Counter({
             " (APP_CONTAINER)": 1,
-            "N/A": 1,
-            "System-managed activity moderation settings are automatically removed by Windows when the executable is deleted or was last executed more than 7 days ago.\r\n\r\nImage: %s\r\nUpdated: %s": 1,
             "%lu: %s\\%s": 1,
             "%s (%u)": 1,
             "%s (%u) (0x%Ix - 0x%Ix)": 1,
-            "%s ago (%s)": 3,
             "%ux%u@%u": 1,
             "0x%x: %s": 6,
         }))

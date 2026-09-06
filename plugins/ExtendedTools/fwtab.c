@@ -14,6 +14,11 @@
 #include <fwpmu.h>
 #include <fwpsu.h>
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 static CONST PH_KEY_VALUE_PAIR FwEventTypePairs[] =
 {
     SIP(SREF(L"VPN Failure (Phase 1)"), FWPM_NET_EVENT_TYPE_IKEEXT_MM_FAILURE),
@@ -319,37 +324,37 @@ VOID InitializeFwTreeList(
     TreeNew_SetRedraw(TreeNewHandle, FALSE);
     TreeNew_SetCallback(TreeNewHandle, FwTreeNewCallback, NULL);
 
-    PhAddTreeNewColumnEx2(TreeNewHandle, FW_COLUMN_NAME, TRUE, L"Name", 140, PH_ALIGN_LEFT, FW_COLUMN_NAME, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
-    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_PROCESSID, TRUE, L"PID", 50, PH_ALIGN_RIGHT, FW_COLUMN_PROCESSID, DT_RIGHT, TRUE);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_ACTION, TRUE, L"Action", 100, PH_ALIGN_LEFT, FW_COLUMN_ACTION, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_DIRECTION, TRUE, L"Direction", 40, PH_ALIGN_LEFT, FW_COLUMN_DIRECTION, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_RULENAME, TRUE, L"Rule", 240, PH_ALIGN_LEFT, FW_COLUMN_RULENAME, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_RULEDESCRIPTION, TRUE, L"Description", 180, PH_ALIGN_LEFT, FW_COLUMN_RULEDESCRIPTION, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_FILTER_ORIGIN, TRUE, L"Filter origin", 80, PH_ALIGN_LEFT, FW_COLUMN_FILTER_ORIGIN, 0);
-    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_LOCALADDRESS, TRUE, L"Local address", 110, PH_ALIGN_RIGHT, FW_COLUMN_LOCALADDRESS, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_LOCALPORT, TRUE, L"Local port", 30, PH_ALIGN_LEFT, FW_COLUMN_LOCALPORT, DT_LEFT, TRUE);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALHOSTNAME, TRUE, L"Local hostname", 100, PH_ALIGN_LEFT, FW_COLUMN_LOCALHOSTNAME, 0);
-    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_REMOTEADDRESS, TRUE, L"Remote address", 110, PH_ALIGN_RIGHT, FW_COLUMN_REMOTEADDRESS, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_REMOTEPORT, TRUE, L"Remote port", 30, PH_ALIGN_LEFT, FW_COLUMN_REMOTEPORT, DT_LEFT, TRUE);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTEHOSTNAME, TRUE, L"Remote hostname", 100, PH_ALIGN_LEFT, FW_COLUMN_REMOTEHOSTNAME, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_PROTOCOL, TRUE, L"Protocol", 60, PH_ALIGN_LEFT, FW_COLUMN_PROTOCOL, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_TIMESTAMP, TRUE, L"Timestamp", 60, PH_ALIGN_LEFT, FW_COLUMN_TIMESTAMP, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, FW_COLUMN_NAME, TRUE, EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"), 140, PH_ALIGN_LEFT, FW_COLUMN_NAME, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
+    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_PROCESSID, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_PID, L"PID"), 50, PH_ALIGN_RIGHT, FW_COLUMN_PROCESSID, DT_RIGHT, TRUE);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_ACTION, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_ACTION, L"Action"), 100, PH_ALIGN_LEFT, FW_COLUMN_ACTION, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_DIRECTION, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_DIRECTION, L"Direction"), 40, PH_ALIGN_LEFT, FW_COLUMN_DIRECTION, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_RULENAME, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_RULE, L"Rule"), 240, PH_ALIGN_LEFT, FW_COLUMN_RULENAME, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_RULEDESCRIPTION, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_DESCRIPTION, L"Description"), 180, PH_ALIGN_LEFT, FW_COLUMN_RULEDESCRIPTION, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_FILTER_ORIGIN, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_FILTER_ORIGIN, L"Filter origin"), 80, PH_ALIGN_LEFT, FW_COLUMN_FILTER_ORIGIN, 0);
+    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_LOCALADDRESS, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_LOCAL_ADDRESS, L"Local address"), 110, PH_ALIGN_RIGHT, FW_COLUMN_LOCALADDRESS, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_LOCALPORT, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_LOCAL_PORT, L"Local port"), 30, PH_ALIGN_LEFT, FW_COLUMN_LOCALPORT, DT_LEFT, TRUE);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALHOSTNAME, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_LOCAL_HOSTNAME, L"Local hostname"), 100, PH_ALIGN_LEFT, FW_COLUMN_LOCALHOSTNAME, 0);
+    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_REMOTEADDRESS, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_REMOTE_ADDRESS, L"Remote address"), 110, PH_ALIGN_RIGHT, FW_COLUMN_REMOTEADDRESS, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(TreeNewHandle, FW_COLUMN_REMOTEPORT, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_REMOTE_PORT, L"Remote port"), 30, PH_ALIGN_LEFT, FW_COLUMN_REMOTEPORT, DT_LEFT, TRUE);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTEHOSTNAME, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_REMOTE_HOSTNAME, L"Remote hostname"), 100, PH_ALIGN_LEFT, FW_COLUMN_REMOTEHOSTNAME, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_PROTOCOL, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_PROTOCOL, L"Protocol"), 60, PH_ALIGN_LEFT, FW_COLUMN_PROTOCOL, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_TIMESTAMP, TRUE, EtGetUiString(IDS_ET_FW_COLUMN_TIMESTAMP, L"Timestamp"), 60, PH_ALIGN_LEFT, FW_COLUMN_TIMESTAMP, 0);
    // PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_PROCESSFILENAME, FALSE, L"File path", 100, PH_ALIGN_LEFT, FW_COLUMN_PROCESSFILENAME, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_USER, FALSE, L"Username", 100, PH_ALIGN_LEFT, FW_COLUMN_USER, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_USER, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_USERNAME, L"Username"), 100, PH_ALIGN_LEFT, FW_COLUMN_USER, 0);
     //PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_PACKAGE, FALSE, L"Package", 100, PH_ALIGN_LEFT, FW_COLUMN_PACKAGE, 0);
-    PhAddTreeNewColumnEx2(TreeNewHandle, FW_COLUMN_COUNTRY, FALSE, L"Country", 80, PH_ALIGN_LEFT, FW_COLUMN_COUNTRY, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALADDRESSCLASS, FALSE, L"Local address class", 80, PH_ALIGN_LEFT, FW_COLUMN_LOCALADDRESSCLASS, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTEADDRESSCLASS, FALSE, L"Remote address class", 80, PH_ALIGN_LEFT, FW_COLUMN_REMOTEADDRESSCLASS, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALADDRESSSSCOPE, FALSE, L"Local address scope", 80, PH_ALIGN_LEFT, FW_COLUMN_LOCALADDRESSSSCOPE, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTEADDRESSSCOPE, FALSE, L"Remote address scope", 80, PH_ALIGN_LEFT, FW_COLUMN_REMOTEADDRESSSCOPE, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_ORIGINALNAME, FALSE, L"Original name", 100, PH_ALIGN_LEFT, FW_COLUMN_ORIGINALNAME, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALSERVICENAME, FALSE, L"Local port service", 80, PH_ALIGN_LEFT, FW_COLUMN_LOCALSERVICENAME, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTESERVICENAME, FALSE, L"Remote port service", 80, PH_ALIGN_LEFT, FW_COLUMN_REMOTESERVICENAME, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_INTERFACE_LUID, FALSE, L"Interface LUID", 80, PH_ALIGN_LEFT, FW_COLUMN_INTERFACE_LUID, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_COMPARTMENT_ID, FALSE, L"Compartment ID", 80, PH_ALIGN_LEFT, FW_COLUMN_COMPARTMENT_ID, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_POLICY_APP_ID, FALSE, L"Policy app ID", 100, PH_ALIGN_LEFT, FW_COLUMN_POLICY_APP_ID, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_SERVICE_SIDS, FALSE, L"Service SIDs", 100, PH_ALIGN_LEFT, FW_COLUMN_SERVICE_SIDS, 0);
-    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_FQBN_NAME, FALSE, L"FQBN name", 100, PH_ALIGN_LEFT, FW_COLUMN_FQBN_NAME, 0);
+    PhAddTreeNewColumnEx2(TreeNewHandle, FW_COLUMN_COUNTRY, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_COUNTRY, L"Country"), 80, PH_ALIGN_LEFT, FW_COLUMN_COUNTRY, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALADDRESSCLASS, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_LOCAL_ADDRESS_CLASS, L"Local address class"), 80, PH_ALIGN_LEFT, FW_COLUMN_LOCALADDRESSCLASS, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTEADDRESSCLASS, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_REMOTE_ADDRESS_CLASS, L"Remote address class"), 80, PH_ALIGN_LEFT, FW_COLUMN_REMOTEADDRESSCLASS, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALADDRESSSSCOPE, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_LOCAL_ADDRESS_SCOPE, L"Local address scope"), 80, PH_ALIGN_LEFT, FW_COLUMN_LOCALADDRESSSSCOPE, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTEADDRESSSCOPE, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_REMOTE_ADDRESS_SCOPE, L"Remote address scope"), 80, PH_ALIGN_LEFT, FW_COLUMN_REMOTEADDRESSSCOPE, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_ORIGINALNAME, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_ORIGINAL_NAME, L"Original name"), 100, PH_ALIGN_LEFT, FW_COLUMN_ORIGINALNAME, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_LOCALSERVICENAME, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_LOCAL_PORT_SERVICE, L"Local port service"), 80, PH_ALIGN_LEFT, FW_COLUMN_LOCALSERVICENAME, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_REMOTESERVICENAME, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_REMOTE_PORT_SERVICE, L"Remote port service"), 80, PH_ALIGN_LEFT, FW_COLUMN_REMOTESERVICENAME, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_INTERFACE_LUID, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_INTERFACE_LUID, L"Interface LUID"), 80, PH_ALIGN_LEFT, FW_COLUMN_INTERFACE_LUID, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_COMPARTMENT_ID, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_COMPARTMENT_ID, L"Compartment ID"), 80, PH_ALIGN_LEFT, FW_COLUMN_COMPARTMENT_ID, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_POLICY_APP_ID, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_POLICY_APP_ID, L"Policy app ID"), 100, PH_ALIGN_LEFT, FW_COLUMN_POLICY_APP_ID, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_SERVICE_SIDS, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_SERVICE_SIDS, L"Service SIDs"), 100, PH_ALIGN_LEFT, FW_COLUMN_SERVICE_SIDS, 0);
+    PhAddTreeNewColumn(TreeNewHandle, FW_COLUMN_FQBN_NAME, FALSE, EtGetUiString(IDS_ET_FW_COLUMN_FQBN_NAME, L"FQBN name"), 100, PH_ALIGN_LEFT, FW_COLUMN_FQBN_NAME, 0);
 
     PhInitializeTreeNewFilterSupport(&EtFwFilterSupport, TreeNewHandle, FwNodeList);
 
@@ -1995,7 +2000,7 @@ VOID EtFwHandleFwCommand(
                 }
                 else
                 {
-                    PhShowStatus(TreeWindowHandle, L"The process does not exist.", STATUS_INVALID_CID, 0);
+                    PhShowStatus(TreeWindowHandle, EtGetUiString(IDS_ET_WCT_PROCESS_NOT_FOUND, L"The process does not exist."), STATUS_INVALID_CID, 0);
                 }
             }
         }
@@ -2109,18 +2114,18 @@ VOID ShowFwContextMenu(
         PPH_EMENU_ITEM whoisMenu;
 
         menu = PhCreateEMenu();
-        PhInsertEMenuItem(menu, pingMenu = PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_PING, L"&Ping", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, traceMenu = PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_TRACERT, L"&Traceroute", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, whoisMenu = PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_WHOIS, L"&Whois", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, pingMenu = PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_PING, EtGetUiString(IDS_ET_FW_MENU_PING, L"&Ping"), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, traceMenu = PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_TRACERT, EtGetUiString(IDS_ET_FW_MENU_TRACEROUTE, L"&Traceroute"), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, whoisMenu = PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_WHOIS, EtGetUiString(IDS_ET_FW_MENU_WHOIS, L"&Whois"), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_GOTOPROCESS, L"&Go to process", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_GOTOPROCESS, EtGetUiString(IDS_ET_FW_MENU_GO_TO_PROCESS, L"&Go to process"), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_OPENFILELOCATION, L"Open &file location\bEnter", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_OPENFILELOCATION, EtGetUiString(IDS_ET_FW_MENU_OPEN_FILE_LOCATION, L"Open &file location\bEnter"), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_INSPECT, L"&Inspect", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_PROPERTIES, L"P&roperties", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_INSPECT, EtGetUiString(IDS_ET_FW_MENU_INSPECT, L"&Inspect"), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_PROPERTIES, EtGetUiString(IDS_ET_FW_MENU_PROPERTIES, L"P&roperties"), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_COPY, L"&Copy\bCtrl+C", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, FW_ITEM_COMMAND_ID_COPY, EtGetUiString(IDS_ET_FW_MENU_COPY_SHORTCUT, L"&Copy\bCtrl+C"), NULL, NULL), ULONG_MAX);
         InitializeFwMenu(menu, fwItems, numberOfFwItems);
         PhInsertCopyCellEMenuItem(menu, FW_ITEM_COMMAND_ID_COPY, TreeWindowHandle, ContextMenuEvent->Column);
         PhSetFlagsEMenuItem(menu, FW_ITEM_COMMAND_ID_GOTOPROCESS, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);

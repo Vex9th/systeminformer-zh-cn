@@ -65,11 +65,21 @@ VOID ShowAvailableDialog(
 {
     PPH_STRING downloadButtonText;
     PPH_STRING availableDetailsFormat;
+    PPH_STRING windowTitle;
+    PPH_STRING releaseDownloadText;
+    PPH_STRING canaryDownloadText;
+    PPH_STRING updateDownloadText;
+    PPH_STRING newerBuildText;
     TASKDIALOG_BUTTON taskDialogButtonArray[1];
     TASKDIALOGCONFIG config;
 
     downloadButtonText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_BUTTON_DOWNLOAD, NULL));
     availableDetailsFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_AVAILABLE_DETAILS_FORMAT, NULL));
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    releaseDownloadText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOAD_RELEASE_PROMPT, NULL));
+    canaryDownloadText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOAD_CANARY_PROMPT, NULL));
+    updateDownloadText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOAD_UPDATE_PROMPT, NULL));
+    newerBuildText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_NEWER_BUILD_AVAILABLE, NULL));
 
     taskDialogButtonArray[0].nButtonID = IDOK;
     taskDialogButtonArray[0].pszButtonText = PhGetStringOrEmpty(downloadButtonText);
@@ -85,31 +95,31 @@ VOID ShowAvailableDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.pfCallback = ShowAvailableCallbackProc;
 
-    config.pszWindowTitle = L"System Informer - Updater";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
     if (Context->SwitchingChannel)
     {
         switch (Context->Channel)
         {
         case PhReleaseChannel:
-            config.pszMainInstruction = L"Would you like to download the Release build?";
+            config.pszMainInstruction = PhGetStringOrEmpty(releaseDownloadText);
             break;
         //case PhPreviewChannel:
         //    config.pszMainInstruction = L"Would you like to download the Preview build?";
         //    break;
         case PhCanaryChannel:
-            config.pszMainInstruction = L"Would you like to download the Canary build?";
+            config.pszMainInstruction = PhGetStringOrEmpty(canaryDownloadText);
             break;
         //case PhDeveloperChannel:
         //    config.pszMainInstruction = L"Would you like to download the Developer build?";
         //    break;
         default:
-            config.pszMainInstruction = L"Would you like to download the update?";
+            config.pszMainInstruction = PhGetStringOrEmpty(updateDownloadText);
             break;
         }
     }
     else
     {
-        config.pszMainInstruction = L"A newer build of System Informer is available.";
+        config.pszMainInstruction = PhGetStringOrEmpty(newerBuildText);
     }
 
     config.pszContent = PhaFormatString(

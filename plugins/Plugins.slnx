@@ -17,7 +17,6 @@
   <Project Path="NetworkTools/NetworkTools.vcxproj" Id="b5e0da09-ea01-4d5a-a9d6-5b22db0c306e" />
   <Project Path="OnlineChecks/OnlineChecks.vcxproj" Id="79d24223-1122-40a9-bc8f-46a2089fe089" />
   <Project Path="ToolStatus/ToolStatus.vcxproj" Id="60b43533-c75e-4741-9e19-c4d581bef51c" />
-  <Project Path="Updater/Updater.vcxproj" Id="a0c1595c-fa3e-4b7a-936c-306bc6294c5e" />
   <Project Path="UserNotes/UserNotes.vcxproj" Id="7c38d0aa-572c-4d75-8e4e-d68af3c051af" />
   <Project Path="WindowExplorer/WindowExplorer.vcxproj" Id="37488dc1-e45f-4626-a87c-3a854a153d1a" />
 </Solution>

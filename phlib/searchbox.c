@@ -11,6 +11,7 @@
  */
 
 #include <ph.h>
+#include <phappresourceid.h>
 #include <searchbox.h>
 #include <guisup.h>
 #include <phtranslation.h>
@@ -38,6 +39,7 @@ typedef struct _PH_SEARCHCONTROL_BUTTON
     ULONG ImageIndex;
     ULONG ActiveImageIndex;
     HWND TooltipHandle;
+    PPH_STRING TooltipText;
 } PH_SEARCHCONTROL_BUTTON, *PPH_SEARCHCONTROL_BUTTON;
 
 #define PH_SC_BUTTON_COUNT 3
@@ -121,6 +123,25 @@ static COLORREF PhpSearchControlSelectColor(
     )
 {
     return PhEnableThemeSupport ? ThemeColor : ClassicColor;
+}
+
+static PPH_EMENU_ITEM PhpCreateSearchResourceEMenuItem(
+    _In_ ULONG Flags,
+    _In_ ULONG Id,
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR FallbackText
+    )
+{
+    PPH_STRING resourceText;
+    PWSTR ownedText;
+
+    resourceText = PhApplicationUiResourceInstance
+        ? PhLoadUiString(PhApplicationUiResourceInstance, ResourceId, NULL)
+        : NULL;
+    ownedText = PhDuplicateStringZ(PhGetStringOrDefault(resourceText, FallbackText));
+    PhClearReference(&resourceText);
+
+    return PhCreateEMenuItem(Flags | PH_EMENU_TEXT_OWNED, Id, ownedText, NULL, NULL);
 }
 
 VOID PhpSearchControlInitializeColors(
@@ -306,7 +327,8 @@ VOID PhpSearchControlCreateTooltip(
     _In_ PPH_SEARCHCONTROL_BUTTON Button,
     _In_ HWND ParentWindow,
     _In_ PRECT TooltipRect,
-    _In_ PWSTR TooltipText
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR FallbackText
     )
 {
     TOOLINFO toolInfo;
@@ -339,11 +361,18 @@ VOID PhpSearchControlCreateTooltip(
     MapWindowRect(HWND_DESKTOP, ParentWindow, TooltipRect);
     PhInflateRect(TooltipRect, -1, -1);
 
+    PhMoveReference(
+        &Button->TooltipText,
+        PhApplicationUiResourceInstance
+            ? PhLoadUiString(PhApplicationUiResourceInstance, ResourceId, NULL)
+            : NULL
+        );
+
     memset(&toolInfo, 0, sizeof(TOOLINFO));
     toolInfo.cbSize = sizeof(TOOLINFO);
     toolInfo.uFlags = TTF_TRANSPARENT | TTF_SUBCLASS;
     toolInfo.hwnd = ParentWindow;
-    toolInfo.lpszText = TooltipText;
+    toolInfo.lpszText = (PWSTR)PhGetStringOrDefault(Button->TooltipText, FallbackText);
     toolInfo.rect = *TooltipRect;
     SendMessage(Button->TooltipHandle, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
     SendMessage(Button->TooltipHandle, TTM_SETDELAYTIME, TTDT_INITIAL, 0);
@@ -877,6 +906,10 @@ LRESULT CALLBACK PhpSearchWndSubclassProc(
                 context->SearchButton.TooltipHandle = NULL;
             }
 
+            PhClearReference(&context->RegexButton.TooltipText);
+            PhClearReference(&context->CaseButton.TooltipText);
+            PhClearReference(&context->SearchButton.TooltipText);
+
             PhFree(context);
         }
         break;
@@ -1022,14 +1055,14 @@ LRESULT CALLBACK PhpSearchWndSubclassProc(
             CallWindowProc(oldWndProc, WindowHandle, EM_GETSEL, (WPARAM)&selStart, (LPARAM)&selEnd);
 
             menu = PhCreateEMenu();
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Undo", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhpCreateSearchResourceEMenuItem(0, 1, IDS_PH_SEARCH_UNDO, L"Undo"), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"Cut", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, L"Copy", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 4, L"Paste", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 5, L"Delete", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhpCreateSearchResourceEMenuItem(0, 2, IDS_PH_SEARCH_CUT, L"Cut"), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhpCreateSearchResourceEMenuItem(0, 3, IDS_PH_SEARCH_COPY, L"Copy"), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhpCreateSearchResourceEMenuItem(0, 4, IDS_PH_SEARCH_PASTE, L"Paste"), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhpCreateSearchResourceEMenuItem(0, 5, IDS_PH_SEARCH_DELETE, L"Delete"), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 6, L"Select All", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhpCreateSearchResourceEMenuItem(0, 6, IDS_PH_SEARCH_SELECT_ALL, L"Select All"), ULONG_MAX);
 
             if (selStart == selEnd)
             {
@@ -1174,7 +1207,7 @@ LRESULT CALLBACK PhpSearchWndSubclassProc(
 
             if (context->RegexButton.Hot)
             {
-                PhpSearchControlCreateTooltip(context, &context->RegexButton, WindowHandle, &buttonRect, L"Regular Expression");
+                PhpSearchControlCreateTooltip(context, &context->RegexButton, WindowHandle, &buttonRect, IDS_PH_SEARCH_REGULAR_EXPRESSION, L"Regular Expression");
             }
 
             PhpSearchControlButtonRect(context, &context->CaseButton, &windowRect, &buttonRect);
@@ -1182,7 +1215,7 @@ LRESULT CALLBACK PhpSearchWndSubclassProc(
 
             if (context->CaseButton.Hot)
             {
-                PhpSearchControlCreateTooltip(context, &context->CaseButton, WindowHandle, &buttonRect, L"Match Case");
+                PhpSearchControlCreateTooltip(context, &context->CaseButton, WindowHandle, &buttonRect, IDS_PH_SEARCH_MATCH_CASE, L"Match Case");
             }
 
             PhpSearchControlButtonRect(context, &context->SearchButton, &windowRect, &buttonRect);
@@ -1190,7 +1223,7 @@ LRESULT CALLBACK PhpSearchWndSubclassProc(
 
             if (context->SearchButton.Hot)
             {
-                PhpSearchControlCreateTooltip(context, &context->SearchButton, WindowHandle, &buttonRect, L"Clear Search");
+                PhpSearchControlCreateTooltip(context, &context->SearchButton, WindowHandle, &buttonRect, IDS_PH_SEARCH_CLEAR_SEARCH, L"Clear Search");
             }
 
             // Check that the mouse is within the inserted button.
@@ -1489,4 +1522,3 @@ BOOLEAN PhSearchControlMatchPointerRange(
     return ((context->SearchPointer >= (ULONG64)Pointer) &&
             (context->SearchPointer < (ULONG64)pointerEnd));
 }
-

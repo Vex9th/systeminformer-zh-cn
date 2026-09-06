@@ -84,10 +84,37 @@ static CONST PH_STRINGREF DefaultPluginName[] =
     PH_STRINGREF_INIT(L"NetworkTools.dll"),
     PH_STRINGREF_INIT(L"OnlineChecks.dll"),
     PH_STRINGREF_INIT(L"ToolStatus.dll"),
-    PH_STRINGREF_INIT(L"Updater.dll"),
     PH_STRINGREF_INIT(L"UserNotes.dll"),
     PH_STRINGREF_INIT(L"WindowExplorer.dll"),
 };
+
+static BOOLEAN PhpIsPluginBlockedByPolicy(
+    _In_ PCPH_STRINGREF FileName
+    )
+{
+    PH_STRINGREF baseName = *FileName;
+    ULONG_PTR separatorIndex;
+    ULONG_PTR alternativeSeparatorIndex;
+
+    separatorIndex = PhFindLastCharInStringRef(FileName, L'\\', FALSE);
+    alternativeSeparatorIndex = PhFindLastCharInStringRef(FileName, L'/', FALSE);
+
+    if (
+        alternativeSeparatorIndex != SIZE_MAX &&
+        (separatorIndex == SIZE_MAX || alternativeSeparatorIndex > separatorIndex)
+        )
+    {
+        separatorIndex = alternativeSeparatorIndex;
+    }
+
+    if (separatorIndex != SIZE_MAX)
+    {
+        baseName.Buffer = FileName->Buffer + separatorIndex + 1;
+        baseName.Length = FileName->Length - ((separatorIndex + 1) * sizeof(WCHAR));
+    }
+
+    return PhEqualStringRef2(&baseName, L"Updater.dll", TRUE);
+}
 
 LONG NTAPI PhpPluginsCompareFunction(
     _In_ PPH_AVL_LINKS Links1,
@@ -302,6 +329,9 @@ static BOOLEAN EnumPluginsDirectoryCallback(
 
     baseName.Buffer = fileNamesInfo->FileName;
     baseName.Length = fileNamesInfo->FileNameLength;
+
+    if (PhpIsPluginBlockedByPolicy(&baseName))
+        return TRUE;
 
     if (!PhIsPluginDisabled(&baseName))
     {
@@ -630,6 +660,9 @@ NTSTATUS PhLoadPlugin(
     )
 {
     NTSTATUS status;
+
+    if (PhpIsPluginBlockedByPolicy(FileName))
+        return STATUS_NOT_SUPPORTED;
 
     if (LoadLibraryEx(PhGetStringRefZ(FileName), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32))
         status = STATUS_SUCCESS;

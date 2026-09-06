@@ -72,7 +72,7 @@ NTSTATUS EtpModuleServicesDialogThreadStart(
         PPH_STRING resourceTitle;
 
         resourceTitle = PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_MODULE_REFERENCES, NULL);
-        PhShowInformation2(context->ParentWindowHandle, PhGetString(resourceTitle), L"%s", L"This module was not referenced by a service.");
+        PhShowInformation2(context->ParentWindowHandle, PhGetString(resourceTitle), L"%s", EtGetUiString(IDS_ET_MODULE_NOT_REFERENCED_BY_SERVICE, L"This module was not referenced by a service."));
         PhDereferenceObject(resourceTitle);
         PhDereferenceObject(serviceList);
         PhFree(context);

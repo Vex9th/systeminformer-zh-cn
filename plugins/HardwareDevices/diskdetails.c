@@ -15,52 +15,52 @@ VOID DiskDeviceAddListViewItems(
     _Inout_ PDV_DISK_PAGE_CONTEXT Context
     )
 {
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FS_CREATION_TIME, L"Volume creation time", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_SERIAL_NUMBER, L"Volume serial number", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_UNIQUEID, L"Volume unique identifier", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_PARTITIONID, L"Volume partition identifier(s)", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, L"Volume file system", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FS_VERSION, L"Volume version", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_LFS_VERSION, L"LFS version", NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FS_CREATION_TIME, HardwareDevicesGetUiString(IDS_HD_VOLUME_CREATION_TIME), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_SERIAL_NUMBER, HardwareDevicesGetUiString(IDS_HD_VOLUME_SERIAL_NUMBER), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_UNIQUEID, HardwareDevicesGetUiString(IDS_HD_VOLUME_UNIQUE_IDENTIFIER), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_PARTITIONID, HardwareDevicesGetUiString(IDS_HD_VOLUME_PARTITION_IDENTIFIERS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_SYSTEM, HardwareDevicesGetUiString(IDS_HD_VOLUME_FILE_SYSTEM), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FS_VERSION, HardwareDevicesGetUiString(IDS_HD_VOLUME_VERSION), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_LFS_VERSION, HardwareDevicesGetUiString(IDS_HD_LFS_VERSION), NULL);
 
     //PhAddListViewItem(Context->ListViewHandle, MAXINT, L"BytesPerPhysicalSector", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SIZE, L"Total size", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_FREE, L"Total free", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_USED, L"Total used", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SECTORS, L"Total sectors", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_CLUSTERS, L"Total clusters", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FREE_CLUSTERS, L"Free clusters", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_RESERVED, L"Reserved clusters", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_BYTES_PER_SECTOR, L"Bytes per sector", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_BYTES_PER_CLUSTER, L"Bytes per cluster", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_BYTES_PER_RECORD, L"Bytes per file record segment", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_CLUSTERS_PER_RECORD, L"Clusters per File record segment", NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SIZE, HardwareDevicesGetUiString(IDS_HD_TOTAL_SIZE), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_FREE, HardwareDevicesGetUiString(IDS_HD_TOTAL_FREE), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_USED, HardwareDevicesGetUiString(IDS_HD_TOTAL_USED), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_SECTORS, HardwareDevicesGetUiString(IDS_HD_TOTAL_SECTORS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_CLUSTERS, HardwareDevicesGetUiString(IDS_HD_TOTAL_CLUSTERS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FREE_CLUSTERS, HardwareDevicesGetUiString(IDS_HD_FREE_CLUSTERS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_RESERVED, HardwareDevicesGetUiString(IDS_HD_RESERVED_CLUSTERS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_BYTES_PER_SECTOR, HardwareDevicesGetUiString(IDS_HD_BYTES_PER_SECTOR), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_BYTES_PER_CLUSTER, HardwareDevicesGetUiString(IDS_HD_BYTES_PER_CLUSTER), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_BYTES_PER_RECORD, HardwareDevicesGetUiString(IDS_HD_BYTES_PER_FILE_RECORD_SEGMENT), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_TOTAL_CLUSTERS_PER_RECORD, HardwareDevicesGetUiString(IDS_HD_CLUSTERS_PER_FILE_RECORD_SEGMENT), NULL);
 
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_RECORDS, L"MFT records", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_SIZE, L"MFT size", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_START, L"MFT start", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_ZONE, L"MFT Zone clusters", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_ZONE_SIZE, L"MFT zone size", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_MIRROR_START, L"MFT mirror start", NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_RECORDS, HardwareDevicesGetUiString(IDS_HD_MFT_RECORDS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_SIZE, HardwareDevicesGetUiString(IDS_HD_MFT_SIZE), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_START, HardwareDevicesGetUiString(IDS_HD_MFT_START), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_ZONE, HardwareDevicesGetUiString(IDS_HD_MFT_ZONE_CLUSTERS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_ZONE_SIZE, HardwareDevicesGetUiString(IDS_HD_MFT_ZONE_SIZE), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_MIRROR_START, HardwareDevicesGetUiString(IDS_HD_MFT_MIRROR_START), NULL);
 
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_READS, L"File reads", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_WRITES, L"File writes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_DISK_READS, L"Disk reads", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_DISK_WRITES, L"Disk writes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_READ_BYTES, L"File read bytes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_WRITE_BYTES, L"File write bytes", NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_READS, HardwareDevicesGetUiString(IDS_HD_FILE_READS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_WRITES, HardwareDevicesGetUiString(IDS_HD_FILE_WRITES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_DISK_READS, HardwareDevicesGetUiString(IDS_HD_DISK_READS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_DISK_WRITES, HardwareDevicesGetUiString(IDS_HD_DISK_WRITES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_READ_BYTES, HardwareDevicesGetUiString(IDS_HD_FILE_READ_BYTES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_WRITE_BYTES, HardwareDevicesGetUiString(IDS_HD_FILE_WRITE_BYTES), NULL);
 
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_READS, L"Metadata reads", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_WRITES, L"Metadata writes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_DISK_READS, L"Metadata disk reads", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_DISK_WRITES, L"Metadata disk writes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_READ_BYTES, L"Metadata read bytes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_WRITE_BYTES, L"Metadata write bytes", NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_READS, HardwareDevicesGetUiString(IDS_HD_METADATA_READS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_WRITES, HardwareDevicesGetUiString(IDS_HD_METADATA_WRITES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_DISK_READS, HardwareDevicesGetUiString(IDS_HD_METADATA_DISK_READS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_DISK_WRITES, HardwareDevicesGetUiString(IDS_HD_METADATA_DISK_WRITES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_READ_BYTES, HardwareDevicesGetUiString(IDS_HD_METADATA_READ_BYTES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_METADATA_WRITE_BYTES, HardwareDevicesGetUiString(IDS_HD_METADATA_WRITE_BYTES), NULL);
 
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_READS, L"Mft reads", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_WRITES, L"Mft writes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_READ_BYTES, L"Mft read bytes", NULL);
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_WRITE_BYTES, L"Mft write bytes", NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_READS, HardwareDevicesGetUiString(IDS_HD_MFT_READS), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_WRITES, HardwareDevicesGetUiString(IDS_HD_MFT_WRITES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_READ_BYTES, HardwareDevicesGetUiString(IDS_HD_MFT_READ_BYTES), NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_MFT_WRITE_BYTES, HardwareDevicesGetUiString(IDS_HD_MFT_WRITE_BYTES), NULL);
 
     //PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_ROOT_INDEX_READS, L"RootIndex reads", NULL);
     //PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_ROOT_INDEX_WRITES, L"RootIndex writes", NULL);
@@ -87,23 +87,23 @@ VOID DiskDeviceAddListViewItems(
     //PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_LOGFILE_READ_BYTES, L"LogFile read bytes", NULL);
     //PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_LOGFILE_WRITE_BYTES, L"LogFile write bytes", NULL);
 
-    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_OTHER_EXCEPTIONS, L"Exceptions", NULL);
+    PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_OTHER_EXCEPTIONS, HardwareDevicesGetUiString(IDS_HD_EXCEPTIONS), NULL);
 
     if (PhWindowsVersion >= WINDOWS_8_1)
     {
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_RESOURCES_EXHAUSTED, L"Resources exhausted", NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_RESOURCES_EXHAUSTED, HardwareDevicesGetUiString(IDS_HD_RESOURCES_EXHAUSTED), NULL);
     }
 
     if (PhWindowsVersion >= WINDOWS_10)
     {
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_COUNT, L"Volume trim count", NULL);
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_TIME, L"Volume trim time", NULL);
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_BYTES, L"Volume trim bytes", NULL);
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_SKIPPED_COUNT, L"Volume trim skipped count", NULL);
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_SKIPPED_BYTES, L"Volume trim skipped bytes", NULL);
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_COUNT, L"File trim count", NULL);
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_TIME, L"File trim time", NULL);
-        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_BYTES, L"File trim bytes", NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_COUNT, HardwareDevicesGetUiString(IDS_HD_VOLUME_TRIM_COUNT), NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_TIME, HardwareDevicesGetUiString(IDS_HD_VOLUME_TRIM_TIME), NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_BYTES, HardwareDevicesGetUiString(IDS_HD_VOLUME_TRIM_BYTES), NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_SKIPPED_COUNT, HardwareDevicesGetUiString(IDS_HD_VOLUME_TRIM_SKIPPED_COUNT), NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_VOLUME_TRIM_SKIPPED_BYTES, HardwareDevicesGetUiString(IDS_HD_VOLUME_TRIM_SKIPPED_BYTES), NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_COUNT, HardwareDevicesGetUiString(IDS_HD_FILE_TRIM_COUNT), NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_TIME, HardwareDevicesGetUiString(IDS_HD_FILE_TRIM_TIME), NULL);
+        PhAddListViewItem(Context->ListViewHandle, DISKDRIVE_DETAILS_INDEX_FILE_TRIM_BYTES, HardwareDevicesGetUiString(IDS_HD_FILE_TRIM_BYTES), NULL);
     }
 }
 
@@ -653,7 +653,7 @@ INT_PTR CALLBACK DiskDeviceFileSystemDetailsDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 290, L"Property");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 290, HardwareDevicesGetUiString(IDS_HD_PROPERTY));
             PhSetExtendedListView(context->ListViewHandle);
 
             DiskDeviceAddListViewItems(context);
@@ -745,7 +745,7 @@ INT_PTR CALLBACK DiskDeviceFileSystemDetailsDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, HardwareDevicesGetUiString(IDS_HD_MENU_COPY_ACCELERATOR), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -821,11 +821,11 @@ INT_PTR CALLBACK DiskDeviceSmartDetailsDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 240, L"Property");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, L"Value");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 50, L"Best");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, L"Raw");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 80, L"Raw (Hex)");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 240, HardwareDevicesGetUiString(IDS_HD_PROPERTY));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, HardwareDevicesGetUiString(IDS_HD_VALUE));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 50, HardwareDevicesGetUiString(IDS_HD_BEST));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, HardwareDevicesGetUiString(IDS_HD_RAW));
+            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 80, HardwareDevicesGetUiString(IDS_HD_RAW_HEX));
             //PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 80, L"Advisory");
             //PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 80, L"Failure Imminent");
             PhSetExtendedListView(context->ListViewHandle);
@@ -896,7 +896,7 @@ INT_PTR CALLBACK DiskDeviceSmartDetailsDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, HardwareDevicesGetUiString(IDS_HD_MENU_COPY_ACCELERATOR), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -1009,7 +1009,7 @@ VOID ShowDiskDeviceDetailsDialog(
 
         if (!NT_SUCCESS(PhCreateThreadEx(&threadHandle, ShowDiskDeviceDetailsDialogThread, pageContext)))
         {
-            PhShowError2(Context->WindowHandle, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(Context->WindowHandle, HardwareDevicesGetUiString(IDS_HD_UNABLE_CREATE_WINDOW), L"%s", L"");
             return;
         }
 

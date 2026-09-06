@@ -253,27 +253,14 @@ HFONT PhCreateCommonFont(
     )
 {
     HFONT fontHandle;
-    LOGFONT logFont;
+    NONCLIENTMETRICS metrics = { sizeof(metrics) };
 
-    if (!PhGetSystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &logFont, WindowDpi))
+    if (!PhGetSystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, WindowDpi))
         return NULL;
 
-    fontHandle = CreateFont(
-        -PhMultiplyDivideSigned(Size, WindowDpi, 72),
-        0,
-        0,
-        0,
-        Weight,
-        FALSE,
-        FALSE,
-        FALSE,
-        ANSI_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        PhFontQuality,
-        DEFAULT_PITCH,
-        logFont.lfFaceName
-        );
+    metrics.lfMessageFont.lfHeight = -PhMultiplyDivideSigned(Size, WindowDpi, 72);
+    metrics.lfMessageFont.lfWeight = Weight;
+    fontHandle = CreateFontIndirect(&metrics.lfMessageFont);
 
     if (!fontHandle)
         return NULL;
@@ -309,7 +296,6 @@ HFONT PhCreateMessageFont(
 
     if (PhGetSystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, WindowDpi))
     {
-        metrics.lfMessageFont.lfQuality = (UCHAR)PhFontQuality;
         return CreateFontIndirect(&metrics.lfMessageFont);
     }
 
@@ -401,10 +387,6 @@ HFONT PhInitializeFont(
 {
     HFONT fontHandle;
 
-    if (fontHandle = PhCreateFontHandle(L"Microsoft Sans Serif", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi))
-        return fontHandle;
-    if (fontHandle = PhCreateFontHandle(L"Tahoma", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi))
-        return fontHandle;
     if (fontHandle = PhCreateMessageFont(WindowDpi))
         return fontHandle;
 
@@ -489,7 +471,7 @@ HFONT PhCreateTreeWindowFont(
     _In_ LONG WindowDpi
     )
 {
-    return PhpCreateFontFromSetting(L"Font", WindowDpi, PhCreateIconTitleFont);
+    return PhpCreateFontFromSetting(L"Font", WindowDpi, PhCreateMessageFont);
 }
 
 HFONT PhCreateMonospaceFont(
@@ -2912,6 +2894,22 @@ LRESULT CALLBACK PhDefaultPropSheetWindowProcedure(
  * \param lParam Additional parameter (unused).
  * \return 0 always.
  */
+static PPH_STRING PhpLoadPropSheetCloseText(
+    VOID
+    )
+{
+    PPH_STRING closeText;
+
+    closeText = PhApplicationUiResourceInstance
+        ? PhLoadUiString(PhApplicationUiResourceInstance, IDS_PH_CLOSE, NULL)
+        : NULL;
+
+    if (!closeText)
+        closeText = PhCreateString(L"Close");
+
+    return closeText;
+}
+
 INT CALLBACK PhModalPropSheetWindowProcedure(
     _In_ HWND hwndDlg,
     _In_ UINT uMsg,
@@ -2930,17 +2928,11 @@ INT CALLBACK PhModalPropSheetWindowProcedure(
             // Hide the OK button.
             ShowWindow(GetDlgItem(hwndDlg, IDOK), SW_HIDE);
             // Set the Cancel button's text to "Close".
-            closeText = PhApplicationUiResourceInstance
-                ? PhLoadUiString(
-                    PhApplicationUiResourceInstance,
-                    IDS_PH_CLOSE,
-                    NULL
-                    )
-                : NULL;
+            closeText = PhpLoadPropSheetCloseText();
             PhSetDialogItemText(
                 hwndDlg,
                 IDCANCEL,
-                PhGetStringOrDefault(closeText, L"Close")
+                closeText->Buffer
                 );
             PhClearReference(&closeText);
         }

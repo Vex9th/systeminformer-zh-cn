@@ -39,6 +39,8 @@ class FontHandleContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.source = read_source("phlib/guisup.c")
         cls.header = read_source("phlib/include/guisup.h")
+        cls.main_window = read_source("SystemInformer/mainwnd.c")
+        cls.tab_new = read_source("phlib/tabnew.c")
         cls.exports = read_source("SystemInformer/SystemInformer.def")
         cls.production_sources = "\n".join(
             path.read_text(encoding="utf-8-sig")
@@ -47,23 +49,94 @@ class FontHandleContractTests(unittest.TestCase):
             for path in (REPO_ROOT / root).rglob(extension)
         )
 
-    def test_internal_initializers_use_real_gdi_handles_and_keep_fallbacks(self) -> None:
+    def test_dynamic_ui_fonts_use_the_dpi_aware_system_message_font(self) -> None:
         normal = compact(function_body(self.source, "PhInitializeFont"))
+        common = compact(function_body(self.source, "PhCreateCommonFont"))
+        message = compact(function_body(self.source, "PhCreateMessageFont"))
+        tree = compact(function_body(self.source, "PhCreateTreeWindowFont"))
+
+        self.assertEqual(
+            normal,
+            "HFONT fontHandle; if (fontHandle = PhCreateMessageFont(WindowDpi)) return fontHandle; return GetStockFont(DEFAULT_GUI_FONT);",
+        )
+        self.assertNotIn("Microsoft Sans Serif", normal)
+        self.assertNotIn("Tahoma", normal)
+        self.assertNotIn("ANSI_CHARSET", common)
+        self.assertIn(
+            "PhGetSystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, WindowDpi)",
+            common,
+        )
+        self.assertIn(
+            "metrics.lfMessageFont.lfHeight = -PhMultiplyDivideSigned(Size, WindowDpi, 72);",
+            common,
+        )
+        self.assertIn("metrics.lfMessageFont.lfWeight = Weight;", common)
+        self.assertIn("CreateFontIndirect(&metrics.lfMessageFont)", common)
+        self.assertNotIn("lfFaceName", common)
+        self.assertNotIn("lfCharSet", common)
+        self.assertNotIn("lfQuality", common)
+        self.assertIn(
+            "PhGetSystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, WindowDpi)",
+            message,
+        )
+        self.assertNotIn("lfFaceName", message)
+        self.assertNotIn("lfCharSet", message)
+        self.assertNotIn("lfQuality", message)
+        self.assertEqual(
+            tree,
+            'return PhpCreateFontFromSetting(L"Font", WindowDpi, PhCreateMessageFont);',
+        )
+
+    def test_explicit_tree_font_setting_and_dpi_refresh_semantics_are_preserved(
+        self,
+    ) -> None:
+        from_setting = compact(function_body(self.source, "PhpCreateFontFromSetting"))
+        main_dpi = compact(function_body(self.main_window, "PhMwpOnDpiChanged"))
+        application_refresh = compact(
+            function_body(self.main_window, "PhMwpOnSettingChange")
+        )
+        tree_refresh = compact(
+            function_body(self.main_window, "PhMwpInvokeUpdateWindowFont")
+        )
+        tab_window_proc = compact(function_body(self.tab_new, "PhTabNewWndProc"))
+        tab_font_refresh = compact(function_body(self.tab_new, "PhTabNewUpdateFont"))
+
+        self.assertLess(
+            from_setting.index("CreateFontIndirect(&font)"),
+            from_setting.index("Fallback(WindowDpi)"),
+        )
+        self.assertIn("font.lfQuality = (UCHAR)PhFontQuality;", from_setting)
+        self.assertLess(
+            main_dpi.index("PhMwpInitializeMetrics(WindowHandle, WindowDpi);"),
+            main_dpi.index("PhMwpOnSettingChange(WindowHandle, 0, NULL);"),
+        )
+        self.assertIn("PhMwpOnSettingChange(WindowHandle, 0, NULL);", main_dpi)
+        self.assertIn("PhMwpInvokeUpdateWindowFont(NULL);", main_dpi)
+        self.assertIn(
+            "PhApplicationFont = PhCreateApplicationFont(LayoutWindowDpi);",
+            application_refresh,
+        )
+        self.assertIn("if (oldFont) DeleteFont(oldFont);", application_refresh)
+        self.assertIn("PhCreateTreeWindowFont(LayoutWindowDpi)", tree_refresh)
+        self.assertIn("if (oldFont) DeleteFont(oldFont);", tree_refresh)
+        self.assertIn(
+            "case WM_DPICHANGED_AFTERPARENT: { context->WindowDpi = PhGetWindowDpi(WindowHandle); PhTabNewUpdateFont(context);",
+            tab_window_proc,
+        )
+        self.assertIn(
+            "if (Context->Font && Context->OwnFont) DeleteFont(Context->Font);",
+            tab_font_refresh,
+        )
+
+    def test_monospace_initializer_keeps_real_gdi_handle_fallbacks(self) -> None:
         monospace = compact(function_body(self.source, "PhInitializeMonospaceFont"))
 
-        self.assertIn(
-            'if (fontHandle = PhCreateFontHandle(L"Microsoft Sans Serif", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi)) return fontHandle; '
-            'if (fontHandle = PhCreateFontHandle(L"Tahoma", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi)) return fontHandle; '
-            "if (fontHandle = PhCreateMessageFont(WindowDpi)) return fontHandle;",
-            normal,
-        )
         self.assertIn(
             'if (fontHandle = PhCreateFontHandle(L"Lucida Console", 9, FW_DONTCARE, FF_MODERN, WindowDpi)) return fontHandle; '
             'if (fontHandle = PhCreateFontHandle(L"Courier New", 9, FW_DONTCARE, FF_MODERN, WindowDpi)) return fontHandle; '
             "if (fontHandle = PhCreateFontHandle(NULL, 9, FW_DONTCARE, FF_MODERN, WindowDpi)) return fontHandle;",
             monospace,
         )
-        self.assertNotIn("PhCreateFont(", normal)
         self.assertNotIn("PhCreateFont(", monospace)
 
     def test_real_handle_helper_keeps_the_createfont_contract(self) -> None:

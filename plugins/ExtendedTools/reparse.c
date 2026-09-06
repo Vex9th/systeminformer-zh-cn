@@ -1015,7 +1015,7 @@ INT_PTR CALLBACK EtFindSecurityIdsDlgProc(
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 250, L"Filename");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 250, EtGetUiString(IDS_ET_COLUMN_FILENAME, L"Filename"));
 
             PhInitializeWindowTheme(WindowHandle, !!PhGetIntegerSetting(SETTING_ENABLE_THEME_SUPPORT));
 
@@ -1084,7 +1084,7 @@ INT_PTR CALLBACK EtFindSecurityIdsDlgProc(
                             break;
 
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"&Copy", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
                         PhInsertCopyListViewEMenuItem(menu, USHRT_MAX, context->ListViewHandle);
 
                         selectedItem = PhShowEMenu(
@@ -1193,24 +1193,24 @@ INT_PTR CALLBACK EtReparseDlgProc(
             switch (context->MenuItemIndex)
             {
             case ID_REPARSE_POINTS:
-                PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, L"File index");
-                PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"Reparse tag");
-                PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 250, L"Filename");
+                PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, EtGetUiString(IDS_ET_REPARSE_COLUMN_FILE_INDEX, L"File index"));
+                PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, EtGetUiString(IDS_ET_REPARSE_COLUMN_REPARSE_TAG, L"Reparse tag"));
+                PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 250, EtGetUiString(IDS_ET_COLUMN_FILENAME, L"Filename"));
                 PhLoadListViewColumnsFromSetting(SETTING_NAME_REPARSE_LISTVIEW_COLUMNS, context->ListViewHandle);
                 break;
             case ID_REPARSE_OBJID:
-                PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, L"File index");
-                PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"Object identifier");
-                PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 250, L"Filename");
+                PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, EtGetUiString(IDS_ET_REPARSE_COLUMN_FILE_INDEX, L"File index"));
+                PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, EtGetUiString(IDS_ET_REPARSE_COLUMN_OBJECT_IDENTIFIER, L"Object identifier"));
+                PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 250, EtGetUiString(IDS_ET_COLUMN_FILENAME, L"Filename"));
                 PhLoadListViewColumnsFromSetting(SETTING_NAME_REPARSE_OBJECTID_LISTVIEW_COLUMNS, context->ListViewHandle);
                 break;
             case ID_REPARSE_SDDL:
-                PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, L"Volume");
-                PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 50, L"SecurityID");
-                PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, L"Hash");
-                PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 80, L"Length");
-                PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 150, L"Owner");
-                PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 250, L"SDDL");
+                PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, EtGetUiString(IDS_ET_REPARSE_COLUMN_VOLUME, L"Volume"));
+                PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 50, EtGetUiString(IDS_ET_REPARSE_COLUMN_SECURITY_ID, L"SecurityID"));
+                PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, EtGetUiString(IDS_ET_REPARSE_COLUMN_HASH, L"Hash"));
+                PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_REPARSE_COLUMN_LENGTH, L"Length"));
+                PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 150, EtGetUiString(IDS_ET_REPARSE_COLUMN_OWNER, L"Owner"));
+                PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 250, EtGetUiString(IDS_ET_REPARSE_COLUMN_SDDL, L"SDDL"));
                 PhLoadListViewColumnsFromSetting(SETTING_NAME_REPARSE_SD_LISTVIEW_COLUMNS, context->ListViewHandle);
                 break;
             }
@@ -1418,15 +1418,15 @@ INT_PTR CALLBACK EtReparseDlgProc(
                         {
                         case ID_REPARSE_POINTS:
                         case ID_REPARSE_OBJID:
-                            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Remove...", NULL, NULL), ULONG_MAX);
+                            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, EtGetUiString(IDS_ET_REPARSE_MENU_REMOVE, L"Remove..."), NULL, NULL), ULONG_MAX);
                             break;
                         case ID_REPARSE_SDDL:
-                            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Find files...", NULL, NULL), ULONG_MAX);
+                            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, EtGetUiString(IDS_ET_REPARSE_MENU_FIND_FILES, L"Find files..."), NULL, NULL), ULONG_MAX);
                             break;
                         }
 
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"&Copy", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
                         PhInsertCopyListViewEMenuItem(menu, USHRT_MAX, context->ListViewHandle);
 
                         selectedItem = PhShowEMenu(
@@ -1455,9 +1455,9 @@ INT_PTR CALLBACK EtReparseDlgProc(
                                         {
                                             if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                                                 WindowHandle,
-                                                L"remove",
-                                                L"the repase point",
-                                                L"The repase point will be permanently deleted.",
+                                                EtGetUiString(IDS_ET_CONFIRM_ACTION_REMOVE, L"remove"),
+                                                EtGetUiString(IDS_ET_CONFIRM_REPARSE_POINT, L"the repase point"),
+                                                EtGetUiString(IDS_ET_CONFIRM_REPARSE_POINT_WARNING, L"The repase point will be permanently deleted."),
                                                 FALSE
                                                 ))
                                             {
@@ -1470,9 +1470,9 @@ INT_PTR CALLBACK EtReparseDlgProc(
                                         {
                                             if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                                                 WindowHandle,
-                                                L"remove",
-                                                L"the object identifier",
-                                                L"The object identifier will be permanently deleted.",
+                                                EtGetUiString(IDS_ET_CONFIRM_ACTION_REMOVE, L"remove"),
+                                                EtGetUiString(IDS_ET_CONFIRM_OBJECT_IDENTIFIER, L"the object identifier"),
+                                                EtGetUiString(IDS_ET_CONFIRM_OBJECT_IDENTIFIER_WARNING, L"The object identifier will be permanently deleted."),
                                                 FALSE
                                                 ))
                                             {

@@ -17,6 +17,7 @@
  */
 
 #include <ph.h>
+#include <phappresourceid.h>
 #include <guisup.h>
 #include <emenu.h>
 
@@ -94,6 +95,25 @@ LONG PhpDefaultCompareListViewItems(
     _In_ LONG Y,
     _In_ LONG Column
     );
+
+static PPH_EMENU_ITEM PhpCreateApplicationResourceEMenuItem(
+    _In_ ULONG Flags,
+    _In_ ULONG Id,
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR FallbackText
+    )
+{
+    PPH_STRING resourceText;
+    PWSTR ownedText;
+
+    resourceText = PhApplicationUiResourceInstance
+        ? PhLoadUiString(PhApplicationUiResourceInstance, ResourceId, NULL)
+        : NULL;
+    ownedText = PhDuplicateStringZ(PhGetStringOrDefault(resourceText, FallbackText));
+    PhClearReference(&resourceText);
+
+    return PhCreateEMenuItem(Flags | PH_EMENU_TEXT_OWNED, Id, ownedText, NULL, NULL);
+}
 
 /**
  * Enables extended list view support for a list view control.
@@ -241,13 +261,13 @@ LRESULT CALLBACK PhpExtendedListViewWndProc(
                         break;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Size column to fit", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"Size all columns to fit", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhpCreateApplicationResourceEMenuItem(0, 1, IDS_PH_EXTLV_SIZE_COLUMN_TO_FIT, L"Size column to fit"), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhpCreateApplicationResourceEMenuItem(0, 2, IDS_PH_EXTLV_SIZE_ALL_COLUMNS_TO_FIT, L"Size all columns to fit"), ULONG_MAX);
 
                     if (context->SortOrder != context->DefaultSortOrder || context->SortColumn != context->DefaultSortColumn)
                     {
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, L"Reset sort", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhpCreateApplicationResourceEMenuItem(0, 3, IDS_PH_EXTLV_RESET_SORT, L"Reset sort"), ULONG_MAX);
                     }
 
                     selectedItem = PhShowEMenu(

@@ -265,8 +265,8 @@ INT_PTR CALLBACK DevicePropGeneralDlgProc(
 
             PhSetListViewStyle(context->GeneralListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->GeneralListViewHandle, L"explorer");
-            PhAddListViewColumn(context->GeneralListViewHandle, 0, 0, 0, LVCFMT_LEFT, 180, L"Name");
-            PhAddListViewColumn(context->GeneralListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, L"Value");
+            PhAddListViewColumn(context->GeneralListViewHandle, 0, 0, 0, LVCFMT_LEFT, 180, HardwareDevicesGetUiString(IDS_HD_NAME));
+            PhAddListViewColumn(context->GeneralListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, HardwareDevicesGetUiString(IDS_HD_VALUE));
             PhSetExtendedListView(context->GeneralListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_DEVICE_GENERAL_COLUMNS, context->GeneralListViewHandle);
             DeviceSetImageList(context->GeneralListViewHandle, context);
@@ -330,7 +330,7 @@ INT_PTR CALLBACK DevicePropGeneralDlgProc(
                 if (PhGetSelectedListViewItemParams(context->GeneralListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, HardwareDevicesGetUiString(IDS_HD_MENU_COPY_ACCELERATOR), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->GeneralListViewHandle);
 
                     item = PhShowEMenu(
@@ -377,10 +377,10 @@ INT_PTR CALLBACK DevicePropGeneralDlgProc(
                 break;
 
             menu = PhCreateEMenu();
-            PhInsertEMenuItem(menu, enable = PhCreateEMenuItem(0, 0, L"Enable", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, disable = PhCreateEMenuItem(0, 1, L"Disable", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, restart = PhCreateEMenuItem(0, 2, L"Restart", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, uninstall = PhCreateEMenuItem(0, 3, L"Uninstall", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, enable = PhCreateEMenuItem(0, 0, HardwareDevicesGetUiString(IDS_HD_MENU_ENABLE), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, disable = PhCreateEMenuItem(0, 1, HardwareDevicesGetUiString(IDS_HD_MENU_DISABLE), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, restart = PhCreateEMenuItem(0, 2, HardwareDevicesGetUiString(IDS_HD_MENU_RESTART), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, uninstall = PhCreateEMenuItem(0, 3, HardwareDevicesGetUiString(IDS_HD_MENU_UNINSTALL), NULL, NULL), ULONG_MAX);
 
             if (!PhGetOwnTokenAttributes().Elevated)
             {
@@ -676,8 +676,8 @@ INT_PTR CALLBACK DevicePropPropertiesDlgProc(
 
             PhSetListViewStyle(context->PropsListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->PropsListViewHandle, L"explorer");
-            PhAddListViewColumn(context->PropsListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, L"Name");
-            PhAddListViewColumn(context->PropsListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, L"Value");
+            PhAddListViewColumn(context->PropsListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, HardwareDevicesGetUiString(IDS_HD_NAME));
+            PhAddListViewColumn(context->PropsListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, HardwareDevicesGetUiString(IDS_HD_VALUE));
             PhSetExtendedListView(context->PropsListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_DEVICE_PROPERTIES_COLUMNS, context->PropsListViewHandle);
             DeviceSetImageList(context->PropsListViewHandle, context);
@@ -732,7 +732,7 @@ INT_PTR CALLBACK DevicePropPropertiesDlgProc(
                 if (PhGetSelectedListViewItemParams(context->PropsListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, HardwareDevicesGetUiString(IDS_HD_MENU_COPY_ACCELERATOR), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->PropsListViewHandle);
 
                     item = PhShowEMenu(
@@ -849,8 +849,8 @@ INT_PTR CALLBACK DevicePropInterfacesDlgProc(
 
             PhSetListViewStyle(context->InterfacesListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->InterfacesListViewHandle, L"explorer");
-            PhAddListViewColumn(context->InterfacesListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, L"Name");
-            PhAddListViewColumn(context->InterfacesListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, L"Value");
+            PhAddListViewColumn(context->InterfacesListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, HardwareDevicesGetUiString(IDS_HD_NAME));
+            PhAddListViewColumn(context->InterfacesListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, HardwareDevicesGetUiString(IDS_HD_VALUE));
             PhSetExtendedListView(context->InterfacesListViewHandle);
 
             PhLoadListViewColumnsFromSetting(SETTING_NAME_DEVICE_INTERFACES_COLUMNS, context->InterfacesListViewHandle);
@@ -906,7 +906,7 @@ INT_PTR CALLBACK DevicePropInterfacesDlgProc(
                 if (PhGetSelectedListViewItemParams(context->InterfacesListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, HardwareDevicesGetUiString(IDS_HD_MENU_COPY_ACCELERATOR), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->InterfacesListViewHandle);
 
                     item = PhShowEMenu(
@@ -971,8 +971,8 @@ INT_PTR CALLBACK DevicePropResourcesDlgProc(
 
             PhSetListViewStyle(context->ResourcesListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ResourcesListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ResourcesListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, L"Resource type");
-            PhAddListViewColumn(context->ResourcesListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, L"Setting");
+            PhAddListViewColumn(context->ResourcesListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, HardwareDevicesGetUiString(IDS_HD_RESOURCE_TYPE));
+            PhAddListViewColumn(context->ResourcesListViewHandle, 1, 1, 1, LVCFMT_LEFT, 300, HardwareDevicesGetUiString(IDS_HD_SETTING));
             PhSetExtendedListView(context->ResourcesListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_DEVICE_INTERFACES_COLUMNS, context->ResourcesListViewHandle);
             DeviceSetImageList(context->ResourcesListViewHandle, context);
@@ -1033,7 +1033,7 @@ INT_PTR CALLBACK DevicePropResourcesDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ResourcesListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, HardwareDevicesGetUiString(IDS_HD_MENU_COPY_ACCELERATOR), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ResourcesListViewHandle);
 
                     item = PhShowEMenu(

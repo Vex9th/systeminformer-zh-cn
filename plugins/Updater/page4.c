@@ -74,10 +74,14 @@ VOID ShowProgressDialog(
 {
     PPH_STRING downloadingChannelFormat;
     PPH_STRING downloadingUpdateFormat;
+    PPH_STRING windowTitle;
+    PPH_STRING progressText;
     TASKDIALOGCONFIG config;
 
     downloadingChannelFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOADING_CHANNEL_FORMAT, NULL));
     downloadingUpdateFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOADING_UPDATE_FORMAT, NULL));
+    windowTitle = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DIALOG_TITLE, NULL));
+    progressText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOAD_PROGRESS_INITIAL, NULL));
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -88,7 +92,7 @@ VOID ShowProgressDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.pfCallback = ShowProgressCallbackProc;
 
-    config.pszWindowTitle = L"System Informer - Updater";
+    config.pszWindowTitle = PhGetStringOrEmpty(windowTitle);
     if (Context->SwitchingChannel)
     {
         PCWSTR channelName;
@@ -119,7 +123,7 @@ VOID ShowProgressDialog(
         config.pszMainInstruction = PhaFormatString(PhGetStringOrEmpty(downloadingUpdateFormat), PhGetStringOrEmpty(Context->Version))->Buffer;
     }
 
-    config.pszContent = L"Downloaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s";
+    config.pszContent = PhGetStringOrEmpty(progressText);
 
     PhTaskDialogNavigatePage(Context->DialogHandle, &config);
 }

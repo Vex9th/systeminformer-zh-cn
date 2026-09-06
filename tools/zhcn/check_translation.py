@@ -404,13 +404,22 @@ def main():
     total_a = sum(v[1] for v in per_cat.values())
     untranslated = [e for e in untranslated if not is_keep_english(e["english"])]
 
+    report_keep_english = {}
+    for entry in keep_english.values():
+        report_keep_english.setdefault(
+            (entry["category"], entry["english"]), entry
+        )
+
     lines = []
     lines.append("# 翻译审计报告 / Translation Audit Report")
     lines.append("")
     lines.append(f"- 有效翻译单元（不含约定保留英文项）：{total_a}")
     lines.append(f"- 已翻译：{total_t}")
     lines.append(f"- 未翻译：{total_a - total_t}")
-    lines.append(f"- 约定保留英文（技术缩写/键名/占位符等）：{len(keep_english)} 项")
+    lines.append(
+        f"- 约定保留英文（技术缩写/键名/占位符等）："
+        f"{len(report_keep_english)} 项"
+    )
     migration_categories = "`, `".join(sorted(CALLSITE_MIGRATION_CATEGORIES))
     lines.append(
         f"- `{migration_categories}` 必须迁移调用点；"
@@ -438,10 +447,10 @@ def main():
         t, a = per_mod[mod]
         lines.append(f"| {mod} | {t} | {a} | {a - t} |")
     lines.append("")
-    if keep_english:
+    if report_keep_english:
         lines.append("## 约定保留英文 / Kept in English by design")
         lines.append("")
-        for e in list(keep_english.values())[:80]:
+        for e in list(report_keep_english.values())[:80]:
             lines.append(f"- `{e['english']}` ({e['category']})")
         lines.append("")
 

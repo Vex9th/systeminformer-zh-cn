@@ -91,6 +91,26 @@
 #define IDS_ES_DEFAULT_RESTART_MESSAGE_FORMAT 2067
 #define IDS_ES_NOT_AVAILABLE            2068
 #define IDS_ES_COMPUTER_NAME_UNKNOWN    2069
+#define IDS_ES_MENU_ENABLE              2070
+#define IDS_ES_MENU_DISABLE             2071
+#define IDS_ES_MENU_RESTART             2072
+#define IDS_ES_MENU_UNINSTALL           2073
+#define IDS_ES_MENU_OPEN_KEY            2074
+#define IDS_ES_MENU_HARDWARE            2075
+#define IDS_ES_MENU_SOFTWARE            2076
+#define IDS_ES_MENU_USER                2077
+#define IDS_ES_MENU_CONFIG              2078
+#define IDS_ES_MENU_PROPERTIES          2079
+#define IDS_ES_COLUMN_PNP_DEVICES       2080
+#define IDS_ES_COLUMN_TRIGGER           2081
+#define IDS_ES_COLUMN_ACTION            2082
+#define IDS_ES_COLUMN_DATA              2083
+#define IDS_ES_COLUMN_PRIVILEGE_NAME    2084
+#define IDS_ES_COLUMN_PRIVILEGE_DISPLAY_NAME 2085
+#define IDS_ES_INVALID_GUID_HINT        2086
+#define IDS_ES_PRIVILEGE_ALREADY_ADDED  2087
+#define IDS_ES_SERVICE_PROTECTION_WARNING 2088
+#define IDS_ES_CONTINUE_PROMPT          2089
 #define IDC_SERVICES_LAYOUT             1001
 #define IDC_MESSAGE                     1002
 #define IDC_FIRSTFAILURE                1003
@@ -148,6 +168,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        115
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1052
-#define _APS_NEXT_SYMED_VALUE           2070
+#define _APS_NEXT_SYMED_VALUE           2090
 #endif
 #endif

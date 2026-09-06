@@ -98,7 +98,7 @@ VOID GraphicsDeviceShowNodesDialog(
 
         if (!NT_SUCCESS(PhCreateThreadEx(&Context->NodeWindowThreadHandle, EtpGpuNodesDialogThreadStart, Context)))
         {
-            PhShowError2(ParentWindowHandle, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(ParentWindowHandle, HardwareDevicesGetUiString(IDS_HD_UNABLE_CREATE_WINDOW), L"%s", L"");
             PhDereferenceObject(Context);
             return;
         }

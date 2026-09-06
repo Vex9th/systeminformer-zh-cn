@@ -102,7 +102,7 @@ VOID WeShowWindowsDialog(
         if (!NT_SUCCESS(PhCreateThreadEx(&WepWindowsDialogThreadHandle, WepShowWindowsDialogThread, context)))
         {
             PhDereferenceObject(context);
-            PhShowError2(ParentWindowHandle, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(ParentWindowHandle, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UNABLE_CREATE_WINDOW, NULL))), L"%s", L"");
             return;
         }
 
@@ -626,6 +626,22 @@ LRESULT CALLBACK OverlayWndProc(HWND WindowHandle, UINT msg, WPARAM wParam, LPAR
  * \return
  */
 
+static PPH_EMENU_ITEM WepCreateResourceEMenuItem(
+    _In_ ULONG Flags,
+    _In_ ULONG Id,
+    _In_ ULONG ResourceId
+    )
+{
+    PPH_STRING menuText;
+    PWSTR ownedText;
+
+    menuText = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+    ownedText = PhDuplicateStringZ(PhGetStringOrEmpty(menuText));
+    PhClearReference(&menuText);
+
+    return PhCreateEMenuItem(Flags | PH_EMENU_TEXT_OWNED, Id, ownedText, NULL, NULL);
+}
+
 PPH_EMENU WepCreateWindowMenu(
     _In_ PPH_EMENU WindowMenu,
     _In_ BOOLEAN IncludeProperties,
@@ -633,42 +649,19 @@ PPH_EMENU WepCreateWindowMenu(
     )
 {
     PPH_EMENU_ITEM menuItem;
-    PPH_STRING closeText;
-    PWSTR closeMenuText;
-
-    closeText = PhLoadUiString(
-        PluginInstance->DllBase,
-        IDS_WE_CLOSE,
-        NULL
-        );
-    closeMenuText = PhDuplicateStringZ(
-        PhGetStringOrDefault(closeText, L"Close")
-        );
-    PhClearReference(&closeText);
-
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_BRINGTOFRONT, L"Bring to front", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_RESTORE, L"Restore", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_MINIMIZE, L"Minimize", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_MAXIMIZE, L"Maximize", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(
-        WindowMenu,
-        PhCreateEMenuItem(
-            PH_EMENU_TEXT_OWNED,
-            ID_WINDOW_CLOSE,
-            closeMenuText,
-            NULL,
-            NULL
-            ),
-        ULONG_MAX
-        );
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_DESTROY, L"Destroy", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_BRINGTOFRONT, IDS_WE_MENU_BRING_TO_FRONT), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_RESTORE, IDS_WE_MENU_RESTORE), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_MINIMIZE, IDS_WE_MENU_MINIMIZE), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_MAXIMIZE, IDS_WE_MENU_MAXIMIZE), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_CLOSE, IDS_WE_CLOSE), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_DESTROY, IDS_WE_MENU_DESTROY), ULONG_MAX);
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuSeparator(), ULONG_MAX);
 
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_VISIBLE, L"Visible", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_ENABLED, L"Enabled", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_ALWAYSONTOP, L"Always on top", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_VISIBLE, IDS_WE_MENU_VISIBLE), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_ENABLED, IDS_WE_MENU_ENABLED), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_ALWAYSONTOP, IDS_WE_MENU_ALWAYS_ON_TOP), ULONG_MAX);
 
-    menuItem = PhCreateEMenuItem(0, 0, L"&Opacity", NULL, NULL);
+    menuItem = WepCreateResourceEMenuItem(0, 0, IDS_WE_MENU_OPACITY);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_10, L"&10%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_20, L"&20%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_30, L"&30%", NULL, NULL), ULONG_MAX);
@@ -678,25 +671,25 @@ PPH_EMENU WepCreateWindowMenu(
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_70, L"&70%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_80, L"&80%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_90, L"&90%", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_OPAQUE, L"&Opaque", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, WepCreateResourceEMenuItem(0, ID_OPACITY_OPAQUE, IDS_WE_MENU_OPAQUE), ULONG_MAX);
     PhInsertEMenuItem(WindowMenu, menuItem, ULONG_MAX);
 
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_INSPECT, L"&Inspect", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_SETDPI, L"DPI", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_OPENFILELOCATION, L"Open &file location", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_INSPECT, IDS_WE_MENU_INSPECT), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_SETDPI, IDS_WE_MENU_DPI), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_OPENFILELOCATION, IDS_WE_MENU_OPEN_FILE_LOCATION), ULONG_MAX);
 
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_HIGHLIGHT, L"Highlight", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_GOTOPROCESS, L"Go to process...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_GOTOTHREAD, L"Go to thread...", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_HIGHLIGHT, IDS_WE_MENU_HIGHLIGHT), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_GOTOPROCESS, IDS_WE_MENU_GO_TO_PROCESS), ULONG_MAX);
+    PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_GOTOTHREAD, IDS_WE_MENU_GO_TO_THREAD), ULONG_MAX);
     if (IncludeProperties)
-        PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_PROPERTIES, L"Properties", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_PROPERTIES, IDS_WE_MENU_PROPERTIES), ULONG_MAX);
 
     if (IncludeCopy)
     {
         PhInsertEMenuItem(WindowMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_COPY, L"Copy\bCtrl+C", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(WindowMenu, WepCreateResourceEMenuItem(0, ID_WINDOW_COPY, IDS_WE_MENU_COPY_SHORTCUT), ULONG_MAX);
     }
 
     return WindowMenu;
@@ -920,7 +913,7 @@ BOOLEAN WepExecuteWindowCommand(
             }
             else
             {
-                PhShowError2(ParentWindowHandle, L"The process does not exist.", L"%s", L"");
+                PhShowError2(ParentWindowHandle, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_PROCESS_NOT_FOUND, NULL))), L"%s", L"");
             }
         }
         break;
@@ -945,7 +938,7 @@ BOOLEAN WepExecuteWindowCommand(
             }
             else
             {
-                PhShowError2(ParentWindowHandle, L"The process does not exist.", L"%s", L"");
+                PhShowError2(ParentWindowHandle, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_PROCESS_NOT_FOUND, NULL))), L"%s", L"");
             }
         }
         break;
@@ -1241,7 +1234,7 @@ INT_PTR CALLBACK WepWindowsDlgProc(
             PhCreateSearchControl(
                 WindowHandle,
                 context->SearchBoxHandle,
-                L"Search Windows (Ctrl+K)",
+                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_SEARCH_WINDOWS, NULL))),
                 WepWindowsSearchControlCallback,
                 context
                 );
@@ -1484,20 +1477,20 @@ INT_PTR CALLBACK WepWindowsDlgProc(
                     GetWindowRect(GetDlgItem(WindowHandle, IDC_OPTIONS), &rect);
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, enumMessageOnlyItem = PhCreateEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_MESSAGEONLY, L"Enumerate message-only windows", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, enumNonVisibleItem = PhCreateEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_NONVISIBLE, L"Enumerate non-visible windows", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, enumMessageOnlyItem = WepCreateResourceEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_MESSAGEONLY, IDS_WE_MENU_ENUMERATE_MESSAGE_ONLY), ULONG_MAX);
+                    PhInsertEMenuItem(menu, enumNonVisibleItem = WepCreateResourceEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_NONVISIBLE, IDS_WE_MENU_ENUMERATE_NON_VISIBLE), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, highlightMessageOnlyItem = PhCreateEMenuItem(0, ID_WINDOW_OPTIONS_HIGHLIGHT_MESSAGEONLY, L"Highlight message-only windows", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, highlightMessageOnlyItem = WepCreateResourceEMenuItem(0, ID_WINDOW_OPTIONS_HIGHLIGHT_MESSAGEONLY, IDS_WE_MENU_HIGHLIGHT_MESSAGE_ONLY), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, iconsItem = PhCreateEMenuItem(0, 1, L"Enable icons", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, iconsItem = WepCreateResourceEMenuItem(0, 1, IDS_WE_MENU_ENABLE_ICONS), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, desktopItem = PhCreateEMenuItem(0, 3, L"Show desktop windows", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, desktopItem = WepCreateResourceEMenuItem(0, 3, IDS_WE_MENU_SHOW_DESKTOP_WINDOWS), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, findSnapshotItem = PhCreateEMenuItem(0, ID_WINDOW_OPTIONS_FIND_SNAPSHOT, L"Use snapshot window finder", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, findSnapshotItem = WepCreateResourceEMenuItem(0, ID_WINDOW_OPTIONS_FIND_SNAPSHOT, IDS_WE_MENU_USE_SNAPSHOT_FINDER), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, parentChildItem = PhCreateEMenuItem(0, ID_VIEW_MODE_PARENTCHILD, L"Enumerate windows", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, zOrderItem = PhCreateEMenuItem(0, ID_VIEW_MODE_ZORDER, L"Enumerate windows by z-order", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, ownerItem = PhCreateEMenuItem(0, ID_VIEW_MODE_OWNER, L"Enumerate windows by owner", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, parentChildItem = WepCreateResourceEMenuItem(0, ID_VIEW_MODE_PARENTCHILD, IDS_WE_MENU_ENUMERATE_WINDOWS), ULONG_MAX);
+                    PhInsertEMenuItem(menu, zOrderItem = WepCreateResourceEMenuItem(0, ID_VIEW_MODE_ZORDER, IDS_WE_MENU_ENUMERATE_Z_ORDER), ULONG_MAX);
+                    PhInsertEMenuItem(menu, ownerItem = WepCreateResourceEMenuItem(0, ID_VIEW_MODE_OWNER, IDS_WE_MENU_ENUMERATE_OWNER), ULONG_MAX);
 
                     if (PhGetIntegerSetting(SETTING_NAME_WINDOW_ENUM_MESSAGEONLY))
                         enumMessageOnlyItem->Flags |= PH_EMENU_CHECKED;
@@ -1886,7 +1879,7 @@ INT_PTR CALLBACK WepWindowsDlgProc(
                         }
                         else
                         {
-                            PhShowError2(WindowHandle, L"The process does not exist.", L"%s", L"");
+                            PhShowError2(WindowHandle, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_PROCESS_NOT_FOUND, NULL))), L"%s", L"");
                         }
                     }
                 }
@@ -1912,7 +1905,7 @@ INT_PTR CALLBACK WepWindowsDlgProc(
                         }
                         else
                         {
-                            PhShowError2(WindowHandle, L"The process does not exist.", L"%s", L"");
+                            PhShowError2(WindowHandle, PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_PROCESS_NOT_FOUND, NULL))), L"%s", L"");
                         }
                     }
                 }
@@ -2327,7 +2320,7 @@ INT_PTR CALLBACK WepWindowsPageProc(
             PhCreateSearchControl(
                 WindowHandle,
                 context->SearchBoxHandle,
-                L"Search Windows (Ctrl+K)",
+                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_SEARCH_WINDOWS, NULL))),
                 WepWindowsSearchControlCallback,
                 context
                 );
@@ -2644,18 +2637,18 @@ INT_PTR CALLBACK WepWindowsPageProc(
                     GetWindowRect(GetDlgItem(WindowHandle, IDC_OPTIONS), &rect);
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, enumMessageOnlyItem = PhCreateEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_MESSAGEONLY, L"Enumerate message-only windows", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, enumNonVisibleItem = PhCreateEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_NONVISIBLE, L"Enumerate non-visible windows", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, enumMessageOnlyItem = WepCreateResourceEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_MESSAGEONLY, IDS_WE_MENU_ENUMERATE_MESSAGE_ONLY), ULONG_MAX);
+                    PhInsertEMenuItem(menu, enumNonVisibleItem = WepCreateResourceEMenuItem(0, ID_WINDOW_OPTIONS_ENUM_NONVISIBLE, IDS_WE_MENU_ENUMERATE_NON_VISIBLE), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, highlightMessageOnlyItem = PhCreateEMenuItem(0, ID_WINDOW_OPTIONS_HIGHLIGHT_MESSAGEONLY, L"Highlight message-only windows", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, highlightMessageOnlyItem = WepCreateResourceEMenuItem(0, ID_WINDOW_OPTIONS_HIGHLIGHT_MESSAGEONLY, IDS_WE_MENU_HIGHLIGHT_MESSAGE_ONLY), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, iconsItem = PhCreateEMenuItem(0, 1, L"Enable icons", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, iconsItem = WepCreateResourceEMenuItem(0, 1, IDS_WE_MENU_ENABLE_ICONS), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, desktopItem = PhCreateEMenuItem(0, 3, L"Show desktop windows", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, desktopItem = WepCreateResourceEMenuItem(0, 3, IDS_WE_MENU_SHOW_DESKTOP_WINDOWS), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, parentChildItem = PhCreateEMenuItem(0, ID_VIEW_MODE_PARENTCHILD, L"Enumerate windows", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, zOrderItem = PhCreateEMenuItem(0, ID_VIEW_MODE_ZORDER, L"Enumerate windows by z-order", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, ownerItem = PhCreateEMenuItem(0, ID_VIEW_MODE_OWNER, L"Enumerate windows by owner", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, parentChildItem = WepCreateResourceEMenuItem(0, ID_VIEW_MODE_PARENTCHILD, IDS_WE_MENU_ENUMERATE_WINDOWS), ULONG_MAX);
+                    PhInsertEMenuItem(menu, zOrderItem = WepCreateResourceEMenuItem(0, ID_VIEW_MODE_ZORDER, IDS_WE_MENU_ENUMERATE_Z_ORDER), ULONG_MAX);
+                    PhInsertEMenuItem(menu, ownerItem = WepCreateResourceEMenuItem(0, ID_VIEW_MODE_OWNER, IDS_WE_MENU_ENUMERATE_OWNER), ULONG_MAX);
 
                     if (PhGetIntegerSetting(SETTING_NAME_WINDOW_ENUM_MESSAGEONLY))
                         enumMessageOnlyItem->Flags |= PH_EMENU_CHECKED;

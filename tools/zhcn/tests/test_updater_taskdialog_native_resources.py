@@ -91,10 +91,10 @@ class UpdaterTaskDialogNativeResourceTests(unittest.TestCase):
                 header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(12000, 12018)))
-        self.assertEqual(len(english), 18)
-        self.assertEqual(len(chinese), 18)
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12018$")
+        self.assertEqual(numeric_ids, list(range(12000, 12056)))
+        self.assertEqual(len(english), 56)
+        self.assertEqual(len(chinese), 56)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12056$")
 
     def test_button_arrays_are_local_and_hold_loaded_strings_through_navigation(self) -> None:
         page1 = function_body(self.sources["page1.c"], "ShowCheckForUpdatesDialog")

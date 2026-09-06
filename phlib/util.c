@@ -1063,6 +1063,23 @@ PPH_STRING PhGetNtFormatMessage(
     return messageString;
 }
 
+static PPH_STRING PhpLoadApplicationUiStringOrDefault(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR FallbackText
+    )
+{
+    PPH_STRING resourceText;
+
+    resourceText = PhApplicationUiResourceInstance
+        ? PhLoadUiString(PhApplicationUiResourceInstance, ResourceId, NULL)
+        : NULL;
+
+    if (!resourceText)
+        resourceText = PhCreateString(FallbackText);
+
+    return resourceText;
+}
+
 /**
  * Displays a message box.
  *
@@ -1198,6 +1215,7 @@ BOOLEAN PhpShowMessageOneTime(
 {
     ULONG result;
     PPH_STRING message;
+    PPH_STRING verificationText;
     TASKDIALOGCONFIG config;
     BOOLEAN checked = FALSE;
     ULONG buttonsFlags;
@@ -1212,6 +1230,11 @@ BOOLEAN PhpShowMessageOneTime(
 
     if (!message)
         return FALSE;
+
+    verificationText = PhpLoadApplicationUiStringOrDefault(
+        IDS_PH_DONT_SHOW_THIS_MESSAGE_AGAIN,
+        L"Don't show this message again"
+        );
 
     buttonsFlags = 0;
     PhMapFlags1(
@@ -1230,7 +1253,7 @@ BOOLEAN PhpShowMessageOneTime(
     config.pszMainIcon = Icon;
     config.pszMainInstruction = PhTranslateString(Title);
     config.pszContent = PhGetString(message);
-    config.pszVerificationText = L"Don't show this message again";
+    config.pszVerificationText = verificationText->Buffer;
     config.cxWidth = 200;
 
     if (PhShowTaskDialog(
@@ -1241,6 +1264,7 @@ BOOLEAN PhpShowMessageOneTime(
         ))
     {
         PhDereferenceObject(message);
+        PhDereferenceObject(verificationText);
 
         if (Result)
             *Result = result;
@@ -1253,6 +1277,7 @@ BOOLEAN PhpShowMessageOneTime(
     else
     {
         PhDereferenceObject(message);
+        PhDereferenceObject(verificationText);
         return FALSE;
     }
 }
@@ -1512,24 +1537,32 @@ VOID PhShowStatus(
     _In_opt_ ULONG Win32Result
     )
 {
+    PPH_STRING defaultMessage;
     PPH_STRING statusMessage;
+
+    defaultMessage = PhpLoadApplicationUiStringOrDefault(
+        IDS_PH_UNABLE_PERFORM_OPERATION,
+        L"Unable to perform the operation."
+        );
 
     if (statusMessage = PhGetStatusMessage(Status, Win32Result))
     {
         if (Message)
             PhShowError2(WindowHandle, Message, L"%s", PhGetString(statusMessage));
         else
-            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", PhGetString(statusMessage));
+            PhShowError2(WindowHandle, defaultMessage->Buffer, L"%s", PhGetString(statusMessage));
 
         PhDereferenceObject(statusMessage);
     }
     else
     {
         if (Message)
-            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", Message);
+            PhShowError2(WindowHandle, defaultMessage->Buffer, L"%s", Message);
         else
-            PhShowStatus(WindowHandle, PhTranslateString(L"Unable to perform the operation."), STATUS_UNSUCCESSFUL, 0);
+            PhShowStatus(WindowHandle, defaultMessage->Buffer, STATUS_UNSUCCESSFUL, 0);
     }
+
+    PhDereferenceObject(defaultMessage);
 }
 
 /**
@@ -1547,24 +1580,32 @@ VOID PhShowStatusHR(
     _In_opt_ ULONG Win32Result
     )
 {
+    PPH_STRING defaultMessage;
     PPH_STRING statusMessage;
+
+    defaultMessage = PhpLoadApplicationUiStringOrDefault(
+        IDS_PH_UNABLE_PERFORM_OPERATION,
+        L"Unable to perform the operation."
+        );
 
     if (statusMessage = PhGetStatusMessageHR(Status, Win32Result))
     {
         if (Message)
             PhShowError2(WindowHandle, Message, L"%s", PhGetString(statusMessage));
         else
-            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", PhGetString(statusMessage));
+            PhShowError2(WindowHandle, defaultMessage->Buffer, L"%s", PhGetString(statusMessage));
 
         PhDereferenceObject(statusMessage);
     }
     else
     {
         if (Message)
-            PhShowError2(WindowHandle, PhTranslateString(L"Unable to perform the operation."), L"%s", Message);
+            PhShowError2(WindowHandle, defaultMessage->Buffer, L"%s", Message);
         else
-            PhShowStatusHR(WindowHandle, PhTranslateString(L"Unable to perform the operation."), E_FAIL, 0);
+            PhShowStatusHR(WindowHandle, defaultMessage->Buffer, E_FAIL, 0);
     }
+
+    PhDereferenceObject(defaultMessage);
 }
 
 /**
@@ -1584,21 +1625,27 @@ BOOLEAN PhShowContinueStatus(
     _In_opt_ ULONG Win32Result
     )
 {
+    PPH_STRING defaultMessage;
     PPH_STRING statusMessage;
     LONG result;
 
+    defaultMessage = PhpLoadApplicationUiStringOrDefault(
+        IDS_PH_UNABLE_PERFORM_OPERATION,
+        L"Unable to perform the operation."
+        );
     statusMessage = PhGetStatusMessage(Status, Win32Result);
 
     if (Message && statusMessage)
         result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CLOSE_BUTTON, TD_ERROR_ICON, Message, L"%s", PhGetString(statusMessage));
     else if (Message)
-        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, PhTranslateString(L"Unable to perform the operation."), L"%s", Message);
+        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, defaultMessage->Buffer, L"%s", Message);
     else if (statusMessage)
-        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, PhTranslateString(L"Unable to perform the operation."), L"%s", PhGetString(statusMessage));
+        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, defaultMessage->Buffer, L"%s", PhGetString(statusMessage));
     else
-        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, PhTranslateString(L"Unable to perform the operation."), L"");
+        result = PhShowMessage2(WindowHandle, TD_OK_BUTTON | TD_CANCEL_BUTTON, TD_ERROR_ICON, defaultMessage->Buffer, L"");
 
     if (statusMessage) PhDereferenceObject(statusMessage);
+    PhDereferenceObject(defaultMessage);
 
     return result == IDOK;
 }
@@ -1628,6 +1675,10 @@ static BOOLEAN PhpShowConfirmMessage(
     PPH_STRING verb;
     PPH_STRING verbCaps;
     PPH_STRING action;
+    PPH_STRING confirmFormat;
+    PPH_STRING confirmContentFormat;
+    PPH_STRING cancelText;
+    PPH_STRING fallbackFormat;
     PCWSTR object;
 
     // Make sure the verb is all lowercase.
@@ -1653,8 +1704,23 @@ static BOOLEAN PhpShowConfirmMessage(
             action = PhaConcatStrings(3, verb->Buffer, L" ", object);
     }
 
+    confirmFormat = PhpLoadApplicationUiStringOrDefault(
+        IDS_PH_CONFIRM_ACTION_FORMAT,
+        L"Do you want to %s?"
+        );
+    confirmContentFormat = PhpLoadApplicationUiStringOrDefault(
+        IDS_PH_SERVICE_PROGRESS_CONFIRM_CONTENT_FORMAT,
+        L"%s Are you sure you want to continue?"
+        );
+    cancelText = PhpLoadApplicationUiStringOrDefault(IDS_PH_CANCEL, L"Cancel");
+    fallbackFormat = PhpLoadApplicationUiStringOrDefault(
+        IDS_PH_CONFIRM_ACTION_FALLBACK_FORMAT,
+        L"Are you sure you want to %s?"
+        );
+
     {
         ULONG button;
+        BOOLEAN confirmed;
         TASKDIALOGCONFIG config;
         TASKDIALOG_BUTTON buttons[2];
 
@@ -1665,13 +1731,13 @@ static BOOLEAN PhpShowConfirmMessage(
         config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | ((WindowHandle && IsWindowVisible(WindowHandle) && !IsMinimized(WindowHandle)) ? TDF_POSITION_RELATIVE_TO_WINDOW : 0);
         config.pszWindowTitle = PhApplicationName;
         config.pszMainIcon = Warning ? TD_WARNING_ICON : TD_INFORMATION_ICON;
-        config.pszMainInstruction = PhaConcatStrings(3, PhTranslateString(L"Do you want to "), action->Buffer, L"?")->Buffer;
-        if (Message) config.pszContent = PhaConcatStrings2(PhTranslateString(Message), PhTranslateString(L" Are you sure you want to continue?"))->Buffer;
+        config.pszMainInstruction = PhaFormatString(confirmFormat->Buffer, action->Buffer)->Buffer;
+        if (Message) config.pszContent = PhaFormatString(confirmContentFormat->Buffer, PhTranslateString(Message))->Buffer;
 
         buttons[0].nButtonID = IDYES;
         buttons[0].pszButtonText = verbCaps->Buffer;
         buttons[1].nButtonID = IDNO;
-        buttons[1].pszButtonText = PhTranslateString(L"Cancel");
+        buttons[1].pszButtonText = cancelText->Buffer;
 
         config.cButtons = 2;
         config.pButtons = buttons;
@@ -1685,20 +1751,24 @@ static BOOLEAN PhpShowConfirmMessage(
             NULL
             ))
         {
-            return button == IDYES;
+            confirmed = button == IDYES;
         }
-
-        if (PhShowMessage(
-            WindowHandle,
-            MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2,
-            L"Are you sure you want to %s?",
-            action->Buffer
-            ) == IDYES)
+        else
         {
-            return TRUE;
+            confirmed = PhShowMessage(
+                WindowHandle,
+                MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2,
+                fallbackFormat->Buffer,
+                action->Buffer
+                ) == IDYES;
         }
 
-        return FALSE;
+        PhDereferenceObject(confirmFormat);
+        PhDereferenceObject(confirmContentFormat);
+        PhDereferenceObject(cancelText);
+        PhDereferenceObject(fallbackFormat);
+
+        return confirmed;
     }
 }
 
@@ -6896,7 +6966,14 @@ VOID PhShellExecute(
 
     if (!PhShellExecuteWin32(&info))
     {
-        PhShowStatus(WindowHandle, L"Unable to execute the program.", 0, PhGetLastError());
+        PPH_STRING message;
+
+        message = PhpLoadApplicationUiStringOrDefault(
+            IDS_PH_UNABLE_EXECUTE_PROGRAM,
+            L"Unable to execute the program."
+            );
+        PhShowStatus(WindowHandle, message->Buffer, 0, PhGetLastError());
+        PhDereferenceObject(message);
     }
 }
 
@@ -7066,7 +7143,14 @@ VOID PhShellProperties(
 
     if (!PhShellExecuteWin32(&info))
     {
-        PhShowStatus(WindowHandle, L"Unable to execute the program.", 0, PhGetLastError());
+        PPH_STRING message;
+
+        message = PhpLoadApplicationUiStringOrDefault(
+            IDS_PH_UNABLE_EXECUTE_PROGRAM,
+            L"Unable to execute the program."
+            );
+        PhShowStatus(WindowHandle, message->Buffer, 0, PhGetLastError());
+        PhDereferenceObject(message);
     }
 }
 

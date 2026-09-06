@@ -355,7 +355,7 @@ class TaskDialogFieldAuditTests(unittest.TestCase):
             {entry["english"]: entry["line"] for entry in entries},
         )
 
-    def test_real_sources_cover_late_fields_formats_and_adjacent_literals(self) -> None:
+    def test_migrated_real_sources_no_longer_emit_taskdialog_literals(self) -> None:
         expected = {
             "SystemInformer/ksisup.c": {
                 "Initializing System Informer kernel driver...",
@@ -392,7 +392,7 @@ class TaskDialogFieldAuditTests(unittest.TestCase):
                     for entry in entries
                     if entry["category"] in {"c_taskdialog", "c_runtime_composed"}
                 }
-                self.assertTrue(expected_texts <= actual, expected_texts - actual)
+                self.assertFalse(expected_texts & actual, expected_texts & actual)
 
     def test_fresh_tree_delta_matches_the_current_taskdialog_audit_baseline(self) -> None:
         legacy_field_re = re.compile(
@@ -483,27 +483,9 @@ class TaskDialogFieldAuditTests(unittest.TestCase):
         added_keys = current_keys - legacy_keys
         removed_keys = legacy_keys - current_keys
 
-        self.assertEqual(
-            34,
-            sum((current_occurrences - legacy_occurrences).values()),
-        )
-        self.assertEqual(24, len(added_keys))
-        self.assertEqual(
-            {
-                "A license key and account number are required to download "
-                "GeoLite database updates and either the key or number are "
-                "not configured.\n\n",
-                "The IO priority will be applied by Windows even when System "
-                "Informer isn't currently running. ",
-                "The process priority will be applied by Windows even when "
-                "System Informer isn't currently running. ",
-                "This kernel version is not yet supported. ",
-                "You will need to provide administrator permission. ",
-                "Your kernel version is pending review on the development "
-                "branch. ",
-            },
-            {key[1] for key in removed_keys},
-        )
+        self.assertEqual(0, sum((current_occurrences - legacy_occurrences).values()))
+        self.assertEqual(set(), added_keys)
+        self.assertEqual(set(), removed_keys)
 
 
 if __name__ == "__main__":

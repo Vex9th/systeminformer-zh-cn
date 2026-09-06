@@ -13,6 +13,11 @@
 
 #include "exttools.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 #define GRAPH_PADDING 5
 static RECT NormalGraphTextMargin = { 5, 5, 5, 5 };
 static RECT NormalGraphTextPadding = { 3, 3, 3, 3 };
@@ -327,7 +332,7 @@ VOID EtShowNpuNodesDialog(
     {
         if (!NT_SUCCESS(PhCreateThreadEx(&EtNpuNodesThreadHandle, EtpNpuNodesDialogThreadStart, ParentWindowHandle)))
         {
-            PhShowError2(ParentWindowHandle, L"Unable to create the window.", L"%s", L"");
+            PhShowError2(ParentWindowHandle, EtGetUiString(IDS_ET_OBJMGR_ERROR_CREATE_WINDOW, L"Unable to create the window."), L"%s", L"");
             return;
         }
 

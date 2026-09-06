@@ -150,23 +150,21 @@ jobs:
           'bin\Release64\plugins\NetworkTools.dll',
           'bin\Release64\plugins\OnlineChecks.dll',
           'bin\Release64\plugins\ToolStatus.dll',
-          'bin\Release64\plugins\Updater.dll',
           'bin\Release64\plugins\UserNotes.dll',
           'bin\Release64\plugins\WindowExplorer.dll'
         )
         python tools\zhcn\validate_templates.py @resourceTargets `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=710' `
-          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=89' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=872' `
+          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=108' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=70' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=231' `
-          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=102' `
-          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=27' `
-          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=18' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=397' `
+          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=199' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=55' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=22' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
-          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=18' `
-          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=20' `
-          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=122' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=52' `
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=168' `
           --expect-string-count-in 'bin\Release64\peview.exe=311'
 
     - name: Assert driverless output (no .sys / .inf)
@@ -310,7 +308,6 @@ jobs:
           'bin\Release64\plugins\NetworkTools.dll',
           'bin\Release64\plugins\OnlineChecks.dll',
           'bin\Release64\plugins\ToolStatus.dll',
-          'bin\Release64\plugins\Updater.dll',
           'bin\Release64\plugins\UserNotes.dll',
           'bin\Release64\plugins\WindowExplorer.dll',
           'build\output\systeminformer-build-release-setup.exe',
@@ -319,18 +316,17 @@ jobs:
         python tools\zhcn\validate_templates.py @resourceTargets `
           --require-strings-in 'build\output\systeminformer-build-release-setup.exe' `
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=710' `
-          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=89' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=872' `
+          --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=108' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=70' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=231' `
-          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=102' `
-          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=27' `
-          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=18' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=397' `
+          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=199' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=55' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=22' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
-          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=18' `
-          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=20' `
-          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=122' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=52' `
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=168' `
           --expect-string-count-in 'bin\Release64\peview.exe=311' `
           --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=74' `
           --expect-string-count-in 'build\output\systeminformer-build-canary-setup.exe=74'
@@ -362,6 +358,13 @@ jobs:
         $staging = Join-Path $env:RUNNER_TEMP "portable-stage"
         if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
         Expand-Archive -Path .\build\output\systeminformer-build-bin.zip -DestinationPath $staging
+        $updaterDll = Get-ChildItem -Path $staging -Recurse -File |
+          Where-Object { $_.Name -ieq 'Updater.dll' }
+        if ($updaterDll) {
+          $updaterDll | ForEach-Object { Write-Host "FORBIDDEN: $($_.FullName)" }
+          Write-Host "::error::Updater.dll found in release package"
+          exit 1
+        }
         # re-assert on the actual package contents
         $forbidden = Get-ChildItem -Path $staging -Recurse -File | Where-Object { $_.Extension -in '.sys', '.inf' }
         if ($forbidden) { $forbidden | ForEach-Object { Write-Host "FORBIDDEN: $($_.FullName)" }; exit 1 }

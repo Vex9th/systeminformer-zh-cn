@@ -186,21 +186,51 @@ INT_PTR CALLBACK OptionsDlgProc(
     {
     case WM_INITDIALOG:
         {
+            CONST struct
+            {
+                LONG Index;
+                LONG Width;
+                ULONG ResourceId;
+            } columns[] =
+            {
+                { 1, 100, IDS_UN_COLUMN_TYPE },
+                { 2, 100, IDS_UN_COLUMN_NAME },
+                { 3, 100, IDS_UN_COLUMN_COMMENT },
+                { 4, 80, IDS_UN_COLUMN_PRIORITY },
+                { 5, 80, IDS_UN_COLUMN_IO_PRIORITY },
+                { 6, 80, IDS_UN_COLUMN_BACK_COLOR },
+                { 7, 80, IDS_UN_COLUMN_COLLAPSE },
+                { 8, 80, IDS_UN_COLUMN_AFFINITY },
+                { 9, 80, IDS_UN_COLUMN_PAGE_PRIORITY },
+                { 10, 80, IDS_UN_COLUMN_EFFICIENCY },
+            };
             HWND listview = GetDlgItem(WindowHandle, IDC_DBLIST);
 
             PhSetListViewStyle(listview, TRUE, TRUE);
             PhSetControlTheme(listview, L"explorer");
             PhAddListViewColumn(listview, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(listview, 1, 1, 1, LVCFMT_LEFT, 100, L"Type");
-            PhAddListViewColumn(listview, 2, 2, 2, LVCFMT_LEFT, 100, L"Name");
-            PhAddListViewColumn(listview, 3, 3, 3, LVCFMT_LEFT, 100, L"Comment");
-            PhAddListViewColumn(listview, 4, 4, 4, LVCFMT_LEFT, 80, L"Priority");
-            PhAddListViewColumn(listview, 5, 5, 5, LVCFMT_LEFT, 80, L"IO priority");
-            PhAddListViewColumn(listview, 6, 6, 6, LVCFMT_LEFT, 80, L"BackColor");
-            PhAddListViewColumn(listview, 7, 7, 7, LVCFMT_LEFT, 80, L"Collapse");
-            PhAddListViewColumn(listview, 8, 8, 8, LVCFMT_LEFT, 80, L"Affinity");
-            PhAddListViewColumn(listview, 9, 9, 9, LVCFMT_LEFT, 80, L"Page priority");
-            PhAddListViewColumn(listview, 10, 10, 10, LVCFMT_LEFT, 80, L"Efficiency");
+
+            for (ULONG i = 0; i < RTL_NUMBER_OF(columns); i++)
+            {
+                PPH_STRING columnText;
+
+                columnText = PhLoadUiString(
+                    PluginInstance->DllBase,
+                    columns[i].ResourceId,
+                    NULL
+                    );
+                PhAddListViewColumn(
+                    listview,
+                    columns[i].Index,
+                    columns[i].Index,
+                    columns[i].Index,
+                    LVCFMT_LEFT,
+                    columns[i].Width,
+                    PhGetStringOrEmpty(columnText)
+                    );
+                PhClearReference(&columnText);
+            }
+
             PhSetExtendedListView(listview);
             PhLoadListViewColumnsFromSetting(SETTING_NAME_OPTIONS_DB_COLUMNS, listview);
 
@@ -262,6 +292,8 @@ INT_PTR CALLBACK OptionsDlgProc(
                 POINT point;
                 PPH_EMENU menu;
                 PPH_EMENU item;
+                PPH_STRING deleteMenuText;
+                PPH_STRING copyMenuText;
                 PVOID* listviewItems;
                 ULONG numberOfItems;
 
@@ -273,10 +305,12 @@ INT_PTR CALLBACK OptionsDlgProc(
 
                 if (PhGetSelectedListViewItemParams(listviewHandle, &listviewItems, &numberOfItems))
                 {
+                    deleteMenuText = PhLoadUiString(PluginInstance->DllBase, IDS_UN_MENU_DELETE, NULL);
+                    copyMenuText = PhLoadUiString(PluginInstance->DllBase, IDS_UN_MENU_COPY, NULL);
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"&Delete", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PhGetStringOrEmpty(deleteMenuText), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, PhGetStringOrEmpty(copyMenuText), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, listviewHandle);
 
                     item = PhShowEMenu(
@@ -321,9 +355,11 @@ INT_PTR CALLBACK OptionsDlgProc(
                     }
 
                     PhDestroyEMenu(menu);
-                }
+                    PhClearReference(&deleteMenuText);
+                    PhClearReference(&copyMenuText);
                     PhFree(listviewItems);
                 }
+            }
         }
         break;
     case WM_CTLCOLORBTN:
@@ -336,5 +372,3 @@ INT_PTR CALLBACK OptionsDlgProc(
 
     return FALSE;
 }
-
-

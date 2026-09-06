@@ -49,22 +49,22 @@ typedef struct _GPU_DETAILS_CONTEXT
 VOID EtpGpuDetailsAddListViewItemGroups(
     _In_ HWND ListView)
 {
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_PHYSICALLOCTION, L"Physical Location", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_DRIVERDATE, L"Driver Date", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_DRIVERVERSION, L"Driver Version", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_WDDMVERSION, L"WDDM Version", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_VENDORID, L"Vendor ID", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_DEVICEID, L"Device ID", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_TOTALMEMORY, L"Total Memory", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_RESERVEDMEMORY, L"Reserved Memory", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_GPUFREQUENCY, L"GPU Frequency", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_GPUMAXFREQUENCY, L"Max GPU Frequency", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_MEMORYFREQUENCY, L"Memory Frequency", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_MEMORYBANDWIDTH, L"Memory Bandwidth", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_PCIEBANDWIDTH, L"PCIE Bandwidth", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_FANRPM, L"Fan RPM", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_POWERUSAGE, L"Power Usage", NULL);
-    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_TEMPERATURE, L"Temperature", NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_PHYSICALLOCTION, HardwareDevicesGetUiString(IDS_HD_PHYSICAL_LOCATION), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_DRIVERDATE, HardwareDevicesGetUiString(IDS_HD_DRIVER_DATE_TITLE), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_DRIVERVERSION, HardwareDevicesGetUiString(IDS_HD_DRIVER_VERSION_TITLE), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_WDDMVERSION, HardwareDevicesGetUiString(IDS_HD_WDDM_VERSION_TITLE), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_VENDORID, HardwareDevicesGetUiString(IDS_HD_VENDOR_ID), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_DEVICEID, HardwareDevicesGetUiString(IDS_HD_DEVICE_ID), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_TOTALMEMORY, HardwareDevicesGetUiString(IDS_HD_TOTAL_MEMORY), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_RESERVEDMEMORY, HardwareDevicesGetUiString(IDS_HD_RESERVED_MEMORY), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_GPUFREQUENCY, HardwareDevicesGetUiString(IDS_HD_GPU_FREQUENCY), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_GPUMAXFREQUENCY, HardwareDevicesGetUiString(IDS_HD_MAX_GPU_FREQUENCY), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_MEMORYFREQUENCY, HardwareDevicesGetUiString(IDS_HD_MEMORY_FREQUENCY), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_MEMORYBANDWIDTH, HardwareDevicesGetUiString(IDS_HD_MEMORY_BANDWIDTH), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_PCIEBANDWIDTH, HardwareDevicesGetUiString(IDS_HD_PCIE_BANDWIDTH), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_FANRPM, HardwareDevicesGetUiString(IDS_HD_FAN_RPM), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_POWERUSAGE, HardwareDevicesGetUiString(IDS_HD_POWER_USAGE), NULL);
+    PhAddListViewItem(ListView, GPUADAPTER_DETAILS_INDEX_TEMPERATURE, HardwareDevicesGetUiString(IDS_HD_TEMPERATURE), NULL);
 }
 
 VOID EtpQueryAdapterDeviceProperties(
@@ -413,8 +413,8 @@ INT_PTR CALLBACK GraphicsDeviceDetailsDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 230, L"Property");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Value");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 230, HardwareDevicesGetUiString(IDS_HD_PROPERTY));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 200, HardwareDevicesGetUiString(IDS_HD_VALUE));
             PhSetExtendedListView(context->ListViewHandle);
 
             PhInitializeLayoutManager(&context->LayoutManager, WindowHandle);
@@ -514,7 +514,7 @@ INT_PTR CALLBACK GraphicsDeviceDetailsDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, HardwareDevicesGetUiString(IDS_HD_MENU_COPY_ACCELERATOR), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, 1, context->ListViewHandle);
 
                     item = PhShowEMenu(

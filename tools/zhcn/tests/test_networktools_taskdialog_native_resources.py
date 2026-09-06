@@ -124,12 +124,12 @@ class NetworkToolsTaskDialogNativeResourceTests(unittest.TestCase):
             [resource_id for _symbol, resource_id, _en, _zh in RESOURCE_DATA],
             list(range(12023, 12027)),
         )
-        self.assertEqual(sorted(defines.values()), list(range(12000, 12027)))
+        self.assertEqual(sorted(defines.values()), list(range(12000, 12055)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 27)
-        self.assertEqual(len(chinese), 27)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12027$")
+        self.assertEqual(len(english), 55)
+        self.assertEqual(len(chinese), 55)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12055$")
 
     def test_format_and_html_contracts_are_preserved(self):
         english = parse_stringtable(PLUGIN_ROOT / "NetworkTools.rc")

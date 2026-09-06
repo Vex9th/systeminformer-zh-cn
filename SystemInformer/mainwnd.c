@@ -3600,6 +3600,23 @@ VOID PhMwpActivateWindow(
     }
 }
 
+static PPH_EMENU_ITEM PhpCreateResourceEMenuItem(
+    _In_ ULONG Flags,
+    _In_ ULONG Id,
+    _In_ ULONG ResourceId,
+    _In_opt_ PVOID Context
+    )
+{
+    PPH_STRING menuText;
+    PWSTR ownedText;
+
+    menuText = PhLoadUiString(PhInstanceHandle, ResourceId, NULL);
+    ownedText = PhDuplicateStringZ(PhGetStringOrEmpty(menuText));
+    PhClearReference(&menuText);
+
+    return PhCreateEMenuItem(Flags | PH_EMENU_TEXT_OWNED, Id, ownedText, NULL, Context);
+}
+
 /**
  * Creates a computer menu.
  *
@@ -3612,39 +3629,39 @@ PPH_EMENU PhpCreateComputerMenu(
 {
     PPH_EMENU_ITEM menuItem;
 
-    menuItem = PhCreateEMenuItem(0, 0, L"&Computer", NULL, NULL);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_LOCK, L"&Lock", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_LOGOFF, L"Log o&ff", NULL, NULL), ULONG_MAX);
+    menuItem = PhpCreateResourceEMenuItem(0, 0, IDS_PH_MAINWND_MENU_COMPUTER, NULL);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_LOCK, IDS_PH_MAINWND_MENU_LOCK, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_LOGOFF, IDS_PH_MAINWND_MENU_LOG_OFF, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_SLEEP, L"&Sleep", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_HIBERNATE, L"&Hibernate", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_SLEEP, IDS_PH_MAINWND_MENU_SLEEP, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_HIBERNATE, IDS_PH_MAINWND_MENU_HIBERNATE, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_RESTART_UPDATE, L"Update and restart", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_SHUTDOWN_UPDATE, L"Update and shut down", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_RESTART_UPDATE, IDS_PH_MAINWND_MENU_UPDATE_AND_RESTART, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_SHUTDOWN_UPDATE, IDS_PH_MAINWND_MENU_UPDATE_AND_SHUT_DOWN, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_RESTART, L"R&estart", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, ID_COMPUTER_RESTARTADVOPTIONS, L"Restart to advanced options", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_RESTARTBOOTOPTIONS, L"Restart to boot options", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, ID_COMPUTER_RESTARTFWOPTIONS, L"Restart to firmware options", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_RESTART, IDS_PH_MAINWND_MENU_RESTART_COMPUTER, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, ID_COMPUTER_RESTARTADVOPTIONS, IDS_PH_MAINWND_MENU_RESTART_TO_ADVANCED_OPTIONS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_RESTARTBOOTOPTIONS, IDS_PH_MAINWND_MENU_RESTART_TO_BOOT_OPTIONS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, ID_COMPUTER_RESTARTFWOPTIONS, IDS_PH_MAINWND_MENU_RESTART_TO_FIRMWARE_OPTIONS, NULL), ULONG_MAX);
     if (PhGetIntegerSetting(SETTING_ENABLE_SHUTDOWN_BOOT_MENU))
     {
         PVOID bootApplicationMenu = PhUiCreateComputerBootDeviceMenu(DelayLoadMenu);
         if (WindowsVersion >= WINDOWS_10 && PhGetOwnTokenAttributes().Elevated)
-            PhInsertEMenuItem(bootApplicationMenu, PhCreateEMenuItem(0, ID_COMPUTER_RESTARTWDOSCAN, L"Windows Defender Offline Scan", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(bootApplicationMenu, PhpCreateResourceEMenuItem(0, ID_COMPUTER_RESTARTWDOSCAN, IDS_PH_MAINWND_MENU_WINDOWS_DEFENDER_OFFLINE_SCAN, NULL), ULONG_MAX);
         PhInsertEMenuItem(menuItem, bootApplicationMenu, ULONG_MAX);
         PhInsertEMenuItem(menuItem, PhUiCreateComputerFirmwareDeviceMenu(DelayLoadMenu), ULONG_MAX);
     }
     PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_SHUTDOWN, L"Shu&t down", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_SHUTDOWNHYBRID, L"H&ybrid shut down", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_SHUTDOWN, IDS_PH_MAINWND_MENU_SHUT_DOWN, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_SHUTDOWNHYBRID, IDS_PH_MAINWND_MENU_HYBRID_SHUT_DOWN, NULL), ULONG_MAX);
     if (PhGetIntegerSetting(SETTING_ENABLE_SHUTDOWN_CRITICAL_MENU))
     {
         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_RESTART_NATIVE, L"R&estart (Native)", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_SHUTDOWN_NATIVE, L"Shu&t down (Native)", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_RESTART_NATIVE, IDS_PH_MAINWND_MENU_RESTART_NATIVE, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_SHUTDOWN_NATIVE, IDS_PH_MAINWND_MENU_SHUT_DOWN_NATIVE, NULL), ULONG_MAX);
         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_RESTART_CRITICAL, L"R&estart (Critical)", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_COMPUTER_SHUTDOWN_CRITICAL, L"Shu&t down (Critical)", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_RESTART_CRITICAL, IDS_PH_MAINWND_MENU_RESTART_CRITICAL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_COMPUTER_SHUTDOWN_CRITICAL, IDS_PH_MAINWND_MENU_SHUT_DOWN_CRITICAL, NULL), ULONG_MAX);
     }
 
     return menuItem;
@@ -3662,17 +3679,17 @@ PPH_EMENU PhpCreateSystemMenu(
     _In_ BOOLEAN DelayLoadMenu
     )
 {
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_RUN, L"&Run...\bCtrl+R", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_RUNAS, L"Run &as...\bCtrl+Shift+R", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_RUNASPACKAGE, L"Run as &package...\bCtrl+Shift+P", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_SHOWDETAILSFORALLPROCESSES, L"Show &details for all processes", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_RUN, IDS_PH_MAINWND_MENU_RUN_SHORTCUT, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_RUNAS, IDS_PH_MAINWND_MENU_RUN_AS_SHORTCUT, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_RUNASPACKAGE, IDS_PH_MAINWND_MENU_RUN_AS_PACKAGE_SHORTCUT, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_SHOWDETAILSFORALLPROCESSES, IDS_PH_MAINWND_MENU_SHOW_DETAILS_FOR_ALL_PROCESSES, NULL), ULONG_MAX);
     PhInsertEMenuItem(HackerMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_SAVE, L"&Save...\bCtrl+S", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_FINDHANDLESORDLLS, L"&Find handles or DLLs...\bCtrl+F", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_OPTIONS, L"&Options...", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_SAVE, IDS_PH_MAINWND_MENU_SAVE_SHORTCUT, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_FINDHANDLESORDLLS, IDS_PH_MAINWND_MENU_FIND_HANDLES_OR_DLLS_SHORTCUT, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_OPTIONS, IDS_PH_MAINWND_MENU_OPTIONS, NULL), ULONG_MAX);
     PhInsertEMenuItem(HackerMenu, PhCreateEMenuSeparator(), ULONG_MAX);
     PhInsertEMenuItem(HackerMenu, PhpCreateComputerMenu(DelayLoadMenu), ULONG_MAX);
-    PhInsertEMenuItem(HackerMenu, PhCreateEMenuItem(0, ID_HACKER_EXIT, L"E&xit", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HackerMenu, PhpCreateResourceEMenuItem(0, ID_HACKER_EXIT, IDS_PH_MAINWND_MENU_EXIT, NULL), ULONG_MAX);
 
     return HackerMenu;
 }
@@ -3689,14 +3706,14 @@ PPH_EMENU PhpCreateViewMenu(
 {
     PPH_EMENU_ITEM menuItem;
 
-    PhInsertEMenuItem(ViewMenu, PhCreateEMenuItem(0, ID_VIEW_SYSTEMINFORMATION, L"System &information\bCtrl+I", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ViewMenu, PhCreateEMenuItem(0, ID_VIEW_TRAYICONS, L"&Tray icons", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ViewMenu, PhpCreateResourceEMenuItem(0, ID_VIEW_SYSTEMINFORMATION, IDS_PH_MAINWND_MENU_SYSTEM_INFORMATION_SHORTCUT, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ViewMenu, PhpCreateResourceEMenuItem(0, ID_VIEW_TRAYICONS, IDS_PH_MAINWND_MENU_TRAY_ICONS, NULL), ULONG_MAX);
     PhInsertEMenuItem(ViewMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(ViewMenu, PhCreateEMenuItem(0, ID_VIEW_SECTIONPLACEHOLDER, L"<section placeholder>", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ViewMenu, PhpCreateResourceEMenuItem(0, ID_VIEW_SECTIONPLACEHOLDER, IDS_PH_MAINWND_MENU_SECTION_PLACEHOLDER, NULL), ULONG_MAX);
     PhInsertEMenuItem(ViewMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(ViewMenu, PhCreateEMenuItem(0, ID_VIEW_ALWAYSONTOP, L"&Always on top", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ViewMenu, PhpCreateResourceEMenuItem(0, ID_VIEW_ALWAYSONTOP, IDS_PH_MAINWND_MENU_ALWAYS_ON_TOP, NULL), ULONG_MAX);
 
-    menuItem = PhCreateEMenuItem(0, 0, L"&Opacity", NULL, NULL);
+    menuItem = PhpCreateResourceEMenuItem(0, 0, IDS_PH_MAINWND_MENU_OPACITY, NULL);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_10, L"&10%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_20, L"&20%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_30, L"&30%", NULL, NULL), ULONG_MAX);
@@ -3706,21 +3723,21 @@ PPH_EMENU PhpCreateViewMenu(
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_70, L"&70%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_80, L"&80%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_90, L"&90%", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_OPAQUE, L"&Opaque", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_OPACITY_OPAQUE, IDS_PH_MAINWND_MENU_OPAQUE, NULL), ULONG_MAX);
     PhInsertEMenuItem(ViewMenu, menuItem, ULONG_MAX);
 
     PhInsertEMenuItem(ViewMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(ViewMenu, PhCreateEMenuItem(0, ID_VIEW_REFRESH, L"&Refresh\bF5", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ViewMenu, PhpCreateResourceEMenuItem(0, ID_VIEW_REFRESH, IDS_PH_MAINWND_MENU_REFRESH_SHORTCUT, NULL), ULONG_MAX);
 
-    menuItem = PhCreateEMenuItem(0, 0, L"Refresh i&nterval", NULL, NULL);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_UPDATEINTERVAL_FAST, L"&Fast (0.5s)", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_UPDATEINTERVAL_NORMAL, L"&Normal (1s)", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_UPDATEINTERVAL_BELOWNORMAL, L"&Below normal (2s)", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_UPDATEINTERVAL_SLOW, L"&Slow (5s)", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_UPDATEINTERVAL_VERYSLOW, L"&Very slow (10s)", NULL, NULL), ULONG_MAX);
+    menuItem = PhpCreateResourceEMenuItem(0, 0, IDS_PH_MAINWND_MENU_REFRESH_INTERVAL, NULL);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_UPDATEINTERVAL_FAST, IDS_PH_MAINWND_MENU_FAST_0_5S, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_UPDATEINTERVAL_NORMAL, IDS_PH_MAINWND_MENU_NORMAL_1S, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_UPDATEINTERVAL_BELOWNORMAL, IDS_PH_MAINWND_MENU_BELOW_NORMAL_2S, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_UPDATEINTERVAL_SLOW, IDS_PH_MAINWND_MENU_SLOW_5S, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_UPDATEINTERVAL_VERYSLOW, IDS_PH_MAINWND_MENU_VERY_SLOW_10S, NULL), ULONG_MAX);
     PhInsertEMenuItem(ViewMenu, menuItem, ULONG_MAX);
 
-    PhInsertEMenuItem(ViewMenu, PhCreateEMenuItem(0, ID_VIEW_UPDATEAUTOMATICALLY, L"Refresh a&utomatically\bF6", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ViewMenu, PhpCreateResourceEMenuItem(0, ID_VIEW_UPDATEAUTOMATICALLY, IDS_PH_MAINWND_MENU_REFRESH_AUTOMATICALLY_SHORTCUT, NULL), ULONG_MAX);
 
     return ViewMenu;
 }
@@ -3737,35 +3754,33 @@ PPH_EMENU PhpCreateToolsMenu(
 {
     PPH_EMENU_ITEM menuItem;
 
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_CREATESERVICE, L"&Create service...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_LIVEDUMP, L"&Create live dump...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_INSPECTEXECUTABLEFILE, L"Inspect e&xecutable file...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_THREADSTACKS, L"&Search thread stacks", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_ZOMBIEPROCESSES, L"&Zombie processes", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_PAGEFILES, L"&Pagefiles", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_ENVIRONMENT_VARIABLES, L"&Environment variables", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(
-        (PhCsEnableProcessMonitor && KsiLevel() >= KphLevelMed) ? 0 : PH_EMENU_DISABLED,
-        ID_TOOLS_INFORMER, L"&Process monitor", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_CREATESERVICE, IDS_PH_MAINWND_MENU_CREATE_SERVICE, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_LIVEDUMP, IDS_PH_MAINWND_MENU_CREATE_LIVE_DUMP, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_INSPECTEXECUTABLEFILE, IDS_PH_MAINWND_MENU_INSPECT_EXECUTABLE_FILE, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_THREADSTACKS, IDS_PH_MAINWND_MENU_SEARCH_THREAD_STACKS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_ZOMBIEPROCESSES, IDS_PH_MAINWND_MENU_ZOMBIE_PROCESSES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_PAGEFILES, IDS_PH_MAINWND_MENU_PAGEFILES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_ENVIRONMENT_VARIABLES, IDS_PH_MAINWND_MENU_ENVIRONMENT_VARIABLES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem((PhCsEnableProcessMonitor && KsiLevel() >= KphLevelMed) ? 0 : PH_EMENU_DISABLED, ID_TOOLS_INFORMER, IDS_PH_MAINWND_MENU_PROCESS_MONITOR, NULL), ULONG_MAX);
     PhInsertEMenuItem(ToolsMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_STARTTASKMANAGER, L"Start &Task Manager", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_STARTRESOURCEMONITOR, L"Start &Resource Monitor", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_STARTPERFORMANCEMONITOR, L"Start &Performance Monitor", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_STARTTASKMANAGER, IDS_PH_MAINWND_MENU_START_TASK_MANAGER, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_STARTRESOURCEMONITOR, IDS_PH_MAINWND_MENU_START_RESOURCE_MONITOR, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_STARTPERFORMANCEMONITOR, IDS_PH_MAINWND_MENU_START_PERFORMANCE_MONITOR, NULL), ULONG_MAX);
     PhInsertEMenuItem(ToolsMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(ToolsMenu, PhCreateEMenuItem(0, ID_TOOLS_SHUTDOWNWSLPROCESSES, L"T&erminate WSL processes", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(ToolsMenu, PhpCreateResourceEMenuItem(0, ID_TOOLS_SHUTDOWNWSLPROCESSES, IDS_PH_MAINWND_MENU_TERMINATE_WSL_PROCESSES, NULL), ULONG_MAX);
     PhInsertEMenuItem(ToolsMenu, PhCreateEMenuSeparator(), ULONG_MAX);
 
-    menuItem = PhCreateEMenuItem(0, 0, L"&Permissions", NULL, NULL);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_PWR_PERMISSIONS, L"Current Power Scheme", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_SCM_PERMISSIONS, L"Service Control Manager", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_RDP_PERMISSIONS, L"Terminal Server Listener", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_WMI_PERMISSIONS, L"WMI Root Namespace", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_COM_ACCESS_PERMISSIONS, L"COM Access Permissions", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_COM_ACCESS_RESTRICTIONS, L"COM Access Restrictions", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_COM_LAUNCH_PERMISSIONS, L"COM Launch Permissions", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_COM_LAUNCH_RESTRICTIONS, L"COM Launch Restrictions", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_DESKTOP_PERMISSIONS, L"Current Window Desktop", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_TOOLS_STATION_PERMISSIONS, L"Current Window Station", NULL, NULL), ULONG_MAX);
+    menuItem = PhpCreateResourceEMenuItem(0, 0, IDS_PH_MAINWND_MENU_PERMISSIONS, NULL);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_PWR_PERMISSIONS, IDS_PH_MAINWND_MENU_CURRENT_POWER_SCHEME, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_SCM_PERMISSIONS, IDS_PH_MAINWND_MENU_SERVICE_CONTROL_MANAGER, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_RDP_PERMISSIONS, IDS_PH_MAINWND_MENU_TERMINAL_SERVER_LISTENER, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_WMI_PERMISSIONS, IDS_PH_MAINWND_MENU_WMI_ROOT_NAMESPACE, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_COM_ACCESS_PERMISSIONS, IDS_PH_MAINWND_MENU_COM_ACCESS_PERMISSIONS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_COM_ACCESS_RESTRICTIONS, IDS_PH_MAINWND_MENU_COM_ACCESS_RESTRICTIONS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_COM_LAUNCH_PERMISSIONS, IDS_PH_MAINWND_MENU_COM_LAUNCH_PERMISSIONS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_COM_LAUNCH_RESTRICTIONS, IDS_PH_MAINWND_MENU_COM_LAUNCH_RESTRICTIONS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_DESKTOP_PERMISSIONS, IDS_PH_MAINWND_MENU_CURRENT_WINDOW_DESKTOP, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_TOOLS_STATION_PERMISSIONS, IDS_PH_MAINWND_MENU_CURRENT_WINDOW_STATION, NULL), ULONG_MAX);
     PhInsertEMenuItem(ToolsMenu, menuItem, ULONG_MAX);
 
     return ToolsMenu;
@@ -3793,7 +3808,7 @@ PPH_EMENU PhpCreateUsersMenu(
     PhUiCreateSessionMenu(UsersMenu);
 
     PhInsertEMenuItem(UsersMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(UsersMenu, PhCreateEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, ID_TOOLS_USER_LIST, L"User list...", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(UsersMenu, PhpCreateResourceEMenuItem(PhGetOwnTokenAttributes().Elevated ? 0 : PH_EMENU_DISABLED, ID_TOOLS_USER_LIST, IDS_PH_MAINWND_MENU_USER_LIST, NULL), ULONG_MAX);
 
     return UsersMenu;
 }
@@ -3808,10 +3823,10 @@ PPH_EMENU PhpCreateHelpMenu(
     _In_ PPH_EMENU HelpMenu
     )
 {
-    PhInsertEMenuItem(HelpMenu, PhCreateEMenuItem(0, ID_HELP_LOG, L"&Log\bCtrl+L", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HelpMenu, PhpCreateResourceEMenuItem(0, ID_HELP_LOG, IDS_PH_MAINWND_MENU_LOG_SHORTCUT, NULL), ULONG_MAX);
     //PhInsertEMenuItem(HelpMenu, PhCreateEMenuItem(0, ID_HELP_DONATE, L"&Donate", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(HelpMenu, PhCreateEMenuItem(0, ID_HELP_DEBUGCONSOLE, L"Debu&g console", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(HelpMenu, PhCreateEMenuItem(0, ID_HELP_ABOUT, L"&About", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HelpMenu, PhpCreateResourceEMenuItem(0, ID_HELP_DEBUGCONSOLE, IDS_PH_MAINWND_MENU_DEBUG_CONSOLE, NULL), ULONG_MAX);
+    PhInsertEMenuItem(HelpMenu, PhpCreateResourceEMenuItem(0, ID_HELP_ABOUT, IDS_PH_MAINWND_MENU_ABOUT, NULL), ULONG_MAX);
 
     return HelpMenu;
 }
@@ -3845,31 +3860,31 @@ PPH_EMENU PhpCreateMainMenu(
             PPH_EMENU_ITEM menuItem;
             menu->Flags |= PH_EMENU_MAINMENU;
 
-            menuItem = PhCreateEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_SYSTEM, L"&System", NULL, NULL);
+            menuItem = PhpCreateResourceEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_SYSTEM, IDS_PH_MAINWND_MENU_SYSTEM, NULL);
             // Insert an empty menuitem so we're able to delay load the submenu. (dmex)
             PhInsertEMenuItem(menuItem, PhCreateEMenuItemEmpty(), ULONG_MAX);
             PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
             //PhInsertEMenuItem(menu, PhpCreateSystemMenu(menuItem, TRUE), ULONG_MAX);
 
-            menuItem = PhCreateEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_VIEW, L"&View", NULL, NULL);
+            menuItem = PhpCreateResourceEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_VIEW, IDS_PH_MAINWND_MENU_VIEW, NULL);
             // Insert an empty menuitem so we're able to delay load the submenu. (dmex)
             PhInsertEMenuItem(menuItem, PhCreateEMenuItemEmpty(), ULONG_MAX);
             PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
             //PhInsertEMenuItem(menu, PhpCreateViewMenu(menuItem), ULONG_MAX);
 
-            menuItem = PhCreateEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_TOOLS, L"&Tools", NULL, NULL);
+            menuItem = PhpCreateResourceEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_TOOLS, IDS_PH_MAINWND_MENU_TOOLS, NULL);
             // Insert an empty menuitem so we're able to delay load the submenu. (dmex)
             PhInsertEMenuItem(menuItem, PhCreateEMenuItemEmpty(), ULONG_MAX);
             PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
             //PhInsertEMenuItem(menu, PhpCreateToolsMenu(menuItem), ULONG_MAX);
 
-            menuItem = PhCreateEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_USERS, L"&Users", NULL, NULL);
+            menuItem = PhpCreateResourceEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_USERS, IDS_PH_MAINWND_MENU_USERS, NULL);
             // Insert an empty menuitem so we're able to delay load the submenu. (dmex)
             PhInsertEMenuItem(menuItem, PhCreateEMenuItemEmpty(), ULONG_MAX);
             PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
             //PhInsertEMenuItem(menu, PhpCreateUsersMenu(menuItem, TRUE), ULONG_MAX);
 
-            menuItem = PhCreateEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_HELP, L"&Help", NULL, NULL);
+            menuItem = PhpCreateResourceEMenuItem(PH_EMENU_MAINMENU, PH_MENU_ITEM_LOCATION_HELP, IDS_PH_MAINWND_MENU_HELP, NULL);
             // Insert an empty menuitem so we're able to delay load the submenu. (dmex)
             PhInsertEMenuItem(menuItem, PhCreateEMenuItemEmpty(), ULONG_MAX);
             PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
@@ -4074,21 +4089,21 @@ PPH_EMENU PhpCreateNotificationMenu(
     ULONG i;
     ULONG id = ULONG_MAX;
 
-    menuItem = PhCreateEMenuItem(0, 0, L"N&otifications", NULL, NULL);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_ENABLEALL, L"&Enable all", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_DISABLEALL, L"&Disable all", NULL, NULL), ULONG_MAX);
+    menuItem = PhpCreateResourceEMenuItem(0, 0, IDS_PH_MAINWND_MENU_NOTIFICATIONS, NULL);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_ENABLEALL, IDS_PH_MAINWND_MENU_ENABLE_ALL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_DISABLEALL, IDS_PH_MAINWND_MENU_DISABLE_ALL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_NEWPROCESSES, L"New &processes", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_TERMINATEDPROCESSES, L"T&erminated processes", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_NEWSERVICES, L"New &services", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_STARTEDSERVICES, L"St&arted services", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_STOPPEDSERVICES, L"St&opped services", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_DELETEDSERVICES, L"&Deleted services", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_MODIFIEDSERVICES, L"&Modified services", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_NEWPROCESSES, IDS_PH_MAINWND_MENU_NEW_PROCESSES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_TERMINATEDPROCESSES, IDS_PH_MAINWND_MENU_TERMINATED_PROCESSES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_NEWSERVICES, IDS_PH_MAINWND_MENU_NEW_SERVICES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_STARTEDSERVICES, IDS_PH_MAINWND_MENU_STARTED_SERVICES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_STOPPEDSERVICES, IDS_PH_MAINWND_MENU_STOPPED_SERVICES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_DELETEDSERVICES, IDS_PH_MAINWND_MENU_DELETED_SERVICES, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_MODIFIEDSERVICES, IDS_PH_MAINWND_MENU_MODIFIED_SERVICES, NULL), ULONG_MAX);
     if (WindowsVersion >= WINDOWS_10)
     {
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_ARRIVEDDEVICES, L"&Arrived devices", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_REMOVEDDEVICES, L"&Removed devices", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_ARRIVEDDEVICES, IDS_PH_MAINWND_MENU_ARRIVED_DEVICES, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_REMOVEDDEVICES, IDS_PH_MAINWND_MENU_REMOVED_DEVICES, NULL), ULONG_MAX);
     }
 
     for (i = PH_NOTIFY_MINIMUM; i != PH_NOTIFY_MAXIMUM; i <<= 1)
@@ -4210,13 +4225,13 @@ PPH_EMENU PhpCreateNotificationSettingsMenu(
 {
     PPH_EMENU_ITEM menuItem;
 
-    menuItem = PhCreateEMenuItem(0, 0, L"Settings", NULL, NULL);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_ENABLEDELAYSTART, L"Enable initialization delay", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_ENABLEPERSISTLAYOUT, L"Enable persistent layout", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_ENABLETRANSPARENTICONS, L"Enable transparent icons", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_ENABLESINGLECLICKICONS, L"Enable single click icons", NULL, NULL), ULONG_MAX);
+    menuItem = PhpCreateResourceEMenuItem(0, 0, IDS_PH_MAINWND_MENU_SETTINGS, NULL);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_ENABLEDELAYSTART, IDS_PH_MAINWND_MENU_ENABLE_INITIALIZATION_DELAY, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_ENABLEPERSISTLAYOUT, IDS_PH_MAINWND_MENU_ENABLE_PERSISTENT_LAYOUT, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_ENABLETRANSPARENTICONS, IDS_PH_MAINWND_MENU_ENABLE_TRANSPARENT_ICONS, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_ENABLESINGLECLICKICONS, IDS_PH_MAINWND_MENU_ENABLE_SINGLE_CLICK_ICONS, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_NOTIFICATIONS_RESETPERSISTLAYOUT, L"Reset persistent layout", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhpCreateResourceEMenuItem(0, ID_NOTIFICATIONS_RESETPERSISTLAYOUT, IDS_PH_MAINWND_MENU_RESET_PERSISTENT_LAYOUT, NULL), ULONG_MAX);
 
     if (PhGetIntegerSetting(SETTING_ICON_TRAY_LAZY_START_DELAY))
     {
@@ -4319,14 +4334,14 @@ PPH_EMENU PhpCreateIconMenu(
     PPH_EMENU menu;
 
     menu = PhCreateEMenu();
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ICON_SHOWHIDEPROCESSHACKER, L"&Show/Hide System Informer", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ICON_SYSTEMINFORMATION, L"System &information", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhpCreateResourceEMenuItem(0, ID_ICON_SHOWHIDEPROCESSHACKER, IDS_PH_MAINWND_MENU_SHOW_HIDE_SYSTEM_INFORMER, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhpCreateResourceEMenuItem(0, ID_ICON_SYSTEMINFORMATION, IDS_PH_MAINWND_MENU_SYSTEM_INFORMATION, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhpCreateNotificationMenu(), ULONG_MAX);
     PhInsertEMenuItem(menu, PhpCreateNotificationSettingsMenu(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESSES_DUMMY, L"&Processes", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhpCreateResourceEMenuItem(0, ID_PROCESSES_DUMMY, IDS_PH_MAINWND_MENU_PROCESSES, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     PhInsertEMenuItem(menu, PhpCreateComputerMenu(FALSE), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ICON_EXIT, L"E&xit", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhpCreateResourceEMenuItem(0, ID_ICON_EXIT, IDS_PH_MAINWND_MENU_EXIT, NULL), ULONG_MAX);
 
     return menu;
 }
@@ -4959,27 +4974,27 @@ VOID PhAddMiniProcessMenuItems(
 
     // Priority
 
-    priorityMenu = PhCreateEMenuItem(0, ID_PROCESS_PRIORITYCLASS, L"&Priority class", NULL, ProcessId);
+    priorityMenu = PhpCreateResourceEMenuItem(0, ID_PROCESS_PRIORITYCLASS, IDS_PH_MAINWND_MENU_PRIORITY_CLASS, ProcessId);
 
-    PhInsertEMenuItem(priorityMenu, PhCreateEMenuItem(0, ID_PRIORITY_REALTIME, L"&Real time", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(priorityMenu, PhCreateEMenuItem(0, ID_PRIORITY_HIGH, L"&High", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(priorityMenu, PhCreateEMenuItem(0, ID_PRIORITY_ABOVENORMAL, L"&Above normal", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(priorityMenu, PhCreateEMenuItem(0, ID_PRIORITY_NORMAL, L"&Normal", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(priorityMenu, PhCreateEMenuItem(0, ID_PRIORITY_BELOWNORMAL, L"&Below normal", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(priorityMenu, PhCreateEMenuItem(0, ID_PRIORITY_IDLE, L"&Idle", NULL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(priorityMenu, PhpCreateResourceEMenuItem(0, ID_PRIORITY_REALTIME, IDS_PH_MAINWND_MENU_REAL_TIME, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(priorityMenu, PhpCreateResourceEMenuItem(0, ID_PRIORITY_HIGH, IDS_PH_MAINWND_MENU_HIGH, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(priorityMenu, PhpCreateResourceEMenuItem(0, ID_PRIORITY_ABOVENORMAL, IDS_PH_MAINWND_MENU_ABOVE_NORMAL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(priorityMenu, PhpCreateResourceEMenuItem(0, ID_PRIORITY_NORMAL, IDS_PH_MAINWND_MENU_NORMAL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(priorityMenu, PhpCreateResourceEMenuItem(0, ID_PRIORITY_BELOWNORMAL, IDS_PH_MAINWND_MENU_BELOW_NORMAL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(priorityMenu, PhpCreateResourceEMenuItem(0, ID_PRIORITY_IDLE, IDS_PH_MAINWND_MENU_IDLE, ProcessId), ULONG_MAX);
 
     // I/O priority
 
-    ioPriorityMenu = PhCreateEMenuItem(0, ID_PROCESS_IOPRIORITY, L"&I/O priority", NULL, ProcessId);
+    ioPriorityMenu = PhpCreateResourceEMenuItem(0, ID_PROCESS_IOPRIORITY, IDS_PH_MAINWND_MENU_I_O_PRIORITY, ProcessId);
 
-    PhInsertEMenuItem(ioPriorityMenu, PhCreateEMenuItem(0, ID_IOPRIORITY_HIGH, L"&High", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(ioPriorityMenu, PhCreateEMenuItem(0, ID_IOPRIORITY_NORMAL, L"&Normal", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(ioPriorityMenu, PhCreateEMenuItem(0, ID_IOPRIORITY_LOW, L"&Low", NULL, ProcessId), ULONG_MAX);
-    PhInsertEMenuItem(ioPriorityMenu, PhCreateEMenuItem(0, ID_IOPRIORITY_VERYLOW, L"&Very low", NULL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(ioPriorityMenu, PhpCreateResourceEMenuItem(0, ID_IOPRIORITY_HIGH, IDS_PH_MAINWND_MENU_HIGH, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(ioPriorityMenu, PhpCreateResourceEMenuItem(0, ID_IOPRIORITY_NORMAL, IDS_PH_MAINWND_MENU_NORMAL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(ioPriorityMenu, PhpCreateResourceEMenuItem(0, ID_IOPRIORITY_LOW, IDS_PH_MAINWND_MENU_LOW, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(ioPriorityMenu, PhpCreateResourceEMenuItem(0, ID_IOPRIORITY_VERYLOW, IDS_PH_MAINWND_MENU_VERY_LOW, ProcessId), ULONG_MAX);
 
     // Menu
 
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_PROCESS_TERMINATE, L"T&erminate", NULL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhpCreateResourceEMenuItem(0, ID_PROCESS_TERMINATE, IDS_PH_MAINWND_MENU_TERMINATE, ProcessId), ULONG_MAX);
 
     if (processItem = PhReferenceProcessItem(ProcessId))
     {
@@ -4989,11 +5004,11 @@ VOID PhAddMiniProcessMenuItems(
     }
 
     if (!isSuspended)
-        PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_PROCESS_SUSPEND, L"&Suspend", NULL, ProcessId), ULONG_MAX);
+        PhInsertEMenuItem(Menu, PhpCreateResourceEMenuItem(0, ID_PROCESS_SUSPEND, IDS_PH_MAINWND_MENU_SUSPEND, ProcessId), ULONG_MAX);
     if (isSuspended || isPartiallySuspended)
-        PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_PROCESS_RESUME, L"Res&ume", NULL, ProcessId), ULONG_MAX);
+        PhInsertEMenuItem(Menu, PhpCreateResourceEMenuItem(0, ID_PROCESS_RESUME, IDS_PH_MAINWND_MENU_RESUME, ProcessId), ULONG_MAX);
 
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_PROCESS_RESTART, L"Res&tart", NULL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhpCreateResourceEMenuItem(0, ID_PROCESS_RESTART, IDS_PH_MAINWND_MENU_RESTART_PROCESS, ProcessId), ULONG_MAX);
 
     PhInsertEMenuItem(Menu, priorityMenu, ULONG_MAX);
 
@@ -5002,7 +5017,7 @@ VOID PhAddMiniProcessMenuItems(
 
     PhMwpSetProcessMenuPriorityChecks(Menu, ProcessId, TRUE, TRUE, FALSE);
 
-    PhInsertEMenuItem(Menu, PhCreateEMenuItem(0, ID_PROCESS_PROPERTIES, L"P&roperties", NULL, ProcessId), ULONG_MAX);
+    PhInsertEMenuItem(Menu, PhpCreateResourceEMenuItem(0, ID_PROCESS_PROPERTIES, IDS_PH_MAINWND_MENU_PROPERTIES, ProcessId), ULONG_MAX);
 }
 
 /**

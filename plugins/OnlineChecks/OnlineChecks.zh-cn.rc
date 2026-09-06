@@ -85,4 +85,8 @@ BEGIN
     IDS_OC_RESCANNING_FORMAT        "正在重新扫描 %s..."
     IDS_OC_LOCATING_ANALYSIS_FORMAT "正在查找 %s 的分析结果..."
     IDS_OC_UPLOAD_ERROR_FORMAT      "上传 %s 时出错..."
+    IDS_OC_WILDCARD_PATH_TITLE      "这看起来是通配符路径，而不是正则表达式。"
+    IDS_OC_WILDCARD_PATH_CONTENT    "要将其转换为正则表达式吗？反斜杠将被转义，通配符将被展开。"
+    IDS_OC_UPLOAD_PROGRESS_INITIAL  "已上传：~ / ~ (0%)\r\n速度：~ KB/s"
+    IDS_OC_INITIALIZING             "正在初始化..."
 END

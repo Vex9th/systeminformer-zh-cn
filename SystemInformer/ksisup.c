@@ -1867,8 +1867,8 @@ VOID KsiShowInitializingSplashScreen(
     config.hMainIcon = PhGetApplicationIcon(FALSE, USER_DEFAULT_SCREEN_DPI);
     config.pfCallback = KsiSplashScreenDialogCallbackProc;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Initializing System Informer kernel driver...";
-    config.pszContent = L"0 ms...";
+    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_KSI_INITIALIZING_DRIVER);
+    config.pszContent = PhGetApplicationUiString(IDS_PH_KSI_INITIAL_ELAPSED);
     config.cxWidth = 200;
 
     TaskDialogIndirect(&config, NULL, NULL, NULL);
@@ -2583,24 +2583,20 @@ HRESULT CALLBACK KsiKernelSupportCheckDialogCallbackProc(
 
                 if (ReadBooleanAcquire(&context->IsSupported))
                 {
-                    config.pszMainInstruction = L"Platform support pending review.";
-                    config.pszContent = L"Your kernel version is pending review on the development branch. "
-                        L"Your kernel will be supported in the next build!";
+                    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_KSI_SUPPORT_PENDING_TITLE);
+                    config.pszContent = PhGetApplicationUiString(IDS_PH_KSI_SUPPORT_PENDING_CONTENT);
                 }
                 else
                 {
                     if (context->IsCanaryChannel)
                     {
-                        config.pszMainInstruction = L"Kernel version not supported";
-                        config.pszContent = L"This kernel version is not yet supported. "
-                            L"Your kernel version is pending review on the development branch.";
+                        config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_KSI_UNSUPPORTED_TITLE);
+                        config.pszContent = PhGetApplicationUiString(IDS_PH_KSI_UNSUPPORTED_CANARY_CONTENT);
                     }
                     else
                     {
-                        config.pszMainInstruction = L"Kernel version not supported";
-                        config.pszContent = L"This kernel version is not yet supported. "
-                            L"For the latest kernel support switch to the Canary update channel "
-                            L"(Help > Check for updates > Canary > Check).";
+                        config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_KSI_UNSUPPORTED_TITLE);
+                        config.pszContent = PhGetApplicationUiString(IDS_PH_KSI_UNSUPPORTED_STABLE_CONTENT);
                     }
                 }
 
@@ -2623,7 +2619,7 @@ VOID KsiShowKernelSupportCheckDialog(
     statusMessage = PhpGetKsiMessage2(
         STATUS_SI_DYNDATA_UNSUPPORTED_KERNEL,
         FALSE,
-        L"Checking for pending platform update...",
+        PhGetApplicationUiString(IDS_PH_KSI_CHECKING_PLATFORM_UPDATE),
         NULL
         );
 
@@ -2637,7 +2633,7 @@ VOID KsiShowKernelSupportCheckDialog(
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
     config.pszWindowTitle = PhApplicationName;
     config.pszMainIcon = TD_SHIELD_WARNING_ICON;
-    config.pszMainInstruction = L"Checking for pending platform update...";
+    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_KSI_CHECKING_PLATFORM_UPDATE);
     config.pszContent = PhGetString(statusMessage);
     config.lpCallbackData = (LONG_PTR)&context;
     config.pfCallback = KsiKernelSupportCheckDialogCallbackProc;

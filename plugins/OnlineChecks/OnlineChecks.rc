@@ -172,6 +172,10 @@ BEGIN
     IDS_OC_RESCANNING_FORMAT        "Rescanning %s..."
     IDS_OC_LOCATING_ANALYSIS_FORMAT "Locating analysis for %s..."
     IDS_OC_UPLOAD_ERROR_FORMAT      "Error uploading %s..."
+    IDS_OC_WILDCARD_PATH_TITLE      "This looks like a wildcard path, not a regular expression."
+    IDS_OC_WILDCARD_PATH_CONTENT    "Convert it to a regular expression? Backslashes will be escaped and wildcards expanded."
+    IDS_OC_UPLOAD_PROGRESS_INITIAL  "Uploaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s"
+    IDS_OC_INITIALIZING             "Initializing..."
 END
 
 #endif    // English (United States) resources

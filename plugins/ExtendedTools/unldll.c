@@ -12,6 +12,11 @@
 
 #include "exttools.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 typedef struct _UNLOADED_DLLS_CONTEXT
 {
     BOOLEAN IsWow64Process;
@@ -57,7 +62,7 @@ VOID EtShowUnloadedDllsDialog(
 
     if (!NT_SUCCESS(status))
     {
-        PhShowStatus(ParentWindowHandle, L"Unable to open the process.", status, 0);
+        PhShowStatus(ParentWindowHandle, EtGetUiString(IDS_ET_ERROR_OPEN_PROCESS, L"Unable to open the process."), status, 0);
         return;
     }
 
@@ -489,13 +494,13 @@ INT_PTR CALLBACK EtpUnloadedDllsDlgProc(
             PhSetListViewStyle(lvHandle, TRUE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
             SetWindowFont(lvHandle, context->WindowFont, FALSE);
-            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"No.");
-            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 120, L"Name");
-            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"Base Address");
-            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 60, L"Size");
-            PhAddListViewColumn(lvHandle, 4, 4, 4, LVCFMT_LEFT, 120, L"Time Stamp");
-            PhAddListViewColumn(lvHandle, 5, 5, 5, LVCFMT_LEFT, 65, L"Checksum");
-            PhAddListViewColumn(lvHandle, 6, 6, 6, LVCFMT_LEFT, 100, L"Version");
+            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 40, EtGetUiString(IDS_ET_UNLOAD_COLUMN_NUMBER, L"No."));
+            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 120, EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"));
+            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 100, EtGetUiString(IDS_ET_COLUMN_BASE_ADDRESS, L"Base Address"));
+            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 60, EtGetUiString(IDS_ET_COLUMN_SIZE, L"Size"));
+            PhAddListViewColumn(lvHandle, 4, 4, 4, LVCFMT_LEFT, 120, EtGetUiString(IDS_ET_COLUMN_TIME_STAMP, L"Time Stamp"));
+            PhAddListViewColumn(lvHandle, 5, 5, 5, LVCFMT_LEFT, 65, EtGetUiString(IDS_ET_COLUMN_CHECKSUM, L"Checksum"));
+            PhAddListViewColumn(lvHandle, 6, 6, 6, LVCFMT_LEFT, 100, EtGetUiString(IDS_ET_COLUMN_VERSION, L"Version"));
 
             PhSetExtendedListView(lvHandle);
             ExtendedListView_SetCompareFunction(lvHandle, 0, EtpNumberCompareFunction);
@@ -600,7 +605,7 @@ INT_PTR CALLBACK EtpUnloadedDllsDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -641,4 +646,3 @@ INT_PTR CALLBACK EtpUnloadedDllsDlgProc(
 
     return FALSE;
 }
-

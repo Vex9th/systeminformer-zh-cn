@@ -85,27 +85,26 @@ PLUGIN_CALLS = {
 }
 
 EXPECTED_COUNTS = {
-    "sys_info.exe": 710,
+    "sys_info.exe": 872,
     "ExtendedNotifications.dll": 4,
-    "ExtendedTools.dll": 231,
-    "HardwareDevices.dll": 102,
-    "NetworkTools.dll": 27,
-    "OnlineChecks.dll": 18,
+    "ExtendedTools.dll": 397,
+    "HardwareDevices.dll": 199,
+    "NetworkTools.dll": 55,
+    "OnlineChecks.dll": 22,
     "ToolStatus.dll": 104,
-    "Updater.dll": 18,
-    "UserNotes.dll": 20,
+    "UserNotes.dll": 52,
 }
 
 EXPECTED_NEXT_SYMED_VALUES = {
-    "SystemInformer": 2710,
-    "UserNotes": 2020,
-    "ExtendedTools": 61231,
+    "SystemInformer": 2872,
+    "UserNotes": 2052,
+    "ExtendedTools": 61397,
     "ExtendedNotifications": 12004,
-    "HardwareDevices": 12102,
-    "OnlineChecks": 12018,
-    "NetworkTools": 12027,
+    "HardwareDevices": 12199,
+    "OnlineChecks": 12022,
+    "NetworkTools": 12055,
     "ToolStatus": 12104,
-    "Updater": 12018,
+    "Updater": 12056,
 }
 
 
@@ -299,8 +298,8 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             self.translations["strings"].keys() & self.translations["native_strings"].keys()
         )
         app_header = (APP_ROOT / "resource.h").read_text(encoding="utf-8-sig")
-        self.assertRegex(app_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_OPTIONS_PLUGINS$")
-        self.assertRegex(app_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2710$")
+        self.assertRegex(app_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_ACTION_FALLBACK_FORMAT$")
+        self.assertRegex(app_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2872$")
 
     def test_exact_ci_and_generator_counts(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
@@ -317,7 +316,7 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(native.returncode, 0, native.stdout + native.stderr)
-        self.assertIn("1900 strings", native.stdout)
+        self.assertIn("2512 strings", native.stdout)
 
         runtime = subprocess.run(
             [sys.executable, str(REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"), "--check"],

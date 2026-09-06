@@ -14,6 +14,35 @@
 
 PPH_OBJECT_TYPE TracertTreeNodeItemType;
 
+static PH_INITONCE TracertTreeUiStringsInitOnce = PH_INITONCE_INIT;
+static PPH_STRING TracertTreeUiStrings[
+    IDS_NT_COLUMN_COUNTRY - IDS_NT_COLUMN_TTL + 1
+    ];
+
+static PCWSTR TracertTreeGetUiString(
+    _In_ ULONG ResourceId
+    )
+{
+    if (ResourceId < IDS_NT_COLUMN_TTL || ResourceId > IDS_NT_COLUMN_COUNTRY)
+        return L"";
+
+    if (PhBeginInitOnce(&TracertTreeUiStringsInitOnce))
+    {
+        for (ULONG resourceId = IDS_NT_COLUMN_TTL; resourceId <= IDS_NT_COLUMN_COUNTRY; resourceId++)
+        {
+            TracertTreeUiStrings[resourceId - IDS_NT_COLUMN_TTL] = PhLoadUiString(
+                PluginInstance->DllBase,
+                resourceId,
+                NULL
+                );
+        }
+
+        PhEndInitOnce(&TracertTreeUiStringsInitOnce);
+    }
+
+    return PhGetStringOrEmpty(TracertTreeUiStrings[ResourceId - IDS_NT_COLUMN_TTL]);
+}
+
 _Function_class_(PH_TYPE_DELETE_PROCEDURE)
 VOID NTAPI TracertTreeNodeItemDeleteProcedure(
     _In_ PVOID Object,
@@ -595,14 +624,14 @@ VOID InitializeTracertTree(
     TreeNew_SetCallback(Context->TreeNewHandle, TracertTreeNewCallback, Context);
     TreeNew_SetRedraw(Context->TreeNewHandle, FALSE);
 
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TTL, TRUE, L"TTL", 30, PH_ALIGN_LEFT, -2, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING1, TRUE, L"Time 1", 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING1, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING2, TRUE, L"Time 2", 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING2, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING3, TRUE, L"Time 3", 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING3, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING4, TRUE, L"Time 4", 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING4, DT_RIGHT);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_IPADDR, TRUE, L"IP Address", 120, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_IPADDR, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_HOSTNAME, TRUE, L"Hostname", 150, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_HOSTNAME, 0);
-    PhAddTreeNewColumnEx2(Context->TreeNewHandle, TREE_COLUMN_ITEM_COUNTRY, TRUE, L"Country", 130, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_COUNTRY, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_TTL, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_TTL), 30, PH_ALIGN_LEFT, -2, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING1, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_TIME_1), 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING1, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING2, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_TIME_2), 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING2, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING3, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_TIME_3), 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING3, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_PING4, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_TIME_4), 70, PH_ALIGN_RIGHT, TREE_COLUMN_ITEM_PING4, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_IPADDR, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_IP_ADDRESS), 120, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_IPADDR, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, TREE_COLUMN_ITEM_HOSTNAME, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_HOSTNAME), 150, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_HOSTNAME, 0);
+    PhAddTreeNewColumnEx2(Context->TreeNewHandle, TREE_COLUMN_ITEM_COUNTRY, TRUE, TracertTreeGetUiString(IDS_NT_COLUMN_COUNTRY), 130, PH_ALIGN_LEFT, TREE_COLUMN_ITEM_COUNTRY, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
 
     //for (INT i = 0; i < MAX_PINGS; i++)
     //    PhAddTreeNewColumn(context->TreeNewHandle, i + 1, i + 1, i + 1, LVCFMT_RIGHT, 50, L"Time");

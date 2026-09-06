@@ -578,7 +578,7 @@ INT_PTR CALLBACK PhpServiceGeneralDlgProc(
             PhSelectComboBoxString(context->StartTypeWindowHandle, PhGetServiceStartTypeString(startType)->Buffer, FALSE);
             PhSelectComboBoxString(context->ErrorControlWindowHandle, PhGetServiceErrorControlString(errorControl)->Buffer, FALSE);
 
-            PhSetWindowText(context->PassBoxWindowHandle, L"password");
+            PhSetWindowText(context->PassBoxWindowHandle, PhGetApplicationUiString(IDS_PH_SERVICE_PASSWORD_PLACEHOLDER));
             Button_SetCheck(context->PassCheckBoxWindowHandle, BST_UNCHECKED);
 
             if (NT_SUCCESS(PhGetServiceDllParameter(serviceItem->Type, &serviceItem->Name->sr, &serviceDll)))

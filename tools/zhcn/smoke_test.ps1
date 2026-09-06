@@ -67,7 +67,6 @@ $expectedModuleMappings = @(
     'HardwareDevices.dll',
     'NetworkTools.dll',
     'OnlineChecks.dll',
-    'Updater.dll',
     'UserNotes.dll',
     'WindowExplorer.dll',
     'ExtendedNotifications.dll'
@@ -149,8 +148,11 @@ try {
             if ($missingMappings.Count -gt 0) {
                 throw "iteration $iteration: missing plugin module mapping: $($missingMappings -join ', ')"
             }
+            if ($mappedModules -contains 'Updater.dll') {
+                throw "iteration $iteration: forbidden plugin module mapping: Updater.dll"
+            }
 
-            Write-Host "iteration $iteration: main window responsive; 11 plugin module mappings present"
+            Write-Host "iteration $iteration: main window responsive; $($expectedModuleMappings.Count) plugin module mappings present"
 
             if (-not [Native.Win]::PostMessage($mainWindow.Handle, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)) {
                 throw "iteration $iteration: failed to post WM_CLOSE"

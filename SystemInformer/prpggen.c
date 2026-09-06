@@ -569,7 +569,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                     startTimeString = PhaFormatDateTime(&startTimeFields);
 
                     PhSetWindowText(context->StartedLabelHandle, PhaFormatString(
-                        L"%s ago (%s)",
+                        PhGetApplicationUiString(IDS_PH_RELATIVE_AND_ABSOLUTE_TIME_FORMAT),
                         startTimeRelativeString->Buffer,
                         startTimeString->Buffer
                         )->Buffer);
@@ -1076,7 +1076,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                             startTimeString = PhaFormatDateTime(&startTimeFields);
 
                             PhSetWindowText(context->StartedLabelHandle, PhaFormatString(
-                                L"%s ago (%s)",
+                                PhGetApplicationUiString(IDS_PH_RELATIVE_AND_ABSOLUTE_TIME_FORMAT),
                                 PhGetString(startTimeRelativeString),
                                 PhGetString(startTimeString)
                                 )->Buffer);

@@ -170,7 +170,10 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
 
         for function, columns in functions.items():
             body = compact(function_body(source, function))
-            self.assertEqual(body.count("EtGetUiString("), 16)
+            expected_ui_string_calls = (
+                18 if function == "EtAddNamedPipeHandleToListView" else 16
+            )
+            self.assertEqual(body.count("EtGetUiString("), expected_ui_string_calls)
 
             for case, column_kind, symbol, english in case_routes:
                 with self.subTest(function=function, case=case):
@@ -253,25 +256,26 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
                 self.assertNotIn(en, data[other])
 
         self.assertEqual([row[1] for row in RESOURCES], list(range(61188, 61200)))
-        self.assertEqual(sorted(defines.values()), list(range(61000, 61231)))
+        self.assertEqual(sorted(defines.values()), list(range(61000, 61397)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 231)
-        self.assertEqual(len(chinese), 231)
+        self.assertEqual(len(english), 397)
+        self.assertEqual(len(chinese), 397)
         self.assertRegex(
-            header, r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_OPTIONS_SECTION$"
+            header,
+            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_CONFIRM_THREAD_IO$",
         )
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61231$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61397$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=231"), 2)
+        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=397"), 2)
 
         generator_test = (
             REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py"
         ).read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("1900 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("2512 strings", result.stdout)', generator_test)
 
     def test_migrated_enum_literals_leave_the_fresh_audit(self):
         audit = load_audit_module()

@@ -269,9 +269,9 @@ VOID EtAddNamedPipeHandleToListView(
     }
 
     if (pipeLocalInfo.NamedPipeEnd == FILE_PIPE_CLIENT_END)
-        lvItemIndex = PhAddListViewItem(Context->ListViewWndHandle, MAXINT, L"Client", NULL);
+        lvItemIndex = PhAddListViewItem(Context->ListViewWndHandle, MAXINT, EtGetUiString(IDS_ET_PIPE_CLIENT, L"Client"), NULL);
     else if (pipeLocalInfo.NamedPipeEnd == FILE_PIPE_SERVER_END)
-        lvItemIndex = PhAddListViewItem(Context->ListViewWndHandle, MAXINT, L"Server", NULL);
+        lvItemIndex = PhAddListViewItem(Context->ListViewWndHandle, MAXINT, EtGetUiString(IDS_ET_PIPE_SERVER, L"Server"), NULL);
     else
         lvItemIndex = PhAddListViewItem(Context->ListViewWndHandle, MAXINT, L"", NULL);
 
@@ -537,21 +537,21 @@ INT_PTR CALLBACK EtPipeEnumDlgProc(
 
             if (context->UseKph)
             {
-                PhAddListViewColumn(context->ListViewWndHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"End");
-                PhAddListViewColumn(context->ListViewWndHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Name");
-                PhAddListViewColumn(context->ListViewWndHandle, 2, 2, 2, LVCFMT_LEFT, 200, L"Process");
-                PhAddListViewColumn(context->ListViewWndHandle, 3, 3, 3, LVCFMT_LEFT, 200, L"Handle");
-                PhAddListViewColumn(context->ListViewWndHandle, 4, 4, 4, LVCFMT_LEFT, 50, L"Granted access");
-                PhAddListViewColumn(context->ListViewWndHandle, 5, 5, 5, LVCFMT_LEFT, 80, L"Type");
-                PhAddListViewColumn(context->ListViewWndHandle, 6, 6, 6, LVCFMT_LEFT, 80, L"Configuration");
-                PhAddListViewColumn(context->ListViewWndHandle, 7, 7, 7, LVCFMT_LEFT, 80, L"Max instances");
-                PhAddListViewColumn(context->ListViewWndHandle, 8, 8, 8, LVCFMT_LEFT, 80, L"Current instances");
-                PhAddListViewColumn(context->ListViewWndHandle, 9, 9, 9, LVCFMT_LEFT, 80, L"Read data available");
-                PhAddListViewColumn(context->ListViewWndHandle, 10, 10, 10, LVCFMT_LEFT, 80, L"Outbound quota");
-                PhAddListViewColumn(context->ListViewWndHandle, 11, 11, 11, LVCFMT_LEFT, 80, L"State");
-                PhAddListViewColumn(context->ListViewWndHandle, 12, 12, 12, LVCFMT_LEFT, 80, L"Remote clients");
-                PhAddListViewColumn(context->ListViewWndHandle, 13, 13, 13, LVCFMT_LEFT, 80, L"Read mode");
-                PhAddListViewColumn(context->ListViewWndHandle, 14, 14, 14, LVCFMT_LEFT, 80, L"Completion mode");
+                PhAddListViewColumn(context->ListViewWndHandle, 0, 0, 0, LVCFMT_LEFT, 40, EtGetUiString(IDS_ET_PIPE_COLUMN_END, L"End"));
+                PhAddListViewColumn(context->ListViewWndHandle, 1, 1, 1, LVCFMT_LEFT, 200, EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"));
+                PhAddListViewColumn(context->ListViewWndHandle, 2, 2, 2, LVCFMT_LEFT, 200, EtGetUiString(IDS_ET_PIPE_COLUMN_PROCESS, L"Process"));
+                PhAddListViewColumn(context->ListViewWndHandle, 3, 3, 3, LVCFMT_LEFT, 200, EtGetUiString(IDS_ET_PIPE_COLUMN_HANDLE, L"Handle"));
+                PhAddListViewColumn(context->ListViewWndHandle, 4, 4, 4, LVCFMT_LEFT, 50, EtGetUiString(IDS_ET_PIPE_COLUMN_GRANTED_ACCESS, L"Granted access"));
+                PhAddListViewColumn(context->ListViewWndHandle, 5, 5, 5, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_TYPE, L"Type"));
+                PhAddListViewColumn(context->ListViewWndHandle, 6, 6, 6, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_CONFIGURATION, L"Configuration"));
+                PhAddListViewColumn(context->ListViewWndHandle, 7, 7, 7, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_MAX_INSTANCES, L"Max instances"));
+                PhAddListViewColumn(context->ListViewWndHandle, 8, 8, 8, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_CURRENT_INSTANCES, L"Current instances"));
+                PhAddListViewColumn(context->ListViewWndHandle, 9, 9, 9, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_READ_DATA_AVAILABLE, L"Read data available"));
+                PhAddListViewColumn(context->ListViewWndHandle, 10, 10, 10, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_OUTBOUND_QUOTA, L"Outbound quota"));
+                PhAddListViewColumn(context->ListViewWndHandle, 11, 11, 11, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_STATE, L"State"));
+                PhAddListViewColumn(context->ListViewWndHandle, 12, 12, 12, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_REMOTE_CLIENTS, L"Remote clients"));
+                PhAddListViewColumn(context->ListViewWndHandle, 13, 13, 13, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_READ_MODE, L"Read mode"));
+                PhAddListViewColumn(context->ListViewWndHandle, 14, 14, 14, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_COMPLETION_MODE, L"Completion mode"));
                 PhSetExtendedListView(context->ListViewWndHandle);
                 PhLoadListViewColumnsFromSetting(SETTING_NAME_PIPE_ENUM_LISTVIEW_COLUMNS_WITH_KSI, context->ListViewWndHandle);
 
@@ -562,18 +562,18 @@ INT_PTR CALLBACK EtPipeEnumDlgProc(
             else
             {
                 PhAddListViewColumn(context->ListViewWndHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-                PhAddListViewColumn(context->ListViewWndHandle, 1, 1, 1, LVCFMT_LEFT, 200, L"Name");
-                PhAddListViewColumn(context->ListViewWndHandle, 2, 2, 2, LVCFMT_LEFT, 50, L"Server");
-                PhAddListViewColumn(context->ListViewWndHandle, 3, 3, 3, LVCFMT_LEFT, 80, L"Type");
-                PhAddListViewColumn(context->ListViewWndHandle, 4, 4, 4, LVCFMT_LEFT, 80, L"Configuration");
-                PhAddListViewColumn(context->ListViewWndHandle, 5, 5, 5, LVCFMT_LEFT, 80, L"Max instances");
-                PhAddListViewColumn(context->ListViewWndHandle, 6, 6, 6, LVCFMT_LEFT, 80, L"Current instances");
-                PhAddListViewColumn(context->ListViewWndHandle, 7, 7, 7, LVCFMT_LEFT, 80, L"Read data available");
-                PhAddListViewColumn(context->ListViewWndHandle, 8, 8, 8, LVCFMT_LEFT, 80, L"Outbound quota");
-                PhAddListViewColumn(context->ListViewWndHandle, 9, 9, 9, LVCFMT_LEFT, 80, L"State");
-                PhAddListViewColumn(context->ListViewWndHandle, 10, 10, 10, LVCFMT_LEFT, 80, L"Remote clients");
-                PhAddListViewColumn(context->ListViewWndHandle, 11, 11, 11, LVCFMT_LEFT, 80, L"Read mode");
-                PhAddListViewColumn(context->ListViewWndHandle, 12, 12, 12, LVCFMT_LEFT, 80, L"Completion mode");
+                PhAddListViewColumn(context->ListViewWndHandle, 1, 1, 1, LVCFMT_LEFT, 200, EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"));
+                PhAddListViewColumn(context->ListViewWndHandle, 2, 2, 2, LVCFMT_LEFT, 50, EtGetUiString(IDS_ET_PIPE_SERVER, L"Server"));
+                PhAddListViewColumn(context->ListViewWndHandle, 3, 3, 3, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_TYPE, L"Type"));
+                PhAddListViewColumn(context->ListViewWndHandle, 4, 4, 4, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_CONFIGURATION, L"Configuration"));
+                PhAddListViewColumn(context->ListViewWndHandle, 5, 5, 5, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_MAX_INSTANCES, L"Max instances"));
+                PhAddListViewColumn(context->ListViewWndHandle, 6, 6, 6, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_CURRENT_INSTANCES, L"Current instances"));
+                PhAddListViewColumn(context->ListViewWndHandle, 7, 7, 7, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_READ_DATA_AVAILABLE, L"Read data available"));
+                PhAddListViewColumn(context->ListViewWndHandle, 8, 8, 8, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_OUTBOUND_QUOTA, L"Outbound quota"));
+                PhAddListViewColumn(context->ListViewWndHandle, 9, 9, 9, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_STATE, L"State"));
+                PhAddListViewColumn(context->ListViewWndHandle, 10, 10, 10, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_REMOTE_CLIENTS, L"Remote clients"));
+                PhAddListViewColumn(context->ListViewWndHandle, 11, 11, 11, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_READ_MODE, L"Read mode"));
+                PhAddListViewColumn(context->ListViewWndHandle, 12, 12, 12, LVCFMT_LEFT, 80, EtGetUiString(IDS_ET_PIPE_COLUMN_COMPLETION_MODE, L"Completion mode"));
                 PhSetExtendedListView(context->ListViewWndHandle);
                 PhLoadListViewColumnsFromSetting(SETTING_NAME_PIPE_ENUM_LISTVIEW_COLUMNS, context->ListViewWndHandle);
 

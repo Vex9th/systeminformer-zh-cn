@@ -340,8 +340,24 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
             context->PrivilegesLv = privilegesLv = GetDlgItem(WindowHandle, IDC_PRIVILEGES);
             PhSetListViewStyle(privilegesLv, FALSE, TRUE);
             PhSetControlTheme(privilegesLv, L"explorer");
-            PhAddListViewColumn(privilegesLv, 0, 0, 0, LVCFMT_LEFT, 140, L"Name");
-            PhAddListViewColumn(privilegesLv, 1, 1, 1, LVCFMT_LEFT, 220, L"Display name");
+            PhAddListViewColumn(
+                privilegesLv,
+                0,
+                0,
+                0,
+                LVCFMT_LEFT,
+                140,
+                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_COLUMN_PRIVILEGE_NAME, NULL)))
+                );
+            PhAddListViewColumn(
+                privilegesLv,
+                1,
+                1,
+                1,
+                LVCFMT_LEFT,
+                220,
+                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_COLUMN_PRIVILEGE_DISPLAY_NAME, NULL)))
+                );
             PhSetExtendedListView(privilegesLv);
 
             context->PrivilegeList = PhCreateList(32);
@@ -484,7 +500,7 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
                                 WindowHandle,
                                 TD_OK_BUTTON | TD_CANCEL_BUTTON,
                                 TD_ERROR_ICON,
-                                 L"The selected privilege has already been added.",
+                                 PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_PRIVILEGE_ALREADY_ADDED, NULL))),
                                  L"%s",
                                  L""
                                  ) == IDOK)
@@ -609,7 +625,20 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
                     if (context->LaunchProtectedValid && launchProtected != 0 && launchProtected != context->OriginalLaunchProtected)
                     {
                         INT result;
+                        PPH_STRING mainInstruction;
+                        PPH_STRING content;
                         TASKDIALOGCONFIG config = { sizeof(TASKDIALOGCONFIG) };
+
+                        mainInstruction = PH_AUTO(PhLoadUiString(
+                            PluginInstance->DllBase,
+                            IDS_ES_SERVICE_PROTECTION_WARNING,
+                            NULL
+                            ));
+                        content = PH_AUTO(PhLoadUiString(
+                            PluginInstance->DllBase,
+                            IDS_ES_CONTINUE_PROMPT,
+                            NULL
+                            ));
 
                         config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_POSITION_RELATIVE_TO_WINDOW;
                         config.dwCommonButtons = TDCBF_YES_BUTTON | TDCBF_NO_BUTTON;
@@ -617,8 +646,8 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
                         config.hwndParent = WindowHandle;
                         config.pszWindowTitle = SystemInformer_GetWindowName();
                         config.pszMainIcon = TD_WARNING_ICON;
-                        config.pszMainInstruction = L"Setting service protection will prevent the service from being controlled, modified, or deleted.";
-                        config.pszContent = L"Do you want to continue?";
+                        config.pszMainInstruction = PhGetStringOrEmpty(mainInstruction);
+                        config.pszContent = PhGetStringOrEmpty(content);
 
                         if (!PhShowTaskDialog(
                             &config,

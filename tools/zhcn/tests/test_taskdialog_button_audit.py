@@ -335,27 +335,8 @@ class TaskDialogButtonAuditTests(unittest.TestCase):
                 entries,
             )
 
-        self.assertEqual(57, len(entries))
-        self.assertEqual(
-            Counter(
-                {
-                    "plugins/UserNotes/main.c": 29,
-                    "SystemInformer/actions.c": 13,
-                    "SystemInformer/main.c": 6,
-                    "plugins/Updater/page1.c": 3,
-                    "plugins/NetworkTools/pages.c": 2,
-                    "plugins/OnlineChecks/page2.c": 2,
-                    "plugins/Updater/page3.c": 1,
-                    "plugins/Updater/page5.c": 1,
-                }
-            ),
-            Counter(entry["file"] for entry in entries),
-        )
-        self.assertEqual(
-            Counter({"c_taskdialog": 47, "c_runtime_composed": 1, "c_taskdialog_raw": 9}),
-            Counter(entry["category"] for entry in entries),
-        )
-        self.assertEqual(37, len(self.audit.build_manifest(entries)["unique_strings"]))
+        self.assertEqual([], entries)
+        self.assertEqual(0, len(self.audit.build_manifest(entries)["unique_strings"]))
 
 
 if __name__ == "__main__":

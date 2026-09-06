@@ -116,7 +116,7 @@ class SmallPluginRemainingResourceTests(unittest.TestCase):
 
         self.assertRegex(
             header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2070$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2090$",
         )
 
     def test_user_notes_resources_are_contiguous_and_bilingual(self) -> None:
@@ -135,7 +135,7 @@ class SmallPluginRemainingResourceTests(unittest.TestCase):
 
         self.assertRegex(
             header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2020$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2052$",
         )
 
     def test_trigger_warning_uses_localized_format_inside_explicit_auto_pool(self) -> None:

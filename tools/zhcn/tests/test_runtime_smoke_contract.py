@@ -48,14 +48,20 @@ class RuntimeSmokeContractTests(unittest.TestCase):
             "HardwareDevices.dll",
             "NetworkTools.dll",
             "OnlineChecks.dll",
-            "Updater.dll",
             "UserNotes.dll",
             "WindowExplorer.dll",
             "ExtendedNotifications.dll",
         )
         for module in expected_modules:
             self.assertIn(f"'{module}'", self.smoke)
-        self.assertEqual(self.smoke.count(".dll'"), len(expected_modules))
+        self.assertEqual(len(expected_modules), 10)
+        self.assertRegex(
+            self.smoke,
+            r"\$mappedModules\s+-contains\s+'Updater\.dll'",
+        )
+        self.assertIn("forbidden plugin module mapping: Updater.dll", self.smoke)
+        self.assertIn("$expectedModuleMappings.Count", self.smoke)
+        self.assertNotIn("11 plugin module mappings present", self.smoke)
         self.assertIn("module mapping", self.smoke)
         self.assertNotIn("plugins loaded", self.smoke.lower())
 

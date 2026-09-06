@@ -97,7 +97,7 @@ BOOLEAN PhpShowElevatePrompt(
     TASKDIALOGCONFIG config;
     CONST TASKDIALOG_BUTTON buttons[1] =
     {
-        { IDYES, L"Continue"}
+        { IDYES, PhGetApplicationUiString(IDS_PH_BUTTON_CONTINUE) }
     };
     LONG button;
 
@@ -113,8 +113,7 @@ BOOLEAN PhpShowElevatePrompt(
     config.pszWindowTitle = PhApplicationName;
     config.pszMainIcon = TD_ERROR_ICON;
     config.pszMainInstruction = PhaConcatStrings2(Message, L".")->Buffer;
-    config.pszContent = L"You will need to provide administrator permission. "
-        L"Click Continue to complete this operation.";
+    config.pszContent = PhGetApplicationUiString(IDS_PH_ELEVATION_PERMISSION_CONTENT);
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
 
     config.cButtons = 1;
@@ -3146,38 +3145,61 @@ BOOLEAN PhUiDebugProcess(
         PPH_STRING cdbPath = NULL;
         PPH_STRING kdPath = NULL;
         PPH_STRING ntsdPath = NULL;
+        PPH_STRING windbgButtonText = NULL;
+        PPH_STRING windbgPreviewButtonText = NULL;
+        PPH_STRING cdbButtonText = NULL;
+        PPH_STRING kdButtonText = NULL;
+        PPH_STRING ntsdButtonText = NULL;
         TASKDIALOGCONFIG config;
         TASKDIALOG_BUTTON buttons[11];
         ULONG buttonCount = 0;
+        PPH_STRING registryButtonDescription = NULL;
         PPH_STRING registryButtonText = NULL;
 
         if (windbgPath = PhFindDebuggerPath(L"windbg.exe"))
-            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 101, L"\U0001FA9F WinDbg\nGraphical debugger for both user-mode and kernel-mode debugging." };
+        {
+            windbgButtonText = PhConcatStrings2(L"\U0001FA9F ", PhGetApplicationUiString(IDS_PH_DEBUGGER_WINDBG_COMMAND));
+            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 101, PhGetStringOrEmpty(windbgButtonText) };
+        }
         if (windbgPreviewPath = PhFindDebuggerPath(L"windbgx.exe"))
-            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 102, L"\U0001FA9F WinDbg (Preview)\nModern graphical debugger for both user-mode and kernel-mode debugging." };
+        {
+            windbgPreviewButtonText = PhConcatStrings2(L"\U0001FA9F ", PhGetApplicationUiString(IDS_PH_DEBUGGER_WINDBG_PREVIEW_COMMAND));
+            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 102, PhGetStringOrEmpty(windbgPreviewButtonText) };
+        }
         //if (vs2026Path = PhFindVisualStudioDebugger(SREF(L"[18.0,19.0)")))
         //    buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 107, L"\U0001F4D8 Visual Studio 2026\nFull-featured IDE with integrated debugging." };
         //if (vs2022Path = PhFindVisualStudioDebugger(SREF(L"[16.0,17.0)")))
         //    buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 108, L"\U0001F4D8 Visual Studio 2022\nFull-featured IDE with integrated debugging." };
         if (cdbPath = PhFindDebuggerPath(L"cdb.exe"))
-            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 103, L"\U0001F4FA CDB\nCommand-line debugger for user-mode applications." };
+        {
+            cdbButtonText = PhConcatStrings2(L"\U0001F4FA ", PhGetApplicationUiString(IDS_PH_DEBUGGER_CDB_COMMAND));
+            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 103, PhGetStringOrEmpty(cdbButtonText) };
+        }
         if (kdPath = PhFindDebuggerPath(L"kd.exe"))
-            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 104, L"\U0001F4FA KD\nKernel debugger for low-level system debugging." };
+        {
+            kdButtonText = PhConcatStrings2(L"\U0001F4FA ", PhGetApplicationUiString(IDS_PH_DEBUGGER_KD_COMMAND));
+            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 104, PhGetStringOrEmpty(kdButtonText) };
+        }
         if (ntsdPath = PhFindDebuggerPath(L"ntsd.exe"))
-            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 105, L"\U0001F4FA NTSD\nLegacy command-line debugger similar to CDB." };
+        {
+            ntsdButtonText = PhConcatStrings2(L"\U0001F4FA ", PhGetApplicationUiString(IDS_PH_DEBUGGER_NTSD_COMMAND));
+            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 105, PhGetStringOrEmpty(ntsdButtonText) };
+        }
 
         // Always add registry debugger option
         if (registryDebuggerPath && registryDebuggerName)
         {
-            registryButtonText = PhFormatString(
-                L"\U00002699 (System Default)\n%s",
+            registryButtonDescription = PhFormatString(
+                PhGetApplicationUiString(IDS_PH_DEBUGGER_SYSTEM_DEFAULT_FORMAT),
                 registryDebuggerName->Buffer
                 );
-            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 106, registryButtonText->Buffer };
+            registryButtonText = PhConcatStrings2(L"\u2699 ", PhGetStringOrEmpty(registryButtonDescription));
+            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 106, PhGetStringOrEmpty(registryButtonText) };
         }
         else
         {
-            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 106, L"\U00002699 System Default\nNo debugger configured in AeDebug registry key." };
+            registryButtonText = PhConcatStrings2(L"\u2699 ", PhGetApplicationUiString(IDS_PH_DEBUGGER_SYSTEM_DEFAULT_UNCONFIGURED));
+            buttons[buttonCount++] = (TASKDIALOG_BUTTON){ 106, PhGetStringOrEmpty(registryButtonText) };
         }
 
         memset(&config, 0, sizeof(TASKDIALOGCONFIG));
@@ -3187,8 +3209,8 @@ BOOLEAN PhUiDebugProcess(
         config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(WindowHandle));
         config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
         config.pszWindowTitle = PhApplicationName;
-        config.pszMainInstruction = L"Select a system debugger to use for this process:";
-        config.pszContent = L"You can choose from the installed debugging tools below.";
+        config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_DEBUGGER_SELECT_INSTRUCTION);
+        config.pszContent = PhGetApplicationUiString(IDS_PH_DEBUGGER_SELECT_CONTENT);
         config.cButtons = buttonCount;
         config.pButtons = buttons;
 
@@ -3238,6 +3260,12 @@ BOOLEAN PhUiDebugProcess(
         PhClearReference(&cdbPath);
         PhClearReference(&kdPath);
         PhClearReference(&ntsdPath);
+        PhClearReference(&windbgButtonText);
+        PhClearReference(&windbgPreviewButtonText);
+        PhClearReference(&cdbButtonText);
+        PhClearReference(&kdButtonText);
+        PhClearReference(&ntsdButtonText);
+        PhClearReference(&registryButtonDescription);
         PhClearReference(&registryButtonText);
     }
 
@@ -3409,16 +3437,16 @@ BOOLEAN PhUiSetActivityModeration(
     _In_ PPH_PROCESS_ITEM Process
     )
 {
-    static CONST TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
+    CONST TASKDIALOG_BUTTON TaskDialogRadioButtonArray[] =
     {
-        { SystemActivityModerationStateSystemManaged, L"System managed" },
-        { SystemActivityModerationStateUserManagedAllowThrottling, L"Allow activity moderation throttling" },
-        { SystemActivityModerationStateUserManagedDisableThrottling, L"Disable activity moderation throttling" },
+        { SystemActivityModerationStateSystemManaged, PhGetApplicationUiString(IDS_PH_ACTIVITY_MODERATION_SYSTEM_MANAGED) },
+        { SystemActivityModerationStateUserManagedAllowThrottling, PhGetApplicationUiString(IDS_PH_ACTIVITY_MODERATION_ALLOW) },
+        { SystemActivityModerationStateUserManagedDisableThrottling, PhGetApplicationUiString(IDS_PH_ACTIVITY_MODERATION_DISABLE) },
     };
-    static CONST TASKDIALOG_BUTTON TaskDialogButtonArray[] =
+    CONST TASKDIALOG_BUTTON TaskDialogButtonArray[] =
     {
-        { IDYES, L"Save" },
-        { IDCANCEL, L"Cancel" },
+        { IDYES, PhGetApplicationUiString(IDS_PH_SAVE) },
+        { IDCANCEL, PhGetApplicationUiString(IDS_PH_CANCEL) },
     };
     NTSTATUS status;
     SYSTEM_ACTIVITY_MODERATION_APP_SETTINGS activityModerationInfo = { 0 };
@@ -3436,7 +3464,7 @@ BOOLEAN PhUiSetActivityModeration(
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_POSITION_RELATIVE_TO_WINDOW;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(WindowHandle));
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Select the process activity moderation throttling state.";
+    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_ACTIVITY_MODERATION_INSTRUCTION);
     config.nDefaultButton = IDCANCEL;
     config.pRadioButtons = TaskDialogRadioButtonArray;
     config.cRadioButtons = RTL_NUMBER_OF(TaskDialogRadioButtonArray);
@@ -3474,10 +3502,9 @@ BOOLEAN PhUiSetActivityModeration(
     }
 
     config.pszContent = PhaFormatString(
-        L"System-managed activity moderation settings are automatically removed by Windows when the executable is deleted or was last executed more than 7 days ago.\r\n\r\n"
-        L"Image: %s\r\nUpdated: %s",
+        PhGetApplicationUiString(IDS_PH_ACTIVITY_MODERATION_DETAILS_FORMAT),
         PH_AUTO_T(PH_STRING, PhGetBaseName(Process->FileName))->Buffer,
-        (startTimeRelativeString && startTimeString) ? PhaFormatString(L"%s ago (%s)", PhGetString(startTimeRelativeString), PhGetString(startTimeString))->Buffer : L"N/A"
+        (startTimeRelativeString && startTimeString) ? PhaFormatString(PhGetApplicationUiString(IDS_PH_RELATIVE_AND_ABSOLUTE_TIME_FORMAT), PhGetString(startTimeRelativeString), PhGetString(startTimeString))->Buffer : PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)
         )->Buffer;
 
     if (PhShowTaskDialog(
