@@ -1433,8 +1433,30 @@
 #define IDS_PH_STAT_HANGCOUNT                               2439
 #define IDS_PH_STAT_GHOSTCOUNT                              2440
 #define IDS_PH_STAT_NETWORKTXRXBYTES                        2441
+#define IDS_PH_TOKEN_RESOLVING                              2442
+#define IDS_PH_TOKEN_TYPE                                   2443
+#define IDS_PH_TOKEN_IMPERSONATION_LEVEL                    2444
+#define IDS_PH_TOKEN_LUID                                   2445
+#define IDS_PH_TOKEN_AUTHENTICATION_LUID                    2446
+#define IDS_PH_TOKEN_MODIFIEDID_LUID                        2447
+#define IDS_PH_TOKEN_ORIGIN_LUID                            2448
+#define IDS_PH_TOKEN_MEMORY_USED                            2449
+#define IDS_PH_TOKEN_MEMORY_AVAILABLE                       2450
+#define IDS_PH_TOKEN_OBJECT_PATH                            2451
+#define IDS_PH_TOKEN_SDDL                                   2452
+#define IDS_PH_TOKEN_TRUSTLEVEL_SID                         2453
+#define IDS_PH_TOKEN_TRUSTLEVEL_NAME                        2454
+#define IDS_PH_TOKEN_FOLDER_PATH                            2455
+#define IDS_PH_TOKEN_REGISTRY_PATH                          2456
+#define IDS_PH_TOKEN_HWID_PUBLISHER                         2457
+#define IDS_PH_TOKEN_HWID_USER                              2458
+#define IDS_PH_TOKEN_NAME                                   2459
+#define IDS_PH_TOKEN_SID                                    2460
+#define IDS_PH_TOKEN_NUMBER                                 2461
+#define IDS_PH_TOKEN_LPAC                                   2462
+#define IDS_PH_TOKEN_PATH                                   2463
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_STAT_NETWORKTXRXBYTES
+#define IDS_PH_LAST                                  IDS_PH_TOKEN_PATH
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1446,6 +1468,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2442
+#define _APS_NEXT_SYMED_VALUE           2464
 #endif
 #endif

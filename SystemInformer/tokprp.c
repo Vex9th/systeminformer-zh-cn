@@ -879,7 +879,7 @@ VOID PhpUpdateSidsFromTokenGroups(
             TokenPageContext->ListViewHandle,
             lvitem->GroupId,
             MAXINT,
-            L"Resolving...",
+            PhGetApplicationUiString(IDS_PH_TOKEN_RESOLVING),
             lvitem
             );
 
@@ -2792,16 +2792,16 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
             PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"LUIDs");
             PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"Memory");
             PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"Properties");
-            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, L"Type", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, L"Impersonation level", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, L"Token LUID", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, L"Authentication LUID", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, L"ModifiedId LUID", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, L"Origin LUID", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, L"Memory used", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, L"Memory available", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, L"Token object path", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, L"Token SDDL", NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_IMPERSONATION_LEVEL), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_LUID), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_AUTHENTICATION_LUID), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_MODIFIEDID_LUID), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_ORIGIN_LUID), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_MEMORY_USED), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_MEMORY_AVAILABLE), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_OBJECT_PATH), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_SDDL), NULL);
 
             if (NT_SUCCESS(tokenPageContext->OpenObject(
                 &tokenHandle,
@@ -2846,8 +2846,8 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                     LONG trustLevelNameIndex;
 
                     trustLevelGroupIndex = PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"TrustLevel");
-                    trustLevelSidIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, L"TrustLevel Sid", NULL);
-                    trustLevelNameIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, L"TrustLevel Name", NULL);
+                    trustLevelSidIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TRUSTLEVEL_SID), NULL);
+                    trustLevelNameIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TRUSTLEVEL_NAME), NULL);
                     PhSetListViewSubItem(context->ListViewHandle, trustLevelSidIndex, 1, PhGetStringOrDefault(tokenTrustLevelSidString, L"N/A"));
                     PhSetListViewSubItem(context->ListViewHandle, trustLevelNameIndex, 1, PhGetStringOrDefault(tokenTrustLevelNameString, L"N/A"));
 
@@ -2875,8 +2875,8 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                     LONG profileRegistryIndex;
 
                     profileGroupIndex = PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"Profile");
-                    profileFolderIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, L"Folder path", NULL);
-                    profileRegistryIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, L"Registry path", NULL);
+                    profileFolderIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_FOLDER_PATH), NULL);
+                    profileRegistryIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_REGISTRY_PATH), NULL);
 
                     PhSetListViewSubItem(context->ListViewHandle, profileFolderIndex, 1, PhGetStringOrDefault(tokenProfilePathString, L"N/A"));
 
@@ -2903,8 +2903,8 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                 LONG systemIdUserIndex;
 
                 systemIdGroupIndex = PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"System ID");
-                systemIdPublisherIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, L"HWID (Publisher)", NULL);
-                systemIdUserIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, L"HWID (User)", NULL);
+                systemIdPublisherIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_HWID_PUBLISHER), NULL);
+                systemIdUserIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_HWID_USER), NULL);
 
                 PhSetListViewSubItem(context->ListViewHandle, systemIdPublisherIndex, 1, PhGetStringOrDefault(tokenSystemIdForPublisher, L"N/A"));
                 PhSetListViewSubItem(context->ListViewHandle, systemIdUserIndex, 1, PhGetStringOrDefault(tokenSystemIdForUser, L"N/A"));
@@ -4460,18 +4460,18 @@ INT_PTR CALLBACK PhpTokenContainerPageProc(
             PhAddListViewGroup(context->ListViewHandle, 3, L"Package");
             PhAddListViewGroup(context->ListViewHandle, 4, L"Profile");
 
-            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, L"Name", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, L"Type", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, L"SID", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, L"Number", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, L"LPAC", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, L"Token object path", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, L"Name", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, L"SID", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, L"Name", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, L"Path", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 4, MAXINT, L"Folder path", NULL);
-            PhAddListViewGroupItem(context->ListViewHandle, 4, MAXINT, L"Registry path", NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_SID), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_NUMBER), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_LPAC), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_OBJECT_PATH), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 2, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_SID), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 3, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_PATH), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 4, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_FOLDER_PATH), NULL);
+            PhAddListViewGroupItem(context->ListViewHandle, 4, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_REGISTRY_PATH), NULL);
 
             if (NT_SUCCESS(tokenPageContext->OpenObject(
                 &tokenHandle,

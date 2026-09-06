@@ -321,7 +321,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             self.assertEqual(chinese.get(symbol), zh, symbol)
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
-        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_STAT_NETWORKTXRXBYTES")
+        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_TOKEN_PATH")
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
         expected_ids = set(range(first_id, last_id + 1))
@@ -334,7 +334,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
         self.assertEqual(len(english), len(expected_ids))
         self.assertEqual(len(chinese), len(expected_ids))
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2442$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2464$")
 
     def test_json_uses_existing_and_native_strings_without_overlap(self):
         data = json.loads(
@@ -356,8 +356,8 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("sys_info.exe=442"), 2)
-        self.assertNotIn("sys_info.exe=400", workflow)
+        self.assertEqual(workflow.count("sys_info.exe=464"), 2)
+        self.assertNotIn("sys_info.exe=442", workflow)
 
     def test_audit_removes_batch_and_preserves_expected_remainder(self):
         audit = load_audit_module()
@@ -372,8 +372,8 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         target_english = {english for _symbol, _id, english, *_ in ROUTES}
 
         self.assertFalse(target_english & {entry["english"] for entry in remaining})
-        self.assertEqual(len(remaining), 29)
-        self.assertEqual(len({entry["english"] for entry in remaining}), 22)
+        self.assertEqual(len(remaining), 0)
+        self.assertEqual(len({entry["english"] for entry in remaining}), 0)
 
 
 if __name__ == "__main__":
