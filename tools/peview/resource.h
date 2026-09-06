@@ -405,8 +405,19 @@
 #define IDS_PV_RELOC_DIR64                            3284
 #define IDS_PV_RELOC_MOV32                            3285
 #define IDS_PV_RELOC_MOV32_T                          3286
+#define IDS_PV_CLR_TABLE_TITLE_FORMAT                 3287
+#define IDS_PV_MENU_COPY_COLUMN_FORMAT                3288
+#define IDS_PV_IMAGE_SIZE_OVERLAY_FORMAT              3289
+#define IDS_PV_CHECKSUM_VERIFYING_FORMAT              3290
+#define IDS_PV_CHECKSUM_MISSING_FORMAT                3291
+#define IDS_PV_CHECKSUM_MISMATCH_FORMAT               3292
+#define IDS_PV_VERIFIED_LINK_FORMAT                   3293
+#define IDS_PV_VERIFIED_COMPANY_FORMAT                3294
+#define IDS_PV_UNVERIFIED_COMPANY_FORMAT              3295
+#define IDS_PV_PROPERTIES_TITLE_FORMAT                3296
+#define IDS_PV_CERTIFICATE_SIZE_FORMAT                3297
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_RELOC_MOV32_T
+#define IDS_PV_LAST                                IDS_PV_CERTIFICATE_SIZE_FORMAT
 
 // Next default values for new objects
 //
@@ -415,6 +426,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3287
+#define _APS_NEXT_SYMED_VALUE           3298
 #endif
 #endif

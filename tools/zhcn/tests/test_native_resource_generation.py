@@ -719,9 +719,6 @@ class NativeResourceGenerationTests(unittest.TestCase):
             REPO_ROOT / "plugins" / "ExtendedTools" / "tpm.c": {
                 ("c_runtime_composed", "0x%08lx"),
             },
-            REPO_ROOT / "tools" / "peview" / "misc.c": {
-                ("c_runtime_composed", 'Copy "%s"'),
-            },
         }
 
         for source_path, expected in cases.items():
@@ -1598,7 +1595,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1671 strings", result.stdout)
+        self.assertIn("1682 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1831,7 +1828,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertIn("PvpLoadUiString", peview_header)
         self.assertIn("IDS_PV_MENU_DISPLAY_RESOURCE", resource_header)
         self.assertIn("IDS_PV_MENU_SAVE_CERTIFICATE", resource_header)
-        self.assertEqual(len(stringtable_ids(resource_script)), 287)
+        self.assertEqual(len(stringtable_ids(resource_script)), 298)
 
         migrated_labels = (
             "ANSI",
@@ -1983,14 +1980,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PV_LAST\s+IDS_PV_RELOC_MOV32_T$",
+            r"(?m)^#define\s+IDS_PV_LAST\s+IDS_PV_CERTIFICATE_SIZE_FORMAT$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3287$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3298$",
         )
-        self.assertEqual(len(stringtable_ids(english_rc)), 287)
-        self.assertEqual(len(stringtable_ids(chinese_rc)), 287)
+        self.assertEqual(len(stringtable_ids(english_rc)), 298)
+        self.assertEqual(len(stringtable_ids(chinese_rc)), 298)
 
     def test_peview_options_and_error_messages_use_native_string_resources(self) -> None:
         source = "\n".join(
@@ -6273,7 +6270,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 9): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
-                    (r"bin\Release64\peview.exe", 287): 2,
+                    (r"bin\Release64\peview.exe", 298): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
                 }

@@ -207,7 +207,10 @@ INT_PTR CALLBACK PvpPeClrTablePreviewDlgProc(
 
             if (tableName = PhConvertUtf8ToUtf16(context->TableName))
             {
-                PhSetWindowText(hwndDlg, PhaFormatString(L"CLR Table: %s", tableName->Buffer)->Buffer);
+                PhSetWindowText(hwndDlg, PhaFormatString(
+                    PvpLoadUiString(IDS_PV_CLR_TABLE_TITLE_FORMAT),
+                    tableName->Buffer
+                    )->Buffer);
                 PhDereferenceObject(tableName);
             }
 

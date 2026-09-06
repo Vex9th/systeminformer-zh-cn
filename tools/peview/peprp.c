@@ -1057,7 +1057,7 @@ VOID PvpSetPeImageSize(
             PhPrintPointer(pointer, UlongToPtr(lastRawDataAddress));
 
             string = PhFormatString(
-                L"%s (incorrect, %s) (overlay, %s - %s)",
+                PvpLoadUiString(IDS_PV_IMAGE_SIZE_OVERLAY_FORMAT),
                 PhaFormatSize(lastRawDataOffset, ULONG_MAX)->Buffer,
                 PhaFormatSize(PvMappedImage.ViewSize, ULONG_MAX)->Buffer,
                 pointer,
@@ -1207,7 +1207,10 @@ VOID PvpSetPeImageCheckSum(
 {
     PPH_STRING string;
 
-    string = PhFormatString(L"0x%I32x (verifying...)", PvMappedImage.NtHeaders->OptionalHeader.CheckSum); // same for 32-bit and 64-bit images
+    string = PhFormatString(
+        PvpLoadUiString(IDS_PV_CHECKSUM_VERIFYING_FORMAT),
+        PvMappedImage.NtHeaders->OptionalHeader.CheckSum
+        ); // same for 32-bit and 64-bit images
 
     PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_CHECKSUM, 1, string->Buffer);
 
@@ -2322,7 +2325,10 @@ INT_PTR CALLBACK PvPeGeneralDlgProc(
             if (headerCheckSum == 0)
             {
                 // Some executables, like .NET ones, don't have a check sum.
-                string = PhFormatString(L"0x0 (real 0x%I32x)", realCheckSum);
+                string = PhFormatString(
+                    PvpLoadUiString(IDS_PV_CHECKSUM_MISSING_FORMAT),
+                    realCheckSum
+                    );
                 PhSetListViewSubItem(context->ListViewHandle, PVP_IMAGE_GENERAL_INDEX_CHECKSUM, 1, string->Buffer);
                 PhDereferenceObject(string);
             }
@@ -2334,7 +2340,11 @@ INT_PTR CALLBACK PvPeGeneralDlgProc(
             }
             else
             {
-                string = PhFormatString(L"0x%I32x (incorrect, real 0x%I32x)", headerCheckSum, realCheckSum);
+                string = PhFormatString(
+                    PvpLoadUiString(IDS_PV_CHECKSUM_MISMATCH_FORMAT),
+                    headerCheckSum,
+                    realCheckSum
+                    );
                 PhSetListViewSubItem(context->ListViewHandle, PVP_IMAGE_GENERAL_INDEX_CHECKSUM, 1, string->Buffer);
                 PhDereferenceObject(string);
             }
@@ -2348,7 +2358,10 @@ INT_PTR CALLBACK PvPeGeneralDlgProc(
             {
                 if (PvImageSignerName)
                 {
-                    string = PhFormatString(L"<a>(Verified) %s</a>", PvImageSignerName->Buffer);
+                    string = PhFormatString(
+                        PvpLoadUiString(IDS_PV_VERIFIED_LINK_FORMAT),
+                        PvImageSignerName->Buffer
+                        );
                     PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME_LINK, string->Buffer);
                     PhDereferenceObject(string);
                     ShowWindow(GetDlgItem(hwndDlg, IDC_COMPANYNAME), SW_HIDE);
@@ -2356,14 +2369,20 @@ INT_PTR CALLBACK PvPeGeneralDlgProc(
                 }
                 else
                 {
-                    string = PhConcatStrings2(L"(Verified) ", PhGetStringOrEmpty(PvImageVersionInfo.CompanyName));
+                    string = PhFormatString(
+                        PvpLoadUiString(IDS_PV_VERIFIED_COMPANY_FORMAT),
+                        PhGetStringOrEmpty(PvImageVersionInfo.CompanyName)
+                        );
                     PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME, string->Buffer);
                     PhDereferenceObject(string);
                 }
             }
             else if (PvImageVerifyResult != VrUnknown)
             {
-                string = PhConcatStrings2(L"(UNVERIFIED) ", PhGetStringOrEmpty(PvImageVersionInfo.CompanyName));
+                string = PhFormatString(
+                    PvpLoadUiString(IDS_PV_UNVERIFIED_COMPANY_FORMAT),
+                    PhGetStringOrEmpty(PvImageVersionInfo.CompanyName)
+                    );
                 PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME, string->Buffer);
                 PhDereferenceObject(string);
             }

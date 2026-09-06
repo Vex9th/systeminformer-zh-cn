@@ -792,7 +792,10 @@ INT_PTR CALLBACK PvTabWindowDialogProc(
             PvTabTreeControl = GetDlgItem(hwndDlg, IDC_SECTIONTREE);
             PvTabContainerControl = GetDlgItem(hwndDlg, IDD_CONTAINER);
 
-            PhSetWindowText(hwndDlg, PhaFormatString(L"%s Properties", PhGetString(PvFileName))->Buffer);
+            PhSetWindowText(hwndDlg, PhaFormatString(
+                PvpLoadUiString(IDS_PV_PROPERTIES_TITLE_FORMAT),
+                PhGetString(PvFileName)
+                )->Buffer);
 
             //PhSetWindowStyle(GetDlgItem(hwndDlg, IDC_SEPARATOR), SS_OWNERDRAW, SS_OWNERDRAW);
             PhSetControlTheme(PvTabTreeControl, L"explorer");

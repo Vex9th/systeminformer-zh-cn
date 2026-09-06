@@ -235,7 +235,10 @@ BOOLEAN PvInsertCopyListViewEMenuItem(
     context->SubId = lvHitInfo.iSubItem;
 
     escapedText = PhEscapeStringForMenuPrefix(&columnText->sr);
-    menuItemText = PhFormatString(L"Copy \"%s\"", escapedText->Buffer);
+    menuItemText = PhFormatString(
+        PvpLoadUiString(IDS_PV_MENU_COPY_COLUMN_FORMAT),
+        escapedText->Buffer
+        );
     PhDereferenceObject(escapedText);
 
     copyMenuItem = PhCreateEMenuItem(0, INT_MAX, menuItemText->Buffer, NULL, context);
@@ -809,7 +812,10 @@ BOOLEAN PhInsertCopyCellEMenuItem(
 
     PhInitializeStringRef(&columnText, Column->Text);
     escapedText = PhEscapeStringForMenuPrefix(&columnText);
-    menuItemText = PhFormatString(L"Copy \"%s\"", escapedText->Buffer);
+    menuItemText = PhFormatString(
+        PvpLoadUiString(IDS_PV_MENU_COPY_COLUMN_FORMAT),
+        escapedText->Buffer
+        );
     PhDereferenceObject(escapedText);
     copyCellItem = PhCreateEMenuItem(0, ID_COPY_CELL, menuItemText->Buffer, NULL, context);
     copyCellItem->DeleteFunction = PhpCopyCellEMenuItemDeleteFunction;

@@ -1366,7 +1366,7 @@ VOID PvpPeEnumerateFileCertificates(
     if (certificateDirectoryLength)
     {
         PhSetWindowText(Context->LabelHandle, PhaFormatString(
-            L"Size: %s (Certs: %s)",
+            PvpLoadUiString(IDS_PV_CERTIFICATE_SIZE_FORMAT),
             PhaFormatSize(certificateDirectoryLength, ULONG_MAX)->Buffer,
             PhaFormatSize(Context->TotalSize, ULONG_MAX)->Buffer
             )->Buffer);

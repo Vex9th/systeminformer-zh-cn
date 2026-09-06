@@ -1198,6 +1198,17 @@ BEGIN
     IDS_PV_RELOC_DIR64                          "DIR64"
     IDS_PV_RELOC_MOV32                          "MOV32"
     IDS_PV_RELOC_MOV32_T                        "MOV32(T)"
+    IDS_PV_CLR_TABLE_TITLE_FORMAT               "CLR Table: %s"
+    IDS_PV_MENU_COPY_COLUMN_FORMAT              "Copy ""%s"""
+    IDS_PV_IMAGE_SIZE_OVERLAY_FORMAT            "%s (incorrect, %s) (overlay, %s - %s)"
+    IDS_PV_CHECKSUM_VERIFYING_FORMAT            "0x%I32x (verifying...)"
+    IDS_PV_CHECKSUM_MISSING_FORMAT              "0x0 (real 0x%I32x)"
+    IDS_PV_CHECKSUM_MISMATCH_FORMAT             "0x%I32x (incorrect, real 0x%I32x)"
+    IDS_PV_VERIFIED_LINK_FORMAT                 "<a>(Verified) %s</a>"
+    IDS_PV_VERIFIED_COMPANY_FORMAT              "(Verified) %s"
+    IDS_PV_UNVERIFIED_COMPANY_FORMAT            "(UNVERIFIED) %s"
+    IDS_PV_PROPERTIES_TITLE_FORMAT              "%s Properties"
+    IDS_PV_CERTIFICATE_SIZE_FORMAT              "Size: %s (Certs: %s)"
 END
 
 

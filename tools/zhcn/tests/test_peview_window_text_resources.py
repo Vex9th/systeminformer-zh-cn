@@ -251,18 +251,18 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual(sorted(defines.values()), list(range(3000, 3287)))
+        self.assertEqual(sorted(defines.values()), list(range(3000, 3298)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 287)
-        self.assertEqual(len(chinese), 287)
+        self.assertEqual(len(english), 298)
+        self.assertEqual(len(chinese), 298)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_RELOC_MOV32_T$",
+            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_CERTIFICATE_SIZE_FORMAT$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3287$",
+            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3298$",
         )
 
     def test_json_uses_existing_owner_and_has_no_layer_overlap(self):
@@ -287,7 +287,7 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("peview.exe=287"), 2)
+        self.assertEqual(workflow.count("peview.exe=298"), 2)
         self.assertNotIn("peview.exe=258", workflow)
         self.assertNotIn("peview.exe=247", workflow)
         self.assertNotIn("peview.exe=246", workflow)
