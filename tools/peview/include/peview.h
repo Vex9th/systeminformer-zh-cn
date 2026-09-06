@@ -51,10 +51,10 @@ PCWSTR PvpLoadUiString(
     );
 
 FORCEINLINE PCWSTR PvpGetStringOrNa(
-    _In_ PPH_STRING String
+    _In_opt_ PPH_STRING String
     )
 {
-    return PhGetStringOrDefault(String, L"N/A");
+    return PhGetStringOrDefault(String, PvpLoadUiString(IDS_PV_NOT_AVAILABLE));
 }
 
 FORCEINLINE LONG PvpGetTreeNewRowHeight(

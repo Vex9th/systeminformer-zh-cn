@@ -118,7 +118,7 @@ VOID PvEnumerateVolatileEntries(
                 break;
             default:
             case PhsrlInvalid:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"(unnamed)");
+                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, PvpLoadUiString(IDS_PV_UNNAMED));
                 break;
             }
 

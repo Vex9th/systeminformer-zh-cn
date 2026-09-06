@@ -200,9 +200,9 @@ VOID PvpSetWslmageVersionInfo(
     _In_ HWND WindowHandle
     )
 {
-    PhSetDialogItemText(WindowHandle, IDC_NAME, L"Loading...");
-    PhSetDialogItemText(WindowHandle, IDC_COMPANYNAME, L"Loading...");
-    PhSetDialogItemText(WindowHandle, IDC_VERSION, L"Loading...");
+    PhSetDialogItemText(WindowHandle, IDC_NAME, PvpLoadUiString(IDS_PV_LOADING));
+    PhSetDialogItemText(WindowHandle, IDC_COMPANYNAME, PvpLoadUiString(IDS_PV_LOADING));
+    PhSetDialogItemText(WindowHandle, IDC_VERSION, PvpLoadUiString(IDS_PV_LOADING));
 
     PhCreateThread2(PvpQueryWslImageThreadStart, WindowHandle);
 
@@ -213,7 +213,7 @@ VOID PvpSetWslImageType(
     _In_ HWND hwndDlg
     )
 {
-    PWSTR type = L"N/A";
+    PCWSTR type = PvpLoadUiString(IDS_PV_NOT_AVAILABLE);
 
     switch (PvMappedImage.Header->e_type)
     {
@@ -227,7 +227,7 @@ VOID PvpSetWslImageType(
         type = L"Executable";
         break;
     default:
-        type = L"ERROR";
+        type = PvpLoadUiString(IDS_PV_ERROR);
         break;
     }
 
@@ -238,7 +238,7 @@ VOID PvpSetWslImageMachineType(
     _In_ HWND hwndDlg
     )
 {
-    PWSTR type = L"N/A";
+    PCWSTR type = PvpLoadUiString(IDS_PV_NOT_AVAILABLE);
 
     switch (PvMappedImage.Header->e_machine)
     {
@@ -249,7 +249,7 @@ VOID PvpSetWslImageMachineType(
         type = L"AMD64";
         break;
     default:
-        type = L"ERROR";
+        type = PvpLoadUiString(IDS_PV_ERROR);
         break;
     }
 

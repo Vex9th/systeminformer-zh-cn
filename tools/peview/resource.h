@@ -357,8 +357,16 @@
 #define IDS_PV_GROUP_FILE_INFORMATION                 3236
 #define IDS_PV_GROUP_DEBUG_INFORMATION                3237
 #define IDS_PV_GROUP_INTERNAL_INFORMATION             3238
+#define IDS_PV_UNNAMED                                3239
+#define IDS_PV_CALCULATING                            3240
+#define IDS_PV_CLOSE                                  3241
+#define IDS_PV_ERROR                                  3242
+#define IDS_PV_LOADING                                3243
+#define IDS_PV_NOT_AVAILABLE                          3244
+#define IDS_PV_RESOLVING                              3245
+#define IDS_PV_VERIFYING_COMPANY                      3246
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_GROUP_INTERNAL_INFORMATION
+#define IDS_PV_LAST                                IDS_PV_VERIFYING_COMPANY
 
 // Next default values for new objects
 //
@@ -367,6 +375,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3239
+#define _APS_NEXT_SYMED_VALUE           3247
 #endif
 #endif

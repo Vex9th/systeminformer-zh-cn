@@ -109,7 +109,7 @@ VOID PvPeAddListViewCfgFunctionEntry(
         break;
     default:
     case PhsrlInvalid:
-        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 3, L"(unnamed)");
+        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 3, PvpLoadUiString(IDS_PV_UNNAMED));
         break;
     }
 

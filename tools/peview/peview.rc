@@ -1150,6 +1150,14 @@ BEGIN
     IDS_PV_GROUP_FILE_INFORMATION               "File information"
     IDS_PV_GROUP_DEBUG_INFORMATION              "Debug information"
     IDS_PV_GROUP_INTERNAL_INFORMATION           "Internal information"
+    IDS_PV_UNNAMED                              "(unnamed)"
+    IDS_PV_CALCULATING                          "Calculating..."
+    IDS_PV_CLOSE                                "Close"
+    IDS_PV_ERROR                                "ERROR"
+    IDS_PV_LOADING                              "Loading..."
+    IDS_PV_NOT_AVAILABLE                        "N/A"
+    IDS_PV_RESOLVING                            "Resolving..."
+    IDS_PV_VERIFYING_COMPANY                    "(Verifying...) %s"
 END
 
 

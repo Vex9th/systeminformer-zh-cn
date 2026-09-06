@@ -181,7 +181,7 @@ PPH_STRING PvpPeGetClrEntryPoint(
         return PhCreateString(value);
     }
 
-    return PhCreateString(L"N/A");
+    return PhCreateString(PvpLoadUiString(IDS_PV_NOT_AVAILABLE));
 }
 
 PPH_STRING PvpPeGetClrStorageVersionText(
@@ -196,7 +196,7 @@ PPH_STRING PvpPeGetClrStorageVersionText(
             );
     }
 
-    return PhCreateString(L"N/A");
+    return PhCreateString(PvpLoadUiString(IDS_PV_NOT_AVAILABLE));
 }
 
 PPH_STRING PvpPeClrGetMvid(

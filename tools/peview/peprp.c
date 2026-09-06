@@ -897,7 +897,10 @@ VOID PvpSetPeImageVersionInfo(
     //else
     PhInitializeImageVersionInfo(&PvImageVersionInfo, PvFileName->Buffer);
 
-    string = PhConcatStrings2(L"(Verifying...) ", PvpGetStringOrNa(PvImageVersionInfo.CompanyName));
+    string = PhFormatString(
+        PvpLoadUiString(IDS_PV_VERIFYING_COMPANY),
+        PvpGetStringOrNa(PvImageVersionInfo.CompanyName)
+        );
     PhSetDialogItemText(WindowHandle, IDC_NAME, PvpGetStringOrNa(PvImageVersionInfo.FileDescription));
     PhSetDialogItemText(WindowHandle, IDC_COMPANYNAME, string->Buffer);
     PhSetDialogItemText(WindowHandle, IDC_VERSION, PvpGetStringOrNa(PvImageVersionInfo.FileVersion));
@@ -1111,7 +1114,7 @@ VOID PvpSetPeImageEntropy(
     _In_ HWND ListViewHandle
     )
 {
-    PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_ENTROPY, 1, L"Calculating...");
+    PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_ENTROPY, 1, PvpLoadUiString(IDS_PV_CALCULATING));
 
     PhQueueItemWorkQueue(PhGetGlobalWorkQueue(), PvpEntropyImageThreadStart, WindowHandle);
 }
@@ -1192,7 +1195,7 @@ VOID PvpSetPeImageEntryPoint(
     _In_ HWND ListViewHandle
     )
 {
-    PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_ENTRYPOINT, 1, L"Resolving...");
+    PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_ENTRYPOINT, 1, PvpLoadUiString(IDS_PV_RESOLVING));
 
     PhQueueItemWorkQueue(PhGetGlobalWorkQueue(), PvpEntryPointImageThreadStart, ListViewHandle);
 }
@@ -1738,7 +1741,7 @@ VOID PvpSetPeImageDebugRepoHash(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_DEBUGREPRO, 1, L"N/A");
+        PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_DEBUGREPRO, 1, PvpLoadUiString(IDS_PV_NOT_AVAILABLE));
     }
 }
 
@@ -1841,7 +1844,7 @@ VOID PvpSetPeImageDebugVCFeatures(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_DEBUGVCFEATURE, 1, L"N/A");
+        PhSetListViewSubItem(ListViewHandle, PVP_IMAGE_GENERAL_INDEX_DEBUGVCFEATURE, 1, PvpLoadUiString(IDS_PV_NOT_AVAILABLE));
     }
 }
 

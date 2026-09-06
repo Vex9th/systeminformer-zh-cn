@@ -1357,8 +1357,8 @@ VOID PvPeHashesAddListViewItem(
     _In_ INT ListViewIndex,
     _In_ PULONG Count,
     _In_ BOOLEAN UpperCase,
-    _In_opt_ PWSTR ErrorText,
-    _In_ PWSTR Text,
+    _In_opt_ PCWSTR ErrorText,
+    _In_ PCWSTR Text,
     _In_opt_ PPH_STRING Result
     )
 {
@@ -1378,7 +1378,7 @@ VOID PvPeHashesAddListViewItem(
     }
     else
     {
-        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, ErrorText ? ErrorText : L"ERROR");
+        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, ErrorText ? ErrorText : PvpLoadUiString(IDS_PV_ERROR));
     }
 }
 
@@ -1563,9 +1563,9 @@ INT_PTR CALLBACK PvpPeHashesDlgProc(
             }
             else
             {
-                PvPeHashesAddListViewItem(context->ListViewHandle, PV_HASHLIST_CATEGORY_IMPORTHASH, PV_HASHLIST_INDEX_IMPHASH, &count, FALSE, L"N/A", L"Imphash", NULL);
-                PvPeHashesAddListViewItem(context->ListViewHandle, PV_HASHLIST_CATEGORY_IMPORTHASH, PV_HASHLIST_INDEX_IMPHASHMSFT, &count, FALSE, L"N/A", L"Imphash (Microsoft)", NULL);
-                PvPeHashesAddListViewItem(context->ListViewHandle, PV_HASHLIST_CATEGORY_FUZZYHASH, PV_HASHLIST_INDEX_IMPFUZZY, &count, FALSE, L"N/A", L"Impfuzzy", NULL);
+                PvPeHashesAddListViewItem(context->ListViewHandle, PV_HASHLIST_CATEGORY_IMPORTHASH, PV_HASHLIST_INDEX_IMPHASH, &count, FALSE, PvpLoadUiString(IDS_PV_NOT_AVAILABLE), L"Imphash", NULL);
+                PvPeHashesAddListViewItem(context->ListViewHandle, PV_HASHLIST_CATEGORY_IMPORTHASH, PV_HASHLIST_INDEX_IMPHASHMSFT, &count, FALSE, PvpLoadUiString(IDS_PV_NOT_AVAILABLE), L"Imphash (Microsoft)", NULL);
+                PvPeHashesAddListViewItem(context->ListViewHandle, PV_HASHLIST_CATEGORY_FUZZYHASH, PV_HASHLIST_INDEX_IMPFUZZY, &count, FALSE, PvpLoadUiString(IDS_PV_NOT_AVAILABLE), L"Impfuzzy", NULL);
             }
 
             // Fuzzy hashes

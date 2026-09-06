@@ -723,4 +723,12 @@ BEGIN
     IDS_PV_GROUP_FILE_INFORMATION               "文件信息"
     IDS_PV_GROUP_DEBUG_INFORMATION              "调试信息"
     IDS_PV_GROUP_INTERNAL_INFORMATION           "内部信息"
+    IDS_PV_UNNAMED                              "（未命名）"
+    IDS_PV_CALCULATING                          "正在计算..."
+    IDS_PV_CLOSE                                "关闭"
+    IDS_PV_ERROR                                "错误"
+    IDS_PV_LOADING                              "正在加载..."
+    IDS_PV_NOT_AVAILABLE                        "不适用"
+    IDS_PV_RESOLVING                            "正在解析..."
+    IDS_PV_VERIFYING_COMPANY                    "（正在验证...）%s"
 END

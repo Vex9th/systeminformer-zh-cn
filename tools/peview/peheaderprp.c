@@ -567,7 +567,7 @@ VOID PvSetPeImageOptionalHeaderProperties(
         PhSetListViewSubItem(Context->ListViewHandle, PVP_IMAGE_HEADER_INDEX_OPT_BASEOFCODE, 1, value);
 
         //PhPrintPointer(value, UlongToPtr(imageNtHeader->OptionalHeader.BaseOfData));
-        PhSetListViewSubItem(Context->ListViewHandle, PVP_IMAGE_HEADER_INDEX_OPT_BASEOFDATA, 1, L"N/A");
+        PhSetListViewSubItem(Context->ListViewHandle, PVP_IMAGE_HEADER_INDEX_OPT_BASEOFDATA, 1, PvpLoadUiString(IDS_PV_NOT_AVAILABLE));
 
         PhPrintPointer(value, (PVOID)imageNtHeader->OptionalHeader.ImageBase);
         PhSetListViewSubItem(Context->ListViewHandle, PVP_IMAGE_HEADER_INDEX_OPT_IMAGEBASE, 1, value);
