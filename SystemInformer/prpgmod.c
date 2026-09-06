@@ -1059,9 +1059,9 @@ INT_PTR CALLBACK PhpProcessModulesDlgProc(
                         {
                             if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                                 hwndDlg,
-                                L"load",
-                                L"a module",
-                                L"Some programs may restrict access or ban your account when loading modules into the process.",
+                                PhGetApplicationUiString(IDS_PH_ACTION_LOAD),
+                                PhGetApplicationUiString(IDS_PH_CONFIRM_MODULE_OBJECT),
+                                PhGetApplicationUiString(IDS_PH_CONFIRM_LOAD_MODULE_WARNING),
                                 FALSE
                                 ))
                             {

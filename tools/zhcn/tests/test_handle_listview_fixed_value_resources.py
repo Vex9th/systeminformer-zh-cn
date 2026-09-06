@@ -270,11 +270,11 @@ class HandleListViewFixedValueResourceTests(unittest.TestCase):
             if symbol in resource_ids:
                 self.assertEqual(resource_ids[symbol], value)
             resource_ids[symbol] = value
-        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2957)))
-        self.assertEqual(len(english), 957)
-        self.assertEqual(len(chinese), 957)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_USER_OBJECT$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2957$")
+        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2984)))
+        self.assertEqual(len(english), 984)
+        self.assertEqual(len(chinese), 984)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2984$")
 
     def test_runtime_ownership_ci_and_generator_counts_are_exact(self) -> None:
         translations = json.loads(
@@ -295,7 +295,7 @@ class HandleListViewFixedValueResourceTests(unittest.TestCase):
                 self.assertIn(english, translations["native_strings"])
                 self.assertNotRegex(runtime_source, rf'\{{ L"{re.escape(english)}", L"')
 
-        self.assertEqual(workflow.count("sys_info.exe=957"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=984"), 2)
         self.assertNotIn("sys_info.exe=650", workflow)
         result = subprocess.run(
             [
@@ -308,7 +308,7 @@ class HandleListViewFixedValueResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("2597 strings", result.stdout)
+        self.assertIn("2624 strings", result.stdout)
 
 
 if __name__ == "__main__":

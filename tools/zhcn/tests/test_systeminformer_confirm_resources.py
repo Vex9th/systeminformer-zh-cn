@@ -159,11 +159,11 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
             if symbol in resource_ids:
                 self.assertEqual(resource_ids[symbol], value)
             resource_ids[symbol] = value
-        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2957)))
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_USER_OBJECT$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2957$")
-        self.assertEqual(len(english), 957)
-        self.assertEqual(len(chinese), 957)
+        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2984)))
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2984$")
+        self.assertEqual(len(english), 984)
+        self.assertEqual(len(chinese), 984)
 
     def test_json_and_ci_have_exact_native_ownership(self) -> None:
         translations = json.loads(
@@ -179,7 +179,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=957"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=984"), 2)
         self.assertNotIn("sys_info.exe=511", workflow)
 
     def test_exact_confirm_routes_preserve_dynamic_object_boundary(self) -> None:
@@ -241,7 +241,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
             body = function_body(source, function, self.audit)
             self.assertRegex(
                 body,
-                r"==\s*1\s*\?\s*L\"the selected handle\"\s*:\s*"
+                r"==\s*1\s*\?\s*PhGetApplicationUiString\(IDS_PH_CONFIRM_SELECTED_HANDLE\)\s*:\s*"
                 r"PhGetApplicationUiString\(IDS_PH_CONFIRM_SELECTED_HANDLES\)",
             )
             self.assertIn("PhShowConfirmMessage(", body)
@@ -272,7 +272,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
         )
         self.assertEqual(
             call_arguments(actions, "PhUiFreeMemory", "PhShowConfirmMessage", self.audit),
-            [("WindowHandle", "verb", 'L"thememoryregion"', "message", "TRUE")],
+            [("WindowHandle", "verb", "PhGetApplicationUiString(IDS_PH_CONFIRM_MEMORY_REGION)", "message", "TRUE")],
         )
         self.assertEqual(
             call_arguments(
@@ -286,7 +286,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
         )
 
         handle_object = (
-            'NumberOfHandles==1?L"theselectedhandle":'
+            "NumberOfHandles==1?PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLE):"
             "PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES)"
         )
         self.assertEqual(
@@ -294,22 +294,22 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
             [
                 (
                     "WindowHandle",
-                    'L"close"',
+                    "PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE)",
                     handle_object,
-                    'L"Closinghandlesmaycausesysteminstabilityanddatacorruption."',
+                    "PhGetApplicationUiString(IDS_PH_CONFIRM_CLOSE_HANDLE_WARNING)",
                     "FALSE",
                 ),
                 (
                     "WindowHandle",
-                    'L"close"',
-                    'L"criticalprocesshandle(s)"',
-                    'L"Youareabouttocloseoneormorehandlesforacriticalprocesswithstricthandlechecksenabled.Thiswillshutdowntheoperatingsystemimmediately.\\r\\n\\r\\n"',
+                    "PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE)",
+                    "PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_PROCESS_HANDLES)",
+                    "PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_HANDLE_WARNING)",
                     "TRUE",
                 ),
             ],
         )
         find_object = (
-            'numberOfHandleObjectNodes==1?L"theselectedhandle":'
+            "numberOfHandleObjectNodes==1?PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLE):"
             "PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES)"
         )
         self.assertEqual(
@@ -317,16 +317,16 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
             [
                 (
                     "hwndDlg",
-                    'L"close"',
+                    "PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE)",
                     find_object,
-                    'L"Closinghandlesmaycausesysteminstabilityanddatacorruption."',
+                    "PhGetApplicationUiString(IDS_PH_CONFIRM_CLOSE_HANDLE_WARNING)",
                     "FALSE",
                 ),
                 (
                     "hwndDlg",
-                    'L"close"',
-                    'L"criticalhandle(s)"',
-                    'L"Youareabouttocloseoneormorehandlesforacriticalprocesswithstricthandlechecksenabled.Thiswillshutdowntheoperatingsystemimmediately.\\r\\n\\r\\n"',
+                    "PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE)",
+                    "PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_HANDLES)",
+                    "PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_HANDLE_WARNING)",
                     "TRUE",
                 ),
             ],

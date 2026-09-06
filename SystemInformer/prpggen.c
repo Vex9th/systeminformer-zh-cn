@@ -929,9 +929,9 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                     {
                         if (PhShowConfirmMessage(
                             hwndDlg,
-                            L"update",
-                            L"the integrity label",
-                            L"Altering the integrity label for a process may produce undesirable results, instability or data corruption.",
+                            PhGetApplicationUiString(IDS_PH_ACTION_UPDATE),
+                            PhGetApplicationUiString(IDS_PH_CONFIRM_INTEGRITY_LABEL),
+                            PhGetApplicationUiString(IDS_PH_CONFIRM_INTEGRITY_LABEL_WARNING),
                             FALSE
                             ))
                         {

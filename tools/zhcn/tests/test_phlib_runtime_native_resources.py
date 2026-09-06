@@ -93,10 +93,10 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
                     rf"(?m)^#define\s+{symbol}\s+{resource_id}$",
                 )
 
-        self.assertEqual(len(english), 957)
-        self.assertEqual(len(chinese), 957)
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_CONFIRM_USER_OBJECT$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2957$")
+        self.assertEqual(len(english), 984)
+        self.assertEqual(len(chinese), 984)
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2984$")
 
     def test_extended_list_view_menu_uses_owned_resource_text_with_fallback(self) -> None:
         source = self.sources["extlv.c"]

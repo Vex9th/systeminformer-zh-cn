@@ -1645,8 +1645,8 @@ INT_PTR CALLBACK PhpTokenPageProc(
                     {
                         if (!PhShowConfirmMessage(
                             hwndDlg,
-                            L"remove",
-                            L"the selected privilege(s)",
+                            PhGetApplicationUiString(IDS_PH_ACTION_REMOVE),
+                            PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_PRIVILEGES),
                             PhGetApplicationUiString(IDS_PH_REMOVE_PRIVILEGES_WARNING),
                             FALSE
                             ))
@@ -1956,8 +1956,8 @@ INT_PTR CALLBACK PhpTokenPageProc(
 
                     if (!PhShowConfirmMessage(
                         hwndDlg,
-                        L"remove",
-                        L"the UIAccess flag",
+                        PhGetApplicationUiString(IDS_PH_ACTION_REMOVE),
+                        PhGetApplicationUiString(IDS_PH_CONFIRM_UIACCESS_FLAG),
                         PhGetApplicationUiString(IDS_PH_REMOVE_UIACCESS_WARNING),
                         FALSE
                         ))
@@ -2135,9 +2135,9 @@ INT_PTR CALLBACK PhpTokenPageProc(
                     {
                         if (PhShowConfirmMessage(
                             hwndDlg,
-                            L"set",
-                            L"the integrity level",
-                            L"Once lowered, the integrity level of the token cannot be raised again.",
+                            PhGetApplicationUiString(IDS_PH_ACTION_SET),
+                            PhGetApplicationUiString(IDS_PH_CONFIRM_INTEGRITY_LEVEL),
+                            PhGetApplicationUiString(IDS_PH_CONFIRM_LOWER_INTEGRITY_WARNING),
                             FALSE
                             ))
                         {

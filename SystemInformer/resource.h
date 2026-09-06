@@ -1934,8 +1934,35 @@
 #define IDS_PH_ACTION_UPDATE_AND_SHUTDOWN                              2954
 #define IDS_PH_ACTION_LOGOFF                                           2955
 #define IDS_PH_CONFIRM_USER_OBJECT                                     2956
+#define IDS_PH_CONFIRM_SELECTED_HANDLE                                 2957
+#define IDS_PH_CONFIRM_CLOSE_HANDLE_WARNING                            2958
+#define IDS_PH_CONFIRM_CRITICAL_PROCESS_HANDLES                        2959
+#define IDS_PH_CONFIRM_CRITICAL_HANDLES                                2960
+#define IDS_PH_CONFIRM_CRITICAL_HANDLE_WARNING                         2961
+#define IDS_PH_CONFIRM_SELECTED_PRIVILEGES                             2962
+#define IDS_PH_CONFIRM_UIACCESS_FLAG                                   2963
+#define IDS_PH_CONFIRM_INTEGRITY_LEVEL                                 2964
+#define IDS_PH_CONFIRM_LOWER_INTEGRITY_WARNING                         2965
+#define IDS_PH_ACTION_LOAD                                             2966
+#define IDS_PH_CONFIRM_MODULE_OBJECT                                   2967
+#define IDS_PH_CONFIRM_LOAD_MODULE_WARNING                             2968
+#define IDS_PH_ACTION_UPDATE                                           2969
+#define IDS_PH_CONFIRM_INTEGRITY_LABEL                                 2970
+#define IDS_PH_CONFIRM_INTEGRITY_LABEL_WARNING                         2971
+#define IDS_PH_CONFIRM_TERMINATE_PROCESS_TREE_WARNING                  2972
+#define IDS_PH_CONFIRM_SUSPEND_PROCESS_TREE_WARNING                    2973
+#define IDS_PH_CONFIRM_RESUME_PROCESS_TREE_WARNING                     2974
+#define IDS_PH_CONFIRM_FREEZE_PROCESS_WARNING                          2975
+#define IDS_PH_CONFIRM_MEMORY_REGION                                   2976
+#define IDS_PH_CONFIRM_PROCESS_VIRTUALIZATION                          2977
+#define IDS_PH_CONFIRM_PROCESS_CRITICAL_STATUS                         2978
+#define IDS_PH_CONFIRM_THREAD_CRITICAL_STATUS                          2979
+#define IDS_PH_CONFIRM_CRITICAL_STATUS_WARNING                         2980
+#define IDS_PH_CONFIRM_PROCESS_ECO_MODE                                2981
+#define IDS_PH_CONFIRM_ECO_MODE_WARNING                                2982
+#define IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING                      2983
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_CONFIRM_USER_OBJECT
+#define IDS_PH_LAST                                  IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1947,6 +1974,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2957
+#define _APS_NEXT_SYMED_VALUE           2984
 #endif
 #endif

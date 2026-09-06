@@ -2007,7 +2007,7 @@ BOOLEAN PhUiTerminateTreeProcess(
                 PhGetApplicationUiString(IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT),
                 Process->ProcessName->Buffer
                 )->Buffer,
-            L"Terminating a process tree will cause the process and its descendants to be terminated.",
+            PhGetApplicationUiString(IDS_PH_CONFIRM_TERMINATE_PROCESS_TREE_WARNING),
             FALSE
             );
     }
@@ -2231,7 +2231,7 @@ BOOLEAN PhUiSuspendTreeProcess(
                 PhGetApplicationUiString(IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT),
                 Process->ProcessName->Buffer
                 )->Buffer,
-            L"Suspending a process tree will cause the process and its descendants to be suspended.",
+            PhGetApplicationUiString(IDS_PH_CONFIRM_SUSPEND_PROCESS_TREE_WARNING),
             FALSE
             );
     }
@@ -2455,7 +2455,7 @@ BOOLEAN PhUiResumeTreeProcess(
                 PhGetApplicationUiString(IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT),
                 Process->ProcessName->Buffer
                 )->Buffer,
-            L"Resuming a process tree will cause the process and its descendants to be resumed.",
+            PhGetApplicationUiString(IDS_PH_CONFIRM_RESUME_PROCESS_TREE_WARNING),
             FALSE
             );
     }
@@ -2502,9 +2502,9 @@ BOOLEAN PhUiFreezeTreeProcess(
     {
         result = PhShowConfirmMessageRawObject(
             WindowHandle,
-            L"freeze",
+            PhGetApplicationUiString(IDS_PH_ACTION_FREEZE),
             Process->ProcessName->Buffer,
-            L"Freezing does not persist after exiting System Informer.",
+            PhGetApplicationUiString(IDS_PH_CONFIRM_FREEZE_PROCESS_WARNING),
             FALSE
             );
     }
@@ -3568,8 +3568,8 @@ BOOLEAN PhUiSetVirtualizationProcess(
     {
         cont = PhShowConfirmMessage(
             WindowHandle,
-            L"set",
-            L"virtualization for the process",
+            PhGetApplicationUiString(IDS_PH_ACTION_SET),
+            PhGetApplicationUiString(IDS_PH_CONFIRM_PROCESS_VIRTUALIZATION),
             PhGetApplicationUiString(IDS_PH_PROCESS_VIRTUALIZATION_WARNING),
             FALSE
             );
@@ -3643,9 +3643,9 @@ BOOLEAN PhUiSetCriticalProcess(
         {
             if (!breakOnTermination && (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"enable",
-                L"critical status on the process",
-                L"If the process ends, the operating system will shut down immediately.",
+                PhGetApplicationUiString(IDS_PH_ACTION_ENABLE),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_PROCESS_CRITICAL_STATUS),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_STATUS_WARNING),
                 TRUE
                 )))
             {
@@ -3653,8 +3653,8 @@ BOOLEAN PhUiSetCriticalProcess(
             }
             else if (breakOnTermination && (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"disable",
-                L"critical status on the process",
+                PhGetApplicationUiString(IDS_PH_ACTION_DISABLE),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_PROCESS_CRITICAL_STATUS),
                 NULL,
                 FALSE
                 )))
@@ -3713,9 +3713,9 @@ BOOLEAN PhUiSetEcoModeProcess(
             {
                 if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                     WindowHandle,
-                    L"enable",
-                    L"Eco mode for this process",
-                    L"Eco mode will lower process priority and improve power efficiency but may cause instability in some processes.",
+                    PhGetApplicationUiString(IDS_PH_ACTION_ENABLE),
+                    PhGetApplicationUiString(IDS_PH_CONFIRM_PROCESS_ECO_MODE),
+                    PhGetApplicationUiString(IDS_PH_CONFIRM_ECO_MODE_WARNING),
                     FALSE
                     ))
                 {
@@ -3736,9 +3736,9 @@ BOOLEAN PhUiSetEcoModeProcess(
             {
                 //if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 //    WindowHandle,
-                //    L"disable",
-                //    L"Eco mode for this process",
-                //    L"Eco mode will lower process priority and improve power efficiency but may cause instability in some processes.",
+                //    PhGetApplicationUiString(IDS_PH_ACTION_DISABLE),
+                //    PhGetApplicationUiString(IDS_PH_CONFIRM_PROCESS_ECO_MODE),
+                //    PhGetApplicationUiString(IDS_PH_CONFIRM_ECO_MODE_WARNING),
                 //    FALSE
                 //    ))
                 {
@@ -3790,7 +3790,7 @@ BOOLEAN PhUiSetExecutionRequiredProcess(
                 PhGetApplicationUiString(IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT),
                 Process->ProcessName->Buffer
                 )->Buffer,
-            L"The process continues to run instead of being suspended or terminated by process lifetime management (PLM).",
+            PhGetApplicationUiString(IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING),
             FALSE
             ))
         {
@@ -6168,7 +6168,7 @@ BOOLEAN PhUiDeleteService(
     // Warnings cannot be disabled for service deletion.
     if (!PhShowConfirmMessageRawObject(
         WindowHandle,
-        L"delete",
+        PhGetApplicationUiString(IDS_PH_ACTION_DELETE),
         Service->Name->Buffer,
         PhGetApplicationUiString(IDS_PH_SERVICE_DELETION_WARNING),
         TRUE
@@ -7346,7 +7346,7 @@ BOOLEAN PhUiFreeMemory(
         cont = PhShowConfirmMessage(
             WindowHandle,
             verb,
-            L"the memory region",
+            PhGetApplicationUiString(IDS_PH_CONFIRM_MEMORY_REGION),
             message,
             TRUE
             );
@@ -7518,9 +7518,9 @@ BOOLEAN PhUiCloseHandles(
     {
         result = PhShowConfirmMessage(
             WindowHandle,
-            L"close",
-            NumberOfHandles == 1 ? L"the selected handle" : PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES),
-            L"Closing handles may cause system instability and data corruption.",
+            PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE),
+            NumberOfHandles == 1 ? PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLE) : PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES),
+            PhGetApplicationUiString(IDS_PH_CONFIRM_CLOSE_HANDLE_WARNING),
             FALSE
             );
     }
@@ -7574,9 +7574,9 @@ BOOLEAN PhUiCloseHandles(
         {
             result = PhShowConfirmMessage(
                 WindowHandle,
-                L"close",
-                L"critical process handle(s)",
-                L"You are about to close one or more handles for a critical process with strict handle checks enabled. This will shut down the operating system immediately.\r\n\r\n",
+                PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_PROCESS_HANDLES),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_HANDLE_WARNING),
                 TRUE
                 );
         }

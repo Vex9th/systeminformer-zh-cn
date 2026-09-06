@@ -89,10 +89,10 @@ class SystemInformerSharedMainMenuResourceTests(unittest.TestCase):
             json_chinese = zh.replace(r"\b", "\b")
             self.assertEqual(json_chinese, data["native_strings"].get(json_english))
             self.assertNotIn(json_english, data["strings"])
-        self.assertEqual(957, len(english))
-        self.assertEqual(957, len(chinese))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_CONFIRM_USER_OBJECT$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2957$")
+        self.assertEqual(984, len(english))
+        self.assertEqual(984, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2984$")
 
     def test_every_shared_menu_literal_uses_the_exact_resource(self) -> None:
         for file_name, expected in ROUTES.items():

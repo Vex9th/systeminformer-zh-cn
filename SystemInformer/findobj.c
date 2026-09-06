@@ -1484,9 +1484,9 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
 
                     if (numberOfHandleObjectNodes != 0 && PhShowConfirmMessage(
                         hwndDlg,
-                        L"close",
-                        numberOfHandleObjectNodes == 1 ? L"the selected handle" : PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES),
-                        L"Closing handles may cause system instability and data corruption.",
+                        PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE),
+                        numberOfHandleObjectNodes == 1 ? PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLE) : PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES),
+                        PhGetApplicationUiString(IDS_PH_CONFIRM_CLOSE_HANDLE_WARNING),
                         FALSE
                         ))
                     {
@@ -1545,9 +1545,9 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
                                     {
                                         if (!PhShowConfirmMessage(
                                             hwndDlg,
-                                            L"close",
-                                            L"critical handle(s)",
-                                            L"You are about to close one or more handles for a critical process with strict handle checks enabled. This will shut down the operating system immediately.\r\n\r\n",
+                                            PhGetApplicationUiString(IDS_PH_ACTION_CLOSE_HANDLE),
+                                            PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_HANDLES),
+                                            PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_HANDLE_WARNING),
                                             TRUE
                                             ))
                                         {

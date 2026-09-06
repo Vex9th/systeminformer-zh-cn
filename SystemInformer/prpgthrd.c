@@ -1383,9 +1383,9 @@ INT_PTR CALLBACK PhpProcessThreadsDlgProc(
                             {
                                 if (!breakOnTermination && (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                                     hwndDlg,
-                                    L"enable",
-                                    L"critical status on the thread",
-                                    L"If the process ends, the operating system will shut down immediately.",
+                                    PhGetApplicationUiString(IDS_PH_ACTION_ENABLE),
+                                    PhGetApplicationUiString(IDS_PH_CONFIRM_THREAD_CRITICAL_STATUS),
+                                    PhGetApplicationUiString(IDS_PH_CONFIRM_CRITICAL_STATUS_WARNING),
                                     TRUE
                                     )))
                                 {
@@ -1393,8 +1393,8 @@ INT_PTR CALLBACK PhpProcessThreadsDlgProc(
                                 }
                                 else if (breakOnTermination && (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                                     hwndDlg,
-                                    L"disable",
-                                    L"critical status on the thread",
+                                    PhGetApplicationUiString(IDS_PH_ACTION_DISABLE),
+                                    PhGetApplicationUiString(IDS_PH_CONFIRM_THREAD_CRITICAL_STATUS),
                                     NULL,
                                     FALSE
                                     )))
