@@ -653,7 +653,7 @@ INT_PTR CALLBACK PhpColumnsDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchInactiveHandle,
-                L"Inactive columns...",
+                PhGetApplicationUiString(IDS_PH_SEARCH_INACTIVE_COLUMNS),
                 PhpInactiveColumnsSearchControlCallback,
                 context
                 );
@@ -661,7 +661,7 @@ INT_PTR CALLBACK PhpColumnsDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchActiveHandle,
-                L"Active columns...",
+                PhGetApplicationUiString(IDS_PH_SEARCH_ACTIVE_COLUMNS),
                 PhpActiveColumnsSearchControlCallback,
                 context
                 );

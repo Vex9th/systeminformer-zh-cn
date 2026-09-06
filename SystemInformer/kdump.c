@@ -196,7 +196,7 @@ HRESULT CALLBACK PhpLiveDumpProgressDialogCallbackProc(
                     config.pfCallback = PhpLiveDumpPageCallbackProc;
                     config.lpCallbackData = (LONG_PTR)context;
                     config.pszWindowTitle = PhApplicationName;
-                    config.pszMainInstruction = L"Live kernel dump has been created.";
+                    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_LIVE_KERNEL_DUMP_CREATED);
                     config.pszContent = PhGetString(context->FileName);
                 }
                 else
@@ -268,7 +268,7 @@ NTSTATUS PhpLiveDumpTaskDialogThread(
     config.pfCallback = PhpLiveDumpProgressDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)context;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Processing live kernel dump...";
+    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_PROCESSING_LIVE_KERNEL_DUMP);
     config.pszContent = L" ";
     config.cxWidth = 200;
 

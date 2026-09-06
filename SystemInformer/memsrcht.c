@@ -1564,7 +1564,7 @@ INT_PTR CALLBACK PhpMemoryStringsDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchHandle,
-                L"Search Strings (Ctrl+K)",
+                PhGetApplicationUiString(IDS_PH_SEARCH_STRINGS),
                 PvpStringsSearchControlCallback,
                 context
                 );

@@ -1036,7 +1036,7 @@ BOOLEAN PhpShowMemoryStringProgressDialog(
     config.lpCallbackData = (LONG_PTR)Context;
     config.hwndParent = Context->ParentWindowHandle;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Searching memory strings...";
+    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_SEARCHING_MEMORY_STRINGS);
     config.pszContent = L" ";
     config.cxWidth = 200;
 

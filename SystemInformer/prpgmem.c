@@ -595,7 +595,7 @@ INT_PTR CALLBACK PhpProcessMemoryDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 memoryContext->SearchboxHandle,
-                L"Search Memory (Ctrl+K)",
+                PhGetApplicationUiString(IDS_PH_SEARCH_MEMORY),
                 PhpProcessMemorySearchControlCallback,
                 memoryContext
                 );

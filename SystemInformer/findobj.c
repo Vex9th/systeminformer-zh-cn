@@ -1269,7 +1269,7 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchWindowHandle,
-                L"Find Handles or DLLs",
+                PhGetApplicationUiString(IDS_PH_SEARCH_FIND_HANDLES_OR_DLLS),
                 PhFindObjectsSearchControlCallback,
                 context
                 );

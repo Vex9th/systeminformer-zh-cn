@@ -825,7 +825,7 @@ INT_PTR CALLBACK PhRunAsPackageWndProc(
             PhCreateSearchControl(
                 WindowHandle,
                 context->SearchBoxHandle,
-                L"Search Packages",
+                PhGetApplicationUiString(IDS_PH_SEARCH_PACKAGES),
                 PhpRunAsPackageSearchControlCallback,
                 context
                 );

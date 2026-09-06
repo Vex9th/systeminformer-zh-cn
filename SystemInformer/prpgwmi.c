@@ -1793,7 +1793,7 @@ VOID PhpShowWmiProviderStatus(
     {
         if (Message)
         {
-            PhShowError2(hWnd, Message, L"%s", L"Unknown error.");
+            PhShowError2(hWnd, Message, L"%s", PhGetApplicationUiString(IDS_PH_UNKNOWN_ERROR));
         }
         else
         {
@@ -2626,7 +2626,7 @@ INT_PTR CALLBACK PhpProcessWmiProvidersDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchWindowHandle,
-                L"Search WMI Providers (Ctrl+K)",
+                PhGetApplicationUiString(IDS_PH_SEARCH_WMI_PROVIDERS),
                 PhpProcessWmiProvidersSearchControlCallback,
                 context
                 );

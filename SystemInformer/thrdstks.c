@@ -1655,7 +1655,7 @@ INT_PTR CALLBACK PhpThreadStacksDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchWindowHandle,
-                L"Search Thread Stacks",
+                PhGetApplicationUiString(IDS_PH_SEARCH_THREAD_STACKS),
                 PhpThreadStacksSearchControlCallback,
                 context
                 );

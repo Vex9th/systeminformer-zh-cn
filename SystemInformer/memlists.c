@@ -629,9 +629,9 @@ VOID PhMemoryListCommandDialog(
     config.lpCallbackData = (LONG_PTR)context;
     config.pszWindowTitle = PhApplicationName;
     if (context->CommandsCount > 1)
-        config.pszMainInstruction = L"Executing memory commands...";
+        config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_EXECUTING_MEMORY_COMMANDS);
     else
-        config.pszMainInstruction = L"Executing memory command...";
+        config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_EXECUTING_MEMORY_COMMAND);
     config.pszContent = L" ";
     config.cxWidth = 200;
 

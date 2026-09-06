@@ -504,7 +504,7 @@ INT_PTR CALLBACK PhpProcessHandlesDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 handlesContext->SearchWindowHandle,
-                L"Search Handles (Ctrl+K)",
+                PhGetApplicationUiString(IDS_PH_SEARCH_HANDLES),
                 PhpProcessHandlessSearchControlCallback,
                 handlesContext
                 );

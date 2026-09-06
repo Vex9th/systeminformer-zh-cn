@@ -1718,7 +1718,7 @@ INT_PTR CALLBACK PhpProcessEnvironmentDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchWindowHandle,
-                L"Search Environment (Ctrl+K)",
+                PhGetApplicationUiString(IDS_PH_SEARCH_ENVIRONMENT),
                 PhpProcessEnvironmentSearchControlCallback,
                 context
                 );

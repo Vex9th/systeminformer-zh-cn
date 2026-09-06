@@ -1179,7 +1179,7 @@ INT_PTR CALLBACK PhpUserListDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchWindowHandle,
-                L"Search Users",
+                PhGetApplicationUiString(IDS_PH_SEARCH_USERS),
                 PhpUserListSearchControlCallback,
                 context
                 );

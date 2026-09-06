@@ -812,8 +812,8 @@ NTSTATUS PhpProcessMiniDumpTaskDialogThread(
     config.pfCallback = PhpProcessMiniDumpTaskDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)context;
     config.pszWindowTitle = PhApplicationName;
-    config.pszMainInstruction = L"Creating the minidump file...";
-    config.pszContent = L"Creating the minidump file...";
+    config.pszMainInstruction = PhGetApplicationUiString(IDS_PH_CREATING_MINIDUMP_FILE);
+    config.pszContent = PhGetApplicationUiString(IDS_PH_CREATING_MINIDUMP_FILE);
     config.cxWidth = 200;
 
     PhShowTaskDialog(&config, NULL, NULL, NULL);

@@ -1049,7 +1049,7 @@ INT_PTR CALLBACK PhpProcessThreadsDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 threadsContext->SearchboxHandle,
-                L"Search Threads (Ctrl+K)",
+                PhGetApplicationUiString(IDS_PH_SEARCH_THREADS),
                 PhpProcessThreadsSearchControlCallback,
                 threadsContext
                 );

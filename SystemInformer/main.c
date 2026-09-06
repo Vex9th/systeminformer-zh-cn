@@ -102,6 +102,21 @@ PCWSTR PhGetApplicationUiStringOrDefault(
         );
 }
 
+static PPH_STRING PhpLoadStartupUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR DefaultString
+    )
+{
+    PPH_STRING string;
+
+    string = PhLoadUiString(PhInstanceHandle, ResourceId, NULL);
+
+    if (!string)
+        string = PhCreateString(DefaultString);
+
+    return string;
+}
+
 INT WINAPI wWinMain(
     _In_ HINSTANCE Instance,
     _In_opt_ HINSTANCE PrevInstance,
@@ -1665,13 +1680,23 @@ VOID PhInitializeAppSettings(
     {
         if (settingsStatus == STATUS_FILE_CORRUPT_ERROR)
         {
-            if (PhShowMessage2(
+            INT response;
+            PPH_STRING instruction;
+            PPH_STRING content;
+
+            instruction = PhpLoadStartupUiString(IDS_PH_SETTINGS_FILE_CORRUPT_PROMPT, L"System Informer's settings file is corrupt. Do you want to reset it?");
+            content = PhpLoadStartupUiString(IDS_PH_SETTINGS_FILE_CORRUPT_CONTENT, L"If you select No, the settings system will not function properly.");
+            response = PhShowMessage2(
                 NULL,
                 TD_YES_BUTTON | TD_NO_BUTTON,
                 TD_WARNING_ICON,
-                L"System Informer's settings file is corrupt. Do you want to reset it?",
-                L"If you select No, the settings system will not function properly."
-                ) == IDYES)
+                instruction->Buffer,
+                content->Buffer
+                );
+            PhClearReference(&instruction);
+            PhClearReference(&content);
+
+            if (response == IDYES)
             {
                 if (PhSettingsFileName)
                     PhResetSettingsFile(&PhSettingsFileName->sr);
@@ -1687,13 +1712,15 @@ VOID PhInitializeAppSettings(
             PPH_STRING resourceTitle;
 
             resourceTitle = PhLoadUiString(
-                NtCurrentImageBase(),
+                PhInstanceHandle,
                 IDS_PH_UNABLE_LOAD_SETTINGS,
                 NULL
                 );
+            if (!resourceTitle)
+                resourceTitle = PhCreateString(L"Unable to load the settings file.");
             PhShowStatus(
                 NULL,
-                PhGetStringOrDefault(resourceTitle, L"Unable to load the settings file."),
+                resourceTitle->Buffer,
                 settingsStatus,
                 0
                 );

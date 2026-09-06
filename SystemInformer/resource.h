@@ -1849,8 +1849,33 @@
 #define IDS_PH_DONT_SHOW_THIS_MESSAGE_AGAIN                           2869
 #define IDS_PH_CONFIRM_ACTION_FORMAT                                  2870
 #define IDS_PH_CONFIRM_ACTION_FALLBACK_FORMAT                         2871
+#define IDS_PH_SETTINGS_FILE_CORRUPT_PROMPT                            2872
+#define IDS_PH_SETTINGS_FILE_CORRUPT_CONTENT                           2873
+#define IDS_PH_FILTERED_NODE_HIDDEN                                    2874
+#define IDS_PH_UNABLE_LOAD_PLUGINS                                     2875
+#define IDS_PH_SEARCH_ACTIVE_COLUMNS                                   2876
+#define IDS_PH_SEARCH_INACTIVE_COLUMNS                                 2877
+#define IDS_PH_SEARCH_FIND_HANDLES_OR_DLLS                             2878
+#define IDS_PH_SEARCH_ENVIRONMENT                                      2879
+#define IDS_PH_SEARCH_HANDLES                                          2880
+#define IDS_PH_SEARCH_MEMORY                                           2881
+#define IDS_PH_SEARCH_MODULES                                          2882
+#define IDS_PH_SEARCH_MONITOR                                          2883
+#define IDS_PH_SEARCH_PACKAGES                                         2884
+#define IDS_PH_SEARCH_SETTINGS                                         2885
+#define IDS_PH_SEARCH_STRINGS                                          2886
+#define IDS_PH_SEARCH_THREAD_STACKS                                    2887
+#define IDS_PH_SEARCH_THREADS                                          2888
+#define IDS_PH_SEARCH_USERS                                            2889
+#define IDS_PH_SEARCH_WMI_PROVIDERS                                    2890
+#define IDS_PH_CREATING_MINIDUMP_FILE                                  2891
+#define IDS_PH_EXECUTING_MEMORY_COMMAND                                2892
+#define IDS_PH_EXECUTING_MEMORY_COMMANDS                               2893
+#define IDS_PH_LIVE_KERNEL_DUMP_CREATED                                2894
+#define IDS_PH_PROCESSING_LIVE_KERNEL_DUMP                             2895
+#define IDS_PH_SEARCHING_MEMORY_STRINGS                                2896
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_CONFIRM_ACTION_FALLBACK_FORMAT
+#define IDS_PH_LAST                                  IDS_PH_SEARCHING_MEMORY_STRINGS
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1862,6 +1887,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2872
+#define _APS_NEXT_SYMED_VALUE           2897
 #endif
 #endif

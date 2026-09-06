@@ -3650,7 +3650,7 @@ VOID PhpInformerInitializeDialog(
     PhCreateSearchControl(
         WindowHandle,
         Context->SearchboxHandle,
-        L"Search Monitor (Ctrl+K)",
+        PhGetApplicationUiString(IDS_PH_SEARCH_MONITOR),
         PhpInformerSearchCallback,
         Context
         );

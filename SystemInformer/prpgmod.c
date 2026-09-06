@@ -770,7 +770,7 @@ INT_PTR CALLBACK PhpProcessModulesDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 modulesContext->SearchboxHandle,
-                L"Search Modules (Ctrl+K)",
+                PhGetApplicationUiString(IDS_PH_SEARCH_MODULES),
                 PhpProcessModulesSearchControlCallback,
                 modulesContext
                 );

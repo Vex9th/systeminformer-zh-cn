@@ -3636,7 +3636,7 @@ INT_PTR CALLBACK PhpOptionsAdvancedDlgProc(
             PhCreateSearchControl(
                 hwndDlg,
                 context->SearchBoxHandle,
-                L"Search settings...",
+                PhGetApplicationUiString(IDS_PH_SEARCH_SETTINGS),
                 PhpOptionsAdvancedSearchControlCallback,
                 context
                 );

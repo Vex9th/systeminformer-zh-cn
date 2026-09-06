@@ -402,7 +402,7 @@ VOID PhpShowPluginErrorMessage(
         NULL,
         TD_CLOSE_BUTTON,
         TD_ERROR_ICON,
-        L"Unable to load the following plugin(s)",
+        PhGetApplicationUiString(IDS_PH_UNABLE_LOAD_PLUGINS),
         L"%s",
         PhGetString(PhFinalStringBuilderString(&stringBuilder))
         ))
