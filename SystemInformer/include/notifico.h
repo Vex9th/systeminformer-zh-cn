@@ -208,6 +208,12 @@ BOOLEAN PhNfShowBalloonTip(
     _In_ ULONG Timeout
     );
 
+BOOLEAN PhNfShowBalloonTipRaw(
+    _In_ PCWSTR Title,
+    _In_ PCWSTR Text,
+    _In_ ULONG Timeout
+    );
+
 /**
  * Shows a balloon tip notification with a callback.
  *

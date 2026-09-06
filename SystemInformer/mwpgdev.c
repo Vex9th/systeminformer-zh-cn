@@ -89,7 +89,7 @@ VOID PhpNotifyForDevice(
     }
 
     if ((PhMwpNotifyIconNotifyMask & Type))
-        PhShowIconNotification(PhGetString(title), PhGetString(name));
+        PhShowIconNotificationRaw(PhGetString(title), PhGetString(name));
 
     PhDereferenceObject(title);
     PhDereferenceObject(name);

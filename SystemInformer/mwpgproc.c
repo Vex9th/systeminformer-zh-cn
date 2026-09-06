@@ -1149,11 +1149,11 @@ VOID PhMwpOnProcessAdded(
 
                 if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
                 {
-                    PhShowIconNotification(L"Process Created", formatBuffer);
+                    PhShowIconNotificationRaw(L"Process Created", formatBuffer);
                 }
                 else
                 {
-                    PhShowIconNotification(L"Process Created",
+                    PhShowIconNotificationRaw(L"Process Created",
                         PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
                 }
             }
@@ -1229,11 +1229,11 @@ VOID PhMwpOnProcessRemoved(
 
             if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
             {
-                PhShowIconNotification(L"Process Terminated", formatBuffer);
+                PhShowIconNotificationRaw(L"Process Terminated", formatBuffer);
             }
             else
             {
-                PhShowIconNotification(L"Process Terminated",
+                PhShowIconNotificationRaw(L"Process Terminated",
                     PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
             }
         }

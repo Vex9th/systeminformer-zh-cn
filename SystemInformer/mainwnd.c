@@ -5318,6 +5318,14 @@ VOID PhShowIconNotification(
     PhNfShowBalloonTip(Title, Text, 10);
 }
 
+VOID PhShowIconNotificationRaw(
+    _In_ PCWSTR Title,
+    _In_ PCWSTR Text
+    )
+{
+    PhNfShowBalloonTipRaw(Title, Text, 10);
+}
+
 /**
  * Displays an extended notification from the tray icon with callback support.
  *

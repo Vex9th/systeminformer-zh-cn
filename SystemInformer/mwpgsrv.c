@@ -489,11 +489,11 @@ VOID PhMwpOnServiceAdded(
 
                 if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
                 {
-                    PhShowIconNotification(L"Service Created", formatBuffer);
+                    PhShowIconNotificationRaw(L"Service Created", formatBuffer);
                 }
                 else
                 {
-                    PhShowIconNotification(L"Service Created",
+                    PhShowIconNotificationRaw(L"Service Created",
                         PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
                 }
             }
@@ -566,11 +566,11 @@ VOID PhMwpOnServiceModified(
 
                 if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
                 {
-                    PhShowIconNotification(L"Service Started", formatBuffer);
+                    PhShowIconNotificationRaw(L"Service Started", formatBuffer);
                 }
                 else
                 {
-                    PhShowIconNotification(L"Service Started",
+                    PhShowIconNotificationRaw(L"Service Started",
                         PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
                 }
             }
@@ -595,11 +595,11 @@ VOID PhMwpOnServiceModified(
 
                 if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
                 {
-                    PhShowIconNotification(L"Service Stopped", formatBuffer);
+                    PhShowIconNotificationRaw(L"Service Stopped", formatBuffer);
                 }
                 else
                 {
-                    PhShowIconNotification(L"Service Stopped",
+                    PhShowIconNotificationRaw(L"Service Stopped",
                         PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
                 }
             }
@@ -624,11 +624,11 @@ VOID PhMwpOnServiceModified(
 
                 if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
                 {
-                    PhShowIconNotification(L"Service Modified", formatBuffer);
+                    PhShowIconNotificationRaw(L"Service Modified", formatBuffer);
                 }
                 else
                 {
-                    PhShowIconNotification(L"Service Modified",
+                    PhShowIconNotificationRaw(L"Service Modified",
                         PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
                 }
             }
@@ -664,11 +664,11 @@ VOID PhMwpOnServiceRemoved(
 
             if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
             {
-                PhShowIconNotification(L"Service Deleted", formatBuffer);
+                PhShowIconNotificationRaw(L"Service Deleted", formatBuffer);
             }
             else
             {
-                PhShowIconNotification(L"Service Deleted",
+                PhShowIconNotificationRaw(L"Service Deleted",
                     PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
             }
         }

@@ -346,6 +346,10 @@ CALL_SPECS = {
     "ComboBox_AddString": {1: "c_combobox"},
     "PhNfShowBalloonTip": {0: "c_balloon", 1: "c_balloon"},
     "PhNfShowBalloonTipEx": {0: "c_balloon", 1: "c_balloon"},
+    "PhNfShowBalloonTipRaw": {0: "c_balloon", 1: "c_balloon"},
+    "PhShowIconNotification": {0: "c_balloon", 1: "c_balloon"},
+    "PhShowIconNotificationEx": {0: "c_balloon", 1: "c_balloon"},
+    "PhShowIconNotificationRaw": {0: "c_balloon", 1: "c_balloon"},
 }
 
 # Message functions can receive user-visible string literals through printf
@@ -530,7 +534,14 @@ def runtime_target_identifier(expression: str):
         r"(?:\s*(?:->|\.)\s*Buffer)?\s*",
         expression,
     )
-    return match.group(1) if match else None
+    if match:
+        return match.group(1)
+
+    string_getter_match = re.fullmatch(
+        r"\s*PhGetString\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*",
+        expression,
+    )
+    return string_getter_match.group(1) if string_getter_match else None
 
 
 def literals_outside_ui_string_getters(expression: str):

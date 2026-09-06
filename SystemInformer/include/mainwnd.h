@@ -423,6 +423,11 @@ PhEscapeStringForXml(
     );
 // end_phapppub
 
+VOID PhShowIconNotificationRaw(
+    _In_ PCWSTR Title,
+    _In_ PCWSTR Text
+    );
+
 VOID PhProcessInvokeQueue(
     VOID
     );

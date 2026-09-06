@@ -51,6 +51,7 @@ static HANDLE PhpTrayIconThreadHandle = NULL;
 static HANDLE PhpTrayIconEventHandle = NULL;
 #ifdef PH_NF_ENABLE_WORKQUEUE
 static SLIST_HEADER PhpTrayIconWorkQueueListHead;
+#define PH_NF_WORKQUEUE_DATA_BALLOON_RAW 0x00000010ul
 #endif
 static ULONG PopupIconIndex = ULONG_MAX; // Win11 workaround (dmex)
 static PPH_NF_ICON PopupRegisteredIcon = NULL; // Win11 workaround (dmex)
@@ -808,10 +809,11 @@ HRESULT PhpShowToastNotification(
     return result;
 }
 
-BOOLEAN PhNfpShowBalloonTip(
+static BOOLEAN PhNfpShowBalloonTip(
     _In_ PCWSTR Title,
     _In_ PCWSTR Text,
-    _In_ ULONG Timeout
+    _In_ ULONG Timeout,
+    _In_ BOOLEAN Translate
     )
 {
     NOTIFYICONDATA notifyIcon;
@@ -843,8 +845,8 @@ BOOLEAN PhNfpShowBalloonTip(
         notifyIcon.guidItem = registeredIcon->IconGuid;
     }
 
-    wcsncpy_s(notifyIcon.szInfoTitle, RTL_NUMBER_OF(notifyIcon.szInfoTitle), PhTranslateString(Title), _TRUNCATE);
-    wcsncpy_s(notifyIcon.szInfo, RTL_NUMBER_OF(notifyIcon.szInfo), PhTranslateString(Text), _TRUNCATE);
+    wcsncpy_s(notifyIcon.szInfoTitle, RTL_NUMBER_OF(notifyIcon.szInfoTitle), Translate ? PhTranslateString(Title) : Title, _TRUNCATE);
+    wcsncpy_s(notifyIcon.szInfo, RTL_NUMBER_OF(notifyIcon.szInfo), Translate ? PhTranslateString(Text) : Text, _TRUNCATE);
     notifyIcon.uTimeout = Timeout;
 
     if (PhGetIntegerSetting(SETTING_ICON_BALLOON_SHOW_ICON) || WindowsVersion < WINDOWS_11)
@@ -857,10 +859,11 @@ BOOLEAN PhNfpShowBalloonTip(
     return TRUE;
 }
 
-BOOLEAN PhNfShowBalloonTip(
+static BOOLEAN PhNfpShowBalloonTipInternal(
     _In_ PCWSTR Title,
     _In_ PCWSTR Text,
-    _In_ ULONG Timeout
+    _In_ ULONG Timeout,
+    _In_ BOOLEAN Translate
     )
 {
     if (!PhNfIconsEnabled())
@@ -869,7 +872,7 @@ BOOLEAN PhNfShowBalloonTip(
     }
 
 #ifndef PH_NF_ENABLE_WORKQUEUE
-    return PhNfpShowBalloonTip(Title, Text, Timeout);
+    return PhNfpShowBalloonTip(Title, Text, Timeout, Translate);
 #else
     PPH_NF_WORKQUEUE_DATA data;
 
@@ -878,10 +881,30 @@ BOOLEAN PhNfShowBalloonTip(
     data->BalloonTitle = Title ? PhCreateString(Title) : NULL;
     data->BalloonText = Text ? PhCreateString(Text) : NULL;
     data->BalloonTimeout = Timeout;
+    if (!Translate)
+        SetFlag(data->Flags, PH_NF_WORKQUEUE_DATA_BALLOON_RAW);
 
     RtlInterlockedPushEntrySList(&PhpTrayIconWorkQueueListHead, &data->ListEntry);
 #endif
     return TRUE;
+}
+
+BOOLEAN PhNfShowBalloonTip(
+    _In_ PCWSTR Title,
+    _In_ PCWSTR Text,
+    _In_ ULONG Timeout
+    )
+{
+    return PhNfpShowBalloonTipInternal(Title, Text, Timeout, TRUE);
+}
+
+BOOLEAN PhNfShowBalloonTipRaw(
+    _In_ PCWSTR Title,
+    _In_ PCWSTR Text,
+    _In_ ULONG Timeout
+    )
+{
+    return PhNfpShowBalloonTipInternal(Title, Text, Timeout, FALSE);
 }
 
 HRESULT PhNfShowBalloonTipEx(
@@ -1385,7 +1408,8 @@ VOID PhNfTrayIconFlushWorkQueueData(
                 PhNfpShowBalloonTip(
                     PhGetString(data->BalloonTitle),
                     PhGetString(data->BalloonText),
-                    data->BalloonTimeout
+                    data->BalloonTimeout,
+                    !FlagOn(data->Flags, PH_NF_WORKQUEUE_DATA_BALLOON_RAW)
                     );
             }
 
