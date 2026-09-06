@@ -588,7 +588,7 @@ INT_PTR CALLBACK PhpServiceGeneralDlgProc(
             }
             else
             {
-                PhSetDialogItemText(hwndDlg, IDC_SERVICEDLL, L"N/A");
+                PhSetDialogItemText(hwndDlg, IDC_SERVICEDLL, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
             }
 
             PhServicePropertiesRefreshIcon(context);

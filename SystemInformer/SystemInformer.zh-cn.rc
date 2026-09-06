@@ -2338,4 +2338,6 @@ BEGIN
     IDS_PH_UNVERIFIED_COMPANY_FORMAT                    "（未验证）%s"
     IDS_PH_NON_EXISTENT_PROCESS_FORMAT                  "不存在的进程（%lu）"
     IDS_PH_UNKNOWN_PROCESS_FORMAT                       "未知进程（%lu）"
+    IDS_PH_NOT_AVAILABLE                                "不适用"
+    IDS_PH_UNKNOWN                                      "未知"
 END

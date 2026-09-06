@@ -985,8 +985,8 @@ VOID PhSipUpdateMemoryPanel(
     VOID
     )
 {
-    PWSTR pagedLimit;
-    PWSTR nonPagedLimit;
+    PCWSTR pagedLimit;
+    PCWSTR nonPagedLimit;
     SYSTEM_MEMORY_LIST_INFORMATION memoryListInfo;
 
     // Hardware
@@ -995,11 +995,11 @@ VOID PhSipUpdateMemoryPanel(
     {
         if (PhGetVirtualStatus() == PhVirtualStatusVirtualMachine)
         {
-            PhSetDialogItemText(MemoryPanel, IDC_ZMEMSLOTS_V, L"N/A");
-            PhSetDialogItemText(MemoryPanel, IDC_ZMEMFORMFACTOR_V, L"N/A");
-            PhSetDialogItemText(MemoryPanel, IDC_ZMEMTYPE_V, L"N/A");
-            PhSetDialogItemText(MemoryPanel, IDC_ZMEMTECHNOLOGY_V, L"N/A");
-            PhSetDialogItemText(MemoryPanel, IDC_ZMEMSPEED_V, L"N/A");
+            PhSetDialogItemText(MemoryPanel, IDC_ZMEMSLOTS_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+            PhSetDialogItemText(MemoryPanel, IDC_ZMEMFORMFACTOR_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+            PhSetDialogItemText(MemoryPanel, IDC_ZMEMTYPE_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+            PhSetDialogItemText(MemoryPanel, IDC_ZMEMTECHNOLOGY_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+            PhSetDialogItemText(MemoryPanel, IDC_ZMEMSPEED_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
         }
         else
         {
@@ -1119,19 +1119,19 @@ VOID PhSipUpdateMemoryPanel(
         if (nonPaged != MAXSIZE_T)
             nonPagedLimit = PhaFormatSize(nonPaged, ULONG_MAX)->Buffer;
         else
-            nonPagedLimit = L"N/A";
+            nonPagedLimit = PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE);
     }
     else
     {
         if (KsiLevel())
         {
             pagedLimit = PhGetApplicationUiString(IDS_PH_STATUS_NO_SYMBOLS);
-            nonPagedLimit = L"N/A";
+            nonPagedLimit = PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE);
         }
         else
         {
             pagedLimit = PhGetApplicationUiString(IDS_PH_STATUS_NO_DRIVER);
-            nonPagedLimit = L"N/A";
+            nonPagedLimit = PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE);
         }
     }
 
@@ -1211,24 +1211,24 @@ VOID PhSipUpdateMemoryPanel(
         if (WindowsVersion >= WINDOWS_8)
             PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIEDPAGEFILE_V, PhaFormatSize((ULONG64)memoryListInfo.ModifiedPageCountPageFile * PAGE_SIZE, ULONG_MAX)->Buffer);
         else
-            PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIEDPAGEFILE_V, L"N/A");
+            PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIEDPAGEFILE_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
     }
     else
     {
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTZEROED_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTFREE_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIED_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIEDNOWRITE_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIEDPAGEFILE_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY0_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY1_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY2_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY3_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY4_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY5_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY6_V, L"N/A");
-        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY7_V, L"N/A");
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTZEROED_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTFREE_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIED_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIEDNOWRITE_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTMODIFIEDPAGEFILE_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY0_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY1_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY2_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY3_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY4_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY5_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY6_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(MemoryPanel, IDC_ZLISTSTANDBY7_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
     }
 }
 

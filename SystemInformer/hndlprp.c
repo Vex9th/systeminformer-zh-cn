@@ -2416,7 +2416,7 @@ VOID PhAddHandlePermissionsTrustee(
     if (Index)
     {
         index = Index;
-        PhSetListViewSubItem(ListViewHandle, Index, 1, PhGetStringOrDefault(string, L"N/A"));
+        PhSetListViewSubItem(ListViewHandle, Index, 1, PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
     }
     else
     {
@@ -2448,7 +2448,7 @@ VOID PhAddHandlePermissionsTrustee(
         }
         else
         {
-            PhSetListViewSubItem(Context->ListViewHandle, index, 2, L"N/A");
+            PhSetListViewSubItem(Context->ListViewHandle, index, 2, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
         }
 
         PhFree(accessEntries);
@@ -2519,7 +2519,7 @@ VOID PhUpdateHandlePermissionsOwnerSecurity(
                     PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (APP_CAPABILITY)"));
                 }
 
-                PhSetListViewSubItem(Context->ListViewHeader, 0, 1, PhGetStringOrDefault(string, L"N/A"));
+                PhSetListViewSubItem(Context->ListViewHeader, 0, 1, PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
                 PhClearReference(&string);
             }
             else
@@ -2614,7 +2614,7 @@ VOID PhUpdateHandlePermissionsGroupSecurity(
                     PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (APP_CAPABILITY)"));
                 }
 
-                PhSetListViewSubItem(Context->ListViewHeader, 1, 1, PhGetStringOrDefault(string, L"N/A"));
+                PhSetListViewSubItem(Context->ListViewHeader, 1, 1, PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
                 PhClearReference(&string);
             }
             else
@@ -2899,9 +2899,9 @@ VOID PhUpdateHandlePermissionSecurity(
         PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_INTEGRITY),
         NULL
         );
-    PhSetListViewSubItem(Context->ListViewHeader, 0, 1, L"N/A");
-    PhSetListViewSubItem(Context->ListViewHeader, 1, 1, L"N/A");
-    PhSetListViewSubItem(Context->ListViewHeader, 2, 1, L"N/A");
+    PhSetListViewSubItem(Context->ListViewHeader, 0, 1, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+    PhSetListViewSubItem(Context->ListViewHeader, 1, 1, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+    PhSetListViewSubItem(Context->ListViewHeader, 2, 1, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
 
     if (NT_SUCCESS(status = PhOpenProcess(
         &processHandle,
@@ -3008,9 +3008,9 @@ VOID PhUpdateHandleAuditingSecurity(
         PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_INTEGRITY),
         NULL
         );
-    PhSetListViewSubItem(Context->ListViewHeader, 0, 1, L"N/A");
-    PhSetListViewSubItem(Context->ListViewHeader, 1, 1, L"N/A");
-    PhSetListViewSubItem(Context->ListViewHeader, 2, 1, L"N/A");
+    PhSetListViewSubItem(Context->ListViewHeader, 0, 1, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+    PhSetListViewSubItem(Context->ListViewHeader, 1, 1, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+    PhSetListViewSubItem(Context->ListViewHeader, 2, 1, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
 
     if (NT_SUCCESS(status = PhOpenProcess(
         &processHandle,

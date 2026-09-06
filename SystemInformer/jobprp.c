@@ -277,7 +277,7 @@ INT_PTR CALLBACK PhpJobPageProc(
             PhAddListViewColumn(limitsLv, 1, 1, 1, LVCFMT_LEFT, 160, L"Value");
             PhLoadListViewColumnsFromSetting(SETTING_JOB_LIST_VIEW_COLUMNS, limitsLv);
 
-            PhSetDialogItemText(hwndDlg, IDC_NAME, L"Unknown");
+            PhSetDialogItemText(hwndDlg, IDC_NAME, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
             if (NT_SUCCESS(jobPageContext->OpenObject(
                 &jobHandle,
@@ -715,23 +715,23 @@ static VOID PhpRefreshJobStatisticsInfo(
     }
     else
     {
-        PhSetDialogItemText(hwndDlg, IDC_ZACTIVEPROCESSES_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZTOTALPROCESSES_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZTERMINATEDPROCESSES_V, L"Unknown");
+        PhSetDialogItemText(hwndDlg, IDC_ZACTIVEPROCESSES_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZTOTALPROCESSES_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZTERMINATEDPROCESSES_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
-        PhSetDialogItemText(hwndDlg, IDC_ZUSERTIME_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZKERNELTIME_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZUSERTIMEPERIOD_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZKERNELTIMEPERIOD_V, L"Unknown");
+        PhSetDialogItemText(hwndDlg, IDC_ZUSERTIME_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZKERNELTIME_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZUSERTIMEPERIOD_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZKERNELTIMEPERIOD_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
-        PhSetDialogItemText(hwndDlg, IDC_ZPAGEFAULTS_V, L"Unknown");
+        PhSetDialogItemText(hwndDlg, IDC_ZPAGEFAULTS_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
-        PhSetDialogItemText(hwndDlg, IDC_ZIOREADS_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZIOREADBYTES_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZIOWRITES_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZIOWRITEBYTES_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZIOOTHER_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZIOOTHERBYTES_V, L"Unknown");
+        PhSetDialogItemText(hwndDlg, IDC_ZIOREADS_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZIOREADBYTES_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZIOWRITES_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZIOWRITEBYTES_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZIOOTHER_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZIOOTHERBYTES_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
     }
 
     if (jobHandle && NT_SUCCESS(PhGetJobExtendedLimits(
@@ -744,8 +744,8 @@ static VOID PhpRefreshJobStatisticsInfo(
     }
     else
     {
-        PhSetDialogItemText(hwndDlg, IDC_ZPEAKPROCESSUSAGE_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZPEAKJOBUSAGE_V, L"Unknown");
+        PhSetDialogItemText(hwndDlg, IDC_ZPEAKPROCESSUSAGE_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZPEAKJOBUSAGE_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
     }
 
     if (jobHandle)

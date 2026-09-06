@@ -172,8 +172,8 @@ static VOID PhpRefreshEventPageInfo(
         )))
     {
         EVENT_BASIC_INFORMATION basicInfo;
-        PCWSTR eventType = L"Unknown";
-        PCWSTR eventState = L"Unknown";
+        PCWSTR eventType = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+        PCWSTR eventState = PhGetApplicationUiString(IDS_PH_UNKNOWN);
 
         if (NT_SUCCESS(PhGetEventBasicInformation(eventHandle, &basicInfo)))
         {
@@ -382,8 +382,8 @@ static VOID PhpRefreshSemaphorePageInfo(
         }
         else
         {
-            PhSetDialogItemText(hwndDlg, IDC_CURRENTCOUNT, L"Unknown");
-            PhSetDialogItemText(hwndDlg, IDC_MAXIMUMCOUNT, L"Unknown");
+            PhSetDialogItemText(hwndDlg, IDC_CURRENTCOUNT, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+            PhSetDialogItemText(hwndDlg, IDC_MAXIMUMCOUNT, PhGetApplicationUiString(IDS_PH_UNKNOWN));
         }
 
         NtClose(semaphoreHandle);
@@ -502,7 +502,7 @@ static VOID PhpRefreshTimerPageInfo(
         }
         else
         {
-            PhSetDialogItemText(hwndDlg, IDC_SIGNALED, L"Unknown");
+            PhSetDialogItemText(hwndDlg, IDC_SIGNALED, PhGetApplicationUiString(IDS_PH_UNKNOWN));
         }
 
         NtClose(timerHandle);

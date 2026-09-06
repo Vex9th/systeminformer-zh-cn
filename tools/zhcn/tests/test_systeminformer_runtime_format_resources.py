@@ -127,16 +127,16 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2560)))
-        self.assertEqual(len(english), 560)
-        self.assertEqual(len(chinese), 560)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_UNKNOWN_PROCESS_FORMAT$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2560$")
+        self.assertEqual(numeric_ids, list(range(2000, 2562)))
+        self.assertEqual(len(english), 562)
+        self.assertEqual(len(chinese), 562)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_UNKNOWN$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2562$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=560"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=562"), 2)
         self.assertNotIn("sys_info.exe=555", workflow)
 
     def test_each_resource_is_bound_to_the_exact_runtime_arguments(self) -> None:
@@ -271,7 +271,8 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
             r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENTPROCESS\s*,\s*"
             r"PH_AUTO_T\(PH_STRING\s*,\s*PhGetClientIdNameEx\(&clientId\s*,\s*parentProcess->ProcessName\)\)->Buffer\s*\)\s*;.*?"
             r"else.*?if\s*\(processItem->ProcessId\s*==\s*SYSTEM_IDLE_PROCESS_ID\).*?"
-            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENTPROCESS\s*,\s*L\"N/A\"\s*\)\s*;\s*"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENTPROCESS\s*,\s*"
+            r"PhGetApplicationUiString\(IDS_PH_NOT_AVAILABLE\)\s*\)\s*;\s*"
             r"\}\s*else\s*\{\s*PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENTPROCESS\s*,\s*"
             r"PhaFormatString\(\s*"
             r"PhGetApplicationUiString\(IDS_PH_NON_EXISTENT_PROCESS_FORMAT\)\s*,\s*"

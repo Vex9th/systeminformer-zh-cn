@@ -1067,7 +1067,8 @@ VOID PhSipUpdateCpuPanel(
     LARGE_INTEGER performanceCounterTicks;
     PH_FORMAT format[6];
     WCHAR formatBuffer[256];
-    WCHAR uptimeString[PH_TIMESPAN_STR_LEN_1] = { L"Unknown" };
+    WCHAR uptimeString[PH_TIMESPAN_STR_LEN_1];
+    PCWSTR uptimeText = PhGetApplicationUiString(IDS_PH_UNKNOWN);
 
     // Hardware
 
@@ -1094,9 +1095,9 @@ VOID PhSipUpdateCpuPanel(
             break;
         }
 
-        PhSetDialogItemText(CpuPanel, IDC_ZL1CACHE_V, CpuL1CacheSize ? PhaFormatSize(CpuL1CacheSize, ULONG_MAX)->Buffer : L"N/A");
-        PhSetDialogItemText(CpuPanel, IDC_ZL2CACHE_V, CpuL2CacheSize ? PhaFormatSize(CpuL2CacheSize, ULONG_MAX)->Buffer : L"N/A");
-        PhSetDialogItemText(CpuPanel, IDC_ZL3CACHE_V, CpuL3CacheSize ? PhaFormatSize(CpuL3CacheSize, ULONG_MAX)->Buffer : L"N/A");
+        PhSetDialogItemText(CpuPanel, IDC_ZL1CACHE_V, CpuL1CacheSize ? PhaFormatSize(CpuL1CacheSize, ULONG_MAX)->Buffer : PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(CpuPanel, IDC_ZL2CACHE_V, CpuL2CacheSize ? PhaFormatSize(CpuL2CacheSize, ULONG_MAX)->Buffer : PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
+        PhSetDialogItemText(CpuPanel, IDC_ZL3CACHE_V, CpuL3CacheSize ? PhaFormatSize(CpuL3CacheSize, ULONG_MAX)->Buffer : PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
     }
 
     // %.2f%%
@@ -1157,9 +1158,10 @@ VOID PhSipUpdateCpuPanel(
     if (NT_SUCCESS(PhGetSystemUptime(&systemUptime)))
     {
         PhPrintTimeSpan(uptimeString, systemUptime.QuadPart, PH_TIMESPAN_DHMS);
+        uptimeText = uptimeString;
     }
 
-    PhSetWindowText(CpuPanelUptimeLabel, uptimeString);
+    PhSetWindowText(CpuPanelUptimeLabel, uptimeText);
 
     if (CpuTicked > 1)
     {

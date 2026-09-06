@@ -835,11 +835,11 @@ static NTSTATUS NTAPI PhpTokenGroupResolveWorker(
         if (PhGetTokenSidTypeString(sidUse, &tokenSidType))
             PhSetListViewSubItem(context->ListViewHandle, ItemIndex, PH_PROCESS_TOKEN_INDEX_USE, tokenSidType);
         else
-            PhSetListViewSubItem(context->ListViewHandle, ItemIndex, PH_PROCESS_TOKEN_INDEX_USE, L"N/A");
+            PhSetListViewSubItem(context->ListViewHandle, ItemIndex, PH_PROCESS_TOKEN_INDEX_USE, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
     }
     else
     {
-        PhSetListViewSubItem(context->ListViewHandle, ItemIndex, PH_PROCESS_TOKEN_INDEX_USE, L"N/A");
+        PhSetListViewSubItem(context->ListViewHandle, ItemIndex, PH_PROCESS_TOKEN_INDEX_USE, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
     }
 
     PhFree(context->TokenGroupSid);
@@ -1400,8 +1400,8 @@ INT_PTR CALLBACK PhpTokenPageProc(
             PhLoadListViewSortColumnsFromSetting(SETTING_TOKEN_GROUPS_LIST_VIEW_SORT, tokenPageContext->ListViewHandle);
             PhpTokenSetImageList(hwndDlg, tokenPageContext);
 
-            PhSetDialogItemText(hwndDlg, IDC_USER, L"Unknown");
-            PhSetDialogItemText(hwndDlg, IDC_USERSID, L"Unknown");
+            PhSetDialogItemText(hwndDlg, IDC_USER, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+            PhSetDialogItemText(hwndDlg, IDC_USERSID, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
             if (NT_SUCCESS(tokenPageContext->OpenObject(
                 &tokenHandle,
@@ -1454,12 +1454,12 @@ INT_PTR CALLBACK PhpTokenPageProc(
                 if (tokenSessionId != ULONG_MAX)
                     PhSetDialogItemValue(hwndDlg, IDC_SESSIONID, tokenSessionId, FALSE);
                 else
-                    PhSetDialogItemText(hwndDlg, IDC_SESSIONID, L"Unknown");
+                    PhSetDialogItemText(hwndDlg, IDC_SESSIONID, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
                 if (PhGetElevationTypeString(tokenElevation, tokenElevationType, &tokenElevationTypeString))
                     PhSetDialogItemText(hwndDlg, IDC_ELEVATED, PhGetStringRefZ(tokenElevationTypeString));
                 else
-                    PhSetDialogItemText(hwndDlg, IDC_ELEVATED, L"Unknown");
+                    PhSetDialogItemText(hwndDlg, IDC_ELEVATED, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
                 if (NT_SUCCESS(PhGetTokenIsVirtualizationAllowed(tokenHandle, &isVirtualizationAllowed)))
                 {
@@ -2568,10 +2568,12 @@ INT_PTR CALLBACK PhpTokenGeneralPageProc(
             TOKEN_ELEVATION_TYPE tokenElevationType = 0;
             PPH_STRINGREF tokenElevationTypeString;
             BOOLEAN hasLinkedToken = FALSE;
-            PWSTR tokenVirtualization = L"N/A";
-            PWSTR tokenUIAccess = L"Unknown";
-            WCHAR tokenSourceName[TOKEN_SOURCE_LENGTH + 1] = { L"Unknown" };
-            WCHAR tokenSourceLuid[PH_INT64_STR_LEN_1] = { L"Unknown" };
+            PCWSTR tokenVirtualization = PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE);
+            PCWSTR tokenUIAccess = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+            WCHAR tokenSourceName[TOKEN_SOURCE_LENGTH + 1];
+            WCHAR tokenSourceLuid[PH_INT64_STR_LEN_1];
+            PCWSTR tokenSourceNameText = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+            PCWSTR tokenSourceLuidText = PhGetApplicationUiString(IDS_PH_UNKNOWN);
 
             // HACK
             PhCenterWindow(GetParent(hwndDlg), GetParent(GetParent(hwndDlg)));
@@ -2659,6 +2661,7 @@ INT_PTR CALLBACK PhpTokenGeneralPageProc(
                         RTL_NUMBER_OF(tokenSourceName),
                         NULL
                         );
+                    tokenSourceNameText = tokenSourceName;
 
                     PhPrintPointer(tokenSourceLuid, UlongToPtr(tokenSource.SourceIdentifier.LowPart));
 
@@ -2668,30 +2671,32 @@ INT_PTR CALLBACK PhpTokenGeneralPageProc(
                         wcscat_s(tokenSourceLuid, RTL_NUMBER_OF(tokenSourceLuid), PhGetStringRefZ(tokenSourceTypeString));
                         wcscat_s(tokenSourceLuid, RTL_NUMBER_OF(tokenSourceLuid), L")");
                     }
+
+                    tokenSourceLuidText = tokenSourceLuid;
                 }
 
                 tokenPageContext->CloseObject(tokenHandle, FALSE, tokenPageContext->Context);
             }
 
-            PhSetDialogItemText(hwndDlg, IDC_USER, PhGetStringOrDefault(tokenUserName, L"Unknown"));
-            PhSetDialogItemText(hwndDlg, IDC_USERSID, PhGetStringOrDefault(tokenUserSid, L"Unknown"));
-            PhSetDialogItemText(hwndDlg, IDC_OWNER, PhGetStringOrDefault(tokenOwnerName, L"Unknown"));
-            PhSetDialogItemText(hwndDlg, IDC_PRIMARYGROUP, PhGetStringOrDefault(tokenPrimaryGroupName, L"Unknown"));
+            PhSetDialogItemText(hwndDlg, IDC_USER, PhGetStringOrDefault(tokenUserName, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
+            PhSetDialogItemText(hwndDlg, IDC_USERSID, PhGetStringOrDefault(tokenUserSid, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
+            PhSetDialogItemText(hwndDlg, IDC_OWNER, PhGetStringOrDefault(tokenOwnerName, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
+            PhSetDialogItemText(hwndDlg, IDC_PRIMARYGROUP, PhGetStringOrDefault(tokenPrimaryGroupName, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
 
             if (tokenSessionId != ULONG_MAX)
                 PhSetDialogItemValue(hwndDlg, IDC_SESSIONID, tokenSessionId, FALSE);
             else
-                PhSetDialogItemText(hwndDlg, IDC_SESSIONID, L"Unknown");
+                PhSetDialogItemText(hwndDlg, IDC_SESSIONID, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
             if (PhGetElevationTypeString(tokenElevation, tokenElevationType, &tokenElevationTypeString))
                 PhSetDialogItemText(hwndDlg, IDC_ELEVATED, PhGetStringRefZ(tokenElevationTypeString));
             else
-                PhSetDialogItemText(hwndDlg, IDC_ELEVATED, L"Unknown");
+                PhSetDialogItemText(hwndDlg, IDC_ELEVATED, PhGetApplicationUiString(IDS_PH_UNKNOWN));
 
             PhSetDialogItemText(hwndDlg, IDC_VIRTUALIZATION, tokenVirtualization);
             PhSetDialogItemText(hwndDlg, IDC_UIACCESS, tokenUIAccess);
-            PhSetDialogItemText(hwndDlg, IDC_SOURCENAME, tokenSourceName);
-            PhSetDialogItemText(hwndDlg, IDC_SOURCELUID, tokenSourceLuid);
+            PhSetDialogItemText(hwndDlg, IDC_SOURCENAME, tokenSourceNameText);
+            PhSetDialogItemText(hwndDlg, IDC_SOURCELUID, tokenSourceLuidText);
 
             EnableWindow(GetDlgItem(hwndDlg, IDC_LINKEDTOKEN), !!hasLinkedToken);
 
@@ -2783,12 +2788,16 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
         {
             HANDLE tokenHandle;
             LONG listViewGroupIndex = 0;
-            PWSTR tokenType = L"Unknown";
-            PWSTR tokenImpersonationLevel = L"Unknown";
-            WCHAR tokenLuid[PH_PTR_STR_LEN_1] = { L"Unknown" };
-            WCHAR authenticationLuid[PH_PTR_STR_LEN_1] = { L"Unknown" };
-            WCHAR tokenModifiedLuid[PH_PTR_STR_LEN_1] = { L"Unknown" };
-            WCHAR tokenOriginLogonSession[PH_PTR_STR_LEN_1] = { L"Unknown" };
+            PCWSTR tokenType = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+            PCWSTR tokenImpersonationLevel = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+            WCHAR tokenLuid[PH_PTR_STR_LEN_1];
+            WCHAR authenticationLuid[PH_PTR_STR_LEN_1];
+            WCHAR tokenModifiedLuid[PH_PTR_STR_LEN_1];
+            WCHAR tokenOriginLogonSession[PH_PTR_STR_LEN_1];
+            PCWSTR tokenLuidText = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+            PCWSTR authenticationLuidText = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+            PCWSTR tokenModifiedLuidText = PhGetApplicationUiString(IDS_PH_UNKNOWN);
+            PCWSTR tokenOriginLogonSessionText = PhGetApplicationUiString(IDS_PH_UNKNOWN);
             PPH_STRING memoryUsed = NULL;
             PPH_STRING memoryAvailable = NULL;
             PPH_STRING tokenNamedObjectPathString = NULL;
@@ -2860,6 +2869,9 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                     PhPrintPointer(tokenLuid, UlongToPtr(statistics.TokenId.LowPart));
                     PhPrintPointer(authenticationLuid, UlongToPtr(statistics.AuthenticationId.LowPart));
                     PhPrintPointer(tokenModifiedLuid, UlongToPtr(statistics.ModifiedId.LowPart));
+                    tokenLuidText = tokenLuid;
+                    authenticationLuidText = authenticationLuid;
+                    tokenModifiedLuidText = tokenModifiedLuid;
 
                     memoryUsed = PhFormatSize(statistics.DynamicCharged - statistics.DynamicAvailable, ULONG_MAX); // DynamicAvailable contains the number of bytes free.
                     memoryAvailable = PhFormatSize(statistics.DynamicCharged, ULONG_MAX); // DynamicCharged contains the number of bytes allocated.
@@ -2868,6 +2880,7 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                 if (NT_SUCCESS(PhGetTokenOrigin(tokenHandle, &origin)))
                 {
                     PhPrintPointer(tokenOriginLogonSession, UlongToPtr(origin.OriginatingLogonSession.LowPart));
+                    tokenOriginLogonSessionText = tokenOriginLogonSession;
                 }
 
                 PhGetTokenNamedObjectPath(tokenHandle, NULL, &tokenNamedObjectPathString);
@@ -2892,8 +2905,18 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                         );
                     trustLevelSidIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TRUSTLEVEL_SID), NULL);
                     trustLevelNameIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TRUSTLEVEL_NAME), NULL);
-                    PhSetListViewSubItem(context->ListViewHandle, trustLevelSidIndex, 1, PhGetStringOrDefault(tokenTrustLevelSidString, L"N/A"));
-                    PhSetListViewSubItem(context->ListViewHandle, trustLevelNameIndex, 1, PhGetStringOrDefault(tokenTrustLevelNameString, L"N/A"));
+                    PhSetListViewSubItem(
+                        context->ListViewHandle,
+                        trustLevelSidIndex,
+                        1,
+                        PhGetStringOrDefault(tokenTrustLevelSidString, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
+                        );
+                    PhSetListViewSubItem(
+                        context->ListViewHandle,
+                        trustLevelNameIndex,
+                        1,
+                        PhGetStringOrDefault(tokenTrustLevelNameString, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
+                        );
 
                     PhClearReference(&tokenTrustLevelNameString);
                     PhClearReference(&tokenTrustLevelSidString);
@@ -2926,11 +2949,21 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                     profileFolderIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_FOLDER_PATH), NULL);
                     profileRegistryIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_REGISTRY_PATH), NULL);
 
-                    PhSetListViewSubItem(context->ListViewHandle, profileFolderIndex, 1, PhGetStringOrDefault(tokenProfilePathString, L"N/A"));
+                    PhSetListViewSubItem(
+                        context->ListViewHandle,
+                        profileFolderIndex,
+                        1,
+                        PhGetStringOrDefault(tokenProfilePathString, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
+                        );
 
                     if (tokenProfileRegistryString = PhpGetTokenRegistryPath(tokenHandle))
                     {
-                        PhSetListViewSubItem(context->ListViewHandle, profileRegistryIndex, 1, PhGetStringOrDefault(tokenProfileRegistryString, L"N/A"));
+                        PhSetListViewSubItem(
+                            context->ListViewHandle,
+                            profileRegistryIndex,
+                            1,
+                            PhGetStringOrDefault(tokenProfileRegistryString, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
+                            );
                         PhDereferenceObject(tokenProfileRegistryString);
                     }
 
@@ -2958,8 +2991,13 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                 systemIdPublisherIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_HWID_PUBLISHER), NULL);
                 systemIdUserIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_HWID_USER), NULL);
 
-                PhSetListViewSubItem(context->ListViewHandle, systemIdPublisherIndex, 1, PhGetStringOrDefault(tokenSystemIdForPublisher, L"N/A"));
-                PhSetListViewSubItem(context->ListViewHandle, systemIdUserIndex, 1, PhGetStringOrDefault(tokenSystemIdForUser, L"N/A"));
+                PhSetListViewSubItem(
+                    context->ListViewHandle,
+                    systemIdPublisherIndex,
+                    1,
+                    PhGetStringOrDefault(tokenSystemIdForPublisher, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
+                    );
+                PhSetListViewSubItem(context->ListViewHandle, systemIdUserIndex, 1, PhGetStringOrDefault(tokenSystemIdForUser, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
 
                 PhClearReference(&tokenSystemIdForPublisher);
                 PhClearReference(&tokenSystemIdForUser);
@@ -2967,14 +3005,14 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
 
             PhSetListViewSubItem(context->ListViewHandle, 0, 1, tokenType);
             PhSetListViewSubItem(context->ListViewHandle, 1, 1, tokenImpersonationLevel);
-            PhSetListViewSubItem(context->ListViewHandle, 2, 1, tokenLuid);
-            PhSetListViewSubItem(context->ListViewHandle, 3, 1, authenticationLuid);
-            PhSetListViewSubItem(context->ListViewHandle, 4, 1, tokenModifiedLuid);
-            PhSetListViewSubItem(context->ListViewHandle, 5, 1, tokenOriginLogonSession);
-            PhSetListViewSubItem(context->ListViewHandle, 6, 1, PhGetStringOrDefault(memoryUsed, L"Unknown"));
-            PhSetListViewSubItem(context->ListViewHandle, 7, 1, PhGetStringOrDefault(memoryAvailable, L"Unknown"));
-            PhSetListViewSubItem(context->ListViewHandle, 8, 1, PhGetStringOrDefault(tokenNamedObjectPathString, L"Unknown"));
-            PhSetListViewSubItem(context->ListViewHandle, 9, 1, PhGetStringOrDefault(tokenSecurityDescriptorString, L"Unknown"));
+            PhSetListViewSubItem(context->ListViewHandle, 2, 1, tokenLuidText);
+            PhSetListViewSubItem(context->ListViewHandle, 3, 1, authenticationLuidText);
+            PhSetListViewSubItem(context->ListViewHandle, 4, 1, tokenModifiedLuidText);
+            PhSetListViewSubItem(context->ListViewHandle, 5, 1, tokenOriginLogonSessionText);
+            PhSetListViewSubItem(context->ListViewHandle, 6, 1, PhGetStringOrDefault(memoryUsed, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
+            PhSetListViewSubItem(context->ListViewHandle, 7, 1, PhGetStringOrDefault(memoryAvailable, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
+            PhSetListViewSubItem(context->ListViewHandle, 8, 1, PhGetStringOrDefault(tokenNamedObjectPathString, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
+            PhSetListViewSubItem(context->ListViewHandle, 9, 1, PhGetStringOrDefault(tokenSecurityDescriptorString, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
 
             PhClearReference(&memoryUsed);
             PhClearReference(&memoryAvailable);
@@ -4616,7 +4654,7 @@ INT_PTR CALLBACK PhpTokenContainerPageProc(
 
                 if (NT_SUCCESS(PhGetAppContainerNamedObjectPath(tokenHandle, NULL, FALSE, &tokenNamedObjectPathString)))
                 {
-                    PhSetListViewSubItem(context->ListViewHandle, 5, 1, PhGetStringOrDefault(tokenNamedObjectPathString, L"Unknown"));
+                    PhSetListViewSubItem(context->ListViewHandle, 5, 1, PhGetStringOrDefault(tokenNamedObjectPathString, PhGetApplicationUiString(IDS_PH_UNKNOWN)));
                     PhDereferenceObject(tokenNamedObjectPathString);
                 }
 

@@ -127,34 +127,34 @@ static VOID PhpUpdateMemoryListInfo(
         if (WindowsVersion >= WINDOWS_8)
             PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIEDPAGEFILE_V, PhaFormatSize((ULONG64)memoryListInfo.ModifiedPageCountPageFile * PAGE_SIZE, ULONG_MAX)->Buffer);
         else
-            PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIEDPAGEFILE_V, L"N/A");
+            PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIEDPAGEFILE_V, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
     }
     else
     {
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTZEROED_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTFREE_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIED_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIEDNOWRITE_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIEDPAGEFILE_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTBAD_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY0_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY1_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY2_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY3_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY4_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY5_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY6_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY7_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED0_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED1_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED2_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED3_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED4_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED5_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED6_V, L"Unknown");
-        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED7_V, L"Unknown");
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTZEROED_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTFREE_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIED_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIEDNOWRITE_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTMODIFIEDPAGEFILE_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTBAD_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY0_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY1_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY2_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY3_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY4_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY5_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY6_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTSTANDBY7_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED0_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED1_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED2_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED3_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED4_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED5_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED6_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
+        PhSetDialogItemText(hwndDlg, IDC_ZLISTREPURPOSED7_V, PhGetApplicationUiString(IDS_PH_UNKNOWN));
     }
 }
 

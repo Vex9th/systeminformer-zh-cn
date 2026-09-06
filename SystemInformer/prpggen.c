@@ -165,14 +165,14 @@ NTSTATUS PhpProcessGeneralCloseHandle(
     return STATUS_SUCCESS;
 }
 
-FORCEINLINE PWSTR PhpGetStringOrNa(
+FORCEINLINE PCWSTR PhpGetStringOrNa(
     _In_opt_ _Maybenull_ PPH_STRING String
     )
 {
     if (String)
         return String->Buffer;
     else
-        return L"N/A";
+        return PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE);
 }
 
 VOID PhpUpdateProcessMitigationPolicies(
@@ -184,7 +184,7 @@ VOID PhpUpdateProcessMitigationPolicies(
     HANDLE processHandle;
     PH_PROCESS_MITIGATION_POLICY_ALL_INFORMATION information;
 
-    PhSetDialogItemText(hwndDlg, IDC_MITIGATION, L"N/A");
+    PhSetDialogItemText(hwndDlg, IDC_MITIGATION, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
 
     if (NT_SUCCESS(status = PhOpenProcess(
         &processHandle,
@@ -576,12 +576,12 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                 }
                 else
                 {
-                    PhSetWindowText(context->StartedLabelHandle, L"N/A");
+                    PhSetWindowText(context->StartedLabelHandle, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
                 }
             }
             else
             {
-                PhSetWindowText(context->StartedLabelHandle, L"N/A");
+                PhSetWindowText(context->StartedLabelHandle, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
             }
 
             // Parent
@@ -600,7 +600,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
             {
                 if (processItem->ProcessId == SYSTEM_IDLE_PROCESS_ID)
                 {
-                    PhSetDialogItemText(hwndDlg, IDC_PARENTPROCESS, L"N/A");
+                    PhSetDialogItemText(hwndDlg, IDC_PARENTPROCESS, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
                 }
                 else
                 {
@@ -624,7 +624,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
             {
                 if (parentProcess->ProcessId == SYSTEM_IDLE_PROCESS_ID)
                 {
-                    PhSetDialogItemText(hwndDlg, IDC_PARENTCONSOLE, L"N/A");
+                    PhSetDialogItemText(hwndDlg, IDC_PARENTCONSOLE, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
                 }
                 else
                 {
@@ -642,7 +642,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
             }
             else
             {
-                PhSetDialogItemText(hwndDlg, IDC_PARENTCONSOLE, L"N/A");
+                PhSetDialogItemText(hwndDlg, IDC_PARENTCONSOLE, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
             }
 
             // Mitigation policies
@@ -1088,7 +1088,7 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                     }
                     else
                     {
-                        PhSetWindowText(context->StartedLabelHandle, L"N/A");
+                        PhSetWindowText(context->StartedLabelHandle, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
                     }
                 }
                 break;

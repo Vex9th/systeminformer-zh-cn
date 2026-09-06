@@ -189,10 +189,10 @@ INT_PTR CALLBACK PhpProcessRecordDlgProc(
             SendMessage(GetDlgItem(hwndDlg, IDC_VIEWCOMMANDLINE), BM_SETIMAGE, IMAGE_ICON,
                 (LPARAM)PH_LOAD_SHARED_ICON_SMALL(PhInstanceHandle, MAKEINTRESOURCE(IDI_MAGNIFIER), dpiValue));
 
-            PhSetDialogItemText(hwndDlg, IDC_NAME, PhGetStringOrDefault(versionInfo.FileDescription, L"N/A"));
-            PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME, PhGetStringOrDefault(versionInfo.CompanyName, L"N/A"));
-            PhSetDialogItemText(hwndDlg, IDC_VERSION, PhGetStringOrDefault(versionInfo.FileVersion, L"N/A"));
-            PhSetDialogItemText(hwndDlg, IDC_FILENAME, PhGetStringOrDefault(fileName, L"N/A"));
+            PhSetDialogItemText(hwndDlg, IDC_NAME, PhGetStringOrDefault(versionInfo.FileDescription, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
+            PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME, PhGetStringOrDefault(versionInfo.CompanyName, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
+            PhSetDialogItemText(hwndDlg, IDC_VERSION, PhGetStringOrDefault(versionInfo.FileVersion, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
+            PhSetDialogItemText(hwndDlg, IDC_FILENAME, PhGetStringOrDefault(fileName, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
 
             if (versionInfoInitialized)
                 PhDeleteImageVersionInfo(&versionInfo);
@@ -200,7 +200,7 @@ INT_PTR CALLBACK PhpProcessRecordDlgProc(
             if (!fileName)
                 EnableWindow(GetDlgItem(hwndDlg, IDC_OPENFILENAME), FALSE);
 
-            PhSetDialogItemText(hwndDlg, IDC_CMDLINE, PhGetStringOrDefault(context->Record->CommandLine, L"N/A"));
+            PhSetDialogItemText(hwndDlg, IDC_CMDLINE, PhGetStringOrDefault(context->Record->CommandLine, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)));
 
             if (!context->Record->CommandLine)
                 EnableWindow(GetDlgItem(hwndDlg, IDC_VIEWCOMMANDLINE), FALSE);
@@ -208,12 +208,12 @@ INT_PTR CALLBACK PhpProcessRecordDlgProc(
             if (context->Record->CreateTime.QuadPart != 0)
                 PhSetDialogItemText(hwndDlg, IDC_STARTED, PhpaGetRelativeTimeString(&context->Record->CreateTime)->Buffer);
             else
-                PhSetDialogItemText(hwndDlg, IDC_STARTED, L"N/A");
+                PhSetDialogItemText(hwndDlg, IDC_STARTED, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
 
             if (context->Record->ExitTime.QuadPart != 0)
                 PhSetDialogItemText(hwndDlg, IDC_TERMINATED, PhpaGetRelativeTimeString(&context->Record->ExitTime)->Buffer);
             else
-                PhSetDialogItemText(hwndDlg, IDC_TERMINATED, L"N/A");
+                PhSetDialogItemText(hwndDlg, IDC_TERMINATED, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE));
 
             PhSetDialogItemValue(hwndDlg, IDC_SESSIONID, context->Record->SessionId, FALSE);
 
