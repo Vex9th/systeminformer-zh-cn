@@ -407,6 +407,10 @@ BEGIN
     IDS_ES_UNABLE_ENUMERATE_DEPENDENTS "Unable to enumerate dependents: %s"
     IDS_ES_PNP_DEVICES_MESSAGE      "This service has registered the following PnP devices:"
     IDS_ES_PNP_UNSUPPORTED_MESSAGE  "This service type doesn't support PnP devices."
+    IDS_ES_TRIGGER_DATA_NOT_ALLOWED_FORMAT "The trigger type ""%s"" does not allow data items to be configured."
+    IDS_ES_DEFAULT_RESTART_MESSAGE_FORMAT "Your computer is connected to the computer named %s. The %s service on %s has ended unexpectedly. %s will restart automatically, and then you can reestablish the connection."
+    IDS_ES_NOT_AVAILABLE            "N/A"
+    IDS_ES_COMPUTER_NAME_UNKNOWN    "(unknown)"
 END
 
 #endif    // English (United States) resources

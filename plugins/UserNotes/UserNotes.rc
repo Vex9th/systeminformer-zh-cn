@@ -95,6 +95,10 @@ BEGIN
     IDS_UN_UNABLE_UPDATE_IFEO_IO_PRIORITY "Unable to update the IFEO for IO priority."
     IDS_UN_UNABLE_UPDATE_IFEO_PAGE_PRIORITY "Unable to update the IFEO for page priority."
     IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY "Unable to update the IFEO for priority."
+    IDS_UN_DB_TYPE_FILE             "File"
+    IDS_UN_DB_TYPE_SERVICE          "Service"
+    IDS_UN_DB_TYPE_COMMAND_LINE     "Commandline"
+    IDS_UN_STATUS_TRUE              "True"
 END
 
 

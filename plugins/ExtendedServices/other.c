@@ -330,6 +330,9 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
             NTSTATUS status;
             LPPROPSHEETPAGE propSheetPage = (LPPROPSHEETPAGE)lParam;
             PPH_SERVICE_ITEM serviceItem = (PPH_SERVICE_ITEM)propSheetPage->lParam;
+            PPH_STRING serviceSidString;
+            PPH_STRING notAvailableString;
+            PCWSTR notAvailableText;
             HWND privilegesLv;
 
             context->ServiceItem = serviceItem;
@@ -365,8 +368,20 @@ INT_PTR CALLBACK EspServiceOtherDlgProc(
             if (PhWindowsVersion < WINDOWS_8_1)
                 EnableWindow(GetDlgItem(WindowHandle, IDC_PROTECTION), FALSE);
 
-            PhSetDialogItemText(WindowHandle, IDC_SERVICESID,
-                PhGetStringOrDefault(PH_AUTO(EspGetServiceSidString(&serviceItem->Name->sr)), L"N/A"));
+            serviceSidString = EspGetServiceSidString(&serviceItem->Name->sr);
+            notAvailableString = PhLoadUiString(
+                PluginInstance->DllBase,
+                IDS_ES_NOT_AVAILABLE,
+                NULL
+                );
+            notAvailableText = PhGetStringOrDefault(notAvailableString, L"N/A");
+            PhSetDialogItemText(
+                WindowHandle,
+                IDC_SERVICESID,
+                PhGetStringOrDefault(serviceSidString, notAvailableText)
+                );
+            PhClearReference(&serviceSidString);
+            PhClearReference(&notAvailableString);
 
             status = EspLoadOtherInfo(WindowHandle, context);
 

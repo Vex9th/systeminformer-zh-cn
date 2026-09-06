@@ -914,7 +914,10 @@
     "continue": "继续",
     "pause": "暂停",
     "stop": "停止",
-    "Unable to %s service \"%s\".": "无法%s服务“%s”。"
+    "Unable to %s service \"%s\".": "无法%s服务“%s”。",
+    "The trigger type \"%s\" does not allow data items to be configured.": "触发器类型“%s”不允许配置数据项。",
+    "Your computer is connected to the computer named %s. The %s service on %s has ended unexpectedly. %s will restart automatically, and then you can reestablish the connection.": "你的计算机已连接到名为 %s 的计算机。%s 服务在 %s 上意外终止。%s 将自动重启，随后你可以重新建立连接。",
+    "Commandline": "命令行"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
@@ -2617,7 +2620,6 @@
     "The section size is greater than 32 MB. Only the first 32 MB will be available.": "节大小超过 32 MB。仅前 32 MB 可用。",
     "The selected privilege has already been added.": "所选特权已添加。",
     "The thread does not appear to be waiting.": "该线程似乎未处于等待状态。",
-    "The trigger type \"%s\" does not allow data items to be configured.": "触发器类型“%s”不允许配置数据项。",
     "The update has been downloaded and installed.\r\n\r\nRestart System Informer to apply the update.": "更新已下载并安装。\r\n\r\n请重启 sys_info 以应用更新。",
     "The update has been successfully downloaded and verified.\r\n\r\nClick Install to continue.": "更新已成功下载并通过验证。\r\n\r\n单击“安装”以继续。",
     "The window property will be permanently deleted.": "该窗口属性将被永久删除。",

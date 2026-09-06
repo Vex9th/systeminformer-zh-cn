@@ -55,4 +55,8 @@ BEGIN
     IDS_UN_UNABLE_UPDATE_IFEO_IO_PRIORITY "无法更新 I/O 优先级对应的 IFEO 配置。"
     IDS_UN_UNABLE_UPDATE_IFEO_PAGE_PRIORITY "无法更新页面优先级对应的 IFEO 配置。"
     IDS_UN_UNABLE_UPDATE_IFEO_PRIORITY "无法更新优先级对应的 IFEO 配置。"
+    IDS_UN_DB_TYPE_FILE             "文件"
+    IDS_UN_DB_TYPE_SERVICE          "服务"
+    IDS_UN_DB_TYPE_COMMAND_LINE     "命令行"
+    IDS_UN_STATUS_TRUE              "真"
 END

@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2355] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and ", L" 和 ", },
@@ -1827,7 +1827,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2355] =
     { L"The service does not exist.", L"服务不存在。", },
     { L"The service has %lu failure actions configured, but this program only supports editing 3. If you save the recovery information using this program, the additional failure actions will be lost.", L"该服务配置了 %lu 个失败操作，但本程序仅支持编辑 3 个。如果使用本程序保存恢复信息，多出的失败操作将丢失。", },
     { L"The thread does not appear to be waiting.", L"该线程似乎未处于等待状态。", },
-    { L"The trigger type \"%s\" does not allow data items to be configured.", L"触发器类型“%s”不允许配置数据项。", },
     { L"The update has been downloaded and installed.\r\n\r\nRestart System Informer to apply the update.", L"更新已下载并安装。\r\n\r\n请重启 sys_info 以应用更新。", },
     { L"The update has been successfully downloaded and verified.\r\n\r\nClick Install to continue.", L"更新已成功下载并通过验证。\r\n\r\n单击“安装”以继续。", },
     { L"The value is outside the schema's supported values.", L"此值不在架构支持的取值范围内。", },

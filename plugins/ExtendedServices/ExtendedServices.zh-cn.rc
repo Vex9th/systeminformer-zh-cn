@@ -249,4 +249,8 @@ BEGIN
     IDS_ES_UNABLE_ENUMERATE_DEPENDENTS "无法枚举依赖此服务的服务：%s"
     IDS_ES_PNP_DEVICES_MESSAGE      "此服务已注册以下 PnP 设备："
     IDS_ES_PNP_UNSUPPORTED_MESSAGE  "此服务类型不支持 PnP 设备。"
+    IDS_ES_TRIGGER_DATA_NOT_ALLOWED_FORMAT "触发器类型“%s”不允许配置数据项。"
+    IDS_ES_DEFAULT_RESTART_MESSAGE_FORMAT "你的计算机已连接到名为 %s 的计算机。%s 服务在 %s 上意外终止。%s 将自动重启，随后你可以重新建立连接。"
+    IDS_ES_NOT_AVAILABLE            "不适用"
+    IDS_ES_COMPUTER_NAME_UNKNOWN    "（未知）"
 END

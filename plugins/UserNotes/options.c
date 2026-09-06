@@ -88,6 +88,21 @@ typedef struct _DB_ENUM_CONTEXT
     HWND ListViewHandle;
 } DB_ENUM_CONTEXT, *PDB_ENUM_CONTEXT;
 
+static VOID OptionsSetListViewResourceSubItem(
+    _In_ HWND ListViewHandle,
+    _In_ INT ItemIndex,
+    _In_ INT SubItemIndex,
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR DefaultText
+    )
+{
+    PPH_STRING text;
+
+    text = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+    PhSetListViewSubItem(ListViewHandle, ItemIndex, SubItemIndex, PhGetStringOrDefault(text, DefaultText));
+    PhClearReference(&text);
+}
+
 BOOLEAN OptionsEnumDbCallback(
     _In_ PDB_OBJECT Object,
     _In_ PDB_ENUM_CONTEXT Context
@@ -101,15 +116,15 @@ BOOLEAN OptionsEnumDbCallback(
 
     if (Object->Tag == FILE_TAG)
     {
-        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"File");
+        OptionsSetListViewResourceSubItem(Context->ListViewHandle, lvItemIndex, 1, IDS_UN_DB_TYPE_FILE, L"File");
     }
     else if (Object->Tag == SERVICE_TAG)
     {
-        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"Service");
+        OptionsSetListViewResourceSubItem(Context->ListViewHandle, lvItemIndex, 1, IDS_UN_DB_TYPE_SERVICE, L"Service");
     }
     else if (Object->Tag == COMMAND_LINE_TAG)
     {
-        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"Commandline");
+        OptionsSetListViewResourceSubItem(Context->ListViewHandle, lvItemIndex, 1, IDS_UN_DB_TYPE_COMMAND_LINE, L"Commandline");
     }
 
     PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, PhGetString(Object->Name));
@@ -135,7 +150,7 @@ BOOLEAN OptionsEnumDbCallback(
 
     if (Object->Collapse)
     {
-        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"True");
+        OptionsSetListViewResourceSubItem(Context->ListViewHandle, lvItemIndex, 7, IDS_UN_STATUS_TRUE, L"True");
     }
 
     if (Object->AffinityMask != 0)
@@ -152,7 +167,7 @@ BOOLEAN OptionsEnumDbCallback(
 
     if (Object->Efficiency)
     {
-        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 10, L"True");
+        OptionsSetListViewResourceSubItem(Context->ListViewHandle, lvItemIndex, 10, IDS_UN_STATUS_TRUE, L"True");
     }
 
     return TRUE;

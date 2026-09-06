@@ -1595,7 +1595,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1718 strings", result.stdout)
+        self.assertIn("1726 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -6261,7 +6261,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 {
                     (r"bin\Release64\sys_info.exe", 598): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
-                    (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
+                    (r"bin\Release64\plugins\ExtendedServices.dll", 70): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 230): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 98): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
@@ -6269,7 +6269,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\OnlineChecks.dll", 5): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 9): 2,
-                    (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
+                    (r"bin\Release64\plugins\UserNotes.dll", 19): 2,
                     (r"bin\Release64\peview.exe", 298): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,

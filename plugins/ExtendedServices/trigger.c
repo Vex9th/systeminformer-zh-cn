@@ -1705,15 +1705,31 @@ INT_PTR CALLBACK EspServiceTriggerDlgProc(
                         type != SERVICE_TRIGGER_TYPE_CUSTOM
                         )
                     {
+                        PPH_STRING warningFormat;
+                        PCWSTR warningFormatText;
+                        INT warningResult;
+
                         // This trigger has data items, but the trigger type doesn't allow them.
-                        if (PhShowMessage2(
+                        warningFormat = PhLoadUiString(
+                            PluginInstance->DllBase,
+                            IDS_ES_TRIGGER_DATA_NOT_ALLOWED_FORMAT,
+                            NULL
+                            );
+                        warningFormatText = PhGetStringOrDefault(warningFormat, L"The trigger type \"%s\" does not allow data items to be configured.");
+                        warningResult = PhShowMessage2(
                             WindowHandle,
                             TD_OK_BUTTON | TD_CANCEL_BUTTON,
                             TD_WARNING_ICON,
-                            PhaFormatString(L"The trigger type \"%s\" does not allow data items to be configured.", PhGetString(typeString))->Buffer,
+                            PhaFormatString(
+                                warningFormatText,
+                                PhGetString(typeString)
+                                )->Buffer,
                             L"%s",
                             PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ES_TRIGGER_DATA_REMOVAL_WARNING, NULL)))
-                            ) != IDOK)
+                            );
+                        PhClearReference(&warningFormat);
+
+                        if (warningResult != IDOK)
                         {
                             goto DoNotClose;
                         }

@@ -713,6 +713,10 @@ INT_PTR CALLBACK RestartComputerDlgProc(
             case IDC_USEDEFAULTMESSAGE:
                 {
                     PPH_STRING message;
+                    PPH_STRING messageFormat;
+                    PPH_STRING computerNameFallback = NULL;
+                    PCWSTR messageFormatText;
+                    PCWSTR computerNameFallbackText;
                     PWSTR computerName;
                     ULONG bufferSize;
                     BOOLEAN allocated = TRUE;
@@ -730,26 +734,45 @@ INT_PTR CALLBACK RestartComputerDlgProc(
                         if (!GetComputerName(computerName, &bufferSize))
                         {
                             PhFree(computerName);
-                            computerName = L"(unknown)";
+                            computerNameFallback = PhLoadUiString(
+                                PluginInstance->DllBase,
+                                IDS_ES_COMPUTER_NAME_UNKNOWN,
+                                NULL
+                                );
+                            computerNameFallbackText = PhGetStringOrDefault(computerNameFallback, L"(unknown)");
+                            computerName = (PWSTR)computerNameFallbackText;
                             allocated = FALSE;
                         }
                     }
 
                     // This message is exactly the same as the one in the Services console,
                     // except the double spaces are replaced by single spaces.
-                    message = PhaFormatString(
+                    messageFormat = PhLoadUiString(
+                        PluginInstance->DllBase,
+                        IDS_ES_DEFAULT_RESTART_MESSAGE_FORMAT,
+                        NULL
+                        );
+                    messageFormatText = PhGetStringOrDefault(
+                        messageFormat,
                         L"Your computer is connected to the computer named %s. "
                         L"The %s service on %s has ended unexpectedly. "
-                        L"%s will restart automatically, and then you can reestablish the connection.",
+                        L"%s will restart automatically, and then you can reestablish the connection."
+                        );
+                    message = PhFormatString(
+                        messageFormatText,
                         computerName,
                         context->ServiceItem->Name->Buffer,
                         computerName,
                         computerName
                         );
-                    PhSetDialogItemText(WindowHandle, IDC_RESTARTMESSAGE, message->Buffer);
+                    PhSetDialogItemText(WindowHandle, IDC_RESTARTMESSAGE, PhGetString(message));
+                    PhClearReference(&message);
+                    PhClearReference(&messageFormat);
 
                     if (allocated)
                         PhFree(computerName);
+
+                    PhClearReference(&computerNameFallback);
 
                     Button_SetCheck(GetDlgItem(WindowHandle, IDC_ENABLERESTARTMESSAGE), BST_CHECKED);
                 }

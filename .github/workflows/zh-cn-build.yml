@@ -157,14 +157,14 @@ jobs:
         python tools\zhcn\validate_templates.py @resourceTargets `
           --expect-string-count-in 'bin\Release64\sys_info.exe=598' `
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=89' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=66' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=70' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=230' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=98' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=22' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=5' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
           --expect-string-count-in 'bin\Release64\plugins\Updater.dll=9' `
-          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=15' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=19' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=111' `
           --expect-string-count-in 'bin\Release64\peview.exe=298'
 
@@ -320,14 +320,14 @@ jobs:
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
           --expect-string-count-in 'bin\Release64\sys_info.exe=598' `
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=89' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=66' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=70' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=230' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=98' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=22' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=5' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
           --expect-string-count-in 'bin\Release64\plugins\Updater.dll=9' `
-          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=15' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=19' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=111' `
           --expect-string-count-in 'bin\Release64\peview.exe=298' `
           --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=74' `

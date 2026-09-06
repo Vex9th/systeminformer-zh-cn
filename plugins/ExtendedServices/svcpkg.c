@@ -278,30 +278,41 @@ BOOLEAN EspUpdatePackageProperties(
     )
 {
     PPH_STRING string;
+    PPH_STRING notAvailableString;
+    PCWSTR notAvailableText;
+
+    notAvailableString = PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_ES_NOT_AVAILABLE,
+        NULL
+        );
+    notAvailableText = PhGetStringOrDefault(notAvailableString, L"N/A");
 
     string = PhGetServiceSharedDirectory(&Context->ServiceItem->Name->sr, SERVICE_DIRECTORY_TYPE_DATA);
-    PhSetDialogItemText(Context->WindowHandle, IDC_ISOLATEDSTATE, PhGetStringOrDefault(string, L"N/A"));
+    PhSetDialogItemText(Context->WindowHandle, IDC_ISOLATEDSTATE, PhGetStringOrDefault(string, notAvailableText));
     PhClearReference(&string);
 
     string = PhGetServiceSharedDirectory(&Context->ServiceItem->Name->sr, SERVICE_DIRECTORY_TYPE_SHAREDDATA);
-    PhSetDialogItemText(Context->WindowHandle, IDC_SHAREDSTATE, PhGetStringOrDefault(string, L"N/A"));
+    PhSetDialogItemText(Context->WindowHandle, IDC_SHAREDSTATE, PhGetStringOrDefault(string, notAvailableText));
     PhClearReference(&string);
 
     string = PhGetServiceSharedRegistryKey(&Context->ServiceItem->Name->sr, SERVICE_DIRECTORY_TYPE_DATA);
-    PhSetDialogItemText(Context->WindowHandle, IDC_REGISOLATED, PhGetStringOrDefault(string, L"N/A"));
+    PhSetDialogItemText(Context->WindowHandle, IDC_REGISOLATED, PhGetStringOrDefault(string, notAvailableText));
     PhClearReference(&string);
 
     string = PhGetServiceSharedRegistryKey(&Context->ServiceItem->Name->sr, SERVICE_DIRECTORY_TYPE_SHAREDDATA);
-    PhSetDialogItemText(Context->WindowHandle, IDC_REGSHARED, PhGetStringOrDefault(string, L"N/A"));
+    PhSetDialogItemText(Context->WindowHandle, IDC_REGSHARED, PhGetStringOrDefault(string, notAvailableText));
     PhClearReference(&string);
 
     string = EspGetServiceAppUserModelId(&Context->ServiceItem->Name->sr);
-    PhSetDialogItemText(Context->WindowHandle, IDC_AUMID, PhGetStringOrDefault(string, L"N/A"));
+    PhSetDialogItemText(Context->WindowHandle, IDC_AUMID, PhGetStringOrDefault(string, notAvailableText));
     PhClearReference(&string);
 
     string = EspGetServicePackageFullName(&Context->ServiceItem->Name->sr);
-    PhSetDialogItemText(Context->WindowHandle, IDC_PACKAGENAME, PhGetStringOrDefault(string, L"N/A"));
+    PhSetDialogItemText(Context->WindowHandle, IDC_PACKAGENAME, PhGetStringOrDefault(string, notAvailableText));
     PhClearReference(&string);
+
+    PhClearReference(&notAvailableString);
 
     return TRUE;
 }
