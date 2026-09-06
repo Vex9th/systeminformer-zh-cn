@@ -970,12 +970,14 @@
     "Continuing a service might prevent the system from functioning properly.": "继续运行服务可能导致系统无法正常运行。",
     "Pausing a service might prevent the system from functioning properly.": "暂停服务可能导致系统无法正常运行。",
     "Stopping a service might prevent the system from functioning properly.": "停止服务可能导致系统无法正常运行。",
-    "Restarting a service might prevent the system from functioning properly.": "重启服务可能导致系统无法正常运行。"
+    "Restarting a service might prevent the system from functioning properly.": "重启服务可能导致系统无法正常运行。",
+    "%s and %s": "%s 和 %s",
+    "%s and its descendants": "%s 及其子进程",
+    "change the execution required state": "更改“需要执行”状态",
+    "change the execution required state of %s": "更改 %s 的“需要执行”状态"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
-    " and ": " 和 ",
-    " and its descendants": "及其子进程",
     "100000": "100000",
     "&About": "关于(&A)",
     "&Above normal": "高于正常(&A)",
@@ -3008,7 +3010,6 @@
     "Zeroed": "清零",
     "Zombie Processes": "僵尸进程",
     "a module": "模块",
-    "change the execution required state": "更改执行必需状态",
     "close": "关闭",
     "critical handle(s)": "关键句柄",
     "critical process handle(s)": "关键进程的句柄",
@@ -3028,7 +3029,6 @@
     "milliseconds": "毫秒",
     "minutes": "分钟",
     "not connected": "未连接",
-    "of ": "的",
     "process memory": "进程内存",
     "remove": "移除",
     "restart": "重启",

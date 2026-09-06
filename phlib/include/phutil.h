@@ -512,6 +512,16 @@ PhShowConfirmMessageRawObject(
     _In_opt_ PCWSTR Message,
     _In_ BOOLEAN Warning
     );
+
+BOOLEAN
+NTAPI
+PhShowConfirmMessageRawAction(
+    _In_ HWND WindowHandle,
+    _In_ PCWSTR Verb,
+    _In_ PCWSTR Action,
+    _In_opt_ PCWSTR Message,
+    _In_ BOOLEAN Warning
+    );
 #endif
 
 /**

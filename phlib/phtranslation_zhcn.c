@@ -11,11 +11,9 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2348] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2344] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
-    { L" and ", L" 和 ", },
-    { L" and its descendants", L"及其子进程", },
     { L"\"%s\" at position %zu.", L"“%s”，位置 %zu。", },
     { L"\"%s\" is not one of the supported values (%s).\r\nThe value was applied anyway.", L"\"%s\" 不是受支持的值之一（%s）。\r\n仍已应用该值。", },
     { L"%s\n%s", L"%s\n详细信息：%s", },
@@ -2287,7 +2285,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2348] =
     { L"Zombie Processes", L"僵尸进程", },
     { L"a module", L"模块", },
     { L"change boost priority", L"更改提升优先级", },
-    { L"change the execution required state", L"更改执行必需状态", },
     { L"close", L"关闭", },
     { L"create execution required state", L"创建“需要执行”状态", },
     { L"critical handle(s)", L"关键句柄", },
@@ -2313,7 +2310,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2348] =
     { L"milliseconds", L"毫秒", },
     { L"minutes", L"分钟", },
     { L"not connected", L"未连接", },
-    { L"of ", L"的", },
     { L"privilege", L"特权", },
     { L"process memory", L"进程内存", },
     { L"reduce the working set", L"缩减工作集", },

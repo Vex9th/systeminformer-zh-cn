@@ -2,6 +2,7 @@ import importlib.util
 import json
 import pathlib
 import re
+import tempfile
 import unittest
 
 
@@ -75,6 +76,9 @@ class ConfirmRawObjectTests(unittest.TestCase):
         sink = function_body(self.util, "PhpShowConfirmMessage", self.audit)
         legacy = function_body(self.util, "PhShowConfirmMessage", self.audit)
         raw = function_body(self.util, "PhShowConfirmMessageRawObject", self.audit)
+        raw_action = function_body(
+            self.util, "PhShowConfirmMessageRawAction", self.audit
+        )
 
         self.assertEqual(sink.count("PhTranslateString(Object)"), 1)
         self.assertRegex(
@@ -83,13 +87,18 @@ class ConfirmRawObjectTests(unittest.TestCase):
         )
         self.assertRegex(
             legacy,
-            r"PhpShowConfirmMessage\s*\([^;]*Object[^;]*TRUE\s*\)",
+            r"PhpShowConfirmMessage\s*\([^;]*Object\s*,\s*NULL[^;]*TRUE\s*\)",
         )
         self.assertRegex(
             raw,
-            r"PhpShowConfirmMessage\s*\([^;]*Object[^;]*FALSE\s*\)",
+            r"PhpShowConfirmMessage\s*\([^;]*Object\s*,\s*NULL[^;]*FALSE\s*\)",
         )
         self.assertNotIn("PhTranslateString", raw)
+        self.assertRegex(
+            raw_action,
+            r"PhpShowConfirmMessage\s*\([^;]*NULL\s*,\s*Action[^;]*FALSE\s*\)",
+        )
+        self.assertNotIn("PhTranslateString", raw_action)
 
         translations = {"System": "系统"}
         legacy_translates_object = compact(legacy).endswith("TRUE);")
@@ -132,6 +141,19 @@ class ConfirmRawObjectTests(unittest.TestCase):
                 r"\s*_In_ PCWSTR Verb,"
                 r"\s*_In_ PCWSTR Object,"
                 r"\s*_In_opt_ PCWSTR Message,"
+                r"\s*_In_ BOOLEAN Warning\s*\)\s*;",
+                re.DOTALL,
+            ),
+        )
+        self.assertRegex(
+            self.header,
+            re.compile(
+                r"#if defined\(_PHLIB_\).*?"
+                r"PhShowConfirmMessageRawAction\s*\("
+                r"\s*_In_ HWND WindowHandle,"
+                r"\s*_In_ PCWSTR Verb,"
+                r"\s*_In_ PCWSTR Action,"
+                r"\s*_In_opt_ PCWSTR Message,"
                 r"\s*_In_ BOOLEAN Warning\s*\)\s*;\s+#endif",
                 re.DOTALL,
             ),
@@ -141,6 +163,7 @@ class ConfirmRawObjectTests(unittest.TestCase):
             r"PHLIBAPI\s+BOOLEAN\s+NTAPI\s+PhShowConfirmMessageRawObject",
         )
         self.assertNotIn("PhShowConfirmMessageRawObject", self.exports)
+        self.assertNotIn("PhShowConfirmMessageRawAction", self.exports)
 
     def test_raw_api_keeps_translatable_arguments_in_the_audit(self) -> None:
         self.assertEqual(
@@ -150,6 +173,10 @@ class ConfirmRawObjectTests(unittest.TestCase):
         self.assertEqual(
             self.audit.CALL_SPECS.get("PhpShowConfirmMessageObject"),
             {1: "c_confirm", 3: "c_confirm"},
+        )
+        self.assertEqual(
+            self.audit.CALL_SPECS.get("PhShowConfirmMessageRawAction"),
+            {1: "c_confirm", 2: "c_confirm", 3: "c_confirm"},
         )
 
         action_entries = []
@@ -195,12 +222,40 @@ class ConfirmRawObjectTests(unittest.TestCase):
             "IDS_PH_CRITICAL_PROCESS_TERMINATE_WARNING_FORMAT",
         ):
             self.assertIn(
-                f"PhGetApplicationUiString({resource_id}),PhTranslateString(Verb)",
+                f"PhGetApplicationUiString({resource_id}),verb",
                 helper,
             )
         self.assertEqual(helper.count("rawObject"), 7)
 
-    def test_two_process_connector_has_a_real_runtime_translation(self) -> None:
+    def test_raw_action_audit_includes_the_complete_action_argument(self) -> None:
+        source = r'''
+        void Show(void)
+        {
+            PhShowConfirmMessageRawAction(
+                NULL,
+                L"delete",
+                L"delete the selected file",
+                L"This cannot be undone.",
+                FALSE
+                );
+        }
+        '''
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            path = pathlib.Path(temporary_directory) / "raw_action.c"
+            path.write_text(source, encoding="utf-8")
+            entries = []
+            self.audit.scan_c_file(str(path), entries)
+
+        self.assertEqual(
+            [
+                entry["english"]
+                for entry in entries
+                if entry["category"] == "c_confirm"
+            ],
+            ["delete", "delete the selected file", "This cannot be undone."],
+        )
+
+    def test_two_process_connector_uses_a_complete_native_format(self) -> None:
         translations = json.loads(
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
                 encoding="utf-8"
@@ -210,23 +265,158 @@ class ConfirmRawObjectTests(unittest.TestCase):
             encoding="utf-8-sig"
         )
 
-        self.assertEqual(translations["strings"].get(" and "), " 和 ")
-        self.assertNotIn(" and ", translations["native_strings"])
-        self.assertIn('{ L" and ", L" 和 ", },', generated)
+        self.assertEqual(translations["native_strings"].get("%s and %s"), "%s 和 %s")
+        self.assertNotIn(" and ", translations["strings"])
+        self.assertNotIn('{ L" and ", L" 和 ", },', generated)
+
+    def test_actions_use_native_formats_without_undeclared_translation_calls(self) -> None:
+        masked_actions = self.audit.mask_c_comments(self.actions)
+        self.assertNotIn("PhTranslateString(", masked_actions)
+
+        header = (REPO_ROOT / "SystemInformer" / "resource.h").read_text(
+            encoding="utf-8-sig"
+        )
+        english_rc = (
+            REPO_ROOT / "SystemInformer" / "SystemInformer.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_rc = (
+            REPO_ROOT / "SystemInformer" / "SystemInformer.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        resources = (
+            ("IDS_PH_PROCESS_PAIR_FORMAT", 2663, "%s and %s", "%s 和 %s"),
+            (
+                "IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT",
+                2664,
+                "%s and its descendants",
+                "%s 及其子进程",
+            ),
+            (
+                "IDS_PH_ACTION_CHANGE_EXECUTION_REQUIRED",
+                2665,
+                "change the execution required state",
+                "更改“需要执行”状态",
+            ),
+            (
+                "IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT",
+                2666,
+                "change the execution required state of %s",
+                "更改 %s 的“需要执行”状态",
+            ),
+        )
+        for symbol, resource_id, english, chinese in resources:
+            with self.subTest(symbol=symbol):
+                self.assertRegex(
+                    header, rf"(?m)^#define\s+{symbol}\s+{resource_id}$"
+                )
+                self.assertRegex(
+                    english_rc,
+                    rf'(?m)^\s*{symbol}\s+"{re.escape(english)}"$',
+                )
+                self.assertRegex(
+                    chinese_rc,
+                    rf'(?m)^\s*{symbol}\s+"{re.escape(chinese)}"$',
+                )
+
+        translations = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected_native = {
+            "%s and %s": "%s 和 %s",
+            "%s and its descendants": "%s 及其子进程",
+            "change the execution required state": "更改“需要执行”状态",
+            "change the execution required state of %s": "更改 %s 的“需要执行”状态",
+        }
+        for english, chinese in expected_native.items():
+            with self.subTest(english=english):
+                self.assertEqual(translations["native_strings"].get(english), chinese)
+                self.assertNotIn(english, translations["strings"])
+
+        for retired_fragment in (" and ", " and its descendants", "of "):
+            self.assertNotIn(retired_fragment, translations["strings"])
+
+        execution_required = compact(
+            function_body(
+                self.actions, "PhUiSetExecutionRequiredProcess", self.audit
+            )
+        )
+        self.assertIn(
+            "PhShowConfirmMessageRawAction(WindowHandle,"
+            "PhGetApplicationUiString(IDS_PH_ACTION_CHANGE_EXECUTION_REQUIRED),"
+            "PhaFormatString(PhGetApplicationUiString("
+            "IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT),"
+            "Process->ProcessName->Buffer)->Buffer",
+            execution_required,
+        )
+        self.assertEqual(
+            self.audit.CALL_SPECS.get("PhShowConfirmMessageRawAction"),
+            {1: "c_confirm", 2: "c_confirm", 3: "c_confirm"},
+        )
+        self.assertIn("PhShowConfirmMessageRawAction", self.header)
+        self.assertNotIn("PhShowConfirmMessageRawAction", self.exports)
+
+    def assert_process_action_id_routes(self, source: str) -> None:
+        expected = {
+            "PhUiTerminateProcesses": "IDS_PH_ACTION_TERMINATE",
+            "PhUiSuspendProcesses": "IDS_PH_ACTION_SUSPEND",
+            "PhUiResumeProcesses": "IDS_PH_ACTION_RESUME",
+        }
+        for function, action_id in expected.items():
+            calls = self.calls_in(
+                source, function, "PhpShowContinueMessageProcesses"
+            )
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(calls[0][1], action_id)
+
+    def test_process_action_ids_match_their_callers(self) -> None:
+        self.assert_process_action_id_routes(self.actions)
+
+    def test_process_action_id_contract_rejects_swapped_routes(self) -> None:
+        mutated = self.actions.replace(
+            "WindowHandle,\n        IDS_PH_ACTION_TERMINATE,\n        L\"Terminating",
+            "WindowHandle,\n        IDS_PH_ACTION_SUSPEND,\n        L\"Terminating",
+            1,
+        ).replace(
+            "WindowHandle,\n        IDS_PH_ACTION_SUSPEND,\n        NULL,",
+            "WindowHandle,\n        IDS_PH_ACTION_TERMINATE,\n        NULL,",
+            1,
+        )
+        self.assertNotEqual(mutated, self.actions)
+        with self.assertRaises(AssertionError):
+            self.assert_process_action_id_routes(mutated)
+
+    def test_raw_action_branch_never_reads_null_object_or_releases_early(self) -> None:
+        sink = function_body(self.util, "PhpShowConfirmMessage", self.audit)
+        match = re.search(
+            r"if\s*\(RawAction\)\s*\{(?P<raw>.*?)\}\s*else\s*\{",
+            sink,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(match)
+        raw_branch = match.group("raw")
+        self.assertIn("action = PhaCreateString(RawAction)", raw_branch)
+        self.assertNotIn("Object", raw_branch)
+        self.assertNotIn("PhDereferenceObject(action)", sink)
+
+        create_index = sink.index("action = PhaCreateString(RawAction)")
+        task_dialog_index = sink.index("PhShowTaskDialog(")
+        fallback_index = sink.index("PhShowMessage(")
+        self.assertLess(create_index, task_dialog_index)
+        self.assertLess(task_dialog_index, fallback_index)
 
     def test_all_confirmed_dynamic_objects_use_raw_route(self) -> None:
-        dynamic_functions = (
+        raw_object_functions = (
             "PhUiTerminateTreeProcess",
             "PhUiSuspendTreeProcess",
             "PhUiResumeTreeProcess",
             "PhUiFreezeTreeProcess",
             "PhUiRestartProcess",
-            "PhUiSetExecutionRequiredProcess",
             "PhUiDeleteService",
             "PhUiUnloadModule",
         )
 
-        for function in dynamic_functions:
+        for function in raw_object_functions:
             with self.subTest(function=function):
                 self.assertEqual(
                     len(
@@ -240,6 +430,17 @@ class ConfirmRawObjectTests(unittest.TestCase):
                     len(self.calls_in(self.actions, function, "PhShowConfirmMessage")),
                     0,
                 )
+
+        self.assertEqual(
+            len(
+                self.calls_in(
+                    self.actions,
+                    "PhUiSetExecutionRequiredProcess",
+                    "PhShowConfirmMessageRawAction",
+                )
+            ),
+            1,
+        )
 
         chooser = function_body(
             self.actions, "PhpShowConfirmMessageObject", self.audit
@@ -269,15 +470,20 @@ class ConfirmRawObjectTests(unittest.TestCase):
             3,
         )
         masked_actions = self.audit.mask_c_comments(self.actions)
-        self.assertEqual(masked_actions.count("PhShowConfirmMessageRawObject("), 9)
+        self.assertEqual(masked_actions.count("PhShowConfirmMessageRawObject("), 8)
+        self.assertEqual(masked_actions.count("PhShowConfirmMessageRawAction("), 1)
 
-    def test_dynamic_object_fragments_are_translated_before_raw_composition(self) -> None:
+    def test_dynamic_object_formats_are_localizable_as_complete_phrases(self) -> None:
         process_helper = compact(
             function_body(
                 self.actions, "PhpShowContinueMessageProcesses", self.audit
             )
         )
-        self.assertIn('PhTranslateString(L"and")', process_helper)
+        self.assertIn(
+            "PhaFormatString(PhGetApplicationUiString(IDS_PH_PROCESS_PAIR_FORMAT),"
+            "Processes[0]->ProcessName->Buffer,Processes[1]->ProcessName->Buffer)",
+            process_helper,
+        )
 
         for function in (
             "PhUiTerminateTreeProcess",
@@ -287,11 +493,12 @@ class ConfirmRawObjectTests(unittest.TestCase):
             with self.subTest(function=function):
                 body = compact(function_body(self.actions, function, self.audit))
                 self.assertIn(
-                    'PhaConcatStrings2(Process->ProcessName->Buffer,'
-                    'PhTranslateString(L"anditsdescendants"))->Buffer',
+                    "PhaFormatString(PhGetApplicationUiString("
+                    "IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT),"
+                    "Process->ProcessName->Buffer)->Buffer",
                     body,
                 )
-                self.assertNotIn("PhConcatStringRefZ", body)
+                self.assertNotIn("PhaConcatStrings2", body)
 
         execution_required = compact(
             function_body(
@@ -299,7 +506,8 @@ class ConfirmRawObjectTests(unittest.TestCase):
             )
         )
         self.assertIn(
-            'PhaConcatStrings2(PhTranslateString(L"of"),'
+            "PhaFormatString(PhGetApplicationUiString("
+            "IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT),"
             "Process->ProcessName->Buffer)->Buffer",
             execution_required,
         )

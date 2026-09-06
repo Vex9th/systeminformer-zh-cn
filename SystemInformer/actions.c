@@ -1612,7 +1612,7 @@ static BOOLEAN PhpShowConfirmMessageObject(
  * Checks if the user wants to proceed with an operation.
  *
  * \param WindowHandle A handle to the parent window.
- * \param Verb A verb describing the action.
+ * \param VerbId The resource identifier for the action.
  * \param Message A message containing additional information
  * about the action.
  * \param WarnOnlyIfDangerous TRUE to skip the confirmation
@@ -1625,7 +1625,7 @@ static BOOLEAN PhpShowConfirmMessageObject(
  */
 static BOOLEAN PhpShowContinueMessageProcesses(
     _In_ HWND WindowHandle,
-    _In_ PCWSTR Verb,
+    _In_ ULONG VerbId,
     _In_opt_ PCWSTR Message,
     _In_ BOOLEAN WarnOnlyIfDangerous,
     _In_ PPH_PROCESS_ITEM *Processes,
@@ -1638,6 +1638,7 @@ static BOOLEAN PhpShowContinueMessageProcesses(
     BOOLEAN dangerous = FALSE;
     BOOLEAN cont = FALSE;
     BOOLEAN rawObject;
+    PCWSTR verb;
 
     if (NumberOfProcesses == 0)
         return FALSE;
@@ -1671,6 +1672,8 @@ static BOOLEAN PhpShowContinueMessageProcesses(
     if (WarnOnlyIfDangerous && !dangerous)
         return TRUE;
 
+    verb = PhGetApplicationUiString(VerbId);
+
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
         if (NumberOfProcesses == 1)
@@ -1680,10 +1683,9 @@ static BOOLEAN PhpShowContinueMessageProcesses(
         }
         else if (NumberOfProcesses == 2)
         {
-            object = PhaConcatStrings(
-                3,
+            object = PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_PROCESS_PAIR_FORMAT),
                 Processes[0]->ProcessName->Buffer,
-                PhTranslateString(L" and "),
                 Processes[1]->ProcessName->Buffer
                 )->Buffer;
             rawObject = TRUE;
@@ -1698,7 +1700,7 @@ static BOOLEAN PhpShowContinueMessageProcesses(
         {
             cont = PhpShowConfirmMessageObject(
                 WindowHandle,
-                Verb,
+                verb,
                 object,
                 Message,
                 FALSE,
@@ -1709,11 +1711,11 @@ static BOOLEAN PhpShowContinueMessageProcesses(
         {
             cont = PhpShowConfirmMessageObject(
                 WindowHandle,
-                Verb,
+                verb,
                 object,
                 PhaFormatString(
                 PhGetApplicationUiString(IDS_PH_SYSTEM_PROCESS_ACTION_WARNING_FORMAT),
-                PhTranslateString(Verb)
+                verb
                 )->Buffer,
                 TRUE,
                 rawObject
@@ -1723,24 +1725,24 @@ static BOOLEAN PhpShowContinueMessageProcesses(
         {
             PPH_STRING message;
 
-            if (PhEqualStringZ(Verb, L"terminate", FALSE))
+            if (VerbId == IDS_PH_ACTION_TERMINATE)
             {
                 message = PhaFormatString(
                     PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_TERMINATE_WARNING_FORMAT),
-                    PhTranslateString(Verb)
+                    verb
                     );
             }
             else
             {
                 message = PhaFormatString(
                     PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_ACTION_WARNING_FORMAT),
-                    PhTranslateString(Verb)
+                    verb
                     );
             }
 
             cont = PhpShowConfirmMessageObject(
                 WindowHandle,
-                Verb,
+                verb,
                 object,
                 message->Buffer,
                 TRUE,
@@ -1823,7 +1825,7 @@ BOOLEAN PhUiTerminateProcesses(
 
     if (!PhpShowContinueMessageProcesses(
         WindowHandle,
-        L"terminate",
+        IDS_PH_ACTION_TERMINATE,
         L"Terminating a process will cause unsaved data to be lost.",
         FALSE,
         Processes,
@@ -2001,8 +2003,11 @@ BOOLEAN PhUiTerminateTreeProcess(
     {
         cont = PhShowConfirmMessageRawObject(
             WindowHandle,
-            L"terminate",
-            PhaConcatStrings2(Process->ProcessName->Buffer, PhTranslateString(L" and its descendants"))->Buffer,
+            PhGetApplicationUiString(IDS_PH_ACTION_TERMINATE),
+            PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT),
+                Process->ProcessName->Buffer
+                )->Buffer,
             L"Terminating a process tree will cause the process and its descendants to be terminated.",
             FALSE
             );
@@ -2047,7 +2052,7 @@ BOOLEAN PhUiSuspendProcesses(
 
     if (!PhpShowContinueMessageProcesses(
         WindowHandle,
-        L"suspend",
+        IDS_PH_ACTION_SUSPEND,
         NULL,
         TRUE,
         Processes,
@@ -2222,8 +2227,11 @@ BOOLEAN PhUiSuspendTreeProcess(
     {
         result = PhShowConfirmMessageRawObject(
             WindowHandle,
-            L"suspend",
-            PhaConcatStrings2(Process->ProcessName->Buffer, PhTranslateString(L" and its descendants"))->Buffer,
+            PhGetApplicationUiString(IDS_PH_ACTION_SUSPEND),
+            PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT),
+                Process->ProcessName->Buffer
+                )->Buffer,
             L"Suspending a process tree will cause the process and its descendants to be suspended.",
             FALSE
             );
@@ -2268,7 +2276,7 @@ BOOLEAN PhUiResumeProcesses(
 
     if (!PhpShowContinueMessageProcesses(
         WindowHandle,
-        L"resume",
+        IDS_PH_ACTION_RESUME,
         NULL,
         TRUE,
         Processes,
@@ -2443,8 +2451,11 @@ BOOLEAN PhUiResumeTreeProcess(
     {
         result = PhShowConfirmMessageRawObject(
             WindowHandle,
-            L"resume",
-            PhaConcatStrings2(Process->ProcessName->Buffer, PhTranslateString(L" and its descendants"))->Buffer,
+            PhGetApplicationUiString(IDS_PH_ACTION_RESUME),
+            PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT),
+                Process->ProcessName->Buffer
+                )->Buffer,
             L"Resuming a process tree will cause the process and its descendants to be resumed.",
             FALSE
             );
@@ -3745,10 +3756,13 @@ BOOLEAN PhUiSetExecutionRequiredProcess(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        if (!PhShowConfirmMessageRawObject(
+        if (!PhShowConfirmMessageRawAction(
             WindowHandle,
-            L"change the execution required state",
-            PhaConcatStrings2(PhTranslateString(L"of "), Process->ProcessName->Buffer)->Buffer,
+            PhGetApplicationUiString(IDS_PH_ACTION_CHANGE_EXECUTION_REQUIRED),
+            PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT),
+                Process->ProcessName->Buffer
+                )->Buffer,
             L"The process continues to run instead of being suspended or terminated by process lifetime management (PLM).",
             FALSE
             ))

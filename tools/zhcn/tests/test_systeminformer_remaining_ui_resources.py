@@ -182,13 +182,13 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
             r"(?m)^#define\s+IDS_PH_[A-Z0-9_]+\s+(\d+)\s*$",
             header + "\n" + app_header,
         ))
-        self.assertEqual(numeric_ids, list(range(2000, 2663)))
-        self.assertEqual(len(english), 663)
-        self.assertEqual(len(chinese), 663)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_SECTION_RESERVE$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2663$")
+        self.assertEqual(numeric_ids, list(range(2000, 2667)))
+        self.assertEqual(len(english), 667)
+        self.assertEqual(len(chinese), 667)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2667$")
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=663"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=667"), 2)
         self.assertNotIn("sys_info.exe=597", workflow)
 
     def test_fixed_window_text_routes_use_borrowed_or_owned_resources_correctly(self) -> None:
@@ -373,9 +373,12 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
             r"case\s+PH_POWERACTION_TYPE_CRITICAL:.*?messageText\s*=\s*PhGetApplicationUiString\(IDS_PH_CRITICAL_SHUTDOWN_WARNING\)",
             re.S,
         ))
-        self.assertIn("PhGetApplicationUiString(IDS_PH_SYSTEM_PROCESS_ACTION_WARNING_FORMAT),\n                PhTranslateString(Verb)", process)
-        self.assertIn("PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_TERMINATE_WARNING_FORMAT),\n                    PhTranslateString(Verb)", process)
-        self.assertIn("PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_ACTION_WARNING_FORMAT),\n                    PhTranslateString(Verb)", process)
+        self.assertRegex(process, r"\bPCWSTR\s+verb\s*;")
+        self.assertIn("verb = PhGetApplicationUiString(VerbId)", process)
+        self.assertIn("PhGetApplicationUiString(IDS_PH_SYSTEM_PROCESS_ACTION_WARNING_FORMAT),\n                verb", process)
+        self.assertIn("PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_TERMINATE_WARNING_FORMAT),\n                    verb", process)
+        self.assertIn("PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_ACTION_WARNING_FORMAT),\n                    verb", process)
+        self.assertIn("VerbId == IDS_PH_ACTION_TERMINATE", process)
 
     def test_power_and_dangerous_process_branches_use_complete_semantic_resources(self) -> None:
         self.assert_action_route_contract(self.sources["actions.c"])
@@ -384,7 +387,8 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
         source = self.sources["actions.c"]
         for mutated in (
             source.replace("IDS_PH_NATIVE_RESTART_WARNING", "IDS_PH_CRITICAL_RESTART_WARNING", 1),
-            source.replace("PhTranslateString(Verb)", "Verb", 1),
+            source.replace("verb = PhGetApplicationUiString(VerbId)", "verb = L\"terminate\"", 1),
+            source.replace("VerbId == IDS_PH_ACTION_TERMINATE", "VerbId == IDS_PH_ACTION_RESUME", 1),
         ):
             with self.assertRaises(AssertionError):
                 self.assert_action_route_contract(mutated)
@@ -493,10 +497,12 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
         self.assertEqual(window_text, Counter({r"\u221E": 1, "password": 1}))
         self.assertEqual(runtime_composed, Counter({
             " (APP_CONTAINER)": 1,
+            "N/A": 1,
+            "System-managed activity moderation settings are automatically removed by Windows when the executable is deleted or was last executed more than 7 days ago.\r\n\r\nImage: %s\r\nUpdated: %s": 1,
             "%lu: %s\\%s": 1,
             "%s (%u)": 1,
             "%s (%u) (0x%Ix - 0x%Ix)": 1,
-            "%s ago (%s)": 2,
+            "%s ago (%s)": 3,
             "%ux%u@%u": 1,
             "0x%x: %s": 6,
         }))

@@ -340,6 +340,11 @@ CALL_SPECS = {
     "PhShowMessageOneTime2": {3: "c_msgbox", 5: "c_msgbox"},
     "PhShowConfirmMessage": {1: "c_confirm", 2: "c_confirm", 3: "c_confirm"},
     "PhShowConfirmMessageRawObject": {1: "c_confirm", 3: "c_confirm"},
+    "PhShowConfirmMessageRawAction": {
+        1: "c_confirm",
+        2: "c_confirm",
+        3: "c_confirm",
+    },
     "PhpShowConfirmMessageObject": {1: "c_confirm", 3: "c_confirm"},
     "PhAddListViewItem": {2: "c_listview_item"},
     "PhAddIListViewItem": {2: "c_listview_item"},

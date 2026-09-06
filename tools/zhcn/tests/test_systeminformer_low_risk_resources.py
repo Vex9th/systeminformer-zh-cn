@@ -125,10 +125,10 @@ class SystemInformerLowRiskResourceTests(unittest.TestCase):
                 self.assertEqual(translations[table].get(english), chinese)
                 self.assertNotIn(english, translations[other_table])
 
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_SECTION_RESERVE$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2663$")
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_PH_[A-Z0-9_]+\s+"', english_rc)), 663)
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_PH_[A-Z0-9_]+\s+"', chinese_rc)), 663)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2667$")
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_PH_[A-Z0-9_]+\s+"', english_rc)), 667)
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_PH_[A-Z0-9_]+\s+"', chinese_rc)), 667)
 
     def test_each_callsite_uses_the_exact_resource(self) -> None:
         for resource_id, file_counts in RESOURCE_USES.items():

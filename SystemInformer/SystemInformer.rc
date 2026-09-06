@@ -3261,6 +3261,10 @@ BEGIN
     IDS_PH_HANDLE_SECTION_COMMIT                        "Commit"
     IDS_PH_HANDLE_SECTION_IMAGE                         "Image"
     IDS_PH_HANDLE_SECTION_RESERVE                       "Reserve"
+    IDS_PH_PROCESS_PAIR_FORMAT                          "%s and %s"
+    IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT               "%s and its descendants"
+    IDS_PH_ACTION_CHANGE_EXECUTION_REQUIRED             "change the execution required state"
+    IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT             "change the execution required state of %s"
 END
 
 /////////////////////////////////////////////////////////////////////////////

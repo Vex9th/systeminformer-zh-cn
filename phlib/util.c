@@ -1609,6 +1609,7 @@ BOOLEAN PhShowContinueStatus(
  * \param WindowHandle The owner window of the message box.
  * \param Verb A verb describing the operation, e.g. "terminate".
  * \param Object The object of the operation, e.g. "the process".
+ * \param RawAction A complete preformatted action, or NULL to join Verb and Object.
  * \param Message A message describing the operation.
  * \param Warning TRUE to display the confirmation message as a warning, otherwise FALSE.
  * \param TranslateObject TRUE to translate Object, otherwise use it verbatim.
@@ -1617,7 +1618,8 @@ BOOLEAN PhShowContinueStatus(
 static BOOLEAN PhpShowConfirmMessage(
     _In_ HWND WindowHandle,
     _In_ PCWSTR Verb,
-    _In_ PCWSTR Object,
+    _In_opt_ PCWSTR Object,
+    _In_opt_ PCWSTR RawAction,
     _In_opt_ PCWSTR Message,
     _In_ BOOLEAN Warning,
     _In_ BOOLEAN TranslateObject
@@ -1637,12 +1639,19 @@ static BOOLEAN PhpShowConfirmMessage(
 
     // "terminate", "the process" -> "terminate the process"; the Chinese
     // translation joins the phrases without a separating space.
-    object = TranslateObject ? PhTranslateString(Object) : Object;
-
-    if (PhTranslationEnabled)
-        action = PhaConcatStrings(2, verb->Buffer, object);
+    if (RawAction)
+    {
+        action = PhaCreateString(RawAction);
+    }
     else
-        action = PhaConcatStrings(3, verb->Buffer, L" ", object);
+    {
+        object = TranslateObject ? PhTranslateString(Object) : Object;
+
+        if (PhTranslationEnabled)
+            action = PhaConcatStrings(2, verb->Buffer, object);
+        else
+            action = PhaConcatStrings(3, verb->Buffer, L" ", object);
+    }
 
     {
         ULONG button;
@@ -1705,6 +1714,7 @@ BOOLEAN PhShowConfirmMessage(
         WindowHandle,
         Verb,
         Object,
+        NULL,
         Message,
         Warning,
         TRUE
@@ -1723,6 +1733,26 @@ BOOLEAN PhShowConfirmMessageRawObject(
         WindowHandle,
         Verb,
         Object,
+        NULL,
+        Message,
+        Warning,
+        FALSE
+        );
+}
+
+BOOLEAN PhShowConfirmMessageRawAction(
+    _In_ HWND WindowHandle,
+    _In_ PCWSTR Verb,
+    _In_ PCWSTR Action,
+    _In_opt_ PCWSTR Message,
+    _In_ BOOLEAN Warning
+    )
+{
+    return PhpShowConfirmMessage(
+        WindowHandle,
+        Verb,
+        NULL,
+        Action,
         Message,
         Warning,
         FALSE
