@@ -186,11 +186,14 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
         ):
             self.assertIn(resource_id, source)
 
-        # These are compatibility funnels for callers that still provide display text.
+        # Generic format/title funnels remain, but confirmation arguments are native
+        # resources or already-formatted dynamic text and must not hit the dictionary.
         self.assertIn("PhFormatString_V(PhTranslateString(Format), argptr)", source)
         self.assertIn("Config->pszWindowTitle = PhTranslateString(Config->pszWindowTitle)", source)
-        self.assertIn("PhTranslateString(Verb)", source)
-        self.assertIn("TranslateObject ? PhTranslateString(Object) : Object", source)
+        self.assertNotIn("PhTranslateString(Verb)", source)
+        self.assertNotIn("PhTranslateString(Object)", source)
+        self.assertNotIn("PhTranslateString(Message)", source)
+        self.assertNotIn("TranslateObject", source)
 
         entries = []
         self.audit.scan_c_file(str(REPO_ROOT / "phlib" / "util.c"), entries)
@@ -198,10 +201,7 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
             entry for entry in entries
             if entry["category"] in {"c_msgbox", "c_taskdialog"}
         ]
-        self.assertEqual(
-            [(entry["category"], entry["english"]) for entry in runtime],
-            [("c_msgbox", "The location could not be found.")],
-        )
+        self.assertEqual([], runtime)
         self.assertEqual(
             [entry for entry in entries if entry["category"] == "phlib_internal"],
             [],

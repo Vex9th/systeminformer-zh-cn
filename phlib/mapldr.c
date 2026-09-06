@@ -15,6 +15,7 @@
 #include <apiimport.h>
 #include <mapimg.h>
 #include <mapldr.h>
+#include <phintrnl.h>
 
 /**
  * Locates a loader entry in the current process.
@@ -1235,6 +1236,24 @@ PPH_STRING PhLoadUiString(
         *FallbackToEnglish = fallbackToEnglish;
 
     return string;
+}
+
+_Ret_notnull_
+PPH_STRING PhpLoadApplicationUiStringOrDefault(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR FallbackText
+    )
+{
+    PPH_STRING resourceText;
+
+    resourceText = PhApplicationUiResourceInstance
+        ? PhLoadUiString(PhApplicationUiResourceInstance, ResourceId, NULL)
+        : NULL;
+
+    if (!resourceText)
+        resourceText = PhCreateString(FallbackText);
+
+    return resourceText;
 }
 
 // rev from SHLoadIndirectString (dmex)
@@ -2567,29 +2586,23 @@ VOID PhLoaderEntrySnapShowErrorMessage(
 
         PhMoveReference(&fileName, PhGetFileName(fileName));
         PhMoveReference(&fileName, PhGetBaseName(fileName));
-        resourceTitle = PhApplicationUiResourceInstance
-            ? PhLoadUiString(
-                PhApplicationUiResourceInstance,
-                IDS_PH_UNABLE_LOAD_PLUGIN,
-                NULL
-                )
-            : NULL;
+        resourceTitle = PhpLoadApplicationUiStringOrDefault(
+            IDS_PH_UNABLE_LOAD_PLUGIN,
+            L"Unable to load plugin."
+            );
 
         if (IMAGE_SNAP_BY_ORDINAL(OriginalThunk->u1.Ordinal))
         {
             PPH_STRING resourceFormat;
 
-            resourceFormat = PhApplicationUiResourceInstance
-                ? PhLoadUiString(
-                    PhApplicationUiResourceInstance,
-                    IDS_PH_PLUGIN_IMPORT_BY_ORDINAL,
-                    NULL
-                    )
-                : NULL;
+            resourceFormat = PhpLoadApplicationUiStringOrDefault(
+                IDS_PH_PLUGIN_IMPORT_BY_ORDINAL,
+                L"Name: %s\r\nOrdinal: %u\r\nModule: %hs"
+                );
             PhShowError2(
                 NULL,
-                PhGetStringOrDefault(resourceTitle, L"Unable to load plugin."),
-                PhGetStringOrDefault(resourceFormat, L"Name: %s\r\nOrdinal: %u\r\nModule: %hs"),
+                resourceTitle->Buffer,
+                resourceFormat->Buffer,
                 PhGetStringOrEmpty(fileName),
                 IMAGE_ORDINAL(OriginalThunk->u1.Ordinal),
                 ImportName
@@ -2602,18 +2615,15 @@ VOID PhLoaderEntrySnapShowErrorMessage(
             PPH_STRING resourceFormat;
 
             importByName = PTR_ADD_OFFSET(BaseAddress, OriginalThunk->u1.AddressOfData);
-            resourceFormat = PhApplicationUiResourceInstance
-                ? PhLoadUiString(
-                    PhApplicationUiResourceInstance,
-                    IDS_PH_PLUGIN_IMPORT_BY_NAME,
-                    NULL
-                    )
-                : NULL;
+            resourceFormat = PhpLoadApplicationUiStringOrDefault(
+                IDS_PH_PLUGIN_IMPORT_BY_NAME,
+                L"Name: %s\r\nFunction: %hs\r\nModule: %hs"
+                );
 
             PhShowError2(
                 NULL,
-                PhGetStringOrDefault(resourceTitle, L"Unable to load plugin."),
-                PhGetStringOrDefault(resourceFormat, L"Name: %s\r\nFunction: %hs\r\nModule: %hs"),
+                resourceTitle->Buffer,
+                resourceFormat->Buffer,
                 PhGetStringOrEmpty(fileName),
                 importByName->Name,
                 ImportName

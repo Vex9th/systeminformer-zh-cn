@@ -33,6 +33,12 @@ NTSTATUS PhInitializeProcessorInformation(
     VOID
     );
 
+_Ret_notnull_
+PPH_STRING PhpLoadApplicationUiStringOrDefault(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR FallbackText
+    );
+
 typedef struct _PHLIB_STATISTICS_BLOCK
 {
     // basesup

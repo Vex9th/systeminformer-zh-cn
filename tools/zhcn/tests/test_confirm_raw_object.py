@@ -72,7 +72,7 @@ class ConfirmRawObjectTests(unittest.TestCase):
             if name == call
         ]
 
-    def test_system_object_is_translated_only_by_legacy_route(self) -> None:
+    def test_confirm_routes_pass_native_or_dynamic_text_without_runtime_translation(self) -> None:
         sink = function_body(self.util, "PhpShowConfirmMessage", self.audit)
         legacy = function_body(self.util, "PhShowConfirmMessage", self.audit)
         raw = function_body(self.util, "PhShowConfirmMessageRawObject", self.audit)
@@ -80,42 +80,25 @@ class ConfirmRawObjectTests(unittest.TestCase):
             self.util, "PhShowConfirmMessageRawAction", self.audit
         )
 
-        self.assertEqual(sink.count("PhTranslateString(Object)"), 1)
-        self.assertRegex(
+        self.assertNotIn("TranslateObject", sink)
+        self.assertNotRegex(
             sink,
-            r"TranslateObject\s*\?\s*PhTranslateString\(Object\)\s*:\s*Object",
+            r"PhTranslateString\(\s*(?:Verb|Object|Message)\s*\)",
         )
-        self.assertRegex(
-            legacy,
-            r"PhpShowConfirmMessage\s*\([^;]*Object\s*,\s*NULL[^;]*TRUE\s*\)",
+        self.assertEqual(
+            [("WindowHandle", "Verb", "Object", "NULL", "Message", "Warning")],
+            self.calls_in(self.util, "PhShowConfirmMessage", "PhpShowConfirmMessage"),
         )
-        self.assertRegex(
-            raw,
-            r"PhpShowConfirmMessage\s*\([^;]*Object\s*,\s*NULL[^;]*FALSE\s*\)",
+        self.assertEqual(
+            [("WindowHandle", "Verb", "Object", "NULL", "Message", "Warning")],
+            self.calls_in(self.util, "PhShowConfirmMessageRawObject", "PhpShowConfirmMessage"),
         )
         self.assertNotIn("PhTranslateString", raw)
-        self.assertRegex(
-            raw_action,
-            r"PhpShowConfirmMessage\s*\([^;]*NULL\s*,\s*Action[^;]*FALSE\s*\)",
+        self.assertEqual(
+            [("WindowHandle", "Verb", "NULL", "Action", "Message", "Warning")],
+            self.calls_in(self.util, "PhShowConfirmMessageRawAction", "PhpShowConfirmMessage"),
         )
         self.assertNotIn("PhTranslateString", raw_action)
-
-        translations = {"System": "系统"}
-        legacy_translates_object = compact(legacy).endswith("TRUE);")
-        raw_translates_object = compact(raw).endswith("TRUE);")
-
-        self.assertEqual(
-            translations.get("System", "System")
-            if legacy_translates_object
-            else "System",
-            "系统",
-        )
-        self.assertEqual(
-            translations.get("System", "System")
-            if raw_translates_object
-            else "System",
-            "System",
-        )
 
     def test_raw_api_is_internal_and_does_not_change_export_ordinals(self) -> None:
         prototype = re.compile(

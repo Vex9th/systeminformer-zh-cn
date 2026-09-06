@@ -31,6 +31,7 @@
 #include <mapldr.h>
 #include <lsasup.h>
 #include <phintrin.h>
+#include <phintrnl.h>
 #include <wslsup.h>
 #include <thirdparty.h>
 
@@ -1063,23 +1064,6 @@ PPH_STRING PhGetNtFormatMessage(
     return messageString;
 }
 
-static PPH_STRING PhpLoadApplicationUiStringOrDefault(
-    _In_ ULONG ResourceId,
-    _In_ PCWSTR FallbackText
-    )
-{
-    PPH_STRING resourceText;
-
-    resourceText = PhApplicationUiResourceInstance
-        ? PhLoadUiString(PhApplicationUiResourceInstance, ResourceId, NULL)
-        : NULL;
-
-    if (!resourceText)
-        resourceText = PhCreateString(FallbackText);
-
-    return resourceText;
-}
-
 /**
  * Displays a message box.
  *
@@ -1659,7 +1643,6 @@ BOOLEAN PhShowContinueStatus(
  * \param RawAction A complete preformatted action, or NULL to join Verb and Object.
  * \param Message A message describing the operation.
  * \param Warning TRUE to display the confirmation message as a warning, otherwise FALSE.
- * \param TranslateObject TRUE to translate Object, otherwise use it verbatim.
  * \return TRUE if the user wishes to continue, otherwise FALSE.
  */
 static BOOLEAN PhpShowConfirmMessage(
@@ -1668,8 +1651,7 @@ static BOOLEAN PhpShowConfirmMessage(
     _In_opt_ PCWSTR Object,
     _In_opt_ PCWSTR RawAction,
     _In_opt_ PCWSTR Message,
-    _In_ BOOLEAN Warning,
-    _In_ BOOLEAN TranslateObject
+    _In_ BOOLEAN Warning
     )
 {
     PPH_STRING verb;
@@ -1679,10 +1661,9 @@ static BOOLEAN PhpShowConfirmMessage(
     PPH_STRING confirmContentFormat;
     PPH_STRING cancelText;
     PPH_STRING fallbackFormat;
-    PCWSTR object;
 
     // Make sure the verb is all lowercase.
-    verb = PhaLowerString(PhaCreateString(PhTranslateString(Verb)));
+    verb = PhaLowerString(PhaCreateString(Verb));
 
     // "terminate" -> "Terminate"
     verbCaps = PhaDuplicateString(verb);
@@ -1696,12 +1677,10 @@ static BOOLEAN PhpShowConfirmMessage(
     }
     else
     {
-        object = TranslateObject ? PhTranslateString(Object) : Object;
-
-        if (PhTranslationEnabled)
-            action = PhaConcatStrings(2, verb->Buffer, object);
+        if (PhGetApplicationUiLanguage() == MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED))
+            action = PhaConcatStrings(2, verb->Buffer, Object);
         else
-            action = PhaConcatStrings(3, verb->Buffer, L" ", object);
+            action = PhaConcatStrings(3, verb->Buffer, L" ", Object);
     }
 
     confirmFormat = PhpLoadApplicationUiStringOrDefault(
@@ -1732,7 +1711,7 @@ static BOOLEAN PhpShowConfirmMessage(
         config.pszWindowTitle = PhApplicationName;
         config.pszMainIcon = Warning ? TD_WARNING_ICON : TD_INFORMATION_ICON;
         config.pszMainInstruction = PhaFormatString(confirmFormat->Buffer, action->Buffer)->Buffer;
-        if (Message) config.pszContent = PhaFormatString(confirmContentFormat->Buffer, PhTranslateString(Message))->Buffer;
+        if (Message) config.pszContent = PhaFormatString(confirmContentFormat->Buffer, Message)->Buffer;
 
         buttons[0].nButtonID = IDYES;
         buttons[0].pszButtonText = verbCaps->Buffer;
@@ -1786,8 +1765,7 @@ BOOLEAN PhShowConfirmMessage(
         Object,
         NULL,
         Message,
-        Warning,
-        TRUE
+        Warning
         );
 }
 
@@ -1805,8 +1783,7 @@ BOOLEAN PhShowConfirmMessageRawObject(
         Object,
         NULL,
         Message,
-        Warning,
-        FALSE
+        Warning
         );
 }
 
@@ -1824,8 +1801,7 @@ BOOLEAN PhShowConfirmMessageRawAction(
         NULL,
         Action,
         Message,
-        Warning,
-        FALSE
+        Warning
         );
 }
 
@@ -7094,16 +7070,13 @@ VOID PhShellExploreFile(
         {
             PPH_STRING resourceTitle;
 
-            resourceTitle = PhApplicationUiResourceInstance
-                ? PhLoadUiString(
-                    PhApplicationUiResourceInstance,
-                    IDS_PH_LOCATION_NOT_FOUND,
-                    NULL
-                    )
-                : NULL;
+            resourceTitle = PhpLoadApplicationUiStringOrDefault(
+                IDS_PH_LOCATION_NOT_FOUND,
+                L"The location could not be found."
+                );
             PhShowError2(
                 WindowHandle,
-                PhGetStringOrDefault(resourceTitle, L"The location could not be found."),
+                resourceTitle->Buffer,
                 L"%s",
                 FileName
                 );

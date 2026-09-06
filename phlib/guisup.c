@@ -16,6 +16,7 @@
 #include <guisup.h>
 #include <mapimg.h>
 #include <mapldr.h>
+#include <phintrnl.h>
 #include <settings.h>
 #include <guisupp.h>
 
@@ -3641,16 +3642,13 @@ static PPH_HASHTABLE PhGetWindowContextHashTable(
         PPH_STRING resourceTitle;
 
         win32Result = PhGetLastError();
-        resourceTitle = PhApplicationUiResourceInstance
-            ? PhLoadUiString(
-                PhApplicationUiResourceInstance,
-                IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT,
-                NULL
-                )
-            : NULL;
+        resourceTitle = PhpLoadApplicationUiStringOrDefault(
+            IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT,
+            L"Unable to create the window context."
+            );
         PhShowStatus(
             NULL,
-            PhGetStringOrDefault(resourceTitle, L"Unable to create the window context."),
+            resourceTitle->Buffer,
             0,
             win32Result
             );

@@ -5807,20 +5807,18 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         self.assertEqual(
             len(re.findall(r"PhLoadUiString\s*\([^;]+,\s*NULL\s*\)", phlib_source)),
-            7,
+            2,
         )
-        self.assertGreaterEqual(
+        self.assertEqual(
             phlib_source.count("PhApplicationUiResourceInstance"),
-            5,
+            4,
         )
         map_loader = (REPO_ROOT / "phlib" / "mapldr.c").read_text(
             encoding="utf-8-sig"
         )
-        self.assertEqual(
-            map_loader.count(
-                'PhGetStringOrDefault(resourceTitle, L"Unable to load plugin.")'
-            ),
-            2,
+        self.assertRegex(
+            map_loader,
+            r'PhpLoadApplicationUiStringOrDefault\(\s*IDS_PH_UNABLE_LOAD_PLUGIN,\s*L"Unable to load plugin\."\s*\)',
         )
         for resource_id, fallback in (
             ("IDS_PH_PLUGIN_IMPORT_BY_ORDINAL", "Name: %s\\r\\nOrdinal: %u\\r\\nModule: %hs"),
@@ -5829,15 +5827,15 @@ class NativeResourceGenerationTests(unittest.TestCase):
             with self.subTest(phlib_format_resource_id=resource_id):
                 self.assertRegex(
                     map_loader,
-                    rf"(?s){resource_id}(?:(?!IDS_PH_).)*PhGetStringOrDefault\(resourceFormat,\s*L\"{re.escape(fallback)}\"\)",
+                    rf"PhpLoadApplicationUiStringOrDefault\(\s*{resource_id},\s*L\"{re.escape(fallback)}\"\s*\)",
                 )
         self.assertRegex(
             (REPO_ROOT / "phlib" / "util.c").read_text(encoding="utf-8-sig"),
-            r'(?s)IDS_PH_LOCATION_NOT_FOUND(?:(?!IDS_PH_).)*PhGetStringOrDefault\(resourceTitle, L"The location could not be found\."\)',
+            r'PhpLoadApplicationUiStringOrDefault\(\s*IDS_PH_LOCATION_NOT_FOUND,\s*L"The location could not be found\."\s*\)',
         )
         self.assertRegex(
             (REPO_ROOT / "phlib" / "guisup.c").read_text(encoding="utf-8-sig"),
-            r'(?s)IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT(?:(?!IDS_PH_).)*PhGetStringOrDefault\(resourceTitle, L"Unable to create the window context\."\)',
+            r'PhpLoadApplicationUiStringOrDefault\(\s*IDS_PH_UNABLE_CREATE_WINDOW_CONTEXT,\s*L"Unable to create the window context\."\s*\)',
         )
 
         gui_support = (
@@ -5849,7 +5847,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         ]
         self.assertLess(
             fls_failure.index("PhGetLastError()"),
-            fls_failure.index("PhLoadUiString("),
+            fls_failure.index("PhpLoadApplicationUiStringOrDefault("),
         )
 
     def test_toolstatus_runtime_text_uses_native_resources(self) -> None:
