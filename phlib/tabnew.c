@@ -14,7 +14,6 @@
 #include <guisupp.h>
 #include <tabnew.h>
 #include <tabnewp.h>
-#include <phtranslation.h>
 #include <vsstyle.h>
 #include <uxtheme.h>
 #include <vssym32.h>
@@ -2960,7 +2959,7 @@ LRESULT PhTabNewOnUserMessage(
             TCITEMW *tci = (TCITEMW *)LParam;
 
             PH_TABNEW_INSERTITEM ins;
-            ins.Text = (PWSTR)PhTranslateString((tci && (tci->mask & TCIF_TEXT)) ? tci->pszText : L"");
+            ins.Text = (tci && (tci->mask & TCIF_TEXT)) ? tci->pszText : L"";
             ins.ImageIndex = (tci && (tci->mask & TCIF_IMAGE)) ? tci->iImage : LONG_ERROR;
             ins.Param = (tci && (tci->mask & TCIF_PARAM)) ? tci->lParam : 0;
             return (LRESULT)PhTabNewInsertItem(Context, (LONG)WParam, &ins);

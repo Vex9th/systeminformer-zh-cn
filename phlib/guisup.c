@@ -12,7 +12,6 @@
 
 #include <ph.h>
 #include <phappresourceid.h>
-#include <phtranslation.h>
 #include <apiimport.h>
 #include <guisup.h>
 #include <mapimg.h>
@@ -1520,7 +1519,7 @@ LONG PhAddTabControlTab(
     TCITEM item;
 
     item.mask = TCIF_TEXT;
-    item.pszText = (PWSTR)PhTranslateString(Text);
+    item.pszText = (PWSTR)Text;
 
     return TabCtrl_InsertItem(TabControlHandle, Index, &item);
 }
