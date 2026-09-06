@@ -521,19 +521,19 @@ PPH_EMENU PhpCreateThreadMenu(
     PPH_EMENU_ITEM menuItem;
 
     menu = PhCreateEMenu();
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_INSPECT, L"&Inspect\bEnter", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_TERMINATE, L"T&erminate\bDel", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_SUSPEND, L"&Suspend", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_RESUME, L"Res&ume", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_FREEZE, L"&Freeze", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_THAW, L"&Thaw", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_INSPECT, PhGetApplicationUiString(IDS_PH_MENU_INSPECT_SHORTCUT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_TERMINATE, PhGetApplicationUiString(IDS_PH_MENU_TERMINATE_SHORTCUT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_SUSPEND, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_SUSPEND), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_RESUME, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_RESUME), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_FREEZE, PhGetApplicationUiString(IDS_PH_MENU_THREAD_FREEZE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_THAW, PhGetApplicationUiString(IDS_PH_MENU_THREAD_THAW), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ANALYZE_WAIT, L"Analy&ze", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ANALYZE_WAIT, PhGetApplicationUiString(IDS_PH_MENU_ANALYZE), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_AFFINITY, PhGetApplicationUiString(IDS_PH_MENU_AFFINITY), NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_BOOST, L"&Boost", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_CRITICAL, L"Critical", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_PERMISSIONS, L"Per&missions", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_TOKEN, L"&Token", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_BOOST, PhGetApplicationUiString(IDS_PH_MENU_BOOST), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_CRITICAL, PhGetApplicationUiString(IDS_PH_MENU_THREAD_CRITICAL), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_PERMISSIONS, PhGetApplicationUiString(IDS_PH_MENU_PERMISSIONS), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_THREAD_TOKEN, PhGetApplicationUiString(IDS_PH_MENU_TOKEN), NULL, NULL), ULONG_MAX);
 
     menuItem = PhCreateEMenuItem(0, 0, PhGetApplicationUiString(IDS_PH_MENU_PRIORITY), NULL, NULL);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_TIMECRITICAL, PhGetApplicationUiString(IDS_PH_MENU_TIME_CRITICAL), NULL, NULL), ULONG_MAX);
@@ -1651,16 +1651,16 @@ INT_PTR CALLBACK PhpProcessThreadsDlgProc(
                     if (!PhGetWindowRect(GetDlgItem(hwndDlg, IDC_OPTIONS), &rect))
                         break;
 
-                    hideSuspendedMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIDE_SUSPENDED, L"Hide suspended", NULL, NULL);
-                    hideGuiMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIDE_GUITHREADS, L"Hide gui", NULL, NULL);
-                    highlightSuspendedMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_SUSPENDED, L"Highlight suspended", NULL, NULL);
-                    highlightDelayExecutionMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_DELAYEXECUTION, L"Highlight delay execution", NULL, NULL);
-                    highlightUserRequestMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_USERREQUEST, L"Highlight user request", NULL, NULL);
-                    highlightAlertByThreadIdMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_ALERTBYTHREADID, L"Highlight alert by thread ID", NULL, NULL);
-                    highlightQueueMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_QUEUE, L"Highlight queue", NULL, NULL);
-                    highlightExecutiveMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_EXECUTIVE, L"Highlight executive", NULL, NULL);
-                    highlightGuiMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_GUITHREADS, L"Highlight gui", NULL, NULL);
-                    saveMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_SAVE, L"Save...", NULL, NULL);
+                    hideSuspendedMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIDE_SUSPENDED, PhGetApplicationUiString(IDS_PH_MENU_HIDE_SUSPENDED), NULL, NULL);
+                    hideGuiMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIDE_GUITHREADS, PhGetApplicationUiString(IDS_PH_MENU_HIDE_GUI), NULL, NULL);
+                    highlightSuspendedMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_SUSPENDED, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_SUSPENDED), NULL, NULL);
+                    highlightDelayExecutionMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_DELAYEXECUTION, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_DELAY_EXECUTION), NULL, NULL);
+                    highlightUserRequestMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_USERREQUEST, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_USER_REQUEST), NULL, NULL);
+                    highlightAlertByThreadIdMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_ALERTBYTHREADID, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_ALERT_BY_THREAD_ID), NULL, NULL);
+                    highlightQueueMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_QUEUE, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_QUEUE), NULL, NULL);
+                    highlightExecutiveMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_EXECUTIVE, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_EXECUTIVE), NULL, NULL);
+                    highlightGuiMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_HIGHLIGHT_GUITHREADS, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_GUI), NULL, NULL);
+                    saveMenuItem = PhCreateEMenuItem(0, PH_THREAD_TREELIST_MENUITEM_SAVE, PhGetApplicationUiString(IDS_PH_MENU_SAVE), NULL, NULL);
 
                     menu = PhCreateEMenu();
                     PhInsertEMenuItem(menu, hideSuspendedMenuItem, ULONG_MAX);

@@ -86,10 +86,10 @@ class SystemInformerSmallMenuTableResourceTests(unittest.TestCase):
             self.assertRegex(header, rf"(?m)^#define\s+{symbol}\s+{resource_id}$")
             self.assertEqual(en, english.get(symbol))
             self.assertEqual(zh, chinese.get(symbol))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_CONFIRM_EXECUTION_REQUIRED_WARNING$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2984$")
-        self.assertEqual(984, len(english))
-        self.assertEqual(984, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_VIRTUALIZATION$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3051$")
+        self.assertEqual(1051, len(english))
+        self.assertEqual(1051, len(chinese))
 
     def test_table_columns_use_exact_stable_application_resources(self) -> None:
         for file_name, routes in TABLE_ROUTES.items():

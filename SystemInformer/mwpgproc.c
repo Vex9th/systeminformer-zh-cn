@@ -101,19 +101,19 @@ BOOLEAN PhMwpProcessesPageCallback(
             PPH_EMENU_ITEM menuItem;
             PPH_EMENU_ITEM columnSetMenuItem;
 
-            menu = PhCreateEMenuItem(0, 0, L"Processes", NULL, NULL);
+            menu = PhCreateEMenuItem(0, 0, PhGetApplicationUiString(IDS_PH_GROUP_PROCESSES), NULL, NULL);
             PhInsertEMenuItem(menuInfo->Menu, menu, menuInfo->StartIndex);
 
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_COLLAPSEALL, L"&Collapse all", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_EXPANDALL, L"&Expand all", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_COLLAPSEALL, PhGetApplicationUiString(IDS_PH_MENU_COLLAPSE_ALL), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_EXPANDALL, PhGetApplicationUiString(IDS_PH_MENU_EXPAND_ALL), NULL, NULL), ULONG_MAX);
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEPROCESSESFROMOTHERUSERS, L"&Hide processes from other users", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDESIGNEDPROCESSES, L"Hide si&gned processes", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEMICROSOFTPROCESSES, L"Hide &system processes", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SCROLLTONEWPROCESSES, L"Scrol&l to new processes", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SORTCHILDPROCESSES, L"Sort &child processes", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SORTROOTPROCESSES, L"Sort &root processes", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SHOWCPUBELOW001, L"Show CPU &below 0.01", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEPROCESSESFROMOTHERUSERS, PhGetApplicationUiString(IDS_PH_MENU_HIDE_OTHER_USER_PROCESSES), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDESIGNEDPROCESSES, PhGetApplicationUiString(IDS_PH_MENU_HIDE_SIGNED_PROCESSES), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_HIDEMICROSOFTPROCESSES, PhGetApplicationUiString(IDS_PH_MENU_HIDE_SYSTEM_PROCESSES), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SCROLLTONEWPROCESSES, PhGetApplicationUiString(IDS_PH_MENU_SCROLL_TO_NEW_PROCESSES), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SORTCHILDPROCESSES, PhGetApplicationUiString(IDS_PH_MENU_SORT_CHILD_PROCESSES), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SORTROOTPROCESSES, PhGetApplicationUiString(IDS_PH_MENU_SORT_ROOT_PROCESSES), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SHOWCPUBELOW001, PhGetApplicationUiString(IDS_PH_MENU_SHOW_CPU_BELOW_POINT_ZERO_ONE), NULL, NULL), ULONG_MAX);
 
             if (PhGetIntegerSetting(SETTING_HIDE_OTHER_USER_PROCESSES) && (menuItem = PhFindEMenuItem(menu, 0, NULL, ID_VIEW_HIDEPROCESSESFROMOTHERUSERS)))
                 menuItem->Flags |= PH_EMENU_CHECKED;
@@ -142,9 +142,9 @@ BOOLEAN PhMwpProcessesPageCallback(
             }
 
             PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-            PhInsertEMenuItem(menu, menuItem = PhCreateEMenuItem(0, ID_VIEW_ORGANIZECOLUMNSETS, L"Organi&ze column sets...", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SAVECOLUMNSET, L"Sa&ve column set...", NULL, NULL), ULONG_MAX);
-            PhInsertEMenuItem(menu, columnSetMenuItem = PhCreateEMenuItem(0, 0, L"Loa&d column set", NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, menuItem = PhCreateEMenuItem(0, ID_VIEW_ORGANIZECOLUMNSETS, PhGetApplicationUiString(IDS_PH_MENU_ORGANIZE_COLUMN_SETS), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_VIEW_SAVECOLUMNSET, PhGetApplicationUiString(IDS_PH_MENU_SAVE_COLUMN_SET), NULL, NULL), ULONG_MAX);
+            PhInsertEMenuItem(menu, columnSetMenuItem = PhCreateEMenuItem(0, 0, PhGetApplicationUiString(IDS_PH_MENU_LOAD_COLUMN_SET), NULL, NULL), ULONG_MAX);
 
             // Add column set sub menu entries.
             {
@@ -876,27 +876,27 @@ PPH_EMENU PhpCreateProcessMenu(
     PPH_EMENU_ITEM menuItem;
 
     menu = PhCreateEMenu();
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_TERMINATE, L"T&erminate\bDel", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_TERMINATETREE, L"Terminate tree\bShift+Del", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_SUSPEND, L"&Suspend", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_SUSPENDTREE, L"Suspend tree", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_RESUME, L"Res&ume", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_RESUMETREE, L"Resume tree", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_FREEZE, L"Freeze", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_THAW, L"Thaw", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_RESTART, L"Res&tart", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_TERMINATE, PhGetApplicationUiString(IDS_PH_MENU_TERMINATE_SHORTCUT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_TERMINATETREE, PhGetApplicationUiString(IDS_PH_MENU_TERMINATE_TREE_SHORTCUT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_SUSPEND, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_SUSPEND), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_SUSPENDTREE, PhGetApplicationUiString(IDS_PH_MENU_SUSPEND_TREE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_RESUME, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_RESUME), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_RESUMETREE, PhGetApplicationUiString(IDS_PH_MENU_RESUME_TREE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_FREEZE, PhGetApplicationUiString(IDS_PH_MENU_PROCESS_FREEZE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_THAW, PhGetApplicationUiString(IDS_PH_MENU_PROCESS_THAW), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_RESTART, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_RESTART_PROCESS), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
 
     if (SystemProcess)
     {
         PPH_EMENU kernelMinimal;
 
-        menuItem = PhCreateEMenuItem(0, ID_PROCESS_CREATEDUMPFILE, L"Create live kernel dump fi&le", NULL, NULL);
-        PhInsertEMenuItem(menuItem, kernelMinimal = PhCreateEMenuItem(0, ID_PROCESS_DUMP_MINIMAL, L"&Minimal...", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_NORMAL, L"&Normal...", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_FULL, L"&Full...", NULL, NULL), ULONG_MAX);
+        menuItem = PhCreateEMenuItem(0, ID_PROCESS_CREATEDUMPFILE, PhGetApplicationUiString(IDS_PH_MENU_CREATE_LIVE_KERNEL_DUMP_FILE), NULL, NULL);
+        PhInsertEMenuItem(menuItem, kernelMinimal = PhCreateEMenuItem(0, ID_PROCESS_DUMP_MINIMAL, PhGetApplicationUiString(IDS_PH_MENU_DUMP_MINIMAL), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_NORMAL, PhGetApplicationUiString(IDS_PH_MENU_DUMP_NORMAL), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_FULL, PhGetApplicationUiString(IDS_PH_MENU_DUMP_FULL), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_CUSTOM, L"&Custom...", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_CUSTOM, PhGetApplicationUiString(IDS_PH_MENU_DUMP_CUSTOM), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
 
         if (!PhGetOwnTokenAttributes().Elevated)
@@ -911,17 +911,17 @@ PPH_EMENU PhpCreateProcessMenu(
     }
     else
     {
-        menuItem = PhCreateEMenuItem(0, ID_PROCESS_CREATEDUMPFILE, L"Create dump fi&le", NULL, NULL);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_MINIMAL, L"&Minimal...", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_LIMITED, L"&Limited...", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_NORMAL, L"&Normal...", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_FULL, L"&Full...", NULL, NULL), ULONG_MAX);
+        menuItem = PhCreateEMenuItem(0, ID_PROCESS_CREATEDUMPFILE, PhGetApplicationUiString(IDS_PH_MENU_CREATE_DUMP_FILE), NULL, NULL);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_MINIMAL, PhGetApplicationUiString(IDS_PH_MENU_DUMP_MINIMAL), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_LIMITED, PhGetApplicationUiString(IDS_PH_MENU_DUMP_LIMITED), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_NORMAL, PhGetApplicationUiString(IDS_PH_MENU_DUMP_NORMAL), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_FULL, PhGetApplicationUiString(IDS_PH_MENU_DUMP_FULL), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_CUSTOM, L"&Custom...", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_DUMP_CUSTOM, PhGetApplicationUiString(IDS_PH_MENU_DUMP_CUSTOM), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
     }
 
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_DEBUG, L"De&bug", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_DEBUG, PhGetApplicationUiString(IDS_PH_MENU_DEBUG), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_AFFINITY, PhGetApplicationUiString(IDS_PH_MENU_AFFINITY), NULL, NULL), ULONG_MAX);
 
@@ -949,34 +949,34 @@ PPH_EMENU PhpCreateProcessMenu(
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_VERYLOW, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_VERY_LOW), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
 
-    menuItem = PhCreateEMenuItem(0, ID_PROCESS_MISCELLANEOUS, L"&Miscellaneous", NULL, NULL);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_ACTIVITY, L"Activity moderation", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_SETCRITICAL, L"&Critical", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_DETACHFROMDEBUGGER, L"&Detach from debugger", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_ECOMODE, L"Efficiency mode", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_EXECUTIONREQUIRED, L"Execution required", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_GDIHANDLES, L"GDI &handles...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_HEAPS, L"Heaps...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_LOCKS, L"Locks...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_FLUSHHEAPS, L"Flush heaps", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_PAGESMODIFIED, L"Modified pages...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_REDUCEWORKINGSET, L"Reduce working &set", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_RUNAS, L"&Run as...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_RUNASTHISUSER, L"Run &as this user...", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_VIRTUALIZATION, L"Virtuali&zation", NULL, NULL), ULONG_MAX);
+    menuItem = PhCreateEMenuItem(0, ID_PROCESS_MISCELLANEOUS, PhGetApplicationUiString(IDS_PH_MENU_MISCELLANEOUS), NULL, NULL);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_ACTIVITY, PhGetApplicationUiString(IDS_PH_MENU_ACTIVITY_MODERATION), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_SETCRITICAL, PhGetApplicationUiString(IDS_PH_MENU_PROCESS_CRITICAL), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_DETACHFROMDEBUGGER, PhGetApplicationUiString(IDS_PH_MENU_DETACH_FROM_DEBUGGER), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_ECOMODE, PhGetApplicationUiString(IDS_PH_MENU_EFFICIENCY_MODE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_EXECUTIONREQUIRED, PhGetApplicationUiString(IDS_PH_MENU_EXECUTION_REQUIRED), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_GDIHANDLES, PhGetApplicationUiString(IDS_PH_MENU_GDI_HANDLES), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_HEAPS, PhGetApplicationUiString(IDS_PH_MENU_HEAPS), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_LOCKS, PhGetApplicationUiString(IDS_PH_MENU_LOCKS), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_FLUSHHEAPS, PhGetApplicationUiString(IDS_PH_MENU_FLUSH_HEAPS), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_PAGESMODIFIED, PhGetApplicationUiString(IDS_PH_MENU_MODIFIED_PAGES), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_REDUCEWORKINGSET, PhGetApplicationUiString(IDS_PH_MENU_REDUCE_WORKING_SET), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_RUNAS, PhGetApplicationUiString(IDS_PH_MENU_RUN_AS), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_MISCELLANEOUS_RUNASTHISUSER, PhGetApplicationUiString(IDS_PH_MENU_RUN_AS_THIS_USER), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PROCESS_VIRTUALIZATION, PhGetApplicationUiString(IDS_PH_MENU_VIRTUALIZATION), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
 
-    menuItem = PhCreateEMenuItem(0, ID_PROCESS_WINDOW, L"&Window", NULL, NULL);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_BRINGTOFRONT, L"Bring to &front", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_RESTORE, L"&Restore", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_MINIMIZE, L"M&inimize", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_MAXIMIZE, L"M&aximize", NULL, NULL), ULONG_MAX);
+    menuItem = PhCreateEMenuItem(0, ID_PROCESS_WINDOW, PhGetApplicationUiString(IDS_PH_MENU_WINDOW), NULL, NULL);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_BRINGTOFRONT, PhGetApplicationUiString(IDS_PH_MENU_WINDOW_BRING_TO_FRONT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_RESTORE, PhGetApplicationUiString(IDS_PH_MENU_WINDOW_RESTORE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_MINIMIZE, PhGetApplicationUiString(IDS_PH_MENU_WINDOW_MINIMIZE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_MAXIMIZE, PhGetApplicationUiString(IDS_PH_MENU_WINDOW_MAXIMIZE), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_CLOSE, L"&Close", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_WINDOW_CLOSE, PhGetApplicationUiString(IDS_PH_MENU_CLOSE_WINDOW), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
 
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_SEARCHONLINE, L"Search &online\bCtrl+M", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_SEARCHONLINE, PhGetApplicationUiString(IDS_PH_MENU_SEARCH_ONLINE_SHORTCUT), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_OPENFILELOCATION, PhGetApplicationUiString(IDS_PH_MENU_OPEN_FILE_LOCATION_SHORTCUT), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_PROPERTIES, PhGetApplicationUiString(IDS_PH_MENU_PROPERTIES_SHORTCUT), NULL, NULL), ULONG_MAX);
