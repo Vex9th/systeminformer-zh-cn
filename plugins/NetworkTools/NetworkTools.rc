@@ -699,6 +699,10 @@ BEGIN
     IDS_NT_TRACERT_RESULT_COMPLETE "complete"
     IDS_NT_WHOIS_TITLE_FORMAT      "Whois %s..."
     IDS_NT_OPTIONS_SECTION         "NetworkTools"
+    IDS_NT_BUTTON_RESTART          "Restart"
+    IDS_NT_BUTTON_DOWNLOAD         "Download"
+    IDS_NT_ACCESS_DENIED_LICENSE_KEY_FORMAT "[%lu] Access denied (invalid license key)"
+    IDS_NT_GEOLITE_LICENSE_REQUIRED_CONTENT "A license key and account number are required to download GeoLite database updates and either the key or number are not configured.\n\nGeoLite license keys and accounts are free. If you're unsure how to create keys then please review the documentation here: <a href=""https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key"">Generate-a-License-Key</a>\n\nOnce you've created the key you can copy/paste the text into the Options window > NetworkTools settings and System Informer can start downloading GeoLite database updates.\n\nSpecial thanks to MaxMind (<a href=""https://www.maxmind.com"">https://www.maxmind.com</a>) for continuing free GeoLite services <3"
 END
 
 #endif    // English (United States) resources

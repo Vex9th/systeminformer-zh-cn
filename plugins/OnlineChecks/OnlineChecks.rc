@@ -160,6 +160,18 @@ BEGIN
     IDS_OC_KEY_STATUS_UNSET         "Unset - optional"
     IDS_OC_PASTE_LICENSE_KEY_HERE   "Paste the license key here:"
     IDS_OC_OPTIONS_SECTION          "OnlineChecks"
+    IDS_OC_BUTTON_VIEW_LAST_ANALYSIS "View last analysis\nView the last or outdated analysis page"
+    IDS_OC_BUTTON_UPLOAD_FILE       "Upload file\nUpload fresh sample for updated analysis"
+    IDS_OC_UPLOADING_FORMAT         "Uploading %s..."
+    IDS_OC_LAST_ANALYZED_FORMAT     "%s was last analyzed %s"
+    IDS_OC_DETECTIONS_LABEL         "Detections:"
+    IDS_OC_FIRST_ANALYZED_LABEL     "First analyzed:"
+    IDS_OC_LAST_ANALYZED_LABEL      "Last analyzed:"
+    IDS_OC_UPLOAD_SIZE_LABEL        "Upload size:"
+    IDS_OC_ANALYSIS_ACTION_PROMPT   "You can take a look at the last analysis or upload it again now."
+    IDS_OC_RESCANNING_FORMAT        "Rescanning %s..."
+    IDS_OC_LOCATING_ANALYSIS_FORMAT "Locating analysis for %s..."
+    IDS_OC_UPLOAD_ERROR_FORMAT      "Error uploading %s..."
 END
 
 #endif    // English (United States) resources

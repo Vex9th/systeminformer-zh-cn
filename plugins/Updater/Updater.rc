@@ -118,6 +118,14 @@ BEGIN
     IDS_UP_NEW_VERSION_AVAILABLE    "New version of System Informer available"
     IDS_UP_CHECK_FOR_UPDATES        "Help menu > Check for updates"
     IDS_UP_OPTIONS_SECTION          "Updater"
+    IDS_UP_BUTTON_CHECK             "Check"
+    IDS_UP_CHANNEL_STABLE_RECOMMENDED "Stable\n - Recommended"
+    IDS_UP_CHANNEL_CANARY_PREVIEW   "Canary\n - Preview"
+    IDS_UP_BUTTON_DOWNLOAD          "Download"
+    IDS_UP_AVAILABLE_DETAILS_FORMAT "Version: %s\r\nDownload size: %s\r\n\r\n<A HREF=""changelog.txt"">View the changelog</A>"
+    IDS_UP_BUTTON_INSTALL           "Install"
+    IDS_UP_DOWNLOADING_CHANNEL_FORMAT "Downloading%s channel %s..."
+    IDS_UP_DOWNLOADING_UPDATE_FORMAT "Downloading update %s..."
 END
 
 #endif    // English (United States) resources

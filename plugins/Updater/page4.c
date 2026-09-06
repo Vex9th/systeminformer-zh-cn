@@ -72,7 +72,12 @@ VOID ShowProgressDialog(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
+    PPH_STRING downloadingChannelFormat;
+    PPH_STRING downloadingUpdateFormat;
     TASKDIALOGCONFIG config;
+
+    downloadingChannelFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOADING_CHANNEL_FORMAT, NULL));
+    downloadingUpdateFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_DOWNLOADING_UPDATE_FORMAT, NULL));
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -107,11 +112,11 @@ VOID ShowProgressDialog(
             break;
         }
 
-        config.pszMainInstruction = PhaFormatString(L"Downloading%s channel %s...", channelName, PhGetStringOrEmpty(Context->Version))->Buffer;
+        config.pszMainInstruction = PhaFormatString(PhGetStringOrEmpty(downloadingChannelFormat), channelName, PhGetStringOrEmpty(Context->Version))->Buffer;
     }
     else
     {
-        config.pszMainInstruction = PhaFormatString(L"Downloading update %s...", PhGetStringOrEmpty(Context->Version))->Buffer;
+        config.pszMainInstruction = PhaFormatString(PhGetStringOrEmpty(downloadingUpdateFormat), PhGetStringOrEmpty(Context->Version))->Buffer;
     }
 
     config.pszContent = L"Downloaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s";

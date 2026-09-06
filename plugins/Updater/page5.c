@@ -97,11 +97,14 @@ VOID ShowUpdateInstallDialog(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
-    TASKDIALOG_BUTTON TaskDialogButtonArray[] =
-    {
-        { IDYES, L"Install" }
-    };
+    PPH_STRING installButtonText;
+    TASKDIALOG_BUTTON taskDialogButtonArray[1];
     TASKDIALOGCONFIG config;
+
+    installButtonText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_BUTTON_INSTALL, NULL));
+
+    taskDialogButtonArray[0].nButtonID = IDYES;
+    taskDialogButtonArray[0].pszButtonText = PhGetStringOrEmpty(installButtonText);
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -111,8 +114,8 @@ VOID ShowUpdateInstallDialog(
     config.cxWidth = 200;
     config.pfCallback = FinalTaskDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
-    config.pButtons = TaskDialogButtonArray;
-    config.cButtons = RTL_NUMBER_OF(TaskDialogButtonArray);
+    config.pButtons = taskDialogButtonArray;
+    config.cButtons = RTL_NUMBER_OF(taskDialogButtonArray);
 
     config.pszWindowTitle = L"System Informer - Updater";
     if (Context->SwitchingChannel)

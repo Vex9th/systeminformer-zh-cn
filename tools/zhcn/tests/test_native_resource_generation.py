@@ -1595,7 +1595,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1876 strings", result.stdout)
+        self.assertIn("1900 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3557,8 +3557,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
         }
         expected_aps = {
             "WindowExplorer": 12122,
-            "OnlineChecks": 12006,
-            "Updater": 12010,
+            "OnlineChecks": 12018,
+            "Updater": 12018,
         }
 
         for plugin, resources in expected_resources.items():
@@ -5311,7 +5311,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertLess(status_update, result_release)
         self.assertLess(result_release, tree_update)
 
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12023$")
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12027$")
         migrated_resource_ids = "|".join(
             re.escape(resource_id) for resource_id in expected_resources
         )
@@ -5331,7 +5331,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(
             len(
                 re.findall(
-                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\NetworkTools\.dll=23'",
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\NetworkTools\.dll=27'",
                     workflow,
                 )
             ),

@@ -11,16 +11,6 @@
 
 #include "nettools.h"
 
-TASKDIALOG_BUTTON RestartButtonArray[] =
-{
-    { IDYES, L"Restart" }
-};
-
-TASKDIALOG_BUTTON DownloadButtonArray[] =
-{
-    { IDOK, L"Download" }
-};
-
 HRESULT CALLBACK CheckForUpdatesDbCallbackProc(
     _In_ HWND WindowHandle,
     _In_ UINT WindowMessage,
@@ -187,6 +177,15 @@ VOID ShowDbCheckForUpdatesDialog(
     _In_ PNETWORK_GEODB_UPDATE_CONTEXT Context
     )
 {
+    PPH_STRING downloadButtonText = PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_BUTTON_DOWNLOAD,
+        NULL
+        ));
+    TASKDIALOG_BUTTON downloadButtonArray[] =
+    {
+        { IDOK, PhGetStringOrEmpty(downloadButtonText) }
+    };
     TASKDIALOGCONFIG config;
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
@@ -195,8 +194,8 @@ VOID ShowDbCheckForUpdatesDialog(
     config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
     config.cxWidth = 200;
-    config.pButtons = DownloadButtonArray;
-    config.cButtons = ARRAYSIZE(DownloadButtonArray);
+    config.pButtons = downloadButtonArray;
+    config.cButtons = ARRAYSIZE(downloadButtonArray);
     config.pfCallback = CheckForUpdatesDbCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
 
@@ -233,6 +232,15 @@ VOID ShowDbInstallRestartDialog(
     _In_ PNETWORK_GEODB_UPDATE_CONTEXT Context
     )
 {
+    PPH_STRING restartButtonText = PH_AUTO(PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_NT_BUTTON_RESTART,
+        NULL
+        ));
+    TASKDIALOG_BUTTON restartButtonArray[] =
+    {
+        { IDYES, PhGetStringOrEmpty(restartButtonText) }
+    };
     TASKDIALOGCONFIG config;
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
@@ -243,8 +251,8 @@ VOID ShowDbInstallRestartDialog(
     config.cxWidth = 200;
     config.pfCallback = RestartDbTaskDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
-    config.pButtons = RestartButtonArray;
-    config.cButtons = ARRAYSIZE(RestartButtonArray);
+    config.pButtons = restartButtonArray;
+    config.cButtons = ARRAYSIZE(restartButtonArray);
 
     config.pszWindowTitle = L"Network Tools - GeoLite Updater";
     config.pszMainInstruction = L"The GeoLite database has been updated.";
@@ -278,7 +286,14 @@ VOID ShowDbUpdateFailedDialog(
 
         if (Context->ErrorCode == ERROR_ACCESS_DENIED)
         {
-            config.pszContent = PhaFormatString(L"[%lu] Access denied (invalid license key)", Context->ErrorCode)->Buffer;
+            config.pszContent = PhaFormatString(
+                PhGetStringOrEmpty(PH_AUTO(PhLoadUiString(
+                    PluginInstance->DllBase,
+                    IDS_NT_ACCESS_DENIED_LICENSE_KEY_FORMAT,
+                    NULL
+                    ))),
+                Context->ErrorCode
+                )->Buffer;
         }
         else if (errorMessage = PhHttpGetErrorMessage(Context->ErrorCode))
         {

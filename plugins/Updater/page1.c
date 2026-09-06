@@ -82,22 +82,27 @@ VOID ShowCheckForUpdatesDialog(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
-    static TASKDIALOG_BUTTON UpdateTaskDialogButtonArray[] =
-    {
-        { IDOK, L"Check" }
-    };
+    PPH_STRING checkButtonText;
+    PPH_STRING stableChannelText;
+    PPH_STRING canaryChannelText;
+    TASKDIALOG_BUTTON updateTaskDialogButtonArray[1];
     //static TASKDIALOG_BUTTON SwitchTaskDialogButtonArray[] =
     //{
     //    { IDOK, L"Yes" }
     //};
-    static TASKDIALOG_BUTTON checkForUpdatesRadioButtons[] =
-    {
-        { IDOK, L"Stable\n - Recommended" },
-        { IDRETRY, L"Canary\n - Preview" },
-        //{ IDIGNORE, L"Stable\n - Recommended" },
-        //{ IDCONTINUE, L"Canary\n - Preview" },
-    };
+    TASKDIALOG_BUTTON checkForUpdatesRadioButtons[2];
     TASKDIALOGCONFIG config;
+
+    checkButtonText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_BUTTON_CHECK, NULL));
+    stableChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHANNEL_STABLE_RECOMMENDED, NULL));
+    canaryChannelText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_CHANNEL_CANARY_PREVIEW, NULL));
+
+    updateTaskDialogButtonArray[0].nButtonID = IDOK;
+    updateTaskDialogButtonArray[0].pszButtonText = PhGetStringOrEmpty(checkButtonText);
+    checkForUpdatesRadioButtons[0].nButtonID = IDOK;
+    checkForUpdatesRadioButtons[0].pszButtonText = PhGetStringOrEmpty(stableChannelText);
+    checkForUpdatesRadioButtons[1].nButtonID = IDRETRY;
+    checkForUpdatesRadioButtons[1].pszButtonText = PhGetStringOrEmpty(canaryChannelText);
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -158,8 +163,8 @@ VOID ShowCheckForUpdatesDialog(
     //}
     //else
     {
-        config.pButtons = UpdateTaskDialogButtonArray;
-        config.cButtons = RTL_NUMBER_OF(UpdateTaskDialogButtonArray);
+        config.pButtons = updateTaskDialogButtonArray;
+        config.cButtons = RTL_NUMBER_OF(updateTaskDialogButtonArray);
         config.pszMainInstruction = L"Check for an updated System Informer release?";
         config.pszContent = L"Click Check to continue.";
     }

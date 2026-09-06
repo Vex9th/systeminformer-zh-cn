@@ -80,14 +80,32 @@ VOID ShowFileFoundDialog(
     _In_ PUPLOAD_CONTEXT Context
     )
 {
-    static TASKDIALOG_BUTTON TaskDialogButtonArray[] =
+    PPH_STRING viewLastAnalysisText;
+    PPH_STRING uploadFileText;
+    PPH_STRING lastAnalyzedFormat;
+    PPH_STRING detectionsLabel;
+    PPH_STRING firstAnalyzedLabel;
+    PPH_STRING lastAnalyzedLabel;
+    PPH_STRING uploadSizeLabel;
+    PPH_STRING analysisActionPrompt;
+    TASKDIALOG_BUTTON TaskDialogButtonArray[] =
     {
-        { IDYES, L"View last analysis\nView the last or outdated analysis page" },
+        { IDYES, NULL },
         //{ IDRETRY, L"Reanalyze file\nRescan the existing sample on VirusTotal" },
-        { IDOK, L"Upload file\nUpload fresh sample for updated analysis" },
+        { IDOK, NULL },
     };
-
     TASKDIALOGCONFIG config;
+
+    viewLastAnalysisText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_BUTTON_VIEW_LAST_ANALYSIS, NULL));
+    uploadFileText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_BUTTON_UPLOAD_FILE, NULL));
+    lastAnalyzedFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_LAST_ANALYZED_FORMAT, NULL));
+    detectionsLabel = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_DETECTIONS_LABEL, NULL));
+    firstAnalyzedLabel = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_FIRST_ANALYZED_LABEL, NULL));
+    lastAnalyzedLabel = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_LAST_ANALYZED_LABEL, NULL));
+    uploadSizeLabel = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_UPLOAD_SIZE_LABEL, NULL));
+    analysisActionPrompt = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_ANALYSIS_ACTION_PROMPT, NULL));
+    TaskDialogButtonArray[0].pszButtonText = PhGetStringOrEmpty(viewLastAnalysisText);
+    TaskDialogButtonArray[1].pszButtonText = PhGetStringOrEmpty(uploadFileText);
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -95,7 +113,7 @@ VOID ShowFileFoundDialog(
     config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
     config.pszMainInstruction = PhaFormatString(
-        L"%s was last analyzed %s",
+        PhGetStringOrEmpty(lastAnalyzedFormat),
         PhGetStringOrEmpty(Context->BaseFileName),
         PhGetStringOrEmpty(Context->LastAnalysisDate)
         )->Buffer;
@@ -105,28 +123,28 @@ VOID ShowFileFoundDialog(
         // was last analyzed by VirusTotal on 2016-12-28 05:26:50 UTC (1 hour ago) it was first analyzed by VirusTotal on 2016-12-12 17:08:19 UTC.
         config.pszContent = PhaFormatString(
             L"%s %s\r\n%s %s\r\n%s %s\r\n%s %s\r\n\r\n%s",
-            L"Detections:",
+            PhGetStringOrEmpty(detectionsLabel),
             PhGetStringOrEmpty(Context->Detected),
-            L"First analyzed:",
+            PhGetStringOrEmpty(firstAnalyzedLabel),
             PhGetStringOrEmpty(Context->FirstAnalysisDate),
-            L"Last analyzed:",
+            PhGetStringOrEmpty(lastAnalyzedLabel),
             PhGetStringOrEmpty(Context->LastAnalysisDate),
-            L"Upload size:",
+            PhGetStringOrEmpty(uploadSizeLabel),
             PhGetStringOrEmpty(Context->FileSize),
-            L"You can take a look at the last analysis or upload it again now."
+            PhGetStringOrEmpty(analysisActionPrompt)
             )->Buffer;
     }
     else
     {
         config.pszContent = PhaFormatString(
             L"%s %s\r\n%s %s\r\n\r\n%s",
-            L"Detections:",
+            PhGetStringOrEmpty(detectionsLabel),
             PhGetStringOrEmpty(Context->Detected),
             //L"Last analyzed:",
             //PhGetStringOrEmpty(Context->LastAnalysisDate),
-            L"Upload size:",
+            PhGetStringOrEmpty(uploadSizeLabel),
             PhGetStringOrEmpty(Context->FileSize),
-            L"You can take a look at the last analysis or upload it again now."
+            PhGetStringOrEmpty(analysisActionPrompt)
             )->Buffer;
     }
 

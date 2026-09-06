@@ -11,11 +11,6 @@
 
 #include "updater.h"
 
-static TASKDIALOG_BUTTON TaskDialogButtonArray[] =
-{
-    { IDOK, L"Download" }
-};
-
 /**
  * \brief Callback procedure for the Update Available task dialog page.
  * \param WindowHandle Handle to the dialog window.
@@ -68,7 +63,16 @@ VOID ShowAvailableDialog(
     _In_ PPH_UPDATER_CONTEXT Context
     )
 {
+    PPH_STRING downloadButtonText;
+    PPH_STRING availableDetailsFormat;
+    TASKDIALOG_BUTTON taskDialogButtonArray[1];
     TASKDIALOGCONFIG config;
+
+    downloadButtonText = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_BUTTON_DOWNLOAD, NULL));
+    availableDetailsFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_UP_AVAILABLE_DETAILS_FORMAT, NULL));
+
+    taskDialogButtonArray[0].nButtonID = IDOK;
+    taskDialogButtonArray[0].pszButtonText = PhGetStringOrEmpty(downloadButtonText);
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -76,8 +80,8 @@ VOID ShowAvailableDialog(
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, Context->WindowDpi);
     config.cxWidth = 200;
-    config.pButtons = TaskDialogButtonArray;
-    config.cButtons = RTL_NUMBER_OF(TaskDialogButtonArray);
+    config.pButtons = taskDialogButtonArray;
+    config.cButtons = RTL_NUMBER_OF(taskDialogButtonArray);
     config.lpCallbackData = (LONG_PTR)Context;
     config.pfCallback = ShowAvailableCallbackProc;
 
@@ -109,7 +113,7 @@ VOID ShowAvailableDialog(
     }
 
     config.pszContent = PhaFormatString(
-        L"Version: %s\r\nDownload size: %s\r\n\r\n<A HREF=\"changelog.txt\">View the changelog</A>",
+        PhGetStringOrEmpty(availableDetailsFormat),
         PhGetStringOrEmpty(Context->Version),
         PhGetStringOrEmpty(Context->SetupFileLength)
         )->Buffer;

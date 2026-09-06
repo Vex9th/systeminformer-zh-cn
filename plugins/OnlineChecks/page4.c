@@ -42,14 +42,29 @@ VOID VirusTotalShowErrorDialog(
     )
 {
     TASKDIALOGCONFIG config;
+    PPH_STRING uploadingFormat;
+    PPH_STRING uploadingText;
+    PPH_STRING uploadErrorFormat;
+    PPH_STRING uploadErrorText;
+
+    uploadingFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_UPLOADING_FORMAT, NULL));
+    uploadingText = PhaFormatString(
+        PhGetStringOrEmpty(uploadingFormat),
+        PhGetStringOrEmpty(Context->BaseFileName)
+        );
+    uploadErrorFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_UPLOAD_ERROR_FORMAT, NULL));
+    uploadErrorText = PhaFormatString(
+        PhGetStringOrEmpty(uploadErrorFormat),
+        PhGetStringOrEmpty(Context->BaseFileName)
+        );
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_ENABLE_HYPERLINKS;
     config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
-    config.pszWindowTitle = PhaFormatString(L"Uploading %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
-    config.pszMainInstruction = PhaFormatString(L"Error uploading %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
+    config.pszWindowTitle = uploadingText->Buffer;
+    config.pszMainInstruction = uploadErrorText->Buffer;
     config.pszContent = PhGetStringOrEmpty(Context->ErrorString);
 
     config.cxWidth = 200;

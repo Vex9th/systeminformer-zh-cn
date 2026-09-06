@@ -655,10 +655,15 @@ NTSTATUS UploadFileThreadStart(
     }
 
     {
-        PPH_STRING msg = PhFormatString(L"Uploading %s...", PhGetStringOrEmpty(context->BaseFileName));
+        PPH_STRING uploadingFormat;
+        PPH_STRING msg;
+
+        uploadingFormat = PhLoadUiString(PluginInstance->DllBase, IDS_OC_UPLOADING_FORMAT, NULL);
+        msg = PhFormatString(PhGetStringOrEmpty(uploadingFormat), PhGetStringOrEmpty(context->BaseFileName));
         SendMessage(context->DialogHandle, TDM_SET_MARQUEE_PROGRESS_BAR, FALSE, 0);
-        SendMessage(context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_MAIN_INSTRUCTION, (LPARAM)PhGetString(msg));
-        PhDereferenceObject(msg);
+        SendMessage(context->DialogHandle, TDM_UPDATE_ELEMENT_TEXT, TDE_MAIN_INSTRUCTION, (LPARAM)PhGetStringOrEmpty(msg));
+        PhClearReference(&msg);
+        PhClearReference(&uploadingFormat);
     }
 
     //if (context->TaskbarListClass)

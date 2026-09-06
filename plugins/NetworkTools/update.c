@@ -847,6 +847,12 @@ VOID ShowGeoLiteUpdateDialog(
 
     if (PhIsNullOrEmptyString(key) || PhIsNullOrEmptyString(id))
     {
+        PPH_STRING licenseRequiredContent = PH_AUTO(PhLoadUiString(
+            PluginInstance->DllBase,
+            IDS_NT_GEOLITE_LICENSE_REQUIRED_CONTENT,
+            NULL
+            ));
+
         PhClearReference(&key);
         PhClearReference(&id);
 
@@ -860,11 +866,7 @@ VOID ShowGeoLiteUpdateDialog(
 
         config.pszWindowTitle = L"Network Tools - GeoLite Updater";
         config.pszMainInstruction = L"Unable to download GeoLite database updates.";
-        config.pszContent =
-            L"A license key and account number are required to download GeoLite database updates and either the key or number are not configured.\n\n"
-            L"GeoLite license keys and accounts are free. If you're unsure how to create keys then please review the documentation here: <a href=\"https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key\">Generate-a-License-Key</a>\n\n"
-            L"Once you've created the key you can copy/paste the text into the Options window > NetworkTools settings and System Informer can start downloading GeoLite database updates.\n\n"
-            L"Special thanks to MaxMind (<a href=\"https://www.maxmind.com\">https://www.maxmind.com</a>) for continuing free GeoLite services <3";
+        config.pszContent = PhGetStringOrEmpty(licenseRequiredContent);
 
         PhShowTaskDialog(&config, NULL, NULL, NULL);
     }

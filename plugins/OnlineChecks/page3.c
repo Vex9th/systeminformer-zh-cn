@@ -160,14 +160,22 @@ VOID ShowFileUploadProgressDialog(
     )
 {
     TASKDIALOGCONFIG config;
+    PPH_STRING uploadingFormat;
+    PPH_STRING uploadingText;
+
+    uploadingFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_UPLOADING_FORMAT, NULL));
+    uploadingText = PhaFormatString(
+        PhGetStringOrEmpty(uploadingFormat),
+        PhGetStringOrEmpty(Context->BaseFileName)
+        );
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_EXPAND_FOOTER_AREA | TDF_ENABLE_HYPERLINKS | TDF_SHOW_PROGRESS_BAR | TDF_CALLBACK_TIMER;
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
-    config.pszWindowTitle = PhaFormatString(L"Uploading %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
-    config.pszMainInstruction = PhaFormatString(L"Uploading %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
+    config.pszWindowTitle = uploadingText->Buffer;
+    config.pszMainInstruction = uploadingText->Buffer;
     config.pszContent = L"Uploaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s";
 
     config.cxWidth = 200;
@@ -182,14 +190,22 @@ VOID ShowVirusTotalReScanProgressDialog(
     )
 {
     TASKDIALOGCONFIG config;
+    PPH_STRING rescanningFormat;
+    PPH_STRING rescanningText;
+
+    rescanningFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_RESCANNING_FORMAT, NULL));
+    rescanningText = PhaFormatString(
+        PhGetStringOrEmpty(rescanningFormat),
+        PhGetStringOrEmpty(Context->BaseFileName)
+        );
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_EXPAND_FOOTER_AREA | TDF_ENABLE_HYPERLINKS | TDF_SHOW_PROGRESS_BAR;
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
-    config.pszWindowTitle = PhaFormatString(L"Rescanning %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
-    config.pszMainInstruction = PhaFormatString(L"Rescanning %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
+    config.pszWindowTitle = rescanningText->Buffer;
+    config.pszMainInstruction = rescanningText->Buffer;
 
     config.cxWidth = 200;
     config.lpCallbackData = (LONG_PTR)Context;
@@ -203,14 +219,22 @@ VOID ShowVirusTotalViewReportProgressDialog(
     )
 {
     TASKDIALOGCONFIG config;
+    PPH_STRING locatingAnalysisFormat;
+    PPH_STRING locatingAnalysisText;
+
+    locatingAnalysisFormat = PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_LOCATING_ANALYSIS_FORMAT, NULL));
+    locatingAnalysisText = PhaFormatString(
+        PhGetStringOrEmpty(locatingAnalysisFormat),
+        PhGetStringOrEmpty(Context->BaseFileName)
+        );
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
     config.dwFlags = TDF_USE_HICON_MAIN | TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED | TDF_EXPAND_FOOTER_AREA | TDF_ENABLE_HYPERLINKS | TDF_SHOW_PROGRESS_BAR;
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
     config.hMainIcon = PhGetApplicationIcon(FALSE, PhGetWindowDpi(Context->DialogHandle));
-    config.pszWindowTitle = PhaFormatString(L"Locating analysis for %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
-    config.pszMainInstruction = PhaFormatString(L"Locating analysis for %s...", PhGetStringOrEmpty(Context->BaseFileName))->Buffer;
+    config.pszWindowTitle = locatingAnalysisText->Buffer;
+    config.pszMainInstruction = locatingAnalysisText->Buffer;
 
     config.cxWidth = 200;
     config.lpCallbackData = (LONG_PTR)Context;
