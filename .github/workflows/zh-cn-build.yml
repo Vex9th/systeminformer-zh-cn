@@ -161,7 +161,7 @@ jobs:
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=470' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=396' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=62' `
-          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=22' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=25' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=52' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=169' `
@@ -323,7 +323,7 @@ jobs:
           --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=470' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=396' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=62' `
-          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=22' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=25' `
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=52' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=169' `

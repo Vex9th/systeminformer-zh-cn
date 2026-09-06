@@ -31,6 +31,38 @@ PH_CALLBACK_REGISTRATION TreeNewMessageCallbackRegistration;
 PH_CALLBACK_REGISTRATION ProcessTreeNewInitializingCallbackRegistration;
 PH_CALLBACK_REGISTRATION ModulesTreeNewInitializingCallbackRegistration;
 PH_CALLBACK_REGISTRATION ServiceTreeNewInitializingCallbackRegistration;
+static PH_INITONCE OnlineChecksUiStringsInitOnce = PH_INITONCE_INIT;
+static PPH_STRING OnlineChecksUiStrings[
+    IDS_OC_COLUMN_HYBRID_ANALYSIS - IDS_OC_COLUMN_VIRUSTOTAL + 1
+];
+
+static PCWSTR OnlineChecksGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    if (ResourceId < IDS_OC_COLUMN_VIRUSTOTAL || ResourceId > IDS_OC_COLUMN_HYBRID_ANALYSIS)
+        return Fallback;
+
+    if (PhBeginInitOnce(&OnlineChecksUiStringsInitOnce))
+    {
+        for (ULONG resourceId = IDS_OC_COLUMN_VIRUSTOTAL; resourceId <= IDS_OC_COLUMN_HYBRID_ANALYSIS; resourceId++)
+        {
+            OnlineChecksUiStrings[resourceId - IDS_OC_COLUMN_VIRUSTOTAL] = PhLoadUiString(
+                PluginInstance->DllBase,
+                resourceId,
+                NULL
+                );
+        }
+
+        PhEndInitOnce(&OnlineChecksUiStringsInitOnce);
+    }
+
+    return PhGetStringOrDefault(
+        OnlineChecksUiStrings[ResourceId - IDS_OC_COLUMN_VIRUSTOTAL],
+        Fallback
+        );
+}
 
 ULONG ScanMaxFileSize = 0;
 ULONG ScanStartupDelay = 0;
@@ -694,7 +726,7 @@ VOID NTAPI ProcessTreeNewInitializingCallback(
     PH_TREENEW_COLUMN column;
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"VirusTotal";
+    column.Text = OnlineChecksGetUiString(IDS_OC_COLUMN_VIRUSTOTAL, L"VirusTotal");
     column.Width = 140;
     column.Alignment = PH_ALIGN_CENTER;
     column.CustomDraw = TRUE;
@@ -703,7 +735,7 @@ VOID NTAPI ProcessTreeNewInitializingCallback(
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, COLUMN_ID_VIRUSTOTAL_PROCESS, NULL, VirusTotalProcessNodeSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Hybrid-Analysis";
+    column.Text = OnlineChecksGetUiString(IDS_OC_COLUMN_HYBRID_ANALYSIS, L"Hybrid-Analysis");
     column.Width = 140;
     column.Alignment = PH_ALIGN_CENTER;
     column.CustomDraw = TRUE;
@@ -722,7 +754,7 @@ VOID NTAPI ModuleTreeNewInitializingCallback(
     PH_TREENEW_COLUMN column;
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"VirusTotal";
+    column.Text = OnlineChecksGetUiString(IDS_OC_COLUMN_VIRUSTOTAL, L"VirusTotal");
     column.Width = 140;
     column.Alignment = PH_ALIGN_CENTER;
     column.CustomDraw = TRUE;
@@ -731,7 +763,7 @@ VOID NTAPI ModuleTreeNewInitializingCallback(
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, COLUMN_ID_VIRUSTOTAL_MODULE, NULL, VirusTotalModuleNodeSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Hybrid-Analysis";
+    column.Text = OnlineChecksGetUiString(IDS_OC_COLUMN_HYBRID_ANALYSIS, L"Hybrid-Analysis");
     column.Width = 140;
     column.Alignment = PH_ALIGN_CENTER;
     column.CustomDraw = TRUE;
@@ -750,7 +782,7 @@ VOID NTAPI ServiceTreeNewInitializingCallback(
     PH_TREENEW_COLUMN column;
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"VirusTotal";
+    column.Text = OnlineChecksGetUiString(IDS_OC_COLUMN_VIRUSTOTAL, L"VirusTotal");
     column.Width = 140;
     column.Alignment = PH_ALIGN_CENTER;
     column.CustomDraw = TRUE;
@@ -759,7 +791,7 @@ VOID NTAPI ServiceTreeNewInitializingCallback(
     PhPluginAddTreeNewColumn(PluginInstance, info->CmData, &column, COLUMN_ID_VIRUSTOTAL_SERVICE, NULL, VirusTotalServiceNodeSortFunction);
 
     memset(&column, 0, sizeof(PH_TREENEW_COLUMN));
-    column.Text = L"Hybrid-Analysis";
+    column.Text = OnlineChecksGetUiString(IDS_OC_COLUMN_HYBRID_ANALYSIS, L"Hybrid-Analysis");
     column.Width = 140;
     column.Alignment = PH_ALIGN_CENTER;
     column.CustomDraw = TRUE;

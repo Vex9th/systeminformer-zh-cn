@@ -68,8 +68,8 @@ pwrgrid.c|IDS_ET_POWER_GRID_NO_FORECAST|No forecast data available.|1
 pwrgrid.c|IDS_ET_STATE_ACTIVE|Active|1
 etwsys.c|IDS_ET_SECTION_DISK|Disk|1
 etwsys.c|IDS_ET_SECTION_NETWORK|Network|1
-gpusys.c|IDS_ET_GROUP_GPU|GPU|1
-npusys.c|IDS_ET_GROUP_NPU|NPU|1
+gpusys.c|IDS_ET_GROUP_GPU|GPU|2
+npusys.c|IDS_ET_GROUP_NPU|NPU|2
 pooldialogbig.c|IDS_ET_STATUS_YES|Yes|1
 pooldialogbig.c|IDS_ET_STATUS_NO|No|1
 objprp.c|IDS_ET_STATUS_TRUE|True|3
@@ -227,8 +227,8 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
         self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=470"), 2)
         self.assertNotIn("plugins\\ExtendedTools.dll=200", workflow)
 
-    def test_all_41_visible_fixed_text_occurrences_use_the_exact_resource(self):
-        self.assertEqual(sum(row[3] for row in FIXED_ROUTES), 41)
+    def test_all_43_visible_fixed_text_occurrences_use_the_exact_resource(self):
+        self.assertEqual(sum(row[3] for row in FIXED_ROUTES), 43)
 
         for filename, symbol, fallback, expected_count in FIXED_ROUTES:
             with self.subTest(filename=filename, symbol=symbol):
@@ -280,15 +280,20 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
         )
 
         gpu = compact(source_text("gpusys.c"))
-        self.assertIn(compact('static CONST PH_STRINGREF string = PH_STRINGREF_INIT(L"GPU");'), gpu)
-        self.assertIn(compact('section.Name = string;'), gpu)
+        self.assertIn(
+            compact('PhInitializeStringRef(&section.Name, EtGetUiString(IDS_ET_GROUP_GPU, L"GPU"));'),
+            gpu,
+        )
         self.assertIn(
             compact('drawPanel->Title = PhCreateString(EtGetUiString(IDS_ET_GROUP_GPU, L"GPU"));'),
             gpu,
         )
 
         npu = compact(source_text("npusys.c"))
-        self.assertIn(compact('PhInitializeStringRef(&section.Name, L"NPU");'), npu)
+        self.assertIn(
+            compact('PhInitializeStringRef(&section.Name, EtGetUiString(IDS_ET_GROUP_NPU, L"NPU"));'),
+            npu,
+        )
         self.assertIn(
             compact('drawPanel->Title = PhCreateString(EtGetUiString(IDS_ET_GROUP_NPU, L"NPU"));'),
             npu,
@@ -565,11 +570,10 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
         for filename in filenames:
             AUDIT.scan_c_file(str(PLUGIN_ROOT / filename), entries)
 
-        stable_section_names = Counter({"GPU": 1, "NPU": 1})
         migrated = (
             {row[2] for row in NEW_RESOURCES}
             | {row[2] for row in REUSED_RESOURCES}
-        ) - set(stable_section_names)
+        )
         self.assertFalse(
             {
                 entry["english"]
@@ -584,7 +588,7 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
             for entry in entries
             if entry["category"] == "c_window_text"
         )
-        self.assertEqual(actual_window_text, stable_section_names)
+        self.assertEqual(actual_window_text, Counter())
 
         expected = Counter()
         for (_filename, _function, value), count in TECHNICAL_FORMATS.items():

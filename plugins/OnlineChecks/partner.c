@@ -17,6 +17,10 @@ typedef struct _PARTNER_CONTEXT
     HFONT TitleFont;
 } PARTNER_CONTEXT, *PPARTNER_CONTEXT;
 
+static CONST PH_STRINGREF PartnerLinkFallback = PH_STRINGREF_INIT(
+    L"<a href=\"https://www.hybrid-analysis.com/\">hybrid-analysis.com</a>"
+    );
+
 static HBITMAP PartnerLoadImage(
     _In_ PCWSTR Name,
     _In_ LONG Width,
@@ -125,7 +129,14 @@ static INT_PTR CALLBACK PartnerDialogProc(
 
             PhInitializeWindowTheme(WindowHandle, !!PhGetIntegerSetting(L"EnableThemeSupport"));
 
-            PhSetDialogItemText(WindowHandle, IDC_PARTNER_LINK, L"<a href=\"https://www.hybrid-analysis.com/\">hybrid-analysis.com</a>");
+            PhSetDialogItemText(
+                WindowHandle,
+                IDC_PARTNER_LINK,
+                PhGetStringOrDefault(
+                    PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_OC_PARTNER_LINK, NULL)),
+                    PartnerLinkFallback.Buffer
+                    )
+                );
             PhSetDialogFocus(WindowHandle, GetDlgItem(WindowHandle, IDOK));
         }
         return FALSE;

@@ -89,4 +89,7 @@ BEGIN
     IDS_OC_WILDCARD_PATH_CONTENT    "要将其转换为正则表达式吗？反斜杠将被转义，通配符将被展开。"
     IDS_OC_UPLOAD_PROGRESS_INITIAL  "已上传：~ / ~ (0%)\r\n速度：~ KB/s"
     IDS_OC_INITIALIZING             "正在初始化..."
+    IDS_OC_COLUMN_VIRUSTOTAL        "VirusTotal"
+    IDS_OC_COLUMN_HYBRID_ANALYSIS   "Hybrid-Analysis"
+    IDS_OC_PARTNER_LINK             "<a href=""https://www.hybrid-analysis.com/"">hybrid-analysis.com</a>"
 END

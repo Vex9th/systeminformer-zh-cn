@@ -176,6 +176,9 @@ BEGIN
     IDS_OC_WILDCARD_PATH_CONTENT    "Convert it to a regular expression? Backslashes will be escaped and wildcards expanded."
     IDS_OC_UPLOAD_PROGRESS_INITIAL  "Uploaded: ~ of ~ (0%)\r\nSpeed: ~ KB/s"
     IDS_OC_INITIALIZING             "Initializing..."
+    IDS_OC_COLUMN_VIRUSTOTAL        "VirusTotal"
+    IDS_OC_COLUMN_HYBRID_ANALYSIS   "Hybrid-Analysis"
+    IDS_OC_PARTNER_LINK             "<a href=""https://www.hybrid-analysis.com/"">hybrid-analysis.com</a>"
 END
 
 #endif    // English (United States) resources

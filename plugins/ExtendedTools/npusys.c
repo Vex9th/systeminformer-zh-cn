@@ -50,7 +50,7 @@ VOID EtNpuSystemInformationInitializing(
     PH_SYSINFO_SECTION section;
 
     memset(&section, 0, sizeof(PH_SYSINFO_SECTION));
-    PhInitializeStringRef(&section.Name, L"NPU");
+    PhInitializeStringRef(&section.Name, EtGetUiString(IDS_ET_GROUP_NPU, L"NPU"));
     section.Flags = 0;
     section.Callback = EtpNpuSysInfoSectionCallback;
 

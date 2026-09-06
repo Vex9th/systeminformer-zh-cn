@@ -46,11 +46,10 @@ VOID EtGpuSystemInformationInitializing(
     _In_ PPH_PLUGIN_SYSINFO_POINTERS Pointers
     )
 {
-    static CONST PH_STRINGREF string = PH_STRINGREF_INIT(L"GPU");
     PH_SYSINFO_SECTION section;
 
     memset(&section, 0, sizeof(PH_SYSINFO_SECTION));
-    section.Name = string;
+    PhInitializeStringRef(&section.Name, EtGetUiString(IDS_ET_GROUP_GPU, L"GPU"));
     section.Flags = 0;
     section.Callback = EtpGpuSysInfoSectionCallback;
 

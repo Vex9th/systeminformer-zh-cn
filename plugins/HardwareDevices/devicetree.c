@@ -60,6 +60,7 @@ static ULONG DeviceArrivedColor = 0;
 static ULONG DeviceHighlightingDuration = 0;
 
 static CONST PH_STRINGREF DevicePageText = PH_STRINGREF_INIT(L"Devices");
+static PH_STRINGREF DevicePageDisplayText;
 static CONST PH_STRINGREF DeviceBannerText = PH_STRINGREF_INIT(L"Search Devices");
 static PPH_OBJECT_TYPE DeviceTreeType = NULL;
 static BOOLEAN DeviceTabCreated = FALSE;
@@ -82,6 +83,17 @@ static PH_TN_FILTER_SUPPORT DeviceTreeFilterSupport = { 0 };
 static PPH_TN_FILTER_ENTRY DeviceTreeFilterEntry = NULL;
 static PH_CALLBACK_REGISTRATION SearchChangedRegistration = { 0 };
 static PPH_POINTER_LIST DeviceNodeStateList = NULL;
+
+static PCWSTR HardwareDevicesPageGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    return PhGetStringOrDefault(
+        HardwareDevicesGetUiStringObject(ResourceId),
+        Fallback
+        );
+}
 
 static int __cdecl DeviceListSortByNameFunction(
     const void* Left,
@@ -1851,11 +1863,15 @@ VOID InitializeDevicesTab(
         );
 
     DeviceTreeUpdateCachedSettings(TRUE);
+    PhInitializeStringRefLongHint(
+        &DevicePageDisplayText,
+        HardwareDevicesPageGetUiString(IDS_HD_MENU_DEVICES, L"Devices")
+        );
 
     RtlZeroMemory(&page, sizeof(PH_MAIN_TAB_PAGE));
     page.Name = DevicePageText;
     page.Callback = DevicesTabPageCallback;
-    DevicesAddedTabPage = PhPluginCreateTabPage(&page);
+    DevicesAddedTabPage = PhPluginCreateTabPage2(&page, &DevicePageDisplayText);
 
     if (ToolStatusInterface = PhGetPluginInterfaceZ(TOOLSTATUS_INTERFACE_NAME, TOOLSTATUS_INTERFACE_VERSION))
     {

@@ -48,9 +48,9 @@ class OnlineChecksRemainingDynamicResourceTests(unittest.TestCase):
             self.assertRegex(header, rf"(?m)^#define\s+{symbol}\s+{resource_id}$")
             self.assertEqual(english.get(symbol), en)
             self.assertEqual(chinese.get(symbol), zh)
-        self.assertEqual(len(english), 22)
-        self.assertEqual(len(chinese), 22)
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12022$")
+        self.assertEqual(len(english), 25)
+        self.assertEqual(len(chinese), 25)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12025$")
 
     def test_exact_call_sites_use_nullable_safe_module_resources(self) -> None:
         exclude = self.audit.mask_c_comments((PLUGIN_ROOT / "exclude.c").read_text(encoding="utf-8-sig"))

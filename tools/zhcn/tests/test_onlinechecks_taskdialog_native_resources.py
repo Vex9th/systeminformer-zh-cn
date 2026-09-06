@@ -123,11 +123,11 @@ class OnlineChecksTaskDialogNativeResourceTests(unittest.TestCase):
                     [item for item in chinese_specifiers if item != "%%"],
                 )
 
-        self.assertEqual(22, len(english))
-        self.assertEqual(22, len(chinese))
+        self.assertEqual(25, len(english))
+        self.assertEqual(25, len(chinese))
         self.assertRegex(
             header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12022$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12025$",
         )
 
     def test_every_target_uses_the_plugin_resource_and_leaves_no_c_literal(self) -> None:

@@ -9,6 +9,7 @@
     "\nW: ": "\nW: ",
     "%": "%",
     "%u bytes per row": "每行 %u 字节",
+    "<a href=\"https://www.hybrid-analysis.com/\">hybrid-analysis.com</a>": "<a href=\"https://www.hybrid-analysis.com/\">hybrid-analysis.com</a>",
     "Accept": "接受",
     "All files (*.*)": "所有文件 (*.*)",
     "Append Write": "追加写入",

@@ -62,6 +62,9 @@
 #define IDS_OC_WILDCARD_PATH_CONTENT    12019
 #define IDS_OC_UPLOAD_PROGRESS_INITIAL  12020
 #define IDS_OC_INITIALIZING             12021
+#define IDS_OC_COLUMN_VIRUSTOTAL        12022
+#define IDS_OC_COLUMN_HYBRID_ANALYSIS   12023
+#define IDS_OC_PARTNER_LINK             12024
 
 // Next default values for new objects
 //
@@ -70,6 +73,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1015
-#define _APS_NEXT_SYMED_VALUE           12022
+#define _APS_NEXT_SYMED_VALUE           12025
 #endif
 #endif
