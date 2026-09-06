@@ -25,6 +25,11 @@ RESOURCES = (
         "%lu zombie process(es), %lu terminated process(es).",
         "%lu 个僵尸进程，%lu 个已终止进程。",
     ),
+    ("IDS_PH_INSTALLED_MEMORY_FORMAT", 2550, "%s installed", "已安装 %s"),
+    ("IDS_PH_TOTAL_MEMORY_FORMAT", 2551, "%s total", "总计 %s"),
+    ("IDS_PH_MEMORY_STRINGS_TITLE_FORMAT", 2552, "%s Strings", "%s 字符串"),
+    ("IDS_PH_THREAD_COUNT_AUTO", 2553, "Thread count... (auto)", "线程数...（自动）"),
+    ("IDS_PH_THREAD_COUNT_FORMAT", 2554, "Thread count... (%lu)", "线程数...（%lu）"),
 )
 
 
@@ -83,6 +88,8 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                 "sessmsg.c",
                 "thrdstk.c",
                 "hidnproc.c",
+                "sysscmem.c",
+                "memsrcht.c",
             )
         }
 
@@ -97,7 +104,7 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
 
-        self.assertEqual([row[1] for row in RESOURCES], list(range(2542, 2550)))
+        self.assertEqual([row[1] for row in RESOURCES], list(range(2542, 2555)))
         for symbol, resource_id, en, zh in RESOURCES:
             with self.subTest(symbol=symbol):
                 self.assertRegex(header, rf"(?m)^#define\s+{symbol}\s+{resource_id}$")
@@ -113,17 +120,17 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2550)))
-        self.assertEqual(len(english), 550)
-        self.assertEqual(len(chinese), 550)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2550$")
+        self.assertEqual(numeric_ids, list(range(2000, 2555)))
+        self.assertEqual(len(english), 555)
+        self.assertEqual(len(chinese), 555)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_THREAD_COUNT_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2555$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=550"), 2)
-        self.assertNotIn("sys_info.exe=542", workflow)
+        self.assertEqual(workflow.count("sys_info.exe=555"), 2)
+        self.assertNotIn("sys_info.exe=550", workflow)
 
     def test_each_resource_is_bound_to_the_exact_runtime_arguments(self) -> None:
         masked = {name: self.audit.mask_c_comments(source) for name, source in self.sources.items()}
@@ -167,6 +174,20 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                     "NumberOfTerminatedProcesses",
                 ),
             ),
+            "sysscmem.c": (
+                (
+                    "IDS_PH_INSTALLED_MEMORY_FORMAT",
+                    "PhaFormatSize(InstalledMemory, ULONG_MAX)->Buffer",
+                ),
+                (
+                    "IDS_PH_TOTAL_MEMORY_FORMAT",
+                    "PhaFormatSize(UInt32x32To64(PhSystemBasicInformation.NumberOfPhysicalPages, PAGE_SIZE), ULONG_MAX)->Buffer",
+                ),
+            ),
+            "memsrcht.c": ((
+                "IDS_PH_MEMORY_STRINGS_TITLE_FORMAT",
+                "PhGetStringOrEmpty(PH_AUTO(PhGetClientIdName(&clientId)))",
+            ),),
         }
 
         actual = Counter()
@@ -187,6 +208,37 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
             for call in calls
         )
         self.assertEqual(actual, expected)
+
+    def test_memory_string_thread_count_labels_use_exact_resource_formats(self) -> None:
+        body = function_body(self.sources["memsrcht.c"], "PhpMemoryStringsDlgProc", self.audit)
+        self.assertRegex(
+            body,
+            r"(?s)if\s*\(context->ThreadCount\s*==\s*0\)\s*"
+            r"swprintf_s\(\s*threadCountLabel\s*,\s*"
+            r"RTL_NUMBER_OF\(threadCountLabel\)\s*,\s*"
+            r"PhGetApplicationUiString\(IDS_PH_THREAD_COUNT_AUTO\)\s*\)\s*;\s*"
+            r"else\s*"
+            r"swprintf_s\(\s*threadCountLabel\s*,\s*"
+            r"RTL_NUMBER_OF\(threadCountLabel\)\s*,\s*"
+            r"PhGetApplicationUiString\(IDS_PH_THREAD_COUNT_FORMAT\)\s*,\s*"
+            r"context->ThreadCount\s*\)\s*;",
+        )
+
+    def test_installed_and_total_memory_formats_stay_in_correct_branches(self) -> None:
+        body = function_body(self.sources["sysscmem.c"], "PhSipMemoryDialogProc", self.audit)
+        self.assertRegex(
+            body,
+            r"(?s)if\s*\(NT_SUCCESS\(PhGetPhysicallyInstalledSystemMemory\("
+            r"&InstalledMemory\s*,\s*&ReservedMemory\)\)\)\s*\{\s*"
+            r"PhSetWindowText\(totalPhysicalLabel\s*,\s*PhaFormatString\(\s*"
+            r"PhGetApplicationUiString\(IDS_PH_INSTALLED_MEMORY_FORMAT\)\s*,\s*"
+            r"PhaFormatSize\(InstalledMemory\s*,\s*ULONG_MAX\)->Buffer\s*\)->Buffer\s*\)\s*;\s*"
+            r"\}\s*else\s*\{\s*"
+            r"PhSetWindowText\(totalPhysicalLabel\s*,\s*PhaFormatString\(\s*"
+            r"PhGetApplicationUiString\(IDS_PH_TOTAL_MEMORY_FORMAT\)\s*,\s*"
+            r"PhaFormatSize\(UInt32x32To64\(PhSystemBasicInformation.NumberOfPhysicalPages\s*,\s*PAGE_SIZE\)\s*,\s*"
+            r"ULONG_MAX\)->Buffer\s*\)->Buffer\s*\)\s*;\s*\}",
+        )
 
     def test_hidden_process_non_auto_pool_path_keeps_explicit_release(self) -> None:
         source = self.sources["hidnproc.c"]
@@ -226,6 +278,9 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
         for _symbol, _resource_id, english, _chinese in RESOURCES:
             with self.subTest(english=english):
                 self.assertNotIn(f'L"{english}"', all_source)
+        for fragment in ('L" installed"', 'L" total"', 'L" Strings"'):
+            with self.subTest(fragment=fragment):
+                self.assertNotIn(fragment, all_source)
 
     def test_fresh_scan_no_longer_reports_migrated_formats(self) -> None:
         entries = []

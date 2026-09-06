@@ -1478,7 +1478,10 @@ VOID PhpMemoryStringsSetWindowTitle(
 
     clientId.UniqueProcess = Context->ProcessItem->ProcessId;
     clientId.UniqueThread = NULL;
-    title = PhaConcatStrings2(PhGetStringOrEmpty(PH_AUTO(PhGetClientIdName(&clientId))), L" Strings");
+    title = PhaFormatString(
+        PhGetApplicationUiString(IDS_PH_MEMORY_STRINGS_TITLE_FORMAT),
+        PhGetStringOrEmpty(PH_AUTO(PhGetClientIdName(&clientId)))
+        );
     SetWindowTextW(Context->WindowHandle, title->Buffer);
 }
 
@@ -1806,9 +1809,9 @@ INT_PTR CALLBACK PhpMemoryStringsDlgProc(
                     zeroPad = PhCreateEMenuItem(0, 8, L"Zero pad addresses", NULL, NULL);
                     refresh = PhCreateEMenuItem(0, 9, L"Refresh\bF5", NULL, NULL);
                     if (context->ThreadCount == 0)
-                        swprintf_s(threadCountLabel, RTL_NUMBER_OF(threadCountLabel), L"Thread count... (auto)");
+                        swprintf_s(threadCountLabel, RTL_NUMBER_OF(threadCountLabel), PhGetApplicationUiString(IDS_PH_THREAD_COUNT_AUTO));
                     else
-                        swprintf_s(threadCountLabel, RTL_NUMBER_OF(threadCountLabel), L"Thread count... (%lu)", context->ThreadCount);
+                        swprintf_s(threadCountLabel, RTL_NUMBER_OF(threadCountLabel), PhGetApplicationUiString(IDS_PH_THREAD_COUNT_FORMAT), context->ThreadCount);
                     threadCount = PhCreateEMenuItem(0, 10, threadCountLabel, NULL, NULL);
 
                     menu = PhCreateEMenu();

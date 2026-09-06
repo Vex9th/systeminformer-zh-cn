@@ -833,7 +833,12 @@
     "Edit %s": "编辑 %s",
     "Message from %s": "来自 %s 的消息",
     "Stack - thread %lu": "堆栈 - 线程 %lu",
-    "%lu zombie process(es), %lu terminated process(es).": "%lu 个僵尸进程，%lu 个已终止进程。"
+    "%lu zombie process(es), %lu terminated process(es).": "%lu 个僵尸进程，%lu 个已终止进程。",
+    "%s installed": "已安装 %s",
+    "%s total": "总计 %s",
+    "%s Strings": "%s 字符串",
+    "Thread count... (auto)": "线程数...（自动）",
+    "Thread count... (%lu)": "线程数...（%lu）"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

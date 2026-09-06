@@ -716,10 +716,6 @@ class NativeResourceGenerationTests(unittest.TestCase):
     def test_audit_finds_known_repository_one_hop_composed_sources(self) -> None:
         audit = load_audit_module()
         cases = {
-            REPO_ROOT / "SystemInformer" / "memsrcht.c": {
-                ("c_emenu", "Thread count... (auto)"),
-                ("c_runtime_composed", "Thread count... (%lu)"),
-            },
             REPO_ROOT / "plugins" / "ExtendedTools" / "tpm.c": {
                 ("c_runtime_composed", "0x%08lx"),
             },
@@ -1075,11 +1071,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('L"', tray_array)
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_THREAD_COUNT_FORMAT$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2550$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2555$",
         )
 
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
@@ -1602,7 +1598,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1614 strings", result.stdout)
+        self.assertIn("1619 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2051,7 +2047,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 550)
+        self.assertEqual(len(stringtable_ids(resource_script)), 555)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -2090,7 +2086,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2550)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2555)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -2583,11 +2579,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_THREAD_COUNT_FORMAT$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2550$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2555$",
         )
 
     def test_early_crash_prompt_does_not_depend_on_ui_string_cache(self) -> None:
@@ -6266,7 +6262,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 550): 2,
+                    (r"bin\Release64\sys_info.exe", 555): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 200): 2,

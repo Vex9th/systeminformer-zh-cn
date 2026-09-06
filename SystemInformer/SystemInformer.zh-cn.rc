@@ -2328,4 +2328,9 @@ BEGIN
     IDS_PH_MESSAGE_FROM_FORMAT                          "来自 %s 的消息"
     IDS_PH_STACK_THREAD_TITLE_FORMAT                    "堆栈 - 线程 %lu"
     IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT                "%lu 个僵尸进程，%lu 个已终止进程。"
+    IDS_PH_INSTALLED_MEMORY_FORMAT                      "已安装 %s"
+    IDS_PH_TOTAL_MEMORY_FORMAT                          "总计 %s"
+    IDS_PH_MEMORY_STRINGS_TITLE_FORMAT                  "%s 字符串"
+    IDS_PH_THREAD_COUNT_AUTO                            "线程数...（自动）"
+    IDS_PH_THREAD_COUNT_FORMAT                          "线程数...（%lu）"
 END

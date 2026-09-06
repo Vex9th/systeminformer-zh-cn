@@ -510,13 +510,17 @@ INT_PTR CALLBACK PhSipMemoryDialogProc(
 
             if (NT_SUCCESS(PhGetPhysicallyInstalledSystemMemory(&InstalledMemory, &ReservedMemory)))
             {
-                PhSetWindowText(totalPhysicalLabel, PhaConcatStrings2(
-                    PhaFormatSize(InstalledMemory, ULONG_MAX)->Buffer, L" installed")->Buffer);
+                PhSetWindowText(totalPhysicalLabel, PhaFormatString(
+                    PhGetApplicationUiString(IDS_PH_INSTALLED_MEMORY_FORMAT),
+                    PhaFormatSize(InstalledMemory, ULONG_MAX)->Buffer
+                    )->Buffer);
             }
             else
             {
-                PhSetWindowText(totalPhysicalLabel, PhaConcatStrings2(
-                    PhaFormatSize(UInt32x32To64(PhSystemBasicInformation.NumberOfPhysicalPages, PAGE_SIZE), ULONG_MAX)->Buffer, L" total")->Buffer);
+                PhSetWindowText(totalPhysicalLabel, PhaFormatString(
+                    PhGetApplicationUiString(IDS_PH_TOTAL_MEMORY_FORMAT),
+                    PhaFormatSize(UInt32x32To64(PhSystemBasicInformation.NumberOfPhysicalPages, PAGE_SIZE), ULONG_MAX)->Buffer
+                    )->Buffer);
             }
 
             MemoryPanel = PhCreateDialog(PhInstanceHandle, MAKEINTRESOURCE(IDD_SYSINFO_MEMPANEL), hwndDlg, PhSipMemoryPanelDialogProc, NULL);

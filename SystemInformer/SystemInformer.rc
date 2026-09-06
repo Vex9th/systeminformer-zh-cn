@@ -3148,6 +3148,11 @@ BEGIN
     IDS_PH_MESSAGE_FROM_FORMAT                          "Message from %s"
     IDS_PH_STACK_THREAD_TITLE_FORMAT                    "Stack - thread %lu"
     IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT                "%lu zombie process(es), %lu terminated process(es)."
+    IDS_PH_INSTALLED_MEMORY_FORMAT                      "%s installed"
+    IDS_PH_TOTAL_MEMORY_FORMAT                          "%s total"
+    IDS_PH_MEMORY_STRINGS_TITLE_FORMAT                  "%s Strings"
+    IDS_PH_THREAD_COUNT_AUTO                            "Thread count... (auto)"
+    IDS_PH_THREAD_COUNT_FORMAT                          "Thread count... (%lu)"
 END
 
 /////////////////////////////////////////////////////////////////////////////
