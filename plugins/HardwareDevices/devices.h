@@ -1798,11 +1798,24 @@ VOID InitializeDevicesTab(
 typedef struct DEVICE_PROPERTY_TABLE_ENTRY
 {
     PH_DEVICE_PROPERTY_CLASS PropClass;
+    ULONG ResourceId;
     PWSTR ColumnName;
     BOOLEAN ColumnVisible;
     ULONG ColumnWidth;
     ULONG ColumnTextFlags;
 } DEVICE_PROPERTY_TABLE_ENTRY, *PDEVICE_PROPERTY_TABLE_ENTRY;
+
+FORCEINLINE
+PCWSTR
+DevicePropertyTableEntryGetColumnName(
+    _In_ const DEVICE_PROPERTY_TABLE_ENTRY* Entry
+    )
+{
+    return PhGetStringOrDefault(
+        HardwareDevicesGetUiStringObject(Entry->ResourceId),
+        Entry->ColumnName
+        );
+}
 
 extern const DEVICE_PROPERTY_TABLE_ENTRY DeviceItemPropertyTable[];
 extern const ULONG DeviceItemPropertyTableCount;

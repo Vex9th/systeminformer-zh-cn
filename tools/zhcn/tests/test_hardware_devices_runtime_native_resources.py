@@ -201,13 +201,13 @@ class HardwareDevicesRuntimeNativeResourceTests(unittest.TestCase):
         self.assertEqual(defines["IDS_HD_NAME"], 12034)
         self.assertEqual(english["IDS_HD_NAME"], "Name")
         self.assertEqual(chinese["IDS_HD_NAME"], "名称")
-        self.assertEqual(sorted(defines.values()), list(range(12000, 12199)))
+        self.assertEqual(sorted(defines.values()), list(range(12000, 12396)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 199)
-        self.assertEqual(len(chinese), 199)
-        self.assertRegex(header, r"(?m)^#define IDS_HD_LAST\s+IDS_HD_RAPL_DRIVES$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12199$")
+        self.assertEqual(len(english), 396)
+        self.assertEqual(len(chinese), 396)
+        self.assertRegex(header, r"(?m)^#define IDS_HD_LAST\s+IDS_HD_DEVICE_PROPERTY_GPU_PHYSICAL_ADAPTER_INDEX$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+12396$")
 
         main = self.sources["main.c"]
         self.assertRegex(main, r"static\s+PPH_STRING\s+HardwareDevicesUiStrings\s*\[\s*IDS_HD_LAST\s*-\s*IDS_HD_FIRST\s*\+\s*1\s*\]")

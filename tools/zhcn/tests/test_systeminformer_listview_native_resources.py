@@ -258,7 +258,10 @@ class SystemInformerListViewNativeResourceTests(unittest.TestCase):
 
         self.assertEqual(2, sources["extended_main"].count('EtGetUiString(IDS_ET_TOTAL, L"Total")'))
         self.assertIn('EtGetUiString(IDS_ET_INDEX, L"Index")', sources["extended_tpm"])
-        self.assertIn('{ PhDevicePropertyClass, L"Class", TRUE, 120, 0 }', sources["hardware_tree"])
+        self.assertIn(
+            '{ PhDevicePropertyClass, IDS_HD_GROUP_CLASS, L"Class", TRUE, 120, 0 }',
+            sources["hardware_tree"],
+        )
         self.assertIn('PhAddTreeNewColumn(', sources["hardware_tree"])
         self.assertIn('WepAddTreeNewResourceColumn(TreeNewHandle, columnTextList, WEWNTLC_CLASS, IDS_WE_GROUP_CLASS', sources["window_tree"])
         self.assertIn('PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_IMAGE_BASE)', sources["pe_header"])

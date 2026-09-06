@@ -616,7 +616,7 @@ VOID DeviceInitializePropsPage(
 
             if (PhLookupDevicePropertyClass(&prop->CompKey.Key, &propClass))
             {
-                name = DeviceItemPropertyTable[propClass].ColumnName;
+                name = DevicePropertyTableEntryGetColumnName(&DeviceItemPropertyTable[propClass]);
                 value = PhGetStringOrEmpty(PhGetDeviceProperty(Context->DeviceItem, propClass)->AsString);
             }
             else
@@ -810,7 +810,7 @@ VOID DeviceInitializeInterfacesPage(
             // device provider but we prefer to show only originally valid information in this tab.
             if (value && prop->Valid)
             {
-                PhAddListViewGroupItem(Context->InterfacesListViewHandle, group, index, entry->ColumnName, NULL);
+                PhAddListViewGroupItem(Context->InterfacesListViewHandle, group, index, DevicePropertyTableEntryGetColumnName(entry), NULL);
                 PhSetListViewSubItem(Context->InterfacesListViewHandle, index, 1, PhGetString(value));
                 index++;
             }

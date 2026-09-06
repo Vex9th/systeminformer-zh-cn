@@ -88,7 +88,7 @@ EXPECTED_COUNTS = {
     "sys_info.exe": 1296,
     "ExtendedNotifications.dll": 4,
     "ExtendedTools.dll": 470,
-    "HardwareDevices.dll": 199,
+    "HardwareDevices.dll": 396,
     "NetworkTools.dll": 55,
     "OnlineChecks.dll": 22,
     "ToolStatus.dll": 104,
@@ -100,7 +100,7 @@ EXPECTED_NEXT_SYMED_VALUES = {
     "UserNotes": 2052,
     "ExtendedTools": 61470,
     "ExtendedNotifications": 12004,
-    "HardwareDevices": 12199,
+    "HardwareDevices": 12396,
     "OnlineChecks": 12022,
     "NetworkTools": 12055,
     "ToolStatus": 12104,
@@ -316,7 +316,7 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(native.returncode, 0, native.stdout + native.stderr)
-        self.assertIn("3009 strings", native.stdout)
+        self.assertIn("3206 strings", native.stdout)
 
         runtime = subprocess.run(
             [sys.executable, str(REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"), "--check"],

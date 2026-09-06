@@ -1595,7 +1595,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("3009 strings", result.stdout)
+        self.assertIn("3206 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -5594,13 +5594,13 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     expected_count,
                 )
 
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12199$")
-        self.assertEqual(len(stringtable_ids(english_resource)), 199)
-        self.assertEqual(len(stringtable_ids(chinese_resource)), 199)
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12396$")
+        self.assertEqual(len(stringtable_ids(english_resource)), 396)
+        self.assertEqual(len(stringtable_ids(chinese_resource)), 396)
         self.assertEqual(
             len(
                 re.findall(
-                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=199'",
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=396'",
                     workflow,
                 )
             ),
@@ -6310,7 +6310,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ExtendedNotifications.dll", 4): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 90): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 470): 2,
-                    (r"bin\Release64\plugins\HardwareDevices.dll", 199): 2,
+                    (r"bin\Release64\plugins\HardwareDevices.dll", 396): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 55): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 168): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 22): 2,

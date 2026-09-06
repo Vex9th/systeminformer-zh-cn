@@ -2522,6 +2522,150 @@ def split_c_initializer_fields(initializer: str):
     return call[1] if call else []
 
 
+def scan_device_property_table_routes(
+    text: str,
+    scan_text: str,
+    rel: str,
+    entries,
+    related_sources=None,
+):
+    """Resolve HardwareDevices property labels through their three UI sinks."""
+    declaration = re.search(
+        r"\bDeviceItemPropertyTable\s*\[\s*\]\s*=\s*"
+        r"\{(?P<body>.*?)\}\s*;",
+        scan_text,
+        re.DOTALL,
+    )
+    if declaration is None:
+        return
+
+    rows = []
+    for initializer in re.finditer(r"\{(?P<body>[^{}]*)\}", declaration.group("body")):
+        fields = split_c_initializer_fields(initializer.group("body"))
+        literal_field = next(
+            (
+                (index, adjacent_literal_text(field))
+                for index, field in enumerate(fields)
+                if adjacent_literal_text(field) is not None
+            ),
+            None,
+        )
+        if literal_field is None or is_noise(literal_field[1]):
+            continue
+        literal_index, visible_text = literal_field
+        resourceized = any(
+            re.fullmatch(r"\s*IDS_HD_[A-Z0-9_]+\s*", field)
+            for field in fields[:literal_index]
+        )
+        rows.append((
+            visible_text,
+            resourceized,
+            declaration.start("body") + initializer.start("body"),
+        ))
+
+    if not rows:
+        return
+
+    sources = [(rel, text, scan_text)]
+    if related_sources:
+        sources.extend(related_sources)
+
+    helper_is_stable = False
+    helper_re = re.compile(
+        r"\bDevicePropertyTableEntryGetColumnName\s*\([^;{}]*\)\s*"
+        r"\{(?P<body>[^{}]*)\}",
+        re.DOTALL,
+    )
+    for _source_rel, _source_text, source_scan_text in sources:
+        helper = helper_re.search(source_scan_text)
+        if helper is None:
+            continue
+        helper_body = helper.group("body")
+        if (
+            re.search(
+                r"\breturn\s+PhGetStringOrDefault\s*\(\s*"
+                r"HardwareDevicesGetUiStringObject\s*"
+                r"\(\s*Entry\s*->\s*ResourceId\s*\)\s*,\s*"
+                r"Entry\s*->\s*ColumnName\s*\)\s*;",
+                helper_body,
+            )
+            and "PH_AUTO" not in helper_body
+            and "PhLoadUiString" not in helper_body
+        ):
+            helper_is_stable = True
+            break
+
+    routes = {
+        "c_treenew_col": (
+            re.compile(
+                r"\bPhAddTreeNewColumn\s*\([^;]*?"
+                r"DevicePropertyTableEntryGetColumnName\s*\(\s*entry\s*\)",
+                re.DOTALL,
+            ),
+            re.compile(
+                r"\bPhAddTreeNewColumn\s*\([^;]*?"
+                r"entry\s*->\s*ColumnName",
+                re.DOTALL,
+            ),
+        ),
+        "c_listview_item": (
+            re.compile(
+                r"\bname\s*=\s*DevicePropertyTableEntryGetColumnName\s*"
+                r"\(\s*&\s*DeviceItemPropertyTable\s*\[\s*propClass\s*\]\s*\)\s*;"
+                r"[\s\S]*?\bPhAddListViewItem\s*\([^;]*?\bname\b",
+            ),
+            re.compile(
+                r"\bname\s*=\s*DeviceItemPropertyTable\s*"
+                r"\[\s*propClass\s*\]\s*\.\s*ColumnName\s*;"
+                r"[\s\S]*?\bPhAddListViewItem\s*\([^;]*?\bname\b",
+            ),
+        ),
+        "c_listview_group_item": (
+            re.compile(
+                r"\bPhAddListViewGroupItem\s*\([^;]*?"
+                r"DevicePropertyTableEntryGetColumnName\s*\(\s*entry\s*\)",
+                re.DOTALL,
+            ),
+            re.compile(
+                r"\bPhAddListViewGroupItem\s*\([^;]*?"
+                r"entry\s*->\s*ColumnName",
+                re.DOTALL,
+            ),
+        ),
+    }
+
+    for category, (native_route, raw_route) in routes.items():
+        route_source = next(
+            (
+                source
+                for source in sources
+                if native_route.search(source[2]) or raw_route.search(source[2])
+            ),
+            None,
+        )
+        if route_source is None:
+            continue
+
+        source_rel, source_text, source_scan_text = route_source
+        raw = raw_route.search(source_scan_text)
+        native = native_route.search(source_scan_text)
+        route_is_native = native is not None and raw is None and helper_is_stable
+        route_offset = (native or raw).start() if (native or raw) else 0
+
+        for visible_text, resourceized, table_offset in rows:
+            if route_is_native and resourceized:
+                continue
+            entries.append({
+                "category": category,
+                "file": source_rel,
+                "line": line_of_offset(
+                    source_text,
+                    route_offset if raw is not None or native is not None else table_offset,
+                ),
+                "english": visible_text,
+            })
+
+
 def resolve_struct_array_member(
     scan_text: str,
     expression: str,
@@ -2691,6 +2835,34 @@ def scan_c_file(path: str, entries):
 
     scan_text = mask_c_comments(text)
     one_hop_seen = set()
+
+    related_device_property_sources = []
+    if rel == "plugins/HardwareDevices/devicetree.c":
+        for related_name in ("deviceprops.c", "devices.h"):
+            related_path = os.path.join(os.path.dirname(path), related_name)
+            try:
+                with open(
+                    related_path,
+                    "r",
+                    encoding="utf-8",
+                    errors="replace",
+                ) as related_file:
+                    related_text = related_file.read()
+            except OSError:
+                continue
+            related_device_property_sources.append((
+                os.path.relpath(related_path, REPO_ROOT).replace("\\", "/"),
+                related_text,
+                mask_c_comments(related_text),
+            ))
+
+    scan_device_property_table_routes(
+        text,
+        scan_text,
+        rel,
+        entries,
+        related_device_property_sources,
+    )
 
     scan_sysinfo_text_sinks(text, scan_text, rel, entries, one_hop_seen)
     scan_combo_box_string_arrays(text, scan_text, rel, entries)

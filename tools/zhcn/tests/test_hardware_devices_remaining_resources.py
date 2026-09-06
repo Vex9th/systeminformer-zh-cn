@@ -224,9 +224,9 @@ class HardwareDevicesRemainingResourceTests(unittest.TestCase):
                 self.assertEqual(translations[table].get(english), chinese)
                 self.assertNotIn(english, translations[other_table])
 
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12199$")
-        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", english_rc)), 199)
-        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", chinese_rc)), 199)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12396$")
+        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", english_rc)), 396)
+        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", chinese_rc)), 396)
 
     def test_group_item_indexes_use_the_exact_resource(self) -> None:
         audit = load_tool("audit")
