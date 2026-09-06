@@ -30,7 +30,12 @@ PCWSTR PhTranslateString(
     ULONG low;
     ULONG high;
 
-    if (!PhTranslationEnabled || !English)
+    if (
+        !PhTranslationEnabled ||
+        !English ||
+        IS_INTRESOURCE(English) ||
+        (ULONG_PTR)English == MAXULONG_PTR
+        )
         return English;
 
     // The table is sorted by ordinal UTF-16 code unit order to match wcscmp.

@@ -253,6 +253,37 @@ class ListViewRuntimeTranslationTests(unittest.TestCase):
             ),
         )
 
+    def test_translation_lookup_rejects_windows_pointer_sentinels(self) -> None:
+        translation = self.source("phlib/phtranslation.c")
+        lookup = function_body(translation, "PhTranslateString", self.audit)
+        fixture = self.source("tools/tests/phlib-test/t_resource.c")
+
+        self.assertIn("IS_INTRESOURCE(English)", lookup)
+        self.assertIn("(ULONG_PTR)English == MAXULONG_PTR", lookup)
+        self.assertLess(lookup.index("IS_INTRESOURCE(English)"), lookup.index("wcscmp("))
+        self.assertLess(
+            lookup.index("(ULONG_PTR)English == MAXULONG_PTR"),
+            lookup.index("wcscmp("),
+        )
+        self.assertIn("PhTranslateString(MAKEINTRESOURCE(1))", fixture)
+        self.assertIn("PhTranslateString((PCWSTR)LPSTR_TEXTCALLBACK)", fixture)
+        fixture_compact = compact(fixture)
+        save = fixture_compact.index("translationEnabled=PhTranslationEnabled;")
+        enable = fixture_compact.index("PhTranslationEnabled=TRUE;", save)
+        resource_probe = fixture_compact.index(
+            "PhTranslateString(MAKEINTRESOURCE(1))", enable
+        )
+        callback_probe = fixture_compact.index(
+            "PhTranslateString((PCWSTR)LPSTR_TEXTCALLBACK)", resource_probe
+        )
+        restore = fixture_compact.index(
+            "PhTranslationEnabled=translationEnabled;", callback_probe
+        )
+        self.assertLess(save, enable)
+        self.assertLess(enable, resource_probe)
+        self.assertLess(resource_probe, callback_probe)
+        self.assertLess(callback_probe, restore)
+
 
 if __name__ == "__main__":
     unittest.main()

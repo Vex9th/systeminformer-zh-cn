@@ -252,6 +252,7 @@ VOID Test_resource(
     PVOID imageBase;
     PPH_STRING string;
     BOOLEAN fallbackToEnglish;
+    BOOLEAN translationEnabled;
 
     imageBase = NtCurrentPeb()->ImageBaseAddress;
 
@@ -281,6 +282,16 @@ VOID Test_resource(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED),
         L"\x4E2D\x6587\x83DC\x5355"
         );
+
+    translationEnabled = PhTranslationEnabled;
+    PhTranslationEnabled = TRUE;
+    TestRequire(PhTranslateString(MAKEINTRESOURCE(1)) == MAKEINTRESOURCE(1));
+    TestRequire(
+        PhTranslateString((PCWSTR)LPSTR_TEXTCALLBACK) ==
+        (PCWSTR)LPSTR_TEXTCALLBACK
+        );
+    PhTranslationEnabled = translationEnabled;
+
     TestEnglishOnlyDialogIsNotDictionaryTranslated(imageBase);
     TestDialogFromTemplateStyle(imageBase);
 
