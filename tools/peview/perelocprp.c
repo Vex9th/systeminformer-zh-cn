@@ -37,6 +37,7 @@ VOID PvEnumerateRelocationEntries(
             INT lvItemIndex;
             WCHAR value[PH_INT64_STR_LEN_1];
             PPH_STRING symbol;
+            PCWSTR type = NULL;
 
             PhPrintUInt64(value, ++count);
             lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, value, NULL);
@@ -50,27 +51,30 @@ VOID PvEnumerateRelocationEntries(
             switch (entry->Record.Type)
             {
             case IMAGE_REL_BASED_ABSOLUTE:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"ABS");
+                type = PvpLoadUiString(IDS_PV_RELOC_ABS);
                 break;
             case IMAGE_REL_BASED_HIGH:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"HIGH");
+                type = PvpLoadUiString(IDS_PV_RELOC_HIGH);
                 break;
             case IMAGE_REL_BASED_LOW:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"LOW");
+                type = PvpLoadUiString(IDS_PV_RELOC_LOW);
                 break;
             case IMAGE_REL_BASED_HIGHLOW:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"HIGHLOW");
+                type = PvpLoadUiString(IDS_PV_RELOC_HIGHLOW);
                 break;
             case IMAGE_REL_BASED_DIR64:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"DIR64");
+                type = PvpLoadUiString(IDS_PV_RELOC_DIR64);
                 break;
             case IMAGE_REL_BASED_ARM_MOV32:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"MOV32");
+                type = PvpLoadUiString(IDS_PV_RELOC_MOV32);
                 break;
             case IMAGE_REL_BASED_THUMB_MOV32:
-                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"MOV32(T)");
+                type = PvpLoadUiString(IDS_PV_RELOC_MOV32_T);
                 break;
             }
+
+            if (type)
+                PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, type);
 
             if (entry->BlockRva)
             {

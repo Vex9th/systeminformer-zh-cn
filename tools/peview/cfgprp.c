@@ -53,10 +53,10 @@ VOID PvPeAddListViewCfgFunctionEntry(
         PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, PvpLoadUiString(IDS_PV_TYPE_FUNCTION));
         break;
     case ControlFlowGuardTakenIatEntry:
-        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"IATEntry");
+        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, PvpLoadUiString(IDS_PV_IAT_ENTRY));
         break;
     case ControlFlowGuardLongJump:
-        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, L"LongJump");
+        PhSetListViewSubItem(ListViewHandle, lvItemIndex, 2, PvpLoadUiString(IDS_PV_LONG_JUMP));
         break;
     }
 

@@ -762,4 +762,13 @@ BEGIN
     IDS_PV_MACHINE_ARM_THUMB2                   "ARM Thumb-2"
     IDS_PV_MACHINE_ARM64                        "ARM64"
     IDS_PV_MACHINE_ARM64_ARM64X                 "ARM64 (ARM64X)"
+    IDS_PV_IAT_ENTRY                            "IAT 条目"
+    IDS_PV_LONG_JUMP                            "长跳转"
+    IDS_PV_RELOC_ABS                            "ABS"
+    IDS_PV_RELOC_HIGH                           "HIGH"
+    IDS_PV_RELOC_LOW                            "LOW"
+    IDS_PV_RELOC_HIGHLOW                        "HIGHLOW"
+    IDS_PV_RELOC_DIR64                          "DIR64"
+    IDS_PV_RELOC_MOV32                          "MOV32"
+    IDS_PV_RELOC_MOV32_T                        "MOV32(T)"
 END

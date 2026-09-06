@@ -13,14 +13,15 @@ PEVIEW_ROOT = REPO_ROOT / "tools" / "peview"
 
 # symbol | id | English | zh-CN
 RESOURCE_DATA = r"""
-IDS_PV_MACHINE_I386|3270|i386|i386
-IDS_PV_MACHINE_I386_CHPE|3271|i386 (CHPE)|i386 (CHPE)
-IDS_PV_MACHINE_AMD64|3272|AMD64|AMD64
-IDS_PV_MACHINE_AMD64_ARM64X|3273|AMD64 (ARM64X)|AMD64 (ARM64X)
-IDS_PV_MACHINE_IA64|3274|IA64|IA64
-IDS_PV_MACHINE_ARM_THUMB2|3275|ARM Thumb-2|ARM Thumb-2
-IDS_PV_MACHINE_ARM64|3276|ARM64|ARM64
-IDS_PV_MACHINE_ARM64_ARM64X|3277|ARM64 (ARM64X)|ARM64 (ARM64X)
+IDS_PV_IAT_ENTRY|3278|IATEntry|IAT 条目
+IDS_PV_LONG_JUMP|3279|LongJump|长跳转
+IDS_PV_RELOC_ABS|3280|ABS|ABS
+IDS_PV_RELOC_HIGH|3281|HIGH|HIGH
+IDS_PV_RELOC_LOW|3282|LOW|LOW
+IDS_PV_RELOC_HIGHLOW|3283|HIGHLOW|HIGHLOW
+IDS_PV_RELOC_DIR64|3284|DIR64|DIR64
+IDS_PV_RELOC_MOV32|3285|MOV32|MOV32
+IDS_PV_RELOC_MOV32_T|3286|MOV32(T)|MOV32(T)
 """.strip()
 
 
@@ -31,9 +32,27 @@ RESOURCES = [
 ]
 
 
+CFG_ROUTES = (
+    ("ControlFlowGuardFunction", "IDS_PV_TYPE_FUNCTION"),
+    ("ControlFlowGuardTakenIatEntry", "IDS_PV_IAT_ENTRY"),
+    ("ControlFlowGuardLongJump", "IDS_PV_LONG_JUMP"),
+)
+
+
+RELOCATION_ROUTES = (
+    ("IMAGE_REL_BASED_ABSOLUTE", "IDS_PV_RELOC_ABS"),
+    ("IMAGE_REL_BASED_HIGH", "IDS_PV_RELOC_HIGH"),
+    ("IMAGE_REL_BASED_LOW", "IDS_PV_RELOC_LOW"),
+    ("IMAGE_REL_BASED_HIGHLOW", "IDS_PV_RELOC_HIGHLOW"),
+    ("IMAGE_REL_BASED_DIR64", "IDS_PV_RELOC_DIR64"),
+    ("IMAGE_REL_BASED_ARM_MOV32", "IDS_PV_RELOC_MOV32"),
+    ("IMAGE_REL_BASED_THUMB_MOV32", "IDS_PV_RELOC_MOV32_T"),
+)
+
+
 def load_audit_module():
     path = REPO_ROOT / "tools" / "zhcn" / "audit.py"
-    spec = importlib.util.spec_from_file_location("zhcn_audit_peview_machine", path)
+    spec = importlib.util.spec_from_file_location("zhcn_audit_peview_technical", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -63,20 +82,21 @@ def function_body(text, function_name):
     raise AssertionError(f"unterminated function: {function_name}")
 
 
-def normalize(expression):
-    return re.sub(r"\s+", "", expression)
+def switch_body(text, expression):
+    match = re.search(rf"\bswitch\s*\(\s*{re.escape(expression)}\s*\)\s*\{{", text)
+    if not match:
+        raise AssertionError(f"switch not found: {expression}")
 
-
-def parse_case_assignments(body):
-    pattern = re.compile(
-        r"(?:\bcase\s+([A-Za-z0-9_]+)\s*:|\b(default)\s*:)\s*"
-        r"type\s*=\s*(.+?)\s*;\s*break\s*;",
-        re.S,
-    )
-    return tuple(
-        (match.group(1) or match.group(2), normalize(match.group(3)))
-        for match in pattern.finditer(body)
-    )
+    start = match.end() - 1
+    depth = 0
+    for offset in range(start, len(text)):
+        if text[offset] == "{":
+            depth += 1
+        elif text[offset] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start + 1:offset]
+    raise AssertionError(f"unterminated switch: {expression}")
 
 
 def parse_defines():
@@ -102,57 +122,42 @@ def parse_stringtable(path):
     }
 
 
-class PeViewMachineResourcesTests(unittest.TestCase):
-    def test_wsl_switch_keeps_exact_cases_order_and_resources(self):
-        body = function_body(masked_source("exlfprp.c"), "PvpSetWslImageMachineType")
-        self.assertEqual(
-            parse_case_assignments(body),
-            (
-                ("EM_386", "PvpLoadUiString(IDS_PV_MACHINE_I386)"),
-                ("EM_X86_64", "PvpLoadUiString(IDS_PV_MACHINE_AMD64)"),
-                ("default", "PvpLoadUiString(IDS_PV_ERROR)"),
-            ),
+class PeViewTechnicalValueResourcesTests(unittest.TestCase):
+    def test_cfg_switch_keeps_exact_cases_resources_and_target_column(self):
+        body = function_body(masked_source("cfgprp.c"), "PvPeAddListViewCfgFunctionEntry")
+        switch = switch_body(body, "Type")
+        pattern = re.compile(
+            r"\bcase\s+([A-Za-z0-9_]+)\s*:\s*"
+            r"PhSetListViewSubItem\(\s*ListViewHandle\s*,\s*lvItemIndex\s*,\s*2\s*,\s*"
+            r"PvpLoadUiString\(\s*(IDS_PV_[A-Z0-9_]+)\s*\)\s*\)\s*;\s*break\s*;",
+            re.S,
         )
-        self.assertRegex(body, r"\bPCWSTR\s+type\s*=\s*PvpLoadUiString\(IDS_PV_NOT_AVAILABLE\)\s*;")
-        self.assertNotRegex(body, r"\bPWSTR\s+type\b|\bPPH_STRING\s+type\b")
-        self.assertRegex(body, r"PhSetDialogItemText\(\s*hwndDlg\s*,\s*IDC_TARGETMACHINE\s*,\s*type\s*\)")
 
-    def test_pe_switch_and_three_ternaries_are_exact(self):
-        body = function_body(masked_source("peprp.c"), "PvpSetPeImageMachineType")
-        self.assertEqual(
-            parse_case_assignments(body),
-            (
-                (
-                    "IMAGE_FILE_MACHINE_I386",
-                    "PhGetMappedImageCHPEVersion(&PvMappedImage)?"
-                    "PvpLoadUiString(IDS_PV_MACHINE_I386_CHPE):"
-                    "PvpLoadUiString(IDS_PV_MACHINE_I386)",
-                ),
-                (
-                    "IMAGE_FILE_MACHINE_AMD64",
-                    "PhGetMappedImageCHPEVersion(&PvMappedImage)?"
-                    "PvpLoadUiString(IDS_PV_MACHINE_AMD64_ARM64X):"
-                    "PvpLoadUiString(IDS_PV_MACHINE_AMD64)",
-                ),
-                ("IMAGE_FILE_MACHINE_IA64", "PvpLoadUiString(IDS_PV_MACHINE_IA64)"),
-                ("IMAGE_FILE_MACHINE_ARMNT", "PvpLoadUiString(IDS_PV_MACHINE_ARM_THUMB2)"),
-                (
-                    "IMAGE_FILE_MACHINE_ARM64",
-                    "PhGetMappedImageCHPEVersion(&PvMappedImage)?"
-                    "PvpLoadUiString(IDS_PV_MACHINE_ARM64_ARM64X):"
-                    "PvpLoadUiString(IDS_PV_MACHINE_ARM64)",
-                ),
-                ("default", "PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN)"),
-            ),
+        self.assertEqual(tuple(pattern.findall(switch)), CFG_ROUTES)
+        self.assertNotRegex(switch, r"\bdefault\s*:")
+        self.assertNotIn("IDS_PV_COLUMN_IAT_SLOT", switch)
+
+    def test_relocation_switch_keeps_all_seven_routes_and_null_default_semantics(self):
+        body = function_body(masked_source("perelocprp.c"), "PvEnumerateRelocationEntries")
+        switch = switch_body(body, "entry->Record.Type")
+        pattern = re.compile(
+            r"\bcase\s+([A-Za-z0-9_]+)\s*:\s*"
+            r"type\s*=\s*PvpLoadUiString\(\s*(IDS_PV_RELOC_[A-Z0-9_]+)\s*\)\s*;\s*"
+            r"break\s*;",
+            re.S,
         )
-        self.assertRegex(body, r"\bPCWSTR\s+type\s*;")
+
+        self.assertEqual(tuple(pattern.findall(switch)), RELOCATION_ROUTES)
+        self.assertNotRegex(switch, r"\bdefault\s*:")
+        self.assertRegex(body, r"\bPCWSTR\s+type\s*=\s*NULL\s*;")
         self.assertNotRegex(body, r"\bPWSTR\s+type\b|\bPPH_STRING\s+type\b")
-        self.assertEqual(body.count("PhGetMappedImageCHPEVersion(&PvMappedImage)"), 3)
         self.assertRegex(
             body,
-            r"PhSetListViewSubItem\(\s*ListViewHandle\s*,\s*"
-            r"PVP_IMAGE_GENERAL_INDEX_NAME\s*,\s*1\s*,\s*type\s*\)",
+            r"\}\s*if\s*\(\s*type\s*\)\s*"
+            r"PhSetListViewSubItem\(\s*ListViewHandle\s*,\s*lvItemIndex\s*,\s*2\s*,\s*type\s*\)\s*;\s*"
+            r"if\s*\(\s*entry->BlockRva\s*\)",
         )
+        self.assertNotIn("PhDereferenceObject(type)", body)
 
     def test_resources_are_contiguous_and_match_both_stringtables(self):
         defines, header = parse_defines()
@@ -165,7 +170,7 @@ class PeViewMachineResourcesTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual([row[1] for row in RESOURCES], list(range(3270, 3278)))
+        self.assertEqual([row[1] for row in RESOURCES], list(range(3278, 3287)))
         self.assertEqual(sorted(defines.values()), list(range(3000, 3287)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
@@ -174,7 +179,7 @@ class PeViewMachineResourcesTests(unittest.TestCase):
         self.assertRegex(header, r"(?m)^#define IDS_PV_LAST\s+IDS_PV_RELOC_MOV32_T$")
         self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3287$")
 
-    def test_all_machine_labels_are_native_only(self):
+    def test_all_technical_values_are_native_only(self):
         data = json.loads(
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
@@ -192,7 +197,7 @@ class PeViewMachineResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
         self.assertEqual(workflow.count("peview.exe=287"), 2)
-        self.assertNotIn("peview.exe=270", workflow)
+        self.assertNotIn("peview.exe=278", workflow)
 
         audit = load_audit_module()
         entries = []

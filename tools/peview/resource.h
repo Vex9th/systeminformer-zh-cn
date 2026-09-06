@@ -396,8 +396,17 @@
 #define IDS_PV_MACHINE_ARM_THUMB2                     3275
 #define IDS_PV_MACHINE_ARM64                          3276
 #define IDS_PV_MACHINE_ARM64_ARM64X                   3277
+#define IDS_PV_IAT_ENTRY                              3278
+#define IDS_PV_LONG_JUMP                              3279
+#define IDS_PV_RELOC_ABS                              3280
+#define IDS_PV_RELOC_HIGH                             3281
+#define IDS_PV_RELOC_LOW                              3282
+#define IDS_PV_RELOC_HIGHLOW                          3283
+#define IDS_PV_RELOC_DIR64                            3284
+#define IDS_PV_RELOC_MOV32                            3285
+#define IDS_PV_RELOC_MOV32_T                          3286
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_MACHINE_ARM64_ARM64X
+#define IDS_PV_LAST                                IDS_PV_RELOC_MOV32_T
 
 // Next default values for new objects
 //
@@ -406,6 +415,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3278
+#define _APS_NEXT_SYMED_VALUE           3287
 #endif
 #endif
