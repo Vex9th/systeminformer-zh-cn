@@ -1209,6 +1209,19 @@ BEGIN
     IDS_PV_UNVERIFIED_COMPANY_FORMAT            "(UNVERIFIED) %s"
     IDS_PV_PROPERTIES_TITLE_FORMAT              "%s Properties"
     IDS_PV_CERTIFICATE_SIZE_FORMAT              "Size: %s (Certs: %s)"
+    IDS_PH_SCROLL_HERE                          "Scroll Here"
+    IDS_PH_SCROLL_LEFT_EDGE                     "Left Edge"
+    IDS_PH_SCROLL_TOP                           "Top"
+    IDS_PH_SCROLL_RIGHT_EDGE                    "Right Edge"
+    IDS_PH_SCROLL_BOTTOM                        "Bottom"
+    IDS_PH_SCROLL_PAGE_LEFT                     "Page Left"
+    IDS_PH_SCROLL_PAGE_UP                       "Page Up"
+    IDS_PH_SCROLL_PAGE_RIGHT                    "Page Right"
+    IDS_PH_SCROLL_PAGE_DOWN                     "Page Down"
+    IDS_PH_SCROLL_LEFT                          "Scroll Left"
+    IDS_PH_SCROLL_UP                            "Scroll Up"
+    IDS_PH_SCROLL_RIGHT                         "Scroll Right"
+    IDS_PH_SCROLL_DOWN                          "Scroll Down"
 END
 
 

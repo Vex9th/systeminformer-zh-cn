@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2347] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and ", L" 和 ", },
@@ -981,7 +981,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
     { L"Latency", L"延迟", },
     { L"Layout", L"布局", },
     { L"Lazy start", L"惰性启动", },
-    { L"Left Edge", L"左边缘", },
     { L"Length", L"长度", },
     { L"Limit", L"限制", },
     { L"Limits:", L"限制：", },
@@ -1224,8 +1223,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
     { L"Package name", L"包名称", },
     { L"Package name:", L"程序包名称：", },
     { L"Package:", L"程序包：", },
-    { L"Page Left", L"向左翻页", },
-    { L"Page Right", L"向右翻页", },
     { L"Page faults", L"页面错误", },
     { L"Page faults delta", L"页面错误增量", },
     { L"Page faults:", L"页面错误：", },
@@ -1502,7 +1499,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
     { L"Retry", L"重试(&R)", },
     { L"Return address", L"返回地址", },
     { L"Revert", L"还原", },
-    { L"Right Edge", L"右边缘", },
     { L"RootIndex read bytes", L"根索引读取字节", },
     { L"RootIndex reads", L"根索引读取数", },
     { L"RootIndex write bytes", L"根索引写入字节", },
@@ -1529,9 +1525,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
     { L"Scan inaccessible partial pages", L"扫描无法访问的部分页面", },
     { L"Scan memory", L"扫描内存", },
     { L"Scrol&l to new processes", L"滚动到新进程(&L)", },
-    { L"Scroll Here", L"滚动到此处", },
-    { L"Scroll Left", L"向左滚动", },
-    { L"Scroll Right", L"向右滚动", },
     { L"Search &onlineCtrl+M", L"在线搜索(&O)Ctrl+M", },
     { L"Search Assemblies (Ctrl+K)", L"搜索程序集 (Ctrl+K)", },
     { L"Search Environment (Ctrl+K)", L"搜索环境变量 (Ctrl+K)", },

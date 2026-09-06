@@ -323,7 +323,7 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
         self.assertEqual(
-            aliases.get("IDS_PH_LAST"), "IDS_PH_UNABLE_SERVICE_ACTION_FORMAT"
+            aliases.get("IDS_PH_LAST"), "IDS_PH_SCROLL_DOWN"
         )
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
@@ -334,9 +334,9 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         )
         self.assertEqual({numeric[symbol] for symbol in english}, expected_ids)
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
-        self.assertEqual(len(english), 598)
-        self.assertEqual(len(chinese), 598)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2598$")
+        self.assertEqual(len(english), 611)
+        self.assertEqual(len(chinese), 611)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2611$")
 
     def test_json_uses_exact_existing_and_native_layers(self):
         data = json.loads(
@@ -396,7 +396,7 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         workflow = (
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=598"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=611"), 2)
         self.assertNotIn("sys_info.exe=498", workflow)
 
     def test_fresh_scan_removes_all_systeminformer_groups(self):

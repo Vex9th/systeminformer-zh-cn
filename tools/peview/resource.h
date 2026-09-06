@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by peview.rc
 //
+#include <phappresourceid.h>
+
 #define IDR_RT_MANIFEST                 1
 #define IDD_PEGENERAL                   101
 #define IDD_PEIMPORTS                   102

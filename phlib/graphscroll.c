@@ -55,6 +55,25 @@
 
 ULONG PhScrollBarSkin = PhScrollNewSkinWin10;
 
+static PWSTR PhpScrollNewGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    PPH_STRING resourceString;
+    PWSTR menuText;
+
+    resourceString = PhApplicationUiResourceInstance ?
+        PhLoadUiString(PhApplicationUiResourceInstance, ResourceId, NULL) :
+        NULL;
+    menuText = PhDuplicateStringZ(
+        PhGetStringOrDefault(resourceString, Fallback)
+        );
+    PhClearReference(&resourceString);
+
+    return menuText;
+}
+
 /**
  * Registers the PhScrollNew window class.
  */
@@ -523,16 +542,16 @@ LRESULT CALLBACK PhScrollNewWndProc(
                 }
 
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_SCROLLNEW_IDM_SCROLL_HERE, L"Scroll Here", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, PH_SCROLLNEW_IDM_SCROLL_HERE, PhpScrollNewGetUiString(IDS_PH_SCROLL_HERE, L"Scroll Here"), NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_SCROLLNEW_IDM_TOP,         isHorz ? L"Left Edge"    : L"Top",         NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_SCROLLNEW_IDM_BOTTOM,      isHorz ? L"Right Edge"   : L"Bottom",      NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, PH_SCROLLNEW_IDM_TOP, PhpScrollNewGetUiString(isHorz ? IDS_PH_SCROLL_LEFT_EDGE : IDS_PH_SCROLL_TOP, isHorz ? L"Left Edge" : L"Top"), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, PH_SCROLLNEW_IDM_BOTTOM, PhpScrollNewGetUiString(isHorz ? IDS_PH_SCROLL_RIGHT_EDGE : IDS_PH_SCROLL_BOTTOM, isHorz ? L"Right Edge" : L"Bottom"), NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_SCROLLNEW_IDM_PAGE_UP,     isHorz ? L"Page Left"    : L"Page Up",     NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_SCROLLNEW_IDM_PAGE_DOWN,   isHorz ? L"Page Right"   : L"Page Down",   NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, PH_SCROLLNEW_IDM_PAGE_UP, PhpScrollNewGetUiString(isHorz ? IDS_PH_SCROLL_PAGE_LEFT : IDS_PH_SCROLL_PAGE_UP, isHorz ? L"Page Left" : L"Page Up"), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, PH_SCROLLNEW_IDM_PAGE_DOWN, PhpScrollNewGetUiString(isHorz ? IDS_PH_SCROLL_PAGE_RIGHT : IDS_PH_SCROLL_PAGE_DOWN, isHorz ? L"Page Right" : L"Page Down"), NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_SCROLLNEW_IDM_SCROLL_UP,   isHorz ? L"Scroll Left"  : L"Scroll Up",   NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_SCROLLNEW_IDM_SCROLL_DOWN, isHorz ? L"Scroll Right" : L"Scroll Down", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, PH_SCROLLNEW_IDM_SCROLL_UP, PhpScrollNewGetUiString(isHorz ? IDS_PH_SCROLL_LEFT : IDS_PH_SCROLL_UP, isHorz ? L"Scroll Left" : L"Scroll Up"), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_TEXT_OWNED, PH_SCROLLNEW_IDM_SCROLL_DOWN, PhpScrollNewGetUiString(isHorz ? IDS_PH_SCROLL_RIGHT : IDS_PH_SCROLL_DOWN, isHorz ? L"Scroll Right" : L"Scroll Down"), NULL, NULL), ULONG_MAX);
 
                 selectedItem = PhShowEMenu(
                     menu,

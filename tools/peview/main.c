@@ -162,6 +162,8 @@ INT WINAPI wWinMain(
     if (!NT_SUCCESS(PhInitializePhLib(L"PE Viewer")))
         return 1;
 
+    PhApplicationUiResourceInstance = PhInstanceHandle;
+
     PhSetApplicationUiLanguage(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
         );

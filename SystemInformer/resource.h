@@ -1589,7 +1589,7 @@
 #define IDS_PH_ACTION_DELETE                                2596
 #define IDS_PH_UNABLE_SERVICE_ACTION_FORMAT                 2597
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_UNABLE_SERVICE_ACTION_FORMAT
+#define IDS_PH_LAST                                  IDS_PH_SCROLL_DOWN
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1601,6 +1601,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2598
+#define _APS_NEXT_SYMED_VALUE           2611
 #endif
 #endif

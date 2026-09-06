@@ -287,7 +287,7 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("peview.exe=298"), 2)
+        self.assertEqual(workflow.count("peview.exe=311"), 2)
         self.assertNotIn("peview.exe=258", workflow)
         self.assertNotIn("peview.exe=247", workflow)
         self.assertNotIn("peview.exe=246", workflow)

@@ -103,7 +103,7 @@ INT WINAPI wWinMain(
     if (!NT_SUCCESS(PhInitializePhLib(L"sys_info")))
         return 1;
 
-    // Only this application owns the shared UI string IDs consumed by phlib.
+    // Register this host's resource instance for shared phlib UI strings.
     PhApplicationUiResourceInstance = PhInstanceHandle;
 
     if (!NT_SUCCESS(PhInitializeDirectoryPolicy()))
