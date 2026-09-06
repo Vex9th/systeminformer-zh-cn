@@ -376,8 +376,20 @@
 #define IDS_PV_TYPE_FUNCTION                          3255
 #define IDS_PV_ARM64_UNWIND_FRAGMENT                  3256
 #define IDS_PV_ARM64_UNWIND_RESERVED                  3257
+#define IDS_PV_SUBSYSTEM_NATIVE                       3258
+#define IDS_PV_SUBSYSTEM_WINDOWS_GUI                  3259
+#define IDS_PV_SUBSYSTEM_WINDOWS_CUI                  3260
+#define IDS_PV_SUBSYSTEM_OS2_CUI                      3261
+#define IDS_PV_SUBSYSTEM_POSIX_CUI                    3262
+#define IDS_PV_SUBSYSTEM_WINDOWS_CE_GUI               3263
+#define IDS_PV_SUBSYSTEM_EFI_APPLICATION              3264
+#define IDS_PV_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER      3265
+#define IDS_PV_SUBSYSTEM_EFI_RUNTIME_DRIVER           3266
+#define IDS_PV_SUBSYSTEM_EFI_ROM                      3267
+#define IDS_PV_SUBSYSTEM_XBOX                         3268
+#define IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION     3269
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_ARM64_UNWIND_RESERVED
+#define IDS_PV_LAST                                IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION
 
 // Next default values for new objects
 //
@@ -386,6 +398,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3258
+#define _APS_NEXT_SYMED_VALUE           3270
 #endif
 #endif

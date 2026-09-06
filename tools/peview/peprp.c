@@ -1274,40 +1274,40 @@ VOID PvpSetPeImageSubsystem(
     switch (subsystem)
     {
     case IMAGE_SUBSYSTEM_NATIVE:
-        type = L"Native";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_NATIVE);
         break;
     case IMAGE_SUBSYSTEM_WINDOWS_GUI:
-        type = L"Windows GUI";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_WINDOWS_GUI);
         break;
     case IMAGE_SUBSYSTEM_WINDOWS_CUI:
-        type = L"Windows CUI";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_WINDOWS_CUI);
         break;
     case IMAGE_SUBSYSTEM_OS2_CUI:
-        type = L"OS/2 CUI";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_OS2_CUI);
         break;
     case IMAGE_SUBSYSTEM_POSIX_CUI:
-        type = L"POSIX CUI";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_POSIX_CUI);
         break;
     case IMAGE_SUBSYSTEM_WINDOWS_CE_GUI:
-        type = L"Windows CE CUI";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_WINDOWS_CE_GUI);
         break;
     case IMAGE_SUBSYSTEM_EFI_APPLICATION:
-        type = L"EFI Application";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_EFI_APPLICATION);
         break;
     case IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER:
-        type = L"EFI Boot Service Driver";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER);
         break;
     case IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER:
-        type = L"EFI Runtime Driver";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_EFI_RUNTIME_DRIVER);
         break;
     case IMAGE_SUBSYSTEM_EFI_ROM:
-        type = L"EFI ROM";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_EFI_ROM);
         break;
     case IMAGE_SUBSYSTEM_XBOX:
-        type = L"Xbox";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_XBOX);
         break;
     case IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION:
-        type = L"Windows Boot Application";
+        type = PvpLoadUiString(IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION);
         break;
     default:
         type = PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN);

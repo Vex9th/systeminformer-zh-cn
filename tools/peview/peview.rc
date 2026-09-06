@@ -1169,6 +1169,18 @@ BEGIN
     IDS_PV_TYPE_FUNCTION                        "Function"
     IDS_PV_ARM64_UNWIND_FRAGMENT                "Fragment"
     IDS_PV_ARM64_UNWIND_RESERVED                "Reserved"
+    IDS_PV_SUBSYSTEM_NATIVE                     "Native"
+    IDS_PV_SUBSYSTEM_WINDOWS_GUI                "Windows GUI"
+    IDS_PV_SUBSYSTEM_WINDOWS_CUI                "Windows CUI"
+    IDS_PV_SUBSYSTEM_OS2_CUI                    "OS/2 CUI"
+    IDS_PV_SUBSYSTEM_POSIX_CUI                  "POSIX CUI"
+    IDS_PV_SUBSYSTEM_WINDOWS_CE_GUI             "Windows CE GUI"
+    IDS_PV_SUBSYSTEM_EFI_APPLICATION            "EFI Application"
+    IDS_PV_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER    "EFI Boot Service Driver"
+    IDS_PV_SUBSYSTEM_EFI_RUNTIME_DRIVER         "EFI Runtime Driver"
+    IDS_PV_SUBSYSTEM_EFI_ROM                    "EFI ROM"
+    IDS_PV_SUBSYSTEM_XBOX                       "Xbox"
+    IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION   "Windows Boot Application"
 END
 
 

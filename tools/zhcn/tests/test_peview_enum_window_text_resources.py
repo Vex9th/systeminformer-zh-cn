@@ -68,6 +68,18 @@ SWITCH_ROUTES = {
         ("default", "IDS_PV_MAPPING_UNKNOWN"),
     ),
     ("peprp.c", "PvpSetPeImageSubsystem", "subsystem"): (
+        ("IMAGE_SUBSYSTEM_NATIVE", "IDS_PV_SUBSYSTEM_NATIVE"),
+        ("IMAGE_SUBSYSTEM_WINDOWS_GUI", "IDS_PV_SUBSYSTEM_WINDOWS_GUI"),
+        ("IMAGE_SUBSYSTEM_WINDOWS_CUI", "IDS_PV_SUBSYSTEM_WINDOWS_CUI"),
+        ("IMAGE_SUBSYSTEM_OS2_CUI", "IDS_PV_SUBSYSTEM_OS2_CUI"),
+        ("IMAGE_SUBSYSTEM_POSIX_CUI", "IDS_PV_SUBSYSTEM_POSIX_CUI"),
+        ("IMAGE_SUBSYSTEM_WINDOWS_CE_GUI", "IDS_PV_SUBSYSTEM_WINDOWS_CE_GUI"),
+        ("IMAGE_SUBSYSTEM_EFI_APPLICATION", "IDS_PV_SUBSYSTEM_EFI_APPLICATION"),
+        ("IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER", "IDS_PV_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER"),
+        ("IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER", "IDS_PV_SUBSYSTEM_EFI_RUNTIME_DRIVER"),
+        ("IMAGE_SUBSYSTEM_EFI_ROM", "IDS_PV_SUBSYSTEM_EFI_ROM"),
+        ("IMAGE_SUBSYSTEM_XBOX", "IDS_PV_SUBSYSTEM_XBOX"),
+        ("IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION", "IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION"),
         ("default", "IDS_PV_MAPPING_UNKNOWN"),
     ),
 }
@@ -207,7 +219,7 @@ def parse_stringtable(path):
 
 
 class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
-    def test_all_14_switch_routes_keep_exact_case_order_and_resources(self):
+    def test_all_26_switch_routes_keep_exact_case_order_and_resources(self):
         actual = {
             key: parse_switch_routes(*key)
             for key in SWITCH_ROUTES
@@ -219,7 +231,7 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
                 for routes in actual.values()
                 for _case_name, symbol in routes
             ),
-            14,
+            26,
         )
 
         lib_source = function_body(source_text("libprp.c"), "PvpLibExportsDlgProc")
@@ -261,18 +273,18 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual(sorted(defines.values()), list(range(3000, 3258)))
+        self.assertEqual(sorted(defines.values()), list(range(3000, 3270)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 258)
-        self.assertEqual(len(chinese), 258)
+        self.assertEqual(len(english), 270)
+        self.assertEqual(len(chinese), 270)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_ARM64_UNWIND_RESERVED$",
+            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3258$",
+            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3270$",
         )
 
     def test_json_uses_exact_existing_owners_without_layer_overlap(self):
@@ -296,7 +308,8 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
         workflow = (
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("peview.exe=258"), 2)
+        self.assertEqual(workflow.count("peview.exe=270"), 2)
+        self.assertNotIn("peview.exe=258", workflow)
         self.assertNotIn("peview.exe=247", workflow)
 
         audit = load_audit_module()
@@ -309,8 +322,8 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
             if entry["category"] == "c_window_text"
             and entry["file"].startswith("tools/peview/")
         ]
-        self.assertEqual(len({entry["english"] for entry in remaining}), 29)
-        self.assertEqual(len(remaining), 31)
+        self.assertEqual(len({entry["english"] for entry in remaining}), 17)
+        self.assertEqual(len(remaining), 19)
 
 
 if __name__ == "__main__":

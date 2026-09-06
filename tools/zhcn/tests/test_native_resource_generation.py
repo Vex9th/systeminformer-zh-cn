@@ -1602,7 +1602,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1460 strings", result.stdout)
+        self.assertIn("1472 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -1835,7 +1835,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertIn("PvpLoadUiString", peview_header)
         self.assertIn("IDS_PV_MENU_DISPLAY_RESOURCE", resource_header)
         self.assertIn("IDS_PV_MENU_SAVE_CERTIFICATE", resource_header)
-        self.assertEqual(len(stringtable_ids(resource_script)), 258)
+        self.assertEqual(len(stringtable_ids(resource_script)), 270)
 
         migrated_labels = (
             "ANSI",
@@ -1987,14 +1987,14 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PV_LAST\s+IDS_PV_ARM64_UNWIND_RESERVED$",
+            r"(?m)^#define\s+IDS_PV_LAST\s+IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3258$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3270$",
         )
-        self.assertEqual(len(stringtable_ids(english_rc)), 258)
-        self.assertEqual(len(stringtable_ids(chinese_rc)), 258)
+        self.assertEqual(len(stringtable_ids(english_rc)), 270)
+        self.assertEqual(len(stringtable_ids(chinese_rc)), 270)
 
     def test_peview_options_and_error_messages_use_native_string_resources(self) -> None:
         source = "\n".join(
@@ -6277,7 +6277,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 7): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
-                    (r"bin\Release64\peview.exe", 258): 2,
+                    (r"bin\Release64\peview.exe", 270): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,
                 }
