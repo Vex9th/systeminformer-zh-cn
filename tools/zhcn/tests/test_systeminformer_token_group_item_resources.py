@@ -216,7 +216,7 @@ class SystemInformerTokenGroupItemResourceTests(unittest.TestCase):
             self.assertEqual(english.get(symbol), en, symbol)
             self.assertEqual(chinese.get(symbol), zh, symbol)
 
-        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_HANDLE_LINK_TARGET")
+        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_HANDLE_SECTION_RESERVE")
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
         expected_ids = set(range(first_id, last_id + 1))
@@ -226,9 +226,9 @@ class SystemInformerTokenGroupItemResourceTests(unittest.TestCase):
         )
         self.assertEqual({numeric[symbol] for symbol in english}, expected_ids)
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
-        self.assertEqual(len(english), 650)
-        self.assertEqual(len(chinese), 650)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2650$")
+        self.assertEqual(len(english), 663)
+        self.assertEqual(len(chinese), 663)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2663$")
 
     def test_json_layers_reuse_four_strings_and_add_eighteen_native(self):
         data = json.loads(
@@ -249,7 +249,7 @@ class SystemInformerTokenGroupItemResourceTests(unittest.TestCase):
         workflow = (
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=650"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=663"), 2)
         self.assertNotIn("sys_info.exe=475", workflow)
 
     def test_fresh_systeminformer_scan_has_no_group_item_literals(self):

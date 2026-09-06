@@ -281,7 +281,7 @@ class HandleListViewWrapperAuditTests(unittest.TestCase):
         ]
 
         self.assertEqual((len(group_text), len(set(group_text))), (0, 0))
-        self.assertEqual((len(window_text), len(set(window_text))), (33, 17))
+        self.assertEqual((len(window_text), len(set(window_text))), (0, 0))
 
 
 if __name__ == "__main__":

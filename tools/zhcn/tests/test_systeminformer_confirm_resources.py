@@ -156,11 +156,11 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2650)))
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_LINK_TARGET$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2650$")
-        self.assertEqual(len(english), 650)
-        self.assertEqual(len(chinese), 650)
+        self.assertEqual(numeric_ids, list(range(2000, 2663)))
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_SECTION_RESERVE$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2663$")
+        self.assertEqual(len(english), 663)
+        self.assertEqual(len(chinese), 663)
 
     def test_json_and_ci_have_exact_native_ownership(self) -> None:
         translations = json.loads(
@@ -176,7 +176,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=650"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=663"), 2)
         self.assertNotIn("sys_info.exe=511", workflow)
 
     def test_exact_confirm_routes_preserve_dynamic_object_boundary(self) -> None:

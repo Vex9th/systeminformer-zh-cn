@@ -3248,6 +3248,19 @@ BEGIN
     IDS_PH_HANDLE_EXITED                                "Exited"
     IDS_PH_HANDLE_EXIT_STATUS                           "Exit status"
     IDS_PH_HANDLE_LINK_TARGET                           "Link target"
+    IDS_PH_HANDLE_NOT_AVAILABLE_SNAPSHOT                "N/A (snapshot)"
+    IDS_PH_HANDLE_PIPE                                  "Pipe"
+    IDS_PH_HANDLE_FILE_OR_DIRECTORY                     "File or directory"
+    IDS_PH_HANDLE_CONSOLE                               "Console"
+    IDS_PH_HANDLE_DIRECTORY                             "Directory"
+    IDS_PH_HANDLE_IO_PRIORITY_VERY_LOW                  "Very Low"
+    IDS_PH_HANDLE_IO_PRIORITY_LOW                       "Low"
+    IDS_PH_HANDLE_IO_PRIORITY_NORMAL                    "Normal"
+    IDS_PH_HANDLE_IO_PRIORITY_HIGH                      "High"
+    IDS_PH_HANDLE_IO_PRIORITY_CRITICAL                  "Critical"
+    IDS_PH_HANDLE_SECTION_COMMIT                        "Commit"
+    IDS_PH_HANDLE_SECTION_IMAGE                         "Image"
+    IDS_PH_HANDLE_SECTION_RESERVE                       "Reserve"
 END
 
 /////////////////////////////////////////////////////////////////////////////

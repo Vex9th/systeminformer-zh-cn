@@ -182,13 +182,13 @@ class SystemInformerRemainingUiResourceTests(unittest.TestCase):
             r"(?m)^#define\s+IDS_PH_[A-Z0-9_]+\s+(\d+)\s*$",
             header + "\n" + app_header,
         ))
-        self.assertEqual(numeric_ids, list(range(2000, 2650)))
-        self.assertEqual(len(english), 650)
-        self.assertEqual(len(chinese), 650)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_LINK_TARGET$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2650$")
+        self.assertEqual(numeric_ids, list(range(2000, 2663)))
+        self.assertEqual(len(english), 663)
+        self.assertEqual(len(chinese), 663)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_SECTION_RESERVE$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2663$")
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=650"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=663"), 2)
         self.assertNotIn("sys_info.exe=597", workflow)
 
     def test_fixed_window_text_routes_use_borrowed_or_owned_resources_correctly(self) -> None:

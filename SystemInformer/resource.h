@@ -1627,8 +1627,21 @@
 #define IDS_PH_HANDLE_EXITED                                2647
 #define IDS_PH_HANDLE_EXIT_STATUS                           2648
 #define IDS_PH_HANDLE_LINK_TARGET                           2649
+#define IDS_PH_HANDLE_NOT_AVAILABLE_SNAPSHOT                2650
+#define IDS_PH_HANDLE_PIPE                                  2651
+#define IDS_PH_HANDLE_FILE_OR_DIRECTORY                     2652
+#define IDS_PH_HANDLE_CONSOLE                               2653
+#define IDS_PH_HANDLE_DIRECTORY                             2654
+#define IDS_PH_HANDLE_IO_PRIORITY_VERY_LOW                  2655
+#define IDS_PH_HANDLE_IO_PRIORITY_LOW                       2656
+#define IDS_PH_HANDLE_IO_PRIORITY_NORMAL                    2657
+#define IDS_PH_HANDLE_IO_PRIORITY_HIGH                      2658
+#define IDS_PH_HANDLE_IO_PRIORITY_CRITICAL                  2659
+#define IDS_PH_HANDLE_SECTION_COMMIT                        2660
+#define IDS_PH_HANDLE_SECTION_IMAGE                         2661
+#define IDS_PH_HANDLE_SECTION_RESERVE                       2662
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_HANDLE_LINK_TARGET
+#define IDS_PH_LAST                                  IDS_PH_HANDLE_SECTION_RESERVE
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1640,6 +1653,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2650
+#define _APS_NEXT_SYMED_VALUE           2663
 #endif
 #endif
