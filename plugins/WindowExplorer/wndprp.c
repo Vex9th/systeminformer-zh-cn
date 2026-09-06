@@ -155,6 +155,37 @@ static VOID WepSetListViewSubItemUiString(
     PhClearReference(&text);
 }
 
+static VOID WepSetListViewSubItemUiFormat(
+    _In_ HWND ListViewHandle,
+    _In_ INT ItemIndex,
+    _In_ INT SubItemIndex,
+    _In_ ULONG ResourceId,
+    _In_ _Printf_format_string_ PCWSTR Fallback,
+    ...
+    )
+{
+    PPH_STRING resourceFormat;
+    PPH_STRING formattedText;
+    va_list argptr;
+
+    resourceFormat = PhLoadUiString(PluginInstance->DllBase, ResourceId, NULL);
+    va_start(argptr, Fallback);
+    formattedText = PhFormatString_V(
+        PhGetStringOrDefault(resourceFormat, Fallback),
+        argptr
+        );
+    va_end(argptr);
+
+    PhSetListViewSubItem(
+        ListViewHandle,
+        ItemIndex,
+        SubItemIndex,
+        PhGetStringOrEmpty(formattedText)
+        );
+    PhClearReference(&formattedText);
+    PhClearReference(&resourceFormat);
+}
+
 _Function_class_(USER_THREAD_START_ROUTINE)
 NTSTATUS WepPropertiesThreadStart(
     _In_ PVOID Parameter
@@ -787,34 +818,49 @@ VOID PhD3DKMTQueryVidPnExclusiveOwnership(
 
     if (NT_SUCCESS(PhQueryDirectXExclusiveOwnership(&queryInfo)))
     {
-        PWSTR ownerTypeString = L"Unknown";
+        PPH_STRING ownerType;
+        ULONG ownerTypeResourceId = IDS_WE_UNKNOWN;
+        PCWSTR ownerTypeFallback = L"Unknown";
+        PCWSTR ownerTypeText;
 
         switch (queryInfo.OwnerType)
         {
         case D3DKMT_VIDPNSOURCEOWNER_UNOWNED:
-            ownerTypeString = L"Unowned";
+            ownerTypeResourceId = IDS_WE_VIDPN_OWNER_UNOWNED;
+            ownerTypeFallback = L"Unowned";
             break;
         case D3DKMT_VIDPNSOURCEOWNER_SHARED:
-            ownerTypeString = L"Shared";
+            ownerTypeResourceId = IDS_WE_VIDPN_OWNER_SHARED;
+            ownerTypeFallback = L"Shared";
             break;
         case D3DKMT_VIDPNSOURCEOWNER_EXCLUSIVE:
-            ownerTypeString = L"Exclusive";
+            ownerTypeResourceId = IDS_WE_VIDPN_OWNER_EXCLUSIVE;
+            ownerTypeFallback = L"Exclusive";
             break;
         case D3DKMT_VIDPNSOURCEOWNER_EXCLUSIVEGDI:
-            ownerTypeString = L"Exclusive (GDI)";
+            ownerTypeResourceId = IDS_WE_VIDPN_OWNER_EXCLUSIVE_GDI;
+            ownerTypeFallback = L"Exclusive (GDI)";
             break;
         case D3DKMT_VIDPNSOURCEOWNER_EMULATED:
-            ownerTypeString = L"Emulated";
+            ownerTypeResourceId = IDS_WE_VIDPN_OWNER_EMULATED;
+            ownerTypeFallback = L"Emulated";
             break;
         }
 
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_D3DKMT_EXCLUSIVE, 1, PhaFormatString(
+        ownerType = PhLoadUiString(PluginInstance->DllBase, ownerTypeResourceId, NULL);
+        ownerTypeText = PhGetStringOrDefault(ownerType, ownerTypeFallback);
+        WepSetListViewSubItemUiFormat(
+            ListViewHandle,
+            WINDOW_PROPERTIES_INDEX_D3DKMT_EXCLUSIVE,
+            1,
+            IDS_WE_EXCLUSIVE_OWNERSHIP_FORMAT,
             L"%s (Source: %u, LUID: %08x-%08x)",
-            ownerTypeString,
+            ownerTypeText,
             queryInfo.VidPnSourceId,
             queryInfo.AdapterLuid.HighPart,
             queryInfo.AdapterLuid.LowPart
-            )->Buffer);
+            );
+        PhClearReference(&ownerType);
     }
     else
     {
@@ -861,7 +907,7 @@ VOID WepRefreshWindowGeneralInfoSymbols(
     )
 {
     if (Context->WndProcResolving != 0)
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDPROC, 1, PhaFormatString(L"0x%Ix (resolving...)", Context->WndProc)->Buffer);
+        WepSetListViewSubItemUiFormat(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDPROC, 1, IDS_WE_ADDRESS_RESOLVING_FORMAT, L"0x%Ix (resolving...)", Context->WndProc);
     else if (Context->WndProcSymbol)
         PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDPROC, 1, PhaFormatString(L"0x%Ix (%s)", Context->WndProc, Context->WndProcSymbol->Buffer)->Buffer);
     else if (Context->WndProc != 0)
@@ -870,7 +916,7 @@ VOID WepRefreshWindowGeneralInfoSymbols(
         WepSetListViewSubItemUiString(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDPROC, 1, IDS_WE_UNKNOWN, L"Unknown");
 
     if (Context->DlgProcResolving != 0)
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, PhaFormatString(L"0x%Ix (resolving...)", Context->DlgProc)->Buffer);
+        WepSetListViewSubItemUiFormat(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, IDS_WE_ADDRESS_RESOLVING_FORMAT, L"0x%Ix (resolving...)", Context->DlgProc);
     else if (Context->DlgProcSymbol)
         PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGPROC, 1, PhaFormatString(L"0x%Ix (%s)", Context->DlgProc, Context->DlgProcSymbol->Buffer)->Buffer);
     else if (Context->DlgProc != 0)
@@ -989,7 +1035,16 @@ VOID WepRefreshWindowGeneralInfo(
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDHANDLE, 1, PhaFormatString(L"0x%Ix", (ULONG_PTR)Context->WindowHandle)->Buffer);
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDUNIQID, 1, PhaFormatString(L"0x%x", PhGetWindowUniqueId(Context->WindowHandle))->Buffer);
     //PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDMSGONLY, 1, Context->MessageOnlyWindow ? L"Yes" : L"No");
-    PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_WNDEXTRA, 1, PhaFormatString(L"%lu bytes (%s) (%s)", windowExtra, PhaFormatSize(windowExtra, ULONG_MAX)->Buffer, WeHashWindowExtraBytes(Context->WindowHandle)->Buffer)->Buffer);
+    WepSetListViewSubItemUiFormat(
+        ListViewHandle,
+        WINDOW_PROPERTIES_INDEX_WNDEXTRA,
+        1,
+        IDS_WE_WINDOW_EXTRA_BYTES_FORMAT,
+        L"%lu bytes (%s) (%s)",
+        windowExtra,
+        PhaFormatSize(windowExtra, ULONG_MAX)->Buffer,
+        WeHashWindowExtraBytes(Context->WindowHandle)->Buffer
+        );
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DLGCTLID, 1, PhaFormatString(L"%lu (0x%x)", windowId, windowId)->Buffer);
 
     //if (Context->MessageOnlyWindow)
@@ -1364,10 +1419,14 @@ VOID WepRefreshWindowClassInfoSymbols(
 {
     if (Context->ClassWndProcResolving != 0)
     {
-        PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_WNDPROC, 1, PhaFormatString(
+        WepSetListViewSubItemUiFormat(
+            ListViewHandle,
+            WINDOW_PROPERTIES_INDEX_CLASS_WNDPROC,
+            1,
+            IDS_WE_ADDRESS_RESOLVING_FORMAT,
             L"0x%Ix (resolving...)",
             (ULONG_PTR)Context->ClassInfo.lpfnWndProc
-            )->Buffer);
+            );
     }
     else if (Context->ClassWndProcSymbol)
     {
@@ -1480,7 +1539,15 @@ VOID WepRefreshWindowClassInfo(
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_MENUNAME, 1, PhaFormatString(L"0x%Ix", (ULONG_PTR)Context->ClassInfo.lpszMenuName)->Buffer);
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_CURSOR, 1, PhaFormatString(L"0x%Ix", (ULONG_PTR)Context->ClassInfo.hCursor)->Buffer);
     PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_BACKBRUSH, 1, PhaFormatString(L"0x%Ix", (ULONG_PTR)Context->ClassInfo.hbrBackground)->Buffer);
-    PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_CLASS_WNDEXTRA, 1, PhaFormatString(L"%lu bytes (%s)", classExtra, PhaFormatSize(classExtra, ULONG_MAX)->Buffer)->Buffer);
+    WepSetListViewSubItemUiFormat(
+        ListViewHandle,
+        WINDOW_PROPERTIES_INDEX_CLASS_WNDEXTRA,
+        1,
+        IDS_WE_CLASS_EXTRA_BYTES_FORMAT,
+        L"%lu bytes (%s)",
+        classExtra,
+        PhaFormatSize(classExtra, ULONG_MAX)->Buffer
+        );
 
     WepRefreshClassStyles(ListViewHandle, Context);
     WepRefreshClassModule(ListViewHandle, Context);
@@ -1600,10 +1667,14 @@ VOID WepRefreshDpiContext(
         }
         else
         {
-            PhSetListViewSubItem(ListViewHandle, WINDOW_PROPERTIES_INDEX_DPICONTEXT, 1, PhaFormatString(
+            WepSetListViewSubItemUiFormat(
+                ListViewHandle,
+                WINDOW_PROPERTIES_INDEX_DPICONTEXT,
+                1,
+                IDS_WE_UNKNOWN_DPI_CONTEXT_FORMAT,
                 L"Unknown (0x%Ix)",
                 (ULONG_PTR)dpiContext
-                )->Buffer);
+                );
         }
     }
 }
@@ -3104,7 +3175,14 @@ VOID WepQueryWindowAttributes(
         PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, Name);
         PhPrintUInt32IX(value, result);
         //message = PhGetStatusMessage(result, 0);
-        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, PhaFormatString(L"0x%s (Failed)", value)->Buffer);
+        WepSetListViewSubItemUiFormat(
+            Context->ListViewHandle,
+            lvItemIndex,
+            2,
+            IDS_WE_ATTRIBUTE_QUERY_FAILED_FORMAT,
+            L"0x%s (Failed)",
+            value
+            );
         //PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, PhaFormatString(L"0x%s (%s)", value, PhGetStringOrDefault(message, L"Failed"))->Buffer);
         //PhClearReference(&message);
     }

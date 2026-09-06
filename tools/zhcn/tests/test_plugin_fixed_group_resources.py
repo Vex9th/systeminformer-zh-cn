@@ -26,8 +26,8 @@ PLUGIN_SPECS = {
             ("IDS_WE_GROUP_CLASS", 12094, "Class", "类", "WINDOW_PROPERTIES_CATEGORY_CLASS"),
             ("IDS_WE_GROUP_STATE", 12095, "State", "状态", "WND_UIA_GROUP_STATE"),
         ),
-        "count": 111,
-        "aps": 12111,
+        "count": 122,
+        "aps": 12122,
     },
 }
 
@@ -190,10 +190,10 @@ class PluginFixedGroupResourceTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertEqual(workflow.count("plugins\\HardwareDevices.dll=98"), 2)
-        self.assertEqual(workflow.count("plugins\\WindowExplorer.dll=111"), 2)
+        self.assertEqual(workflow.count("plugins\\WindowExplorer.dll=122"), 2)
         self.assertNotIn("plugins\\HardwareDevices.dll=96", workflow)
         self.assertNotIn("plugins\\WindowExplorer.dll=93", workflow)
-        self.assertIn('self.assertIn("1726 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("1737 strings", result.stdout)', generator_test)
 
     def test_fixed_group_literals_leave_both_plugins_but_dynamic_group_remains(self) -> None:
         entries = []

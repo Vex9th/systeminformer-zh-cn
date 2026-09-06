@@ -165,7 +165,7 @@ jobs:
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
           --expect-string-count-in 'bin\Release64\plugins\Updater.dll=9' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=19' `
-          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=111' `
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=122' `
           --expect-string-count-in 'bin\Release64\peview.exe=298'
 
     - name: Assert driverless output (no .sys / .inf)
@@ -328,7 +328,7 @@ jobs:
           --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
           --expect-string-count-in 'bin\Release64\plugins\Updater.dll=9' `
           --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=19' `
-          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=111' `
+          --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=122' `
           --expect-string-count-in 'bin\Release64\peview.exe=298' `
           --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=74' `
           --expect-string-count-in 'build\output\systeminformer-build-canary-setup.exe=74'

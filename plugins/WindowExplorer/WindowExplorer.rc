@@ -270,6 +270,17 @@ BEGIN
     IDS_WE_NO_AUTOMATION_ELEMENT    "Error: No automation element"
     IDS_WE_UIA_COM_CREATION_FAILED  "Error: UIA COM creation failed"
     IDS_WE_CLOSE                    "Close"
+    IDS_WE_EXCLUSIVE_OWNERSHIP_FORMAT "%s (Source: %u, LUID: %08x-%08x)"
+    IDS_WE_ADDRESS_RESOLVING_FORMAT "0x%Ix (resolving...)"
+    IDS_WE_WINDOW_EXTRA_BYTES_FORMAT "%lu bytes (%s) (%s)"
+    IDS_WE_CLASS_EXTRA_BYTES_FORMAT "%lu bytes (%s)"
+    IDS_WE_UNKNOWN_DPI_CONTEXT_FORMAT "Unknown (0x%Ix)"
+    IDS_WE_ATTRIBUTE_QUERY_FAILED_FORMAT "0x%s (Failed)"
+    IDS_WE_VIDPN_OWNER_UNOWNED      "Unowned"
+    IDS_WE_VIDPN_OWNER_SHARED       "Shared"
+    IDS_WE_VIDPN_OWNER_EXCLUSIVE    "Exclusive"
+    IDS_WE_VIDPN_OWNER_EXCLUSIVE_GDI "Exclusive (GDI)"
+    IDS_WE_VIDPN_OWNER_EMULATED     "Emulated"
 END
 
 #endif    // English (United States) resources

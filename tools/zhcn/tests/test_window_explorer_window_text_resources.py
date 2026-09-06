@@ -152,13 +152,13 @@ class WindowExplorerWindowTextResourceTests(unittest.TestCase):
                 self.assertNotIn(en, translations[other])
 
         self.assertFalse(translations["strings"].keys() & translations["native_strings"].keys())
-        self.assertEqual(len(english), 111)
-        self.assertEqual(len(chinese), 111)
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12111$")
+        self.assertEqual(len(english), 122)
+        self.assertEqual(len(chinese), 122)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12122$")
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=111"), 2)
+        self.assertEqual(workflow.count(r"plugins\WindowExplorer.dll=122"), 2)
         generator_test = (REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py").read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("1726 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("1737 strings", result.stdout)', generator_test)
 
     def test_helper_owns_loaded_string_until_listview_copies_it(self) -> None:
         body = function_body(self.source, "WepSetListViewSubItemUiString", self.audit)
@@ -304,7 +304,8 @@ class WindowExplorerWindowTextResourceTests(unittest.TestCase):
         }
         self.assertIn("0x%Ix", technical_formats)
         self.assertIn("#%hu", technical_formats)
-        self.assertIn("%s (Source: %u, LUID: %08x-%08x)", technical_formats)
+        self.assertIn("%s (%s)", technical_formats)
+        self.assertNotIn("%s (Source: %u, LUID: %08x-%08x)", technical_formats)
 
 
 if __name__ == "__main__":
