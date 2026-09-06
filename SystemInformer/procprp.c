@@ -580,30 +580,30 @@ LRESULT CALLBACK PhpOptionsButtonWndProc(
 
                 PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_DEBUG, L"De&bug", NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_AFFINITY, L"&Affinity", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PROCESS_AFFINITY, PhGetApplicationUiString(IDS_PH_MENU_AFFINITY), NULL, NULL), ULONG_MAX);
 
-                menuItem = PhCreateEMenuItem(0, ID_PROCESS_PRIORITYCLASS, L"&Priority", NULL, NULL);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_REALTIME, L"&Real time", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_HIGH, L"&High", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_ABOVENORMAL, L"&Above normal", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_NORMAL, L"&Normal", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_BELOWNORMAL, L"&Below normal", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_IDLE, L"&Idle", NULL, NULL), ULONG_MAX);
+                menuItem = PhCreateEMenuItem(0, ID_PROCESS_PRIORITYCLASS, PhGetApplicationUiString(IDS_PH_MENU_PRIORITY), NULL, NULL);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_REALTIME, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_REAL_TIME), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_HIGH, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_HIGH), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_ABOVENORMAL, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_ABOVE_NORMAL), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_NORMAL, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_NORMAL), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_BELOWNORMAL, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_BELOW_NORMAL), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PRIORITY_IDLE, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_IDLE), NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
 
-                menuItem = PhCreateEMenuItem(0, ID_PROCESS_IOPRIORITY, L"&I/O priority", NULL, NULL);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_HIGH, L"&High", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_NORMAL, L"&Normal", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_LOW, L"&Low", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_VERYLOW, L"&Very low", NULL, NULL), ULONG_MAX);
+                menuItem = PhCreateEMenuItem(0, ID_PROCESS_IOPRIORITY, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_I_O_PRIORITY), NULL, NULL);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_HIGH, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_HIGH), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_NORMAL, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_NORMAL), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_LOW, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_LOW), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_IOPRIORITY_VERYLOW, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_VERY_LOW), NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
 
-                menuItem = PhCreateEMenuItem(0, ID_PROCESS_PAGEPRIORITY, L"Pa&ge priority", NULL, NULL);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_NORMAL, L"&Normal", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_BELOWNORMAL, L"&Below normal", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_MEDIUM, L"&Medium", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_LOW, L"&Low", NULL, NULL), ULONG_MAX);
-                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_VERYLOW, L"&Very low", NULL, NULL), ULONG_MAX);
+                menuItem = PhCreateEMenuItem(0, ID_PROCESS_PAGEPRIORITY, PhGetApplicationUiString(IDS_PH_MENU_PAGE_PRIORITY), NULL, NULL);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_NORMAL, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_NORMAL), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_BELOWNORMAL, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_BELOW_NORMAL), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_MEDIUM, PhGetApplicationUiString(IDS_PH_MENU_MEDIUM), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_LOW, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_LOW), NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_PAGEPRIORITY_VERYLOW, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_VERY_LOW), NULL, NULL), ULONG_MAX);
                 PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
 
                 menuItem = PhCreateEMenuItem(0, ID_PROCESS_MISCELLANEOUS, L"&Miscellaneous", NULL, NULL);

@@ -6247,8 +6247,6 @@ BOOLEAN NTAPI PhpAppPolicyTreeNewCallback(
 }
 
 static CONST PH_STRINGREF PhAppPolicyLoadingText = PH_STRINGREF_INIT(L"Initializing kernelbase symbols...");
-static CONST PH_STRINGREF PhAppPolicyEmptyText = PH_STRINGREF_INIT(L"There are no policies to display.");
-
 INT_PTR CALLBACK PhpTokenAppPolicyPageProc(
     _In_ HWND hwndDlg,
     _In_ UINT uMsg,
@@ -6296,10 +6294,13 @@ INT_PTR CALLBACK PhpTokenAppPolicyPageProc(
     case WM_PH_APPMODEL_SYMBOL_RESULT:
         {
             BOOLEAN result = (BOOLEAN)lParam;
+            PH_STRINGREF emptyText;
+
+            PhInitializeStringRef(&emptyText, PhGetApplicationUiString(IDS_PH_APP_POLICY_NONE));
 
             if (result)
             {
-                TreeNew_SetEmptyText(tnHandle, &PhAppPolicyEmptyText, 0);
+                TreeNew_SetEmptyText(tnHandle, &emptyText, 0);
 
                 TreeNew_SetRedraw(tnHandle, FALSE);
                 PhEnumTokenAppModelPolicy(tokenPageContext);
@@ -6308,7 +6309,7 @@ INT_PTR CALLBACK PhpTokenAppPolicyPageProc(
             }
             else
             {
-                TreeNew_SetEmptyText(tnHandle, &PhAppPolicyEmptyText, 0);
+                TreeNew_SetEmptyText(tnHandle, &emptyText, 0);
             }
         }
         break;

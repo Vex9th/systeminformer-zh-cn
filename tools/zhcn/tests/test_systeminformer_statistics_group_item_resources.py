@@ -127,6 +127,17 @@ ROUTES = [
 ]
 
 NATIVE_KEYS = {
+    "CPU (user)",
+    "CPU (kernel)",
+    "CPU (relative)",
+    "Cycles",
+    "Cycles delta",
+    "Context switches",
+    "Context switches delta",
+    "Private WS",
+    "Shareable WS",
+    "Shared WS",
+    "Page priority",
     "Kernel delta",
     "User delta",
     "Total time",
@@ -321,7 +332,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             self.assertEqual(chinese.get(symbol), zh, symbol)
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
-        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_ENV_EDIT_WARNING")
+        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_TIMELINE")
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
         expected_ids = set(range(first_id, last_id + 1))
@@ -334,7 +345,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
         self.assertEqual(len(english), len(expected_ids))
         self.assertEqual(len(chinese), len(expected_ids))
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2931$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2944$")
 
     def test_json_uses_existing_and_native_strings_without_overlap(self):
         data = json.loads(
@@ -343,7 +354,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         strings = data["strings"]
         native_strings = data["native_strings"]
 
-        self.assertEqual(len(NATIVE_KEYS), 59)
+        self.assertEqual(len(NATIVE_KEYS), 70)
         self.assertFalse(strings.keys() & native_strings.keys())
         for _symbol, _resource_id, english, chinese, *_ in ROUTES:
             table = native_strings if english in NATIVE_KEYS else strings
@@ -356,7 +367,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("sys_info.exe=931"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=944"), 2)
         self.assertNotIn("sys_info.exe=475", workflow)
 
     def test_audit_removes_batch_and_preserves_expected_remainder(self):

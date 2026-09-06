@@ -85,7 +85,7 @@ PLUGIN_CALLS = {
 }
 
 EXPECTED_COUNTS = {
-    "sys_info.exe": 931,
+    "sys_info.exe": 944,
     "ExtendedNotifications.dll": 4,
     "ExtendedTools.dll": 397,
     "HardwareDevices.dll": 199,
@@ -96,7 +96,7 @@ EXPECTED_COUNTS = {
 }
 
 EXPECTED_NEXT_SYMED_VALUES = {
-    "SystemInformer": 2931,
+    "SystemInformer": 2944,
     "UserNotes": 2052,
     "ExtendedTools": 61397,
     "ExtendedNotifications": 12004,
@@ -298,8 +298,8 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             self.translations["strings"].keys() & self.translations["native_strings"].keys()
         )
         app_header = (APP_ROOT / "resource.h").read_text(encoding="utf-8-sig")
-        self.assertRegex(app_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_ENV_EDIT_WARNING$")
-        self.assertRegex(app_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2931$")
+        self.assertRegex(app_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_TIMELINE$")
+        self.assertRegex(app_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2944$")
 
     def test_exact_ci_and_generator_counts(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
@@ -316,7 +316,7 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(native.returncode, 0, native.stdout + native.stderr)
-        self.assertIn("2571 strings", native.stdout)
+        self.assertIn("2584 strings", native.stdout)
 
         runtime = subprocess.run(
             [sys.executable, str(REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"), "--check"],
@@ -325,7 +325,7 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(runtime.returncode, 0, runtime.stdout + runtime.stderr)
-        self.assertIn("2275 entries", runtime.stdout)
+        self.assertIn("2252 entries", runtime.stdout)
 
 
 if __name__ == "__main__":

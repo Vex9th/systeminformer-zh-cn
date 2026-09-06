@@ -1908,8 +1908,21 @@
 #define IDS_PH_ACTION_EDIT                                             2928
 #define IDS_PH_ENV_SELECTED_VARIABLE_OBJECT                            2929
 #define IDS_PH_ENV_EDIT_WARNING                                        2930
+#define IDS_PH_UNABLE_REGISTER_WINDOW_CLASS                            2931
+#define IDS_PH_UNABLE_COMMIT_DETOURS                                   2932
+#define IDS_PH_INFORMER_NO_EVENTS                                      2933
+#define IDS_PH_APP_POLICY_NONE                                         2934
+#define IDS_PH_MENU_AFFINITY                                           2935
+#define IDS_PH_MENU_PRIORITY                                           2936
+#define IDS_PH_MENU_TIME_CRITICAL                                      2937
+#define IDS_PH_MENU_HIGHEST                                            2938
+#define IDS_PH_MENU_LOWEST                                             2939
+#define IDS_PH_MENU_PAGE_PRIORITY                                      2940
+#define IDS_PH_MENU_MEDIUM                                             2941
+#define IDS_PH_FILE_NAME                                               2942
+#define IDS_PH_TIMELINE                                                2943
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_ENV_EDIT_WARNING
+#define IDS_PH_LAST                                  IDS_PH_TIMELINE
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1921,6 +1934,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2931
+#define _APS_NEXT_SYMED_VALUE           2944
 #endif
 #endif

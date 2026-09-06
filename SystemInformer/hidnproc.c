@@ -209,7 +209,7 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
             PhSetListViewStyle(lvHandle, TRUE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
             PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 320, L"Process");
-            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 60, L"PID");
+            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 60, PhGetApplicationUiString(IDS_PH_PID));
             PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_RIGHT, 70, L"Handles");
 
             PhSetExtendedListView(lvHandle);

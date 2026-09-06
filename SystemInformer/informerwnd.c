@@ -112,7 +112,6 @@ typedef struct _PH_INFORMERW_CONTEXT
     ULONG NodeLimit;
 } PH_INFORMERW_CONTEXT, *PPH_INFORMERW_CONTEXT;
 
-static const PH_STRINGREF PhpInformerEmptyText = PH_STRINGREF_INIT(L"No events to display.");
 static HWND PhpInformerWindowHandle = NULL;
 static PH_LAYOUT_MANAGER PhpInformerLayoutManager;
 static RECT PhpInformerMinimumSize;
@@ -3049,7 +3048,7 @@ VOID PhpInformerInitializeColumns(
     PhAddTreeNewColumn(tn, PHIC_TIME, TRUE, L"Time", 140, PH_ALIGN_RIGHT, 0, DT_RIGHT);
     PhAddTreeNewColumn(tn, PHIC_DURATION, FALSE, L"Duration", 70, PH_ALIGN_RIGHT, 1, DT_RIGHT);
     PhAddTreeNewColumn(tn, PHIC_PROCESS,TRUE, L"Process", 120, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(tn, PHIC_PID, TRUE, L"PID", 50, PH_ALIGN_RIGHT, 3, DT_RIGHT);
+    PhAddTreeNewColumn(tn, PHIC_PID, TRUE, PhGetApplicationUiString(IDS_PH_PID), 50, PH_ALIGN_RIGHT, 3, DT_RIGHT);
     PhAddTreeNewColumn(tn, PHIC_TID, TRUE, L"TID", 50, PH_ALIGN_RIGHT, 4, DT_RIGHT);
     PhAddTreeNewColumn(tn, PHIC_START_KEY, FALSE, L"Start key", 140, PH_ALIGN_LEFT, 5, 0);
     PhAddTreeNewColumn(tn, PHIC_ATTACHED_PROCESS, FALSE, L"Attached process", 120, PH_ALIGN_LEFT, 6, 0);
@@ -3632,6 +3631,8 @@ VOID PhpInformerInitializeDialog(
     _In_ PCWSTR ColumnSettingName
     )
 {
+    PH_STRINGREF emptyText;
+
     Context->WindowHandle = WindowHandle;
     Context->TreeNewHandle = GetDlgItem(WindowHandle, IDC_LIST);
     Context->SearchboxHandle = GetDlgItem(WindowHandle, IDC_SEARCH);
@@ -3642,7 +3643,8 @@ VOID PhpInformerInitializeDialog(
 
     PhSetControlTheme(Context->TreeNewHandle, L"explorer");
     TreeNew_SetCallback(Context->TreeNewHandle, PhpInformerTreeNewCallback, Context);
-    TreeNew_SetEmptyText(Context->TreeNewHandle, &PhpInformerEmptyText, 0);
+    PhInitializeStringRef(&emptyText, PhGetApplicationUiString(IDS_PH_INFORMER_NO_EVENTS));
+    TreeNew_SetEmptyText(Context->TreeNewHandle, &emptyText, 0);
     TreeNew_SetExtendedFlags(Context->TreeNewHandle, TN_FLAG_ITEM_DRAG_SELECT, TN_FLAG_ITEM_DRAG_SELECT);
 
     PhpInformerInitializeColumns(Context, ColumnSettingName);

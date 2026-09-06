@@ -213,17 +213,17 @@ class HandleListViewNativeResourceTests(unittest.TestCase):
             if symbol in resource_ids:
                 self.assertEqual(resource_ids[symbol], value)
             resource_ids[symbol] = value
-        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2931)))
-        self.assertEqual(len(english), 931)
-        self.assertEqual(len(chinese), 931)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_ENV_EDIT_WARNING$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2931$")
+        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2944)))
+        self.assertEqual(len(english), 944)
+        self.assertEqual(len(chinese), 944)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_TIMELINE$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2944$")
 
     def test_ci_and_generator_lock_the_new_exact_counts(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=931"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=944"), 2)
         self.assertNotIn("sys_info.exe=650", workflow)
         result = subprocess.run(
             [
@@ -236,7 +236,7 @@ class HandleListViewNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("2571 strings", result.stdout)
+        self.assertIn("2584 strings", result.stdout)
 
 
 if __name__ == "__main__":

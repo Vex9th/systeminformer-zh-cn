@@ -1558,7 +1558,7 @@ VOID PhpInitializeThreadStacksTree(
     TreeNew_SetRedraw(Context->TreeNewHandle, FALSE);
 
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_SYMBOL, TRUE, L"Symbol", 250, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_PROCESSID, TRUE, L"PID", 80, PH_ALIGN_LEFT, 1, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_PROCESSID, TRUE, PhGetApplicationUiString(IDS_PH_PID), 80, PH_ALIGN_LEFT, 1, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_THREADID, TRUE, L"TID", 80, PH_ALIGN_LEFT, 2, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_FRAMENUMBER, TRUE, L"Frame", 80, PH_ALIGN_LEFT, 3, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_ARCHITECTURE, TRUE, L"Architecture", 100, PH_ALIGN_LEFT, 4, 0);
@@ -1571,7 +1571,7 @@ VOID PhpInitializeThreadStacksTree(
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_PARAMETER4, FALSE, L"Stack parameter #4", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_CONTROLADDRESS, FALSE, L"Control address", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_RETURNADDRESS, FALSE, L"Return address", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_FILENAME, FALSE, L"File name", 250, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_FILENAME, FALSE, PhGetApplicationUiString(IDS_PH_FILE_NAME), 250, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_LINETEXT, FALSE, L"Line number", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_FRAMEDISTANCE, FALSE, L"Frame distance", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_THREAD_STACKS_COLUMN_STARTADDRESS, FALSE, L"Start address", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);

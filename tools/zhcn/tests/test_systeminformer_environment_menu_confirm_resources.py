@@ -76,10 +76,10 @@ class SystemInformerEnvironmentMenuConfirmResourceTests(unittest.TestCase):
             self.assertEqual(zh, chinese.get(symbol))
             self.assertEqual(zh, data["native_strings"].get(en))
             self.assertNotIn(en, data["strings"])
-        self.assertEqual(931, len(english))
-        self.assertEqual(931, len(chinese))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_ENV_EDIT_WARNING$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2931$")
+        self.assertEqual(944, len(english))
+        self.assertEqual(944, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_TIMELINE$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2944$")
 
     def test_menu_and_confirmation_routes_are_exact(self) -> None:
         source = self.audit.mask_c_comments((APP_ROOT / "prpgenv.c").read_text(encoding="utf-8-sig"))

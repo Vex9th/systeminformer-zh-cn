@@ -3529,6 +3529,19 @@ BEGIN
     IDS_PH_ACTION_EDIT                                             "edit"
     IDS_PH_ENV_SELECTED_VARIABLE_OBJECT                            "the selected environment variable"
     IDS_PH_ENV_EDIT_WARNING                                        "Some programs may restrict access or ban your account when editing the environment variable(s) of the process."
+    IDS_PH_UNABLE_REGISTER_WINDOW_CLASS                            "Unable to register window class."
+    IDS_PH_UNABLE_COMMIT_DETOURS                                   "Unable to commit detours transaction."
+    IDS_PH_INFORMER_NO_EVENTS                                      "No events to display."
+    IDS_PH_APP_POLICY_NONE                                         "There are no policies to display."
+    IDS_PH_MENU_AFFINITY                                           "&Affinity"
+    IDS_PH_MENU_PRIORITY                                           "&Priority"
+    IDS_PH_MENU_TIME_CRITICAL                                      "Time &critical"
+    IDS_PH_MENU_HIGHEST                                            "&Highest"
+    IDS_PH_MENU_LOWEST                                             "&Lowest"
+    IDS_PH_MENU_PAGE_PRIORITY                                      "Pa&ge priority"
+    IDS_PH_MENU_MEDIUM                                             "&Medium"
+    IDS_PH_FILE_NAME                                               "File name"
+    IDS_PH_TIMELINE                                                "Timeline"
 END
 
 /////////////////////////////////////////////////////////////////////////////
