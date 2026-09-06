@@ -156,10 +156,26 @@ VOID PhpUpdateStatisticsAddListViewGroups(
 {
     PhListView_EnableGroupView(Context->ListViewContext, TRUE);
 
-    PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_CPU, L"CPU");
-    PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_MEMORY, L"Memory");
-    PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_IO, L"I/O");
-    PhListView_AddGroup(Context->ListViewContext, PH_PROCESS_STATISTICS_CATEGORY_OTHER, L"Other");
+    PhListView_AddGroup(
+        Context->ListViewContext,
+        PH_PROCESS_STATISTICS_CATEGORY_CPU,
+        PhGetApplicationUiString(IDS_PH_STAT_CPU)
+        );
+    PhListView_AddGroup(
+        Context->ListViewContext,
+        PH_PROCESS_STATISTICS_CATEGORY_MEMORY,
+        PhGetApplicationUiString(IDS_PH_GROUP_MEMORY)
+        );
+    PhListView_AddGroup(
+        Context->ListViewContext,
+        PH_PROCESS_STATISTICS_CATEGORY_IO,
+        PhGetApplicationUiString(IDS_PH_GROUP_IO)
+        );
+    PhListView_AddGroup(
+        Context->ListViewContext,
+        PH_PROCESS_STATISTICS_CATEGORY_OTHER,
+        PhGetApplicationUiString(IDS_PH_STAT_OTHER)
+        );
     PhListView_AddGroup(
         Context->ListViewContext,
         PH_PROCESS_STATISTICS_CATEGORY_ENERGY,

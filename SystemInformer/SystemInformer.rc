@@ -3062,6 +3062,17 @@ BEGIN
     IDS_PH_TOKEN_NUMBER                                  "Number"
     IDS_PH_TOKEN_LPAC                                    "LPAC"
     IDS_PH_TOKEN_PATH                                    "Path"
+    IDS_PH_GROUP_PROCESSES                               "Processes"
+    IDS_PH_GROUP_THREADS                                 "Threads"
+    IDS_PH_GROUP_ENVIRONMENT                             "Environment"
+    IDS_PH_GROUP_WMI                                     "WMI"
+    IDS_PH_GROUP_TOKEN                                   "Token"
+    IDS_PH_GROUP_MEMORY                                  "Memory"
+    IDS_PH_GROUP_MODULES                                 "Modules"
+    IDS_PH_GROUP_SERVICES                                "Services"
+    IDS_PH_GROUP_IO                                      "I/O"
+    IDS_PH_GROUP_USER                                    "User"
+    IDS_PH_GROUP_SYSTEM                                  "System"
 END
 
 /////////////////////////////////////////////////////////////////////////////

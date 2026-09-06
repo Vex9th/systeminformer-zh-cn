@@ -1335,8 +1335,16 @@ static INT_PTR CALLBACK EtEnvironmentVariablesDlgProc(
             PhSetExtendedListView(context->ListViewHandle);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, ENV_GROUP_USER, L"User");
-            PhAddListViewGroup(context->ListViewHandle, ENV_GROUP_SYSTEM, L"System");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                ENV_GROUP_USER,
+                PhGetApplicationUiString(IDS_PH_GROUP_USER)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                ENV_GROUP_SYSTEM,
+                PhGetApplicationUiString(IDS_PH_GROUP_SYSTEM)
+                );
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);

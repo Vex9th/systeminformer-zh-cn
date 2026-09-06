@@ -1455,8 +1455,19 @@
 #define IDS_PH_TOKEN_NUMBER                                 2461
 #define IDS_PH_TOKEN_LPAC                                   2462
 #define IDS_PH_TOKEN_PATH                                   2463
+#define IDS_PH_GROUP_PROCESSES                              2464
+#define IDS_PH_GROUP_THREADS                                2465
+#define IDS_PH_GROUP_ENVIRONMENT                            2466
+#define IDS_PH_GROUP_WMI                                    2467
+#define IDS_PH_GROUP_TOKEN                                  2468
+#define IDS_PH_GROUP_MEMORY                                 2469
+#define IDS_PH_GROUP_MODULES                                2470
+#define IDS_PH_GROUP_SERVICES                               2471
+#define IDS_PH_GROUP_IO                                     2472
+#define IDS_PH_GROUP_USER                                   2473
+#define IDS_PH_GROUP_SYSTEM                                 2474
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_TOKEN_PATH
+#define IDS_PH_LAST                                  IDS_PH_GROUP_SYSTEM
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1468,6 +1479,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2464
+#define _APS_NEXT_SYMED_VALUE           2475
 #endif
 #endif

@@ -251,7 +251,11 @@ INT_PTR CALLBACK PhpSessionPropertiesDlgProc(
             PhSetExtendedListView(context->ListViewHandle);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, 0, L"User");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                0,
+                PhGetApplicationUiString(IDS_PH_GROUP_USER)
+                );
             //PhAddListViewGroup(context->ListViewHandle, 1, L"Profile");
 
             PhAddListViewGroupItem(

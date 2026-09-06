@@ -3991,21 +3991,61 @@ INT_PTR CALLBACK PhpOptionsHighlightingDlgProc(
             PhSetExtendedListView(HighlightingListViewHandle);
             ExtendedListView_SetItemColorFunction(HighlightingListViewHandle, PhpColorItemColorFunction);
             ListView_EnableGroupView(HighlightingListViewHandle, TRUE);
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_PROCESSES_AND_THREADS, L"Processes");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_THREADS, L"Threads");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_NETWORK, L"Network");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_ENVIRONMENT, L"Environment");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_WMI, L"WMI");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_TOKEN, L"Token");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_MEMORY, L"Memory");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_MODULES, L"Modules");
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_PROCESSES_AND_THREADS,
+                PhGetApplicationUiString(IDS_PH_GROUP_PROCESSES)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_THREADS,
+                PhGetApplicationUiString(IDS_PH_GROUP_THREADS)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_NETWORK,
+                PhGetApplicationUiString(IDS_PH_LOGON_NETWORK)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_ENVIRONMENT,
+                PhGetApplicationUiString(IDS_PH_GROUP_ENVIRONMENT)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_WMI,
+                PhGetApplicationUiString(IDS_PH_GROUP_WMI)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_TOKEN,
+                PhGetApplicationUiString(IDS_PH_GROUP_TOKEN)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_MEMORY,
+                PhGetApplicationUiString(IDS_PH_GROUP_MEMORY)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_MODULES,
+                PhGetApplicationUiString(IDS_PH_GROUP_MODULES)
+                );
             PhAddListViewGroup(
                 HighlightingListViewHandle,
                 PH_OPTIONS_HIGHLIGHTING_GROUP_IMAGES,
                 PhGetApplicationUiString(IDS_PH_GROUP_IMAGES_AND_DLLS)
                 );
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_HANDLES, L"Handles");
-            PhAddListViewGroup(HighlightingListViewHandle, PH_OPTIONS_HIGHLIGHTING_GROUP_SERVICES, L"Services");
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_HANDLES,
+                PhGetApplicationUiString(IDS_PH_STAT_HANDLES)
+                );
+            PhAddListViewGroup(
+                HighlightingListViewHandle,
+                PH_OPTIONS_HIGHLIGHTING_GROUP_SERVICES,
+                PhGetApplicationUiString(IDS_PH_GROUP_SERVICES)
+                );
 
             for (ULONG i = 0; i < RTL_NUMBER_OF(ColorItems); i++)
             {
