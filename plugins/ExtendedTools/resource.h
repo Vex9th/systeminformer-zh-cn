@@ -452,8 +452,20 @@
 #define IDS_ET_FILTER_BINARY_FILES      61185
 #define IDS_ET_FILTER_ALL_FILES         61186
 #define IDS_ET_UNABLE_CREATE_FILE       61187
+#define IDS_ET_PIPE_STREAM              61188
+#define IDS_ET_PIPE_MESSAGE             61189
+#define IDS_ET_PIPE_INBOUND             61190
+#define IDS_ET_PIPE_OUTBOUND            61191
+#define IDS_ET_PIPE_DUPLEX              61192
+#define IDS_ET_PIPE_UNLIMITED           61193
+#define IDS_ET_PIPE_LISTENING           61194
+#define IDS_ET_PIPE_CLOSING             61195
+#define IDS_ET_PIPE_REJECT              61196
+#define IDS_ET_PIPE_ACCEPT              61197
+#define IDS_ET_PIPE_QUEUE               61198
+#define IDS_ET_PIPE_COMPLETE            61199
 #define IDS_ET_CACHED_FIRST             IDS_ET_DEDICATED_MEMORY
-#define IDS_ET_CACHED_LAST              IDS_ET_UNABLE_CREATE_FILE
+#define IDS_ET_CACHED_LAST              IDS_ET_PIPE_COMPLETE
 
 // Next default values for new objects
 // 
@@ -462,6 +474,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        60043
 #define _APS_NEXT_COMMAND_VALUE         60043
 #define _APS_NEXT_CONTROL_VALUE         60043
-#define _APS_NEXT_SYMED_VALUE           61188
+#define _APS_NEXT_SYMED_VALUE           61200
 #endif
 #endif

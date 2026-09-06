@@ -1125,6 +1125,18 @@ BEGIN
     IDS_ET_FILTER_BINARY_FILES      "Binary files (*.bin)"
     IDS_ET_FILTER_ALL_FILES         "All files (*.*)"
     IDS_ET_UNABLE_CREATE_FILE       "Unable to create the file"
+    IDS_ET_PIPE_STREAM              "Stream"
+    IDS_ET_PIPE_MESSAGE             "Message"
+    IDS_ET_PIPE_INBOUND             "Inbound"
+    IDS_ET_PIPE_OUTBOUND            "Outbound"
+    IDS_ET_PIPE_DUPLEX              "Duplex"
+    IDS_ET_PIPE_UNLIMITED           "Unlimited"
+    IDS_ET_PIPE_LISTENING           "Listening"
+    IDS_ET_PIPE_CLOSING             "Closing"
+    IDS_ET_PIPE_REJECT              "Reject"
+    IDS_ET_PIPE_ACCEPT              "Accept"
+    IDS_ET_PIPE_QUEUE               "Queue"
+    IDS_ET_PIPE_COMPLETE            "Complete"
 END
 
 #endif    // English (United States) resources

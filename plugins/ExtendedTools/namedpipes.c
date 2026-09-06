@@ -14,6 +14,11 @@
 #include <kphuser.h>
 #include <hndlinfo.h>
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 typedef struct _PIPE_ENUM_DIALOG_CONTEXT
 {
     HWND WindowHandle;
@@ -131,28 +136,34 @@ VOID EtEnumerateNamedPipeDirectory(
                 switch (pipeLocalInfo.NamedPipeType & ~FILE_PIPE_REJECT_REMOTE_CLIENTS)
                 {
                 case FILE_PIPE_BYTE_STREAM_TYPE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 3, L"Stream");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 3,
+                        EtGetUiString(IDS_ET_PIPE_STREAM, L"Stream"));
                     break;
                 case FILE_PIPE_MESSAGE_TYPE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 3, L"Message");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 3,
+                        EtGetUiString(IDS_ET_PIPE_MESSAGE, L"Message"));
                     break;
                 }
 
                 switch (pipeLocalInfo.NamedPipeConfiguration)
                 {
                 case FILE_PIPE_INBOUND:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 4, L"Inbound");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 4,
+                        EtGetUiString(IDS_ET_PIPE_INBOUND, L"Inbound"));
                     break;
                 case FILE_PIPE_OUTBOUND:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 4, L"Outbound");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 4,
+                        EtGetUiString(IDS_ET_PIPE_OUTBOUND, L"Outbound"));
                     break;
                 case FILE_PIPE_FULL_DUPLEX:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 4, L"Duplex");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 4,
+                        EtGetUiString(IDS_ET_PIPE_DUPLEX, L"Duplex"));
                     break;
                 }
 
                 if (pipeLocalInfo.MaximumInstances == FILE_PIPE_UNLIMITED_INSTANCES)
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 5, L"Unlimited");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 5,
+                        EtGetUiString(IDS_ET_PIPE_UNLIMITED, L"Unlimited"));
                 else
                     PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 5, PhaFormatUInt64(pipeLocalInfo.MaximumInstances, FALSE)->Buffer);
                 PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 6, PhaFormatUInt64(pipeLocalInfo.CurrentInstances, FALSE)->Buffer);
@@ -162,23 +173,29 @@ VOID EtEnumerateNamedPipeDirectory(
                 switch (pipeLocalInfo.NamedPipeState)
                 {
                 case FILE_PIPE_DISCONNECTED_STATE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9, L"Disconnected");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9,
+                        EtGetUiString(IDS_ET_SESSION_STATE_DISCONNECTED, L"Disconnected"));
                     break;
                 case FILE_PIPE_LISTENING_STATE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9, L"Listening");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9,
+                        EtGetUiString(IDS_ET_PIPE_LISTENING, L"Listening"));
                     break;
                 case FILE_PIPE_CONNECTED_STATE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9, L"Connected");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9,
+                        EtGetUiString(IDS_ET_SESSION_STATE_CONNECTED, L"Connected"));
                     break;
                 case FILE_PIPE_CLOSING_STATE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9, L"Closing");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 9,
+                        EtGetUiString(IDS_ET_PIPE_CLOSING, L"Closing"));
                     break;
                 }
 
                 if (pipeLocalInfo.NamedPipeType & FILE_PIPE_REJECT_REMOTE_CLIENTS)
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 10, L"Reject");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 10,
+                        EtGetUiString(IDS_ET_PIPE_REJECT, L"Reject"));
                 else
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 10, L"Accept");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 10,
+                        EtGetUiString(IDS_ET_PIPE_ACCEPT, L"Accept"));
             }
 
             if (NT_SUCCESS(NtQueryInformationFile(pipeHandle, &isb, &pipeInfo, sizeof(pipeInfo), FilePipeInformation)))
@@ -186,20 +203,24 @@ VOID EtEnumerateNamedPipeDirectory(
                 switch (pipeInfo.ReadMode)
                 {
                 case FILE_PIPE_BYTE_STREAM_MODE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11, L"Stream");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11,
+                        EtGetUiString(IDS_ET_PIPE_STREAM, L"Stream"));
                     break;
                 case FILE_PIPE_MESSAGE_MODE:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11, L"Message");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11,
+                        EtGetUiString(IDS_ET_PIPE_MESSAGE, L"Message"));
                     break;
                 }
 
                 switch (pipeInfo.CompletionMode)
                 {
                 case FILE_PIPE_QUEUE_OPERATION:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12, L"Queue");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12,
+                        EtGetUiString(IDS_ET_PIPE_QUEUE, L"Queue"));
                     break;
                 case FILE_PIPE_COMPLETE_OPERATION:
-                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12, L"Complete");
+                    PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12,
+                        EtGetUiString(IDS_ET_PIPE_COMPLETE, L"Complete"));
                     break;
                 }
             }
@@ -293,28 +314,34 @@ VOID EtAddNamedPipeHandleToListView(
         switch (pipeLocalInfo.NamedPipeType & ~FILE_PIPE_REJECT_REMOTE_CLIENTS)
         {
             case FILE_PIPE_BYTE_STREAM_TYPE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 5, L"Stream");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 5,
+                    EtGetUiString(IDS_ET_PIPE_STREAM, L"Stream"));
                 break;
             case FILE_PIPE_MESSAGE_TYPE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 5, L"Message");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 5,
+                    EtGetUiString(IDS_ET_PIPE_MESSAGE, L"Message"));
                 break;
         }
 
         switch (pipeLocalInfo.NamedPipeConfiguration)
         {
             case FILE_PIPE_INBOUND:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 6, L"Inbound");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 6,
+                    EtGetUiString(IDS_ET_PIPE_INBOUND, L"Inbound"));
                 break;
             case FILE_PIPE_OUTBOUND:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 6, L"Outbound");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 6,
+                    EtGetUiString(IDS_ET_PIPE_OUTBOUND, L"Outbound"));
                 break;
             case FILE_PIPE_FULL_DUPLEX:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 6, L"Duplex");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 6,
+                    EtGetUiString(IDS_ET_PIPE_DUPLEX, L"Duplex"));
                 break;
         }
 
         if (pipeLocalInfo.MaximumInstances == FILE_PIPE_UNLIMITED_INSTANCES)
-            PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 7, L"Unlimited");
+            PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 7,
+                EtGetUiString(IDS_ET_PIPE_UNLIMITED, L"Unlimited"));
         else
             PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 7, PhaFormatUInt64(pipeLocalInfo.MaximumInstances, FALSE)->Buffer);
 
@@ -325,23 +352,29 @@ VOID EtAddNamedPipeHandleToListView(
         switch (pipeLocalInfo.NamedPipeState)
         {
             case FILE_PIPE_DISCONNECTED_STATE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11, L"Disconnected");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11,
+                    EtGetUiString(IDS_ET_SESSION_STATE_DISCONNECTED, L"Disconnected"));
                 break;
             case FILE_PIPE_LISTENING_STATE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11, L"Listening");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11,
+                    EtGetUiString(IDS_ET_PIPE_LISTENING, L"Listening"));
                 break;
             case FILE_PIPE_CONNECTED_STATE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11, L"Connected");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11,
+                    EtGetUiString(IDS_ET_SESSION_STATE_CONNECTED, L"Connected"));
                 break;
             case FILE_PIPE_CLOSING_STATE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11, L"Closing");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 11,
+                    EtGetUiString(IDS_ET_PIPE_CLOSING, L"Closing"));
                 break;
         }
 
         if (pipeLocalInfo.NamedPipeType & FILE_PIPE_REJECT_REMOTE_CLIENTS)
-            PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12, L"Reject");
+            PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12,
+                EtGetUiString(IDS_ET_PIPE_REJECT, L"Reject"));
         else
-            PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12, L"Accept");
+            PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 12,
+                EtGetUiString(IDS_ET_PIPE_ACCEPT, L"Accept"));
     }
 
     if (NT_SUCCESS(PhCallKphQueryFileInformationWithTimeout(
@@ -356,20 +389,24 @@ VOID EtAddNamedPipeHandleToListView(
         switch (pipeInfo.ReadMode)
         {
             case FILE_PIPE_BYTE_STREAM_MODE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 13, L"Stream");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 13,
+                    EtGetUiString(IDS_ET_PIPE_STREAM, L"Stream"));
                 break;
             case FILE_PIPE_MESSAGE_MODE:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 13, L"Message");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 13,
+                    EtGetUiString(IDS_ET_PIPE_MESSAGE, L"Message"));
                 break;
         }
 
         switch (pipeInfo.CompletionMode)
         {
             case FILE_PIPE_QUEUE_OPERATION:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 14, L"Queue");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 14,
+                    EtGetUiString(IDS_ET_PIPE_QUEUE, L"Queue"));
                 break;
             case FILE_PIPE_COMPLETE_OPERATION:
-                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 14, L"Complete");
+                PhSetListViewSubItem(Context->ListViewWndHandle, lvItemIndex, 14,
+                    EtGetUiString(IDS_ET_PIPE_COMPLETE, L"Complete"));
                 break;
         }
     }
