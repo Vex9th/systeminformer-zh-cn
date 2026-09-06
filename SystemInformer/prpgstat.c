@@ -2360,7 +2360,7 @@ INT_PTR CALLBACK PhpProcessStatisticsDlgProc(
             PhSetControlTheme(statisticsContext->ListViewHandle, L"explorer");
             PhSetExtendedListView(statisticsContext->ListViewHandle);
             PhListView_AddColumn(statisticsContext->ListViewContext, 0, 0, 0, LVCFMT_LEFT, 135, L"Property");
-            PhListView_AddColumn(statisticsContext->ListViewContext, 1, 1, 1, LVCFMT_LEFT, 150, L"Value");
+            PhListView_AddColumn(statisticsContext->ListViewContext, 1, 1, 1, LVCFMT_LEFT, 150, PhGetApplicationUiString(IDS_PH_VALUE));
             PhListView_AddColumn(statisticsContext->ListViewContext, 2, 2, 2, LVCFMT_LEFT, 150, L"Min");
             PhListView_AddColumn(statisticsContext->ListViewContext, 3, 3, 3, LVCFMT_LEFT, 150, L"Max");
             PhListView_AddColumn(statisticsContext->ListViewContext, 4, 4, 4, LVCFMT_LEFT, 150, L"Difference");
@@ -3742,7 +3742,7 @@ INT_PTR CALLBACK PhpProcessStatisticsDlgProc(
                 if (PhGetSelectedListViewItemParams(statisticsContext->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, IDC_COPY, statisticsContext->ListViewHandle);
 
                     item = PhShowEMenu(

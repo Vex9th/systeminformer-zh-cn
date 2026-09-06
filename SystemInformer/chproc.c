@@ -251,9 +251,9 @@ INT_PTR CALLBACK PhpChooseProcessDlgProc(
 
             PhSetListViewStyle(lvHandle, FALSE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
-            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 180, L"Name");
-            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 60, L"PID");
-            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 160, L"User name");
+            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 180, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
+            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 60, PhGetApplicationUiString(IDS_PH_PID));
+            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 160, PhGetApplicationUiString(IDS_PH_SESSION_USER_NAME));
             PhSetExtendedListView(lvHandle);
 
             PhpChooseProcessSetImagelist(context);

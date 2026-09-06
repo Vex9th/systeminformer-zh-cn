@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2300] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L"\"%s\" at position %zu.", L"“%s”，位置 %zu。", },
@@ -35,7 +35,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
     { L"&Combine memory pages", L"合并内存页(&C)", },
     { L"&Computer", L"计算机(&C)", },
     { L"&Connect", L"连接(&C)", },
-    { L"&Copy", L"复制(&C)", },
     { L"&CopyCtrl+C", L"复制(&C)Ctrl+C", },
     { L"&Create live dump...", L"创建实时转储(&C)...", },
     { L"&Create service...", L"创建服务(&C)...", },
@@ -1645,7 +1644,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
     { L"Sockets", L"套接字", },
     { L"Software", L"软件", },
     { L"Some programs may restrict access or ban your account when editing the environment variable(s) of the process.", L"编辑进程的环境变量时，某些程序可能会限制访问或封禁你的账户。", },
-    { L"Some programs may restrict access or ban your account when editing the memory of the process.", L"编辑进程内存时，某些程序可能会限制访问或封禁你的账户。", },
     { L"Some programs may restrict access or ban your account when loading modules into the process.", L"向进程加载模块时，某些程序可能会限制访问或封禁你的账户。", },
     { L"Sort &child processes", L"对子进程排序(&C)", },
     { L"Sort &root processes", L"对根进程排序(&R)", },
@@ -1753,7 +1751,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
     { L"Terminated:", L"已终止：", },
     { L"Terminating a Zombie process may cause the system to become unstable ", L"终止僵尸进程可能导致系统不稳定", },
     { L"Terminating a Zombie process may cause the system to become unstable or crash.", L"终止僵尸进程可能导致系统不稳定或崩溃。", },
-    { L"Terminating a job will terminate all processes assigned to it.", L"终止作业将终止分配给该作业的所有进程。", },
     { L"Terminating a process tree will cause the process and its descendants to be terminated.", L"终止进程树将使该进程及其子进程一并终止。", },
     { L"Text", L"文本", },
     { L"Text options:", L"文本选项：", },
@@ -2131,7 +2128,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
     { L"Username", L"用户名", },
     { L"Users List", L"用户列表", },
     { L"Utilization:", L"利用率：", },
-    { L"Value", L"值", },
     { L"Value:", L"值：", },
     { L"Values (one per line):", L"值（每行一个）：", },
     { L"Vendor ID", L"供应商 ID", },
@@ -2276,7 +2272,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
     { L"minutes", L"分钟", },
     { L"not connected", L"未连接", },
     { L"privilege", L"特权", },
-    { L"process memory", L"进程内存", },
     { L"reduce the working set", L"缩减工作集", },
     { L"remove", L"移除", },
     { L"reset", L"重置", },
@@ -2302,7 +2297,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
     { L"the computer for Windows Defender Offline Scan", L"该计算机以运行 Windows Defender 脱机扫描", },
     { L"the integrity label", L"完整性标签", },
     { L"the integrity level", L"完整性级别", },
-    { L"the job", L"该作业", },
     { L"the memory region", L"该内存区域", },
     { L"the object identifier", L"对象标识符", },
     { L"the repase point", L"该重分析点", },
@@ -2310,14 +2304,12 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2308] =
     { L"the selected handle", L"所选句柄", },
     { L"the selected heap", L"所选堆", },
     { L"the selected privilege(s)", L"所选特权", },
-    { L"the selected process(es)", L"所选进程", },
     { L"the user", L"该用户", },
     { L"the window property", L"该窗口属性", },
     { L"update", L"更新", },
     { L"update and restart", L"更新并重启", },
     { L"update and shutdown", L"更新并关闭", },
     { L"virtualization for the process", L"该进程的虚拟化", },
-    { L"write", L"写入", },
     { L"you can only change affinity for individual threads.", L"你只能更改单个线程的处理器关联。", },
     { L"•  Files unknown to Hybrid-Analysis are uploaded for full analysis", L"•  Hybrid-Analysis 未知的文件将被上传以进行完整分析", },
     { L"•  SHA-256 hashes of scanned images, for reputation lookup", L"•  已扫描映像的 SHA-256 哈希，用于信誉查询", },

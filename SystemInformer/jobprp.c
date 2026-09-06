@@ -272,9 +272,9 @@ INT_PTR CALLBACK PhpJobPageProc(
             PhSetExtendedListView(processesLv);
             PhSetExtendedListView(limitsLv);
 
-            PhAddListViewColumn(processesLv, 0, 0, 0, LVCFMT_LEFT, 240, L"Name");
-            PhAddListViewColumn(limitsLv, 0, 0, 0, LVCFMT_LEFT, 120, L"Name");
-            PhAddListViewColumn(limitsLv, 1, 1, 1, LVCFMT_LEFT, 160, L"Value");
+            PhAddListViewColumn(processesLv, 0, 0, 0, LVCFMT_LEFT, 240, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
+            PhAddListViewColumn(limitsLv, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
+            PhAddListViewColumn(limitsLv, 1, 1, 1, LVCFMT_LEFT, 160, PhGetApplicationUiString(IDS_PH_VALUE));
             PhLoadListViewColumnsFromSetting(SETTING_JOB_LIST_VIEW_COLUMNS, limitsLv);
 
             PhSetDialogItemText(hwndDlg, IDC_NAME, PhGetApplicationUiString(IDS_PH_UNKNOWN));
@@ -457,9 +457,9 @@ INT_PTR CALLBACK PhpJobPageProc(
                 {
                     if (PhShowConfirmMessage(
                         hwndDlg,
-                        L"terminate",
-                        L"the job",
-                        L"Terminating a job will terminate all processes assigned to it.",
+                        PhGetApplicationUiString(IDS_PH_ACTION_TERMINATE),
+                        PhGetApplicationUiString(IDS_PH_CONFIRM_JOB_OBJECT),
+                        PhGetApplicationUiString(IDS_PH_CONFIRM_JOB_TERMINATION_WARNING),
                         TRUE
                         ))
                     {
@@ -572,7 +572,7 @@ INT_PTR CALLBACK PhpJobPageProc(
                 if (PhGetSelectedListViewItemParams(listViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, IDC_COPY, listViewHandle);
 
                     item = PhShowEMenu(

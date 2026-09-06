@@ -2675,4 +2675,13 @@ BEGIN
     IDS_PH_LIVE_KERNEL_DUMP_CREATED                                "已创建实时内核转储。"
     IDS_PH_PROCESSING_LIVE_KERNEL_DUMP                             "正在处理实时内核转储..."
     IDS_PH_SEARCHING_MEMORY_STRINGS                                "正在搜索内存字符串..."
+    IDS_PH_VALUE                                                   "值"
+    IDS_PH_PID                                                     "PID"
+    IDS_PH_MENU_COPY                                               "复制(&C)"
+    IDS_PH_CONFIRM_JOB_OBJECT                                      "该作业"
+    IDS_PH_CONFIRM_JOB_TERMINATION_WARNING                         "终止作业将终止分配给该作业的所有进程。"
+    IDS_PH_CONFIRM_SELECTED_PROCESSES_OBJECT                       "所选进程"
+    IDS_PH_ACTION_WRITE                                            "写入"
+    IDS_PH_PROCESS_MEMORY_OBJECT                                   "进程内存"
+    IDS_PH_MEMORY_EDIT_WARNING                                     "编辑进程内存时，某些程序可能会限制访问或封禁你的账户。"
 END

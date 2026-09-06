@@ -3495,6 +3495,15 @@ BEGIN
     IDS_PH_LIVE_KERNEL_DUMP_CREATED                                "Live kernel dump has been created."
     IDS_PH_PROCESSING_LIVE_KERNEL_DUMP                             "Processing live kernel dump..."
     IDS_PH_SEARCHING_MEMORY_STRINGS                                "Searching memory strings..."
+    IDS_PH_VALUE                                                   "Value"
+    IDS_PH_PID                                                     "PID"
+    IDS_PH_MENU_COPY                                               "&Copy"
+    IDS_PH_CONFIRM_JOB_OBJECT                                      "the job"
+    IDS_PH_CONFIRM_JOB_TERMINATION_WARNING                         "Terminating a job will terminate all processes assigned to it."
+    IDS_PH_CONFIRM_SELECTED_PROCESSES_OBJECT                       "the selected process(es)"
+    IDS_PH_ACTION_WRITE                                            "write"
+    IDS_PH_PROCESS_MEMORY_OBJECT                                   "process memory"
+    IDS_PH_MEMORY_EDIT_WARNING                                     "Some programs may restrict access or ban your account when editing the memory of the process."
 END
 
 /////////////////////////////////////////////////////////////////////////////

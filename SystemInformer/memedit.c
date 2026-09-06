@@ -464,9 +464,9 @@ INT_PTR CALLBACK PhpMemoryEditorDlgProc(
 
                     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                         hwndDlg,
-                        L"write",
-                        L"process memory",
-                        L"Some programs may restrict access or ban your account when editing the memory of the process.",
+                        PhGetApplicationUiString(IDS_PH_ACTION_WRITE),
+                        PhGetApplicationUiString(IDS_PH_PROCESS_MEMORY_OBJECT),
+                        PhGetApplicationUiString(IDS_PH_MEMORY_EDIT_WARNING),
                         FALSE
                         ))
                     {

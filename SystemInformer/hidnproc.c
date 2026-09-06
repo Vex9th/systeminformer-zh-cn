@@ -325,8 +325,8 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
                         if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) ||
                             PhShowConfirmMessage(
                             hwndDlg,
-                            L"terminate",
-                            L"the selected process(es)",
+                            PhGetApplicationUiString(IDS_PH_ACTION_TERMINATE),
+                            PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_PROCESSES_OBJECT),
                             PhGetApplicationUiString(IDS_PH_ZOMBIE_TERMINATION_WARNING),
                             TRUE
                             ))
@@ -564,7 +564,7 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
                 if (PhGetSelectedListViewItemParams(PhZombieProcessesListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, IDC_COPY, PhZombieProcessesListViewHandle);
 
                     item = PhShowEMenu(

@@ -25,7 +25,7 @@ IDS_ET_FIRMWARE_COLUMN_GUID|61179|Guid|GUID|strings
 IDS_ET_FIRMWARE_COLUMN_DATA_LENGTH|61180|Data Length|数据长度|strings
 IDS_ET_MENU_EDIT|61181|&Edit|编辑(&E)|strings
 IDS_ET_MENU_DELETE|61182|&Delete|删除(&D)|strings
-IDS_ET_MENU_COPY|61183|&Copy|复制(&C)|strings
+IDS_ET_MENU_COPY|61183|&Copy|复制(&C)|native_strings
 IDS_ET_FIRMWARE_LEGACY_BIOS|61184|Windows was installed using legacy BIOS.|Windows 是使用传统 BIOS 安装的。|native_strings
 IDS_ET_FILTER_BINARY_FILES|61185|Binary files (*.bin)|二进制文件 (*.bin)|native_strings
 IDS_ET_FILTER_ALL_FILES|61186|All files (*.*)|所有文件 (*.*)|native_strings

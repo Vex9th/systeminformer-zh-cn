@@ -124,10 +124,10 @@ class SystemInformerDialogNativeResourceTests(unittest.TestCase):
                 self.assertEqual(chinese.get(symbol), zh)
 
         self.assertEqual([row[1] for row in RESOURCES], list(range(2710, 2749)))
-        self.assertEqual(len(english), 897)
-        self.assertEqual(len(chinese), 897)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_SEARCHING_MEMORY_STRINGS$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2897$")
+        self.assertEqual(len(english), 906)
+        self.assertEqual(len(chinese), 906)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MEMORY_EDIT_WARNING$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2906$")
 
     def test_actions_taskdialogs_use_native_resources_and_existing_shared_ids(self) -> None:
         source = self.audit.mask_c_comments(self.sources["actions.c"])

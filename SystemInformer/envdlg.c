@@ -817,7 +817,7 @@ static INT_PTR CALLBACK EtEnvSplitDlgProc(
                 PhGetString(context->Name)
                 )->Buffer);
 
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 300, L"Value");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 300, PhGetApplicationUiString(IDS_PH_VALUE));
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PhSetExtendedListView(context->ListViewHandle);
@@ -1334,8 +1334,8 @@ static INT_PTR CALLBACK EtEnvironmentVariablesDlgProc(
 
             PhSetApplicationWindowIcon(hwndDlg);
 
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 320, L"Value");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 320, PhGetApplicationUiString(IDS_PH_VALUE));
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PhSetExtendedListView(context->ListViewHandle);

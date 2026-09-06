@@ -103,12 +103,12 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
 
         self.assertRegex(system_header, r"(?m)^#include\s+<phappresourceid\.h>$")
         self.assertRegex(peview_header, r"(?m)^#include\s+<phappresourceid\.h>$")
-        self.assertEqual(len(system_en), 897)
-        self.assertEqual(len(system_zh), 897)
+        self.assertEqual(len(system_en), 906)
+        self.assertEqual(len(system_zh), 906)
         self.assertEqual(len(peview_en), 311)
         self.assertEqual(len(peview_zh), 311)
-        self.assertRegex(system_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_SEARCHING_MEMORY_STRINGS$")
-        self.assertRegex(system_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2897$")
+        self.assertRegex(system_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MEMORY_EDIT_WARNING$")
+        self.assertRegex(system_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2906$")
         self.assertRegex(peview_header, r"(?m)^#define IDS_PV_FIRST\s+IDS_PV_MENU_ANSI$")
         self.assertRegex(peview_header, r"(?m)^#define IDS_PV_LAST\s+IDS_PV_CERTIFICATE_SIZE_FORMAT$")
         self.assertRegex(peview_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3298$")
@@ -213,17 +213,17 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("2308 entries", result.stdout)
+        self.assertIn("2300 entries", result.stdout)
 
     def test_ci_and_native_generator_counts_are_exact(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
         generator_test = (REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py").read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count(r"sys_info.exe=897"), 2)
+        self.assertEqual(workflow.count(r"sys_info.exe=906"), 2)
         self.assertEqual(workflow.count(r"peview.exe=311"), 2)
         self.assertNotIn(r"sys_info.exe=598", workflow)
         self.assertNotIn(r"peview.exe=298", workflow)
-        self.assertIn('self.assertIn("2537 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("2546 strings", result.stdout)', generator_test)
         self.assertNotIn('self.assertIn("1737 strings", result.stdout)', generator_test)
 
 
