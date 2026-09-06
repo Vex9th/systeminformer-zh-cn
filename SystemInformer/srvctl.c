@@ -336,8 +336,8 @@ INT_PTR CALLBACK PhpServicesPageProc(
 
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 220, L"Display name");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 220, PhGetApplicationUiString(IDS_PH_LISTVIEW_DISPLAY_NAME));
             PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 220, PhGetApplicationUiString(IDS_PH_FILE_NAME));
             PhSetExtendedListView(context->ListViewHandle);
 

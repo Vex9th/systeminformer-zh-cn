@@ -272,10 +272,10 @@ INT_PTR CALLBACK PhpProcessVdmHostProcessDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 140, L"Module name");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 140, PhGetApplicationUiString(IDS_PH_LISTVIEW_MODULE_NAME));
             PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 180, PhGetApplicationUiString(IDS_PH_FILE_NAME));
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, L"Thread Id");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, L"Task Id");
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_THREAD_ID));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_TASK_ID));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_VDM_HOST_LIST_VIEW_COLUMNS, context->ListViewHandle);
 

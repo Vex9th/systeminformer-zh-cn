@@ -1645,40 +1645,40 @@ static VOID PhpAdvancedPageLoad(
 
     if (!ReloadOnly)
     {
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_SINGLE_INSTANCE, L"Allow only one instance", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_HIDE_WHENCLOSED, L"Hide when closed", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_HIDE_WHENMINIMIZED, L"Hide when minimized", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_START_ATLOGON, L"Start when I log on", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_START_HIDDEN, L"Start hidden", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_WARNINGS, L"Enable warnings", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_DRIVER, L"Enable kernel-mode driver", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_MONOSPACE, L"Enable monospace fonts", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_PLUGINS, L"Enable plugins", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_UNDECORATE_SYMBOLS, L"Enable undecorated symbols", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_AVX_EXTENSIONS, L"Enable AVX extensions (experimental)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_COLUMN_HEADER_TOTALS, L"Enable column header totals (experimental)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_CYCLE_CPU_USAGE, L"Enable cycle-based CPU usage", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_LOW_LATENCY_MODE, L"Enable low-latency mode (experimental)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_GRAPH_SCALING, L"Enable fixed graph scaling (experimental)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_MINIINFO_WINDOW, L"Enable tray information window", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_MEMSTRINGS_TREE, L"Enable new memory strings dialog", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_LASTTAB_SUPPORT, L"Remember last selected window", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_THEME_SUPPORT, L"Enable theme support (experimental)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_START_ASADMIN, L"Enable start as admin (experimental)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_STREAM_MODE, L"Enable streamer mode (disable window capture) (experimental)", NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_SINGLE_INSTANCE, PhGetApplicationUiString(IDS_PH_LISTVIEW_ALLOW_ONLY_ONE_INSTANCE), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_HIDE_WHENCLOSED, PhGetApplicationUiString(IDS_PH_LISTVIEW_HIDE_WHEN_CLOSED), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_HIDE_WHENMINIMIZED, PhGetApplicationUiString(IDS_PH_LISTVIEW_HIDE_WHEN_MINIMIZED), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_START_ATLOGON, PhGetApplicationUiString(IDS_PH_LISTVIEW_START_WHEN_LOG_ON), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_START_HIDDEN, PhGetApplicationUiString(IDS_PH_LISTVIEW_START_HIDDEN), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_WARNINGS, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_WARNINGS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_DRIVER, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_KERNEL_MODE_DRIVER), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_MONOSPACE, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_MONOSPACE_FONTS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_PLUGINS, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_PLUGINS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_UNDECORATE_SYMBOLS, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_UNDECORATED_SYMBOLS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_AVX_EXTENSIONS, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_AVX_EXTENSIONS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_COLUMN_HEADER_TOTALS, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_COLUMN_HEADER_TOTALS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_CYCLE_CPU_USAGE, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_CYCLE_BASED_CPU_USAGE), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_LOW_LATENCY_MODE, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_LOW_LATENCY_MODE), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_GRAPH_SCALING, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_FIXED_GRAPH_SCALING), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_MINIINFO_WINDOW, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_TRAY_INFORMATION_WINDOW), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_MEMSTRINGS_TREE, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_NEW_MEMORY_STRINGS_DIALOG), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_LASTTAB_SUPPORT, PhGetApplicationUiString(IDS_PH_LISTVIEW_REMEMBER_LAST_SELECTED_WINDOW), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_THEME_SUPPORT, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_THEME_SUPPORT), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_START_ASADMIN, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_START_AS_ADMIN), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_STREAM_MODE, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_STREAMER_MODE), NULL);
         //PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_LINUX_SUPPORT, L"Enable Windows subsystem for Linux support", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_NETWORK_RESOLVE, L"Resolve network addresses", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_NETWORK_RESOLVE_DOH, L"Resolve DNS over HTTPS (DoH)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_INSTANT_TOOLTIPS, L"Show tooltips instantly", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_IMAGE_COHERENCY, L"Check images for coherency", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_STAGE2, L"Check images for digital signatures", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_SERVICE_STAGE2, L"Check services for digital signatures", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ICON_SINGLE_CLICK, L"Single-click tray icons", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ICON_TOGGLE_VISIBILITY, L"Icon click toggles visibility", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_PROPAGATE_CPU_USAGE, L"Include usage of collapsed processes", NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_NETWORK_RESOLVE, PhGetApplicationUiString(IDS_PH_LISTVIEW_RESOLVE_NETWORK_ADDRESSES), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_NETWORK_RESOLVE_DOH, PhGetApplicationUiString(IDS_PH_LISTVIEW_RESOLVE_DNS_OVER_HTTPS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_INSTANT_TOOLTIPS, PhGetApplicationUiString(IDS_PH_LISTVIEW_SHOW_TOOLTIPS_INSTANTLY), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_IMAGE_COHERENCY, PhGetApplicationUiString(IDS_PH_LISTVIEW_CHECK_IMAGES_FOR_COHERENCY), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_STAGE2, PhGetApplicationUiString(IDS_PH_LISTVIEW_CHECK_IMAGES_FOR_DIGITAL_SIGNATURES), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ENABLE_SERVICE_STAGE2, PhGetApplicationUiString(IDS_PH_LISTVIEW_CHECK_SERVICES_FOR_DIGITAL_SIGNATURES), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ICON_SINGLE_CLICK, PhGetApplicationUiString(IDS_PH_LISTVIEW_SINGLE_CLICK_TRAY_ICONS), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_ICON_TOGGLE_VISIBILITY, PhGetApplicationUiString(IDS_PH_LISTVIEW_ICON_CLICK_TOGGLES_VISIBILITY), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_PROPAGATE_CPU_USAGE, PhGetApplicationUiString(IDS_PH_LISTVIEW_INCLUDE_COLLAPSED_PROCESS_USAGE), NULL);
         if (WindowsVersion >= WINDOWS_10)
-            PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_PROCESS_MONITOR, L"Enable process monitor (experimental)", NULL);
-        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_SHOW_ADVANCED_OPTIONS, L"Show advanced options", NULL);
+            PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_PROCESS_MONITOR, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENABLE_PROCESS_MONITOR), NULL);
+        PhAddListViewItem(listViewHandle, PHP_OPTIONS_INDEX_SHOW_ADVANCED_OPTIONS, PhGetApplicationUiString(IDS_PH_LISTVIEW_SHOW_ADVANCED_OPTIONS), NULL);
     }
 
     SetLvItemCheckForSetting(listViewHandle, PHP_OPTIONS_INDEX_SINGLE_INSTANCE, SETTING_ALLOW_ONLY_ONE_INSTANCE);
@@ -2027,7 +2027,7 @@ INT_PTR CALLBACK PhpOptionsGeneralDlgProc(
             PhSetListViewStyle(ListViewHandle, FALSE, TRUE);
             ListView_SetExtendedListViewStyleEx(ListViewHandle, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
             PhSetControlTheme(ListViewHandle, L"explorer");
-            PhAddListViewColumn(ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 250, L"Name");
+            PhAddListViewColumn(ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 250, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhSetExtendedListView(ListViewHandle);
 
             for (i = 0; i < RTL_NUMBER_OF(PhSizeUnitNames); i++)
@@ -4031,7 +4031,7 @@ INT_PTR CALLBACK PhpOptionsHighlightingDlgProc(
             HighlightingListViewHandle = GetDlgItem(hwndDlg, IDC_LIST);
             PhSetListViewStyle(HighlightingListViewHandle, FALSE, TRUE);
             ListView_SetExtendedListViewStyleEx(HighlightingListViewHandle, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
-            PhAddListViewColumn(HighlightingListViewHandle, 0, 0, 0, LVCFMT_LEFT, 240, L"Name");
+            PhAddListViewColumn(HighlightingListViewHandle, 0, 0, 0, LVCFMT_LEFT, 240, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhSetExtendedListView(HighlightingListViewHandle);
             ExtendedListView_SetItemColorFunction(HighlightingListViewHandle, PhpColorItemColorFunction);
             ListView_EnableGroupView(HighlightingListViewHandle, TRUE);
@@ -4395,7 +4395,7 @@ INT_PTR CALLBACK PhpOptionsTrayIconDlgProc(
             IconListViewHandle = GetDlgItem(hwndDlg, IDC_TRAYICON_ICONLIST);
             PhSetListViewStyle(IconListViewHandle, FALSE, TRUE);
             ListView_SetExtendedListViewStyleEx(IconListViewHandle, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
-            PhAddListViewColumn(IconListViewHandle, 0, 0, 0, LVCFMT_LEFT, 230, L"Name");
+            PhAddListViewColumn(IconListViewHandle, 0, 0, 0, LVCFMT_LEFT, 230, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhSetExtendedListView(IconListViewHandle);
             ListView_EnableGroupView(IconListViewHandle, TRUE);
             PhAddListViewGroup(
@@ -4639,7 +4639,7 @@ INT_PTR CALLBACK PhpOptionsGraphsDlgProc(
             // Highlighting
             PhpGraphListViewHandle = GetDlgItem(hwndDlg, IDC_LIST);
             PhSetListViewStyle(PhpGraphListViewHandle, FALSE, TRUE);
-            PhAddListViewColumn(PhpGraphListViewHandle, 0, 0, 0, LVCFMT_LEFT, 240, L"Name");
+            PhAddListViewColumn(PhpGraphListViewHandle, 0, 0, 0, LVCFMT_LEFT, 240, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhSetExtendedListView(PhpGraphListViewHandle);
             ExtendedListView_SetItemColorFunction(PhpGraphListViewHandle, PhpColorItemColorFunction);
 

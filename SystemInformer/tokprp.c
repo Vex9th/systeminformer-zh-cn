@@ -1354,12 +1354,12 @@ INT_PTR CALLBACK PhpTokenPageProc(
 
             PhSetListViewStyle(tokenPageContext->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(tokenPageContext->ListViewHandle, L"explorer");
-            PhAddListViewColumn(tokenPageContext->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 100, L"Name");
-            PhAddListViewColumn(tokenPageContext->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, L"Status");
-            PhAddListViewColumn(tokenPageContext->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 170, L"Description");
-            PhAddListViewColumn(tokenPageContext->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, L"SID");
-            PhAddListViewColumn(tokenPageContext->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, L"Type");
-            PhAddListViewColumn(tokenPageContext->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, L"Use");
+            PhAddListViewColumn(tokenPageContext->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
+            PhAddListViewColumn(tokenPageContext->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_STATUS));
+            PhAddListViewColumn(tokenPageContext->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 170, PhGetApplicationUiString(IDS_PH_LISTVIEW_DESCRIPTION));
+            PhAddListViewColumn(tokenPageContext->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_TOKEN_SID));
+            PhAddListViewColumn(tokenPageContext->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE));
+            PhAddListViewColumn(tokenPageContext->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_USE));
 
             PhSetExtendedListView(tokenPageContext->ListViewHandle);
             ExtendedListView_SetCompareFunction(tokenPageContext->ListViewHandle, 1, PhpTokenStatusColumnCompareFunction);
@@ -2813,7 +2813,7 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, L"Name");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 280, PhGetApplicationUiString(IDS_PH_VALUE));
             PhSetExtendedListView(context->ListViewHandle);
 
@@ -4536,7 +4536,7 @@ INT_PTR CALLBACK PhpTokenContainerPageProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, L"Name");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 280, PhGetApplicationUiString(IDS_PH_VALUE));
             PhSetExtendedListView(context->ListViewHandle);
 

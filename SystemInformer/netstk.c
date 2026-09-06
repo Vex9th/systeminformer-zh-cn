@@ -146,7 +146,7 @@ INT_PTR CALLBACK PhpNetworkStackDlgProc(
             PhCenterWindow(hwndDlg, GetParent(hwndDlg));
 
             context->ListViewHandle = lvHandle = GetDlgItem(hwndDlg, IDC_LIST);
-            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 350, L"Name");
+            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 350, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhSetListViewStyle(lvHandle, FALSE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
 

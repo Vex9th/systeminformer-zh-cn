@@ -2228,7 +2228,7 @@ INT_PTR CALLBACK PhpHandleGeneralDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, L"Name");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 250, PhGetApplicationUiString(IDS_PH_VALUE));
             PhSetExtendedListView(context->ListViewHandle);
 
@@ -2902,7 +2902,7 @@ VOID PhUpdateHandlePermissionSecurity(
 
     PhSetListViewStyle(Context->ListViewHeader, FALSE, TRUE);
     PhSetControlTheme(Context->ListViewHeader, L"explorer");
-    PhAddListViewColumn(Context->ListViewHeader, 0, 0, 0, LVCFMT_LEFT, 120, L"Name");
+    PhAddListViewColumn(Context->ListViewHeader, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
     PhAddListViewColumn(Context->ListViewHeader, 1, 1, 1, LVCFMT_LEFT, 250, PhGetApplicationUiString(IDS_PH_VALUE));
     PhSetExtendedListView(Context->ListViewHeader);
 
@@ -3011,7 +3011,7 @@ VOID PhUpdateHandleAuditingSecurity(
 
     PhSetListViewStyle(Context->ListViewHeader, FALSE, TRUE);
     PhSetControlTheme(Context->ListViewHeader, L"explorer");
-    PhAddListViewColumn(Context->ListViewHeader, 0, 0, 0, LVCFMT_LEFT, 120, L"Name");
+    PhAddListViewColumn(Context->ListViewHeader, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
     PhAddListViewColumn(Context->ListViewHeader, 1, 1, 1, LVCFMT_LEFT, 250, PhGetApplicationUiString(IDS_PH_VALUE));
     PhSetExtendedListView(Context->ListViewHeader);
 
@@ -3146,9 +3146,9 @@ INT_PTR CALLBACK PhpHandlePermissionsDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 140, L"Principal");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, L"Type");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, L"Access");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 140, PhGetApplicationUiString(IDS_PH_LISTVIEW_PRINCIPAL));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_ACCESS));
             //PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, L"Inherited from");
             PhSetExtendedListView(context->ListViewHandle);
 
@@ -3329,9 +3329,9 @@ INT_PTR CALLBACK PhpHandleAuditingDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 140, L"Principal");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, L"Type");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, L"Access");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 140, PhGetApplicationUiString(IDS_PH_LISTVIEW_PRINCIPAL));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_ACCESS));
             //PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 80, L"Inherited from");
             //PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 80, L"Source");
             PhSetExtendedListView(context->ListViewHandle);

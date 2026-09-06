@@ -559,12 +559,12 @@ INT_PTR CALLBACK PhPageModifiedDlgProc(
 
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 50, L"Index");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, L"File");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"ImageBase");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, L"Offset");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, L"Address");
-            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, L"Symbol");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 50, PhGetApplicationUiString(IDS_PH_LISTVIEW_INDEX));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_HANDLE_FILE));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_IMAGE_BASE));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_OFFSET));
+            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_ADDRESS));
+            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_SYMBOL));
             PhSetExtendedListView(context->ListViewHandle);
             PhLoadListViewColumnsFromSetting(SETTING_MEMORY_MODIFIED_LIST_VIEW_COLUMNS, context->ListViewHandle);
             PhLoadListViewSortColumnsFromSetting(SETTING_MEMORY_MODIFIED_LIST_VIEW_SORT, context->ListViewHandle);

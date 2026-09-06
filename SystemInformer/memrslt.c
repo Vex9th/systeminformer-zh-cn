@@ -277,10 +277,10 @@ INT_PTR CALLBACK PhpMemoryResultsDlgProc(
             context->ListViewHandle = lvHandle = GetDlgItem(hwndDlg, IDC_LIST);
             PhSetListViewStyle(lvHandle, TRUE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
-            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 120, L"Address");
-            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 120, L"Base Address");
-            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 80, L"Length");
-            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 200, L"Result");
+            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_LISTVIEW_ADDRESS));
+            PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_LISTVIEW_BASE_ADDRESS));
+            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_LENGTH));
+            PhAddListViewColumn(lvHandle, 3, 3, 3, LVCFMT_LEFT, 200, PhGetApplicationUiString(IDS_PH_LISTVIEW_RESULT));
             PhSetExtendedListView(lvHandle);
 
             PhLoadListViewColumnsFromSetting(SETTING_MEM_RESULTS_LIST_VIEW_COLUMNS, lvHandle);

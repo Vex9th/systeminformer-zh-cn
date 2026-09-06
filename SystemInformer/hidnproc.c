@@ -208,9 +208,9 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
 
             PhSetListViewStyle(lvHandle, TRUE, TRUE);
             PhSetControlTheme(lvHandle, L"explorer");
-            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 320, L"Process");
+            PhAddListViewColumn(lvHandle, 0, 0, 0, LVCFMT_LEFT, 320, PhGetApplicationUiString(IDS_PH_LISTVIEW_PROCESS));
             PhAddListViewColumn(lvHandle, 1, 1, 1, LVCFMT_LEFT, 60, PhGetApplicationUiString(IDS_PH_PID));
-            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_RIGHT, 70, L"Handles");
+            PhAddListViewColumn(lvHandle, 2, 2, 2, LVCFMT_RIGHT, 70, PhGetApplicationUiString(IDS_PH_STAT_HANDLES));
 
             PhSetExtendedListView(lvHandle);
             PhLoadListViewColumnsFromSetting(SETTING_ZOMBIE_PROCESSES_LIST_VIEW_COLUMNS, lvHandle);
@@ -759,7 +759,7 @@ VOID PhZombieProcessesUpdateListView(
         lvItemIndex = PhAddListViewItem(
             PhZombieProcessesListViewHandle,
             MAXINT,
-            PhGetStringOrDefault(entry->FileName, L"(unknown)"),
+            PhGetStringOrDefault(entry->FileName, PhGetApplicationUiString(IDS_PH_LISTVIEW_UNKNOWN_PARENTHESIZED)),
             entry
             );
         PhPrintUInt32(pidString, HandleToUlong(entry->ProcessId));

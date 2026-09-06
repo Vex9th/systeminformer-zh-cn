@@ -711,13 +711,13 @@ INT_PTR CALLBACK PhpProcessHeapsDlgProc(
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, L"Address");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 120, L"Used");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 120, L"Committed");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 80, L"Entries");
-            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 80, L"Flags");
-            PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 80, L"Class");
-            PhAddListViewColumn(context->ListViewHandle, 7, 7, 7, LVCFMT_LEFT, 80, L"Type");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_ADDRESS));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_LISTVIEW_USED));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_LISTVIEW_COMMITTED));
+            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENTRIES));
+            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_GROUP_FLAGS));
+            PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_CLASS));
+            PhAddListViewColumn(context->ListViewHandle, 7, 7, 7, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE));
             PhSetExtendedListView(context->ListViewHandle);
 
             ExtendedListView_SetContext(context->ListViewHandle, context);
@@ -1484,16 +1484,16 @@ INT_PTR CALLBACK PhProcessLocksDlgProc(
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 40, L"#");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, L"Type");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"Address");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 120, L"Filename");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 120, L"Thread");
-            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 80, L"Lock count");
-            PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 80, L"Contention count");
-            PhAddListViewColumn(context->ListViewHandle, 7, 7, 7, LVCFMT_LEFT, 80, L"Entry count");
-            PhAddListViewColumn(context->ListViewHandle, 8, 8, 8, LVCFMT_LEFT, 80, L"Recursion count");
-            PhAddListViewColumn(context->ListViewHandle, 9, 9, 9, LVCFMT_LEFT, 80, L"Waiting shared count");
-            PhAddListViewColumn(context->ListViewHandle, 10, 10, 10, LVCFMT_LEFT, 80, L"Waiting exclusive count");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 50, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_ADDRESS));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_LISTVIEW_FILENAME));
+            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_LISTVIEW_THREAD));
+            PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_LOCK_COUNT));
+            PhAddListViewColumn(context->ListViewHandle, 6, 6, 6, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_CONTENTION_COUNT));
+            PhAddListViewColumn(context->ListViewHandle, 7, 7, 7, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_ENTRY_COUNT));
+            PhAddListViewColumn(context->ListViewHandle, 8, 8, 8, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_RECURSION_COUNT));
+            PhAddListViewColumn(context->ListViewHandle, 9, 9, 9, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_WAITING_SHARED_COUNT));
+            PhAddListViewColumn(context->ListViewHandle, 10, 10, 10, LVCFMT_LEFT, 80, PhGetApplicationUiString(IDS_PH_LISTVIEW_WAITING_EXCLUSIVE_COUNT));
             PhSetExtendedListView(context->ListViewHandle);
 
             ExtendedListView_SetContext(context->ListViewHandle, context);

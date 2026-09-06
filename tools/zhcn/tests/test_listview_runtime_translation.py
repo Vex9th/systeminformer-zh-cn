@@ -70,16 +70,14 @@ class ListViewRuntimeTranslationTests(unittest.TestCase):
         legacy_body = function_body(source, "PhAddListViewItem", self.audit)
         raw_body = function_body(source, "PhAddListViewItemRaw", self.audit)
 
-        self.assertEqual(private_body.count("PhTranslateString("), 1)
-        self.assertRegex(
-            private_body,
-            r"Translate\s*\?\s*PhTranslateString\(Text\)\s*:\s*Text",
-        )
+        self.assertEqual(private_body.count("PhTranslateString("), 0)
+        self.assertNotIn("Translate", private_body)
         private_compact = compact(private_body)
         for statement in (
             "item.mask=LVIF_TEXT|LVIF_PARAM;",
             "item.iItem=Index;",
             "item.iSubItem=0;",
+            "item.pszText=const_cast<PWSTR>(Text);",
             "item.lParam=reinterpret_cast<LPARAM>(Param);",
             "returnListView_InsertItem(ListViewHandle,&item);",
         ):
@@ -88,13 +86,13 @@ class ListViewRuntimeTranslationTests(unittest.TestCase):
         self.assertNotIn("ListView_InsertItem", legacy_body)
         self.assertRegex(
             legacy_body,
-            r"PhpAddListViewItem\s*\(\s*ListViewHandle\s*,\s*Index\s*,\s*Text\s*,\s*Param\s*,\s*TRUE\s*\)",
+            r"PhpAddListViewItem\s*\(\s*ListViewHandle\s*,\s*Index\s*,\s*Text\s*,\s*Param\s*\)",
         )
         self.assertNotIn("PhTranslateString", raw_body)
         self.assertNotIn("ListView_InsertItem", raw_body)
         self.assertRegex(
             raw_body,
-            r"PhpAddListViewItem\s*\(\s*ListViewHandle\s*,\s*Index\s*,\s*Text\s*,\s*Param\s*,\s*FALSE\s*\)",
+            r"PhpAddListViewItem\s*\(\s*ListViewHandle\s*,\s*Index\s*,\s*Text\s*,\s*Param\s*\)",
         )
 
     def test_raw_helper_is_declared_and_appended_to_exports(self) -> None:

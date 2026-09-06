@@ -185,14 +185,14 @@ INT_PTR CALLBACK PhpPagefilesDlgProc(
             PhSetApplicationWindowIcon(hwndDlg);
 
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 120, PhGetApplicationUiString(IDS_PH_FILE_NAME));
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, L"Usage");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, L"Peak usage");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, L"Total");
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_USAGE));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_PEAK_USAGE));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_TOTAL));
 
             if (WindowsVersion > WINDOWS_8)
             {
-                PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, L"Minimum");
-                PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, L"Maximum");
+                PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_MINIMUM));
+                PhAddListViewColumn(context->ListViewHandle, 5, 5, 5, LVCFMT_LEFT, 100, PhGetApplicationUiString(IDS_PH_LISTVIEW_MAXIMUM));
             }
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
