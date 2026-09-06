@@ -18,6 +18,8 @@ migration even when the legacy dictionary contains the same English key.
   c_listview_col   PhAddListViewColumn* text
   c_listview_group PhAddListViewGroup text
   c_listview_group_item PhAddListViewGroupItem* text (no translation hook)
+  c_listview_item  PhAddListViewItem* text (runtime translation hook)
+  c_listview_item_raw PhAddListViewItemRaw text (no translation hook)
   c_window_text    PhSetDialogItemText / PhSetWindowText / SetWindowText text
   c_combobox       ComboBox_AddString text
   c_treenew_col    PhAddTreeNewColumn* text
@@ -338,6 +340,7 @@ CALL_SPECS = {
     "PhShowConfirmMessage": {1: "c_confirm", 2: "c_confirm", 3: "c_confirm"},
     "PhAddListViewItem": {2: "c_listview_item"},
     "PhAddIListViewItem": {2: "c_listview_item"},
+    "PhAddListViewItemRaw": {2: "c_listview_item_raw"},
     "PhSetDialogItemText": {2: "c_window_text"},
     "PhSetWindowText": {1: "c_window_text"},
     "PhSetListViewSubItem": {3: "c_window_text"},

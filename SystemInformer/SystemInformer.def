@@ -1365,3 +1365,4 @@ EXPORTS
     PhLoadResourceForLanguage
     PhLoadResourceCopyForLanguage
     PhSetApplicationUiLanguage
+    PhAddListViewItemRaw

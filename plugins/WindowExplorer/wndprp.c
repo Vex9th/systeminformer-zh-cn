@@ -3822,7 +3822,7 @@ BOOLEAN CALLBACK WepEnumWindowChildrenProc(
     PhPrintUInt32(processIdStr, item->ProcessId);
     PhPrintUInt32(threadIdStr, item->ThreadId);
 
-    lvItemIndex = PhAddListViewItem(context->ListViewHandle, MAXINT, handleStr, item);
+    lvItemIndex = PhAddListViewItemRaw(context->ListViewHandle, MAXINT, handleStr, item);
     PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 1, PhGetStringOrEmpty(item->ClassName));
     PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 2, PhGetStringOrEmpty(item->Text));
     PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 3, processIdStr);

@@ -675,7 +675,7 @@ static NTSTATUS NTAPI EtEnumCurrentDirectoryObjectsCallback(
             entry->EtObjectType = EtObjectWindowStation;
         }
 
-        entry->ItemIndex = PhAddListViewItem(Context->ListViewHandle, MAXINT, LPSTR_TEXTCALLBACK, entry);
+        entry->ItemIndex = PhAddListViewItemRaw(Context->ListViewHandle, MAXINT, LPSTR_TEXTCALLBACK, entry);
         PhSetListViewItemImageIndex(Context->ListViewHandle, entry->ItemIndex, entry->EtObjectType);
 
         if (entry->EtObjectType == EtObjectSymLink)
@@ -2633,7 +2633,7 @@ VOID NTAPI EtpObjectManagerSearchControlCallback(
             entry->Object && PhSearchControlMatchPointer(MatchHandle, entry->Object)
             )
         {
-            entry->ItemIndex = PhAddListViewItem(context->ListViewHandle, MAXINT, LPSTR_TEXTCALLBACK, entry);
+            entry->ItemIndex = PhAddListViewItemRaw(context->ListViewHandle, MAXINT, LPSTR_TEXTCALLBACK, entry);
             PhSetListViewItemImageIndex(context->ListViewHandle, entry->ItemIndex, entry->EtObjectType);
         }
     }

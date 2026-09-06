@@ -127,11 +127,12 @@ LONG PhAddIListViewColumn(
         );
 }
 
-LONG PhAddListViewItem(
+static LONG PhpAddListViewItem(
     _In_ HWND ListViewHandle,
     _In_ LONG Index,
     _In_ PCWSTR Text,
-    _In_opt_ PVOID Param
+    _In_opt_ PVOID Param,
+    _In_ BOOLEAN Translate
     )
 {
     LVITEM item;
@@ -139,10 +140,30 @@ LONG PhAddListViewItem(
     item.mask = LVIF_TEXT | LVIF_PARAM;
     item.iItem = Index;
     item.iSubItem = 0;
-    item.pszText = const_cast<PWSTR>(PhTranslateString(Text));
+    item.pszText = const_cast<PWSTR>(Translate ? PhTranslateString(Text) : Text);
     item.lParam = reinterpret_cast<LPARAM>(Param);
 
     return ListView_InsertItem(ListViewHandle, &item);
+}
+
+LONG PhAddListViewItem(
+    _In_ HWND ListViewHandle,
+    _In_ LONG Index,
+    _In_ PCWSTR Text,
+    _In_opt_ PVOID Param
+    )
+{
+    return PhpAddListViewItem(ListViewHandle, Index, Text, Param, TRUE);
+}
+
+LONG PhAddListViewItemRaw(
+    _In_ HWND ListViewHandle,
+    _In_ LONG Index,
+    _In_ PCWSTR Text,
+    _In_opt_ PVOID Param
+    )
+{
+    return PhpAddListViewItem(ListViewHandle, Index, Text, Param, FALSE);
 }
 
 LONG PhAddIListViewItem(

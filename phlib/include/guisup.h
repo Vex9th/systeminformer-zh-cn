@@ -1338,6 +1338,16 @@ PhAddListViewItem(
 PHLIBAPI
 LONG
 NTAPI
+PhAddListViewItemRaw(
+    _In_ HWND ListViewHandle,
+    _In_ LONG Index,
+    _In_ PCWSTR Text,
+    _In_opt_ PVOID Param
+    );
+
+PHLIBAPI
+LONG
+NTAPI
 PhFindListViewItemByFlags(
     _In_ HWND ListViewHandle,
     _In_ LONG StartIndex,

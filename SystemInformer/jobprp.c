@@ -228,7 +228,7 @@ static VOID PhpAddJobProcesses(
             clientId.UniqueProcess = (HANDLE)processIdList->ProcessIdList[i];
             name = PH_AUTO(PhGetClientIdName(&clientId));
 
-            PhAddListViewItem(processesLv, MAXINT, PhGetString(name), NULL);
+            PhAddListViewItemRaw(processesLv, MAXINT, PhGetString(name), NULL);
         }
 
         PhFree(processIdList);

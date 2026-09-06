@@ -685,7 +685,7 @@ static VOID EtSplitPopulateList(
         if (part.Length != 0)
         {
             PPH_STRING text = PhCreateString2(&part);
-            PhAddListViewItem(Context->ListViewHandle, MAXINT, text->Buffer, NULL);
+            PhAddListViewItemRaw(Context->ListViewHandle, MAXINT, text->Buffer, NULL);
             PhDereferenceObject(text);
         }
     }
@@ -756,7 +756,7 @@ static VOID EtSplitMoveItem(
     text = PhGetListViewItemText(ListViewHandle, Index, 0);
 
     ListView_DeleteItem(ListViewHandle, Index);
-    PhAddListViewItem(ListViewHandle, target, PhGetString(text), NULL);
+    PhAddListViewItemRaw(ListViewHandle, target, PhGetString(text), NULL);
 
     ListView_SetItemState(ListViewHandle, target, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
     ListView_EnsureVisible(ListViewHandle, target, FALSE);
@@ -897,7 +897,7 @@ static INT_PTR CALLBACK EtEnvSplitDlgProc(
                     {
                         if (!PhIsNullOrEmptyString(text))
                         {
-                            LONG index = PhAddListViewItem(context->ListViewHandle, MAXINT, text->Buffer, NULL);
+                            LONG index = PhAddListViewItemRaw(context->ListViewHandle, MAXINT, text->Buffer, NULL);
                             ListView_SetItemState(context->ListViewHandle, index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
                         }
                     }
@@ -962,7 +962,7 @@ static INT_PTR CALLBACK EtEnvSplitDlgProc(
                             }
                             else
                             {
-                                index = PhAddListViewItem(context->ListViewHandle, MAXINT, fileName->Buffer, NULL);
+                                index = PhAddListViewItemRaw(context->ListViewHandle, MAXINT, fileName->Buffer, NULL);
                                 ListView_SetItemState(context->ListViewHandle, index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
                             }
                         }

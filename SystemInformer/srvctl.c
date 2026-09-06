@@ -354,7 +354,7 @@ INT_PTR CALLBACK PhpServicesPageProc(
                 LONG lvItemIndex;
 
                 serviceItem = context->Services[i];
-                lvItemIndex = PhAddListViewItem(context->ListViewHandle, MAXINT, serviceItem->Name->Buffer, serviceItem);
+                lvItemIndex = PhAddListViewItemRaw(context->ListViewHandle, MAXINT, serviceItem->Name->Buffer, serviceItem);
                 PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 1, serviceItem->DisplayName->Buffer);
 
                 if (NT_SUCCESS(PhOpenService(&serviceHandle, SERVICE_QUERY_CONFIG, PhGetString(serviceItem->Name))))

@@ -392,7 +392,7 @@ INT_PTR CALLBACK PhpColumnSetEditorDlgProc(
             {
                 PPH_COLUMN_SET_ENTRY entry = context->ColumnSetList->Items[i];
 
-                PhAddListViewItem(context->ListViewHandle, MAXINT, entry->Name->Buffer, entry);
+                PhAddListViewItemRaw(context->ListViewHandle, MAXINT, entry->Name->Buffer, entry);
             }
 
             Button_Enable(context->RenameButtonHandle, FALSE);

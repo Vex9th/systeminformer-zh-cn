@@ -36,6 +36,7 @@ class TranslationManifestContractTests(unittest.TestCase):
                 "c_listview_group",
                 "c_listview_group_item",
                 "c_listview_item",
+                "c_listview_item_raw",
                 "c_msgbox",
                 "c_msgbox_vararg",
                 "c_runtime_composed",
@@ -57,6 +58,10 @@ class TranslationManifestContractTests(unittest.TestCase):
 
         self.assertIn(
             "c_runtime_composed",
+            contract.CALLSITE_MIGRATION_CATEGORIES,
+        )
+        self.assertIn(
+            "c_listview_item_raw",
             contract.CALLSITE_MIGRATION_CATEGORIES,
         )
 

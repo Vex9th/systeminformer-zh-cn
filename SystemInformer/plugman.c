@@ -1111,7 +1111,7 @@ VOID PhpAddDisabledPlugins(
             displayText = PhCreateString2(&part);
 
             PhAcquireQueuedLockExclusive(&Context->ListLock);
-            lvItemIndex = PhAddListViewItem(Context->ListViewHandle, MAXINT, PhGetString(displayText), displayText);
+            lvItemIndex = PhAddListViewItemRaw(Context->ListViewHandle, MAXINT, PhGetString(displayText), displayText);
             PhReleaseQueuedLockExclusive(&Context->ListLock);
 
             ListView_SetCheckState(Context->ListViewHandle, lvItemIndex, TRUE);

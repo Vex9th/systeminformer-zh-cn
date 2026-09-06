@@ -74,7 +74,7 @@ VOID PhpAddPagefileItems(
         newFileName = PhGetFileName(fileName);
         PhDereferenceObject(fileName);
 
-        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, newFileName->Buffer, NULL);
+        lvItemIndex = PhAddListViewItemRaw(ListViewHandle, MAXINT, newFileName->Buffer, NULL);
         PhDereferenceObject(newFileName);
 
         // Usage
@@ -116,7 +116,7 @@ VOID PhpAddPagefileItemsEx(
         newFileName = PhGetFileName(fileName);
         PhDereferenceObject(fileName);
 
-        lvItemIndex = PhAddListViewItem(ListViewHandle, MAXINT, newFileName->Buffer, NULL);
+        lvItemIndex = PhAddListViewItemRaw(ListViewHandle, MAXINT, newFileName->Buffer, NULL);
         PhDereferenceObject(newFileName);
 
         // Usage
