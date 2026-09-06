@@ -322,6 +322,7 @@ CALL_SPECS = {
     "PhAddIListViewGroupItem": {3: "c_listview_group_item"},
     "PhListView_AddGroup": {2: "c_listview_group"},
     "PhListView_AddGroupItem": {3: "c_listview_group_item"},
+    "PhAddHandleListViewItem": {3: "c_listview_group_item"},
     "PhAddTreeNewColumn": {3: "c_treenew_col"},
     "PhAddTreeNewColumnEx": {3: "c_treenew_col"},
     "PhAddTreeNewColumnEx2": {3: "c_treenew_col"},
@@ -346,6 +347,7 @@ CALL_SPECS = {
     "PhSetDialogItemText": {2: "c_window_text"},
     "PhSetWindowText": {1: "c_window_text"},
     "PhSetListViewSubItem": {3: "c_window_text"},
+    "PhSetHandleListViewItem": {3: "c_window_text"},
     "SetWindowText": {1: "c_window_text"},
     "SetWindowTextW": {1: "c_window_text"},
     "ComboBox_AddString": {1: "c_combobox"},
@@ -355,6 +357,14 @@ CALL_SPECS = {
     "PhShowIconNotification": {0: "c_balloon", 1: "c_balloon"},
     "PhShowIconNotificationEx": {0: "c_balloon", 1: "c_balloon"},
     "PhShowIconNotificationRaw": {0: "c_balloon", 1: "c_balloon"},
+}
+
+# These business wrappers accept an already-rendered label/value. Resolve only
+# direct text and a single unambiguous local definition so unrelated literals
+# in arbitrary producer calls cannot be mistaken for UI text.
+STRICT_LITERAL_CALLS = {
+    "PhAddHandleListViewItem",
+    "PhSetHandleListViewItem",
 }
 
 # Message functions can receive user-visible string literals through printf
@@ -512,7 +522,11 @@ def expression_source_literals(expression: str, default_category: str):
     ]
 
 
-def one_hop_expression_source_literals(expression: str, default_category: str):
+def one_hop_expression_source_literals(
+    expression: str,
+    default_category: str,
+    allow_string_fallback: bool = False,
+):
     """Accept only literal expressions or explicitly supported composers."""
     calls = expression_call_ranges(expression)
     sources = []
@@ -526,7 +540,9 @@ def one_hop_expression_source_literals(expression: str, default_category: str):
         if any(is_runtime_composer(name) for name in enclosing_calls):
             sources.append(("c_runtime_composed", text, offset))
         elif not enclosing_calls or all(
-            name == "PH_STRINGREF_INIT" for name in enclosing_calls
+            name == "PH_STRINGREF_INIT"
+            or (allow_string_fallback and name == "PhGetStringOrDefault")
+            for name in enclosing_calls
         ):
             sources.append((default_category, text, offset))
 
@@ -628,7 +644,7 @@ def is_conditionally_guarded(
     for scope in nested_scopes:
         prefix = scan_text[binding_scope[0]:scope[0]]
         if re.search(
-            r"(?:\b(?:if|switch|for|while)\s*\([^;{}]*\)|\belse|\bdo)\s*$",
+            r"(?:\b(?:if|switch|for|while)\s*\([^{}]*\)|\belse|\bdo)\s*$",
             prefix,
             re.DOTALL,
         ):
@@ -636,9 +652,55 @@ def is_conditionally_guarded(
 
     prefix = scan_text[binding_scope[0]:offset]
     return bool(
-        re.search(r"\bif\s*\([^;{}]*\)\s*$", prefix, re.DOTALL)
-        or re.search(r"\belse\s*$", prefix)
+        re.search(
+            r"\b(?:if|for|while)\s*\([^{}]*\)\s*$",
+            prefix,
+            re.DOTALL,
+        )
+        or re.search(r"\b(?:else|do)\s*$", prefix)
     )
+
+
+def indexed_binding_mutation_offsets(
+    syntax_text: str,
+    identifier: str,
+    start_offset: int,
+    end_offset: int,
+):
+    """Yield writes through one or more balanced array index expressions."""
+    identifier_re = re.compile(rf"(?<![.>])\b{re.escape(identifier)}\b")
+
+    for match in identifier_re.finditer(syntax_text, start_offset, end_offset):
+        cursor = match.end()
+
+        while cursor < end_offset and syntax_text[cursor].isspace():
+            cursor += 1
+        if cursor >= end_offset or syntax_text[cursor] != "[":
+            continue
+
+        while cursor < end_offset and syntax_text[cursor] == "[":
+            depth = 0
+            while cursor < end_offset:
+                character = syntax_text[cursor]
+                if character == "[":
+                    depth += 1
+                elif character == "]":
+                    depth -= 1
+                    if depth == 0:
+                        cursor += 1
+                        break
+                cursor += 1
+
+            if depth != 0:
+                break
+            while cursor < end_offset and syntax_text[cursor].isspace():
+                cursor += 1
+
+        if re.match(
+            r"(?:=(?!=)|(?:<<|>>|[+\-*/%&|^])=|\+\+|--)",
+            syntax_text[cursor:end_offset],
+        ):
+            yield match.start()
 
 
 def one_hop_runtime_sources(
@@ -646,6 +708,7 @@ def one_hop_runtime_sources(
     identifier: str,
     sink_offset: int,
     default_category: str,
+    simple_only: bool = False,
 ):
     """Resolve conservative reaching definitions for one local UI binding."""
     scopes = c_brace_scopes(scan_text)
@@ -663,6 +726,7 @@ def one_hop_runtime_sources(
 
     initializer = declaration.group("initializer")
     state = []
+    simple_definition_count = 0
     if initializer is not None:
         initializer = scan_text[
             declaration.start("initializer"):declaration.end("initializer")
@@ -670,9 +734,17 @@ def one_hop_runtime_sources(
         state = [
             (category, text, declaration.start("initializer") + offset)
             for category, text, offset in one_hop_expression_source_literals(
-                initializer, default_category
+                initializer,
+                default_category,
+                allow_string_fallback=simple_only,
             )
         ]
+        simple_definition_count = 1
+        if simple_only and (
+            not state
+            or any(category != default_category for category, _, _ in state)
+        ):
+            return []
 
     assignment_re = re.compile(
         rf"(?<![.>])\b{re.escape(identifier)}\s*=(?!=)\s*(?P<value>.*?);",
@@ -691,7 +763,9 @@ def one_hop_runtime_sources(
         sources = [
             (category, text, assignment.start("value") + offset)
             for category, text, offset in one_hop_expression_source_literals(
-                value, default_category
+                value,
+                default_category,
+                allow_string_fallback=simple_only,
             )
         ]
         events.append((assignment.start(), "definition", sources))
@@ -770,10 +844,49 @@ def one_hop_runtime_sources(
         ) is declaration:
             events.append((assignment.start(), "mutation", []))
 
+    if simple_only:
+        binding_mutation_re = re.compile(
+            rf"(?:\+\+|--)\s*\b{re.escape(identifier)}\b"
+            rf"|(?<![.>])\b{re.escape(identifier)}\b\s*"
+            rf"(?:(?:\+\+|--)|(?:<<|>>|[+\-*/%&|^])=)"
+        )
+        for mutation in binding_mutation_re.finditer(
+            syntax_text, declaration.end(), sink_offset
+        ):
+            if visible_local_text_declaration(
+                declarations, identifier, mutation.start(), scopes
+            ) is declaration:
+                events.append((mutation.start(), "mutation", []))
+        for mutation_offset in indexed_binding_mutation_offsets(
+            syntax_text,
+            identifier,
+            declaration.end(),
+            sink_offset,
+        ):
+            if visible_local_text_declaration(
+                declarations, identifier, mutation_offset, scopes
+            ) is declaration:
+                events.append((mutation_offset, "mutation", []))
+
     for offset, event_kind, sources in sorted(events, key=lambda event: event[0]):
         conditional = is_conditionally_guarded(
             scan_text, offset, binding_scope, scopes
         )
+        if simple_only:
+            if (
+                event_kind != "definition"
+                or conditional
+                or not sources
+                or simple_definition_count
+                or any(
+                    category != default_category
+                    for category, _, _ in sources
+                )
+            ):
+                return []
+            state = sources
+            simple_definition_count = 1
+            continue
         if event_kind == "mutation" or not sources:
             if not conditional:
                 state = []
@@ -893,6 +1006,7 @@ def append_runtime_target_entries(
     sink_offset: int,
     default_category: str,
     one_hop_seen,
+    strict_literals: bool = False,
 ):
     identifier = runtime_target_identifier(expression)
     sources = None
@@ -904,15 +1018,25 @@ def append_runtime_target_entries(
             identifier,
             sink_offset,
             default_category,
+            simple_only=strict_literals,
         )
         resolved_one_hop = sources is not None
 
     if sources is None:
+        if strict_literals:
+            source_literals = one_hop_expression_source_literals(
+                expression,
+                default_category,
+                allow_string_fallback=True,
+            )
+        else:
+            source_literals = expression_source_literals(
+                expression,
+                default_category,
+            )
         sources = [
             (category, visible_text, expression_offset + relative_offset)
-            for category, visible_text, relative_offset in expression_source_literals(
-                expression, default_category
-            )
+            for category, visible_text, relative_offset in source_literals
         ]
 
     for category, visible_text, source_offset in sources:
@@ -1354,6 +1478,7 @@ def scan_c_file(path: str, entries):
                         call_start,
                         cat,
                         one_hop_seen,
+                        strict_literals=name in STRICT_LITERAL_CALLS,
                     )
             if name in FORMAT_ARG_INDEXES:
                 format_index = FORMAT_ARG_INDEXES[name]
