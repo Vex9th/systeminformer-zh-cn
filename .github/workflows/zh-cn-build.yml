@@ -181,10 +181,10 @@ jobs:
         }
         Write-Host "OK: no .sys or .inf files under bin\"
 
-    - name: Runtime translation smoke test
+    - name: Windows x64 smoke gate
       shell: pwsh
       working-directory: ${{github.workspace}}
-      run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\zhcn\smoke_test.ps1 -ExePath bin\Release64\sys_info.exe
+      run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\zhcn\smoke_test.ps1 -ExePath bin\Release64\sys_info.exe -Iterations 3 -DumpDirectory "${{ runner.temp }}\sys_info_local_dumps"
 
     - name: Cache report
       if: always()
@@ -346,10 +346,10 @@ jobs:
         }
         Write-Host "OK: no .sys or .inf files under bin\ or build\output"
 
-    - name: Runtime translation smoke test
+    - name: Windows x64 smoke gate
       shell: pwsh
       working-directory: ${{github.workspace}}
-      run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\zhcn\smoke_test.ps1 -ExePath bin\Release64\sys_info.exe
+      run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\zhcn\smoke_test.ps1 -ExePath bin\Release64\sys_info.exe -Iterations 3 -DumpDirectory "${{ runner.temp }}\sys_info_local_dumps"
 
     - name: Package portable zip
       shell: pwsh
