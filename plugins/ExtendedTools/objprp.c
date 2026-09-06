@@ -943,30 +943,31 @@ PCWSTR EtMapSessionConnectState(
     _In_ WINSTATIONSTATECLASS State
     )
 {
-    static CONST PH_KEY_VALUE_PAIR EtpConnectStatePairs[] =
+    switch (State)
     {
-        SIP(L"Active", State_Active),
-        SIP(L"Connected", State_Connected),
-        SIP(L"ConnectQuery", State_ConnectQuery),
-        SIP(L"Shadow", State_Shadow),
-        SIP(L"Disconnected", State_Disconnected),
-        SIP(L"Idle", State_Idle),
-        SIP(L"Listen", State_Listen),
-        SIP(L"Reset", State_Reset),
-        SIP(L"Down", State_Down),
-        SIP(L"Init", State_Init)
-    };
-
-    PCWSTR stateString = NULL;
-
-    PhIndexStringSiKeyValuePairs(
-        EtpConnectStatePairs,
-        sizeof(EtpConnectStatePairs),
-        State,
-        &stateString
-        );
-
-    return stateString;
+    case State_Active:
+        return EtGetUiString(IDS_ET_STATE_ACTIVE, L"Active");
+    case State_Connected:
+        return EtGetUiString(IDS_ET_SESSION_STATE_CONNECTED, L"Connected");
+    case State_ConnectQuery:
+        return EtGetUiString(IDS_ET_SESSION_STATE_CONNECT_QUERY, L"ConnectQuery");
+    case State_Shadow:
+        return EtGetUiString(IDS_ET_SESSION_STATE_SHADOW, L"Shadow");
+    case State_Disconnected:
+        return EtGetUiString(IDS_ET_SESSION_STATE_DISCONNECTED, L"Disconnected");
+    case State_Idle:
+        return EtGetUiString(IDS_ET_SESSION_STATE_IDLE, L"Idle");
+    case State_Listen:
+        return EtGetUiString(IDS_ET_SESSION_STATE_LISTEN, L"Listen");
+    case State_Reset:
+        return EtGetUiString(IDS_ET_SESSION_STATE_RESET, L"Reset");
+    case State_Down:
+        return EtGetUiString(IDS_ET_SESSION_STATE_DOWN, L"Down");
+    case State_Init:
+        return EtGetUiString(IDS_ET_SESSION_STATE_INIT, L"Init");
+    default:
+        return NULL;
+    }
 }
 
 VOID EtHandlePropertiesWindowUninitializing(

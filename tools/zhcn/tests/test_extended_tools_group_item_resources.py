@@ -237,9 +237,9 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
                 self.assertNotIn(english, translations[other_table])
 
         self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_RESOURCE_VALUE\s+60043$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61116$")
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', english_rc)), 116)
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', chinese_rc)), 116)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61132$")
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', english_rc)), 132)
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', chinese_rc)), 132)
 
     def parse_routes(self, filename: str):
         source = self.audit.mask_c_comments(
@@ -316,15 +316,15 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
         self.assertRegex(
             main_source,
             r"static PPH_STRING EtUiStrings\[\s*"
-            r"IDS_ET_GROUP_SESSION_INFORMATION\s*-\s*IDS_ET_DEDICATED_MEMORY\s*\+\s*1\s*\]",
+            r"IDS_ET_CACHED_LAST\s*-\s*IDS_ET_CACHED_FIRST\s*\+\s*1\s*\]",
         )
         self.assertRegex(
             helper,
-            r"ResourceId\s*>\s*IDS_ET_GROUP_SESSION_INFORMATION",
+            r"ResourceId\s*>\s*IDS_ET_CACHED_LAST",
         )
         self.assertRegex(
             helper,
-            r"resourceId\s*<=\s*IDS_ET_GROUP_SESSION_INFORMATION",
+            r"resourceId\s*<=\s*IDS_ET_CACHED_LAST",
         )
 
     def test_all_12_groups_keep_exact_routes_assignments_and_fallbacks(self) -> None:
@@ -413,14 +413,15 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
             )
         self.assertEqual(remaining, [])
 
-    def test_ci_requires_all_116_extended_tools_strings(self) -> None:
+    def test_ci_requires_all_132_extended_tools_strings(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
         self.assertEqual(
-            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=116"),
+            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=132"),
             2,
         )
+        self.assertNotIn("bin\\Release64\\plugins\\ExtendedTools.dll=116", workflow)
         self.assertNotIn("bin\\Release64\\plugins\\ExtendedTools.dll=104", workflow)
 
 

@@ -1053,6 +1053,22 @@ BEGIN
     IDS_ET_GROUP_TYPE_INFORMATION   "Type information"
     IDS_ET_GROUP_TYPE_ACCESS_INFORMATION "Type access information"
     IDS_ET_GROUP_SESSION_INFORMATION "Session information"
+    IDS_ET_CACHE_TYPE_DATA          "Data"
+    IDS_ET_CACHE_TYPE_INSTRUCTION   "Instruction"
+    IDS_ET_CACHE_TYPE_UNIFIED       "Unified"
+    IDS_ET_UNKNOWN                  "Unknown"
+    IDS_ET_STATE_ACTIVE             "Active"
+    IDS_ET_SESSION_STATE_CONNECTED  "Connected"
+    IDS_ET_SESSION_STATE_CONNECT_QUERY "ConnectQuery"
+    IDS_ET_SESSION_STATE_SHADOW     "Shadow"
+    IDS_ET_SESSION_STATE_DISCONNECTED "Disconnected"
+    IDS_ET_SESSION_STATE_IDLE       "Idle"
+    IDS_ET_SESSION_STATE_LISTEN     "Listen"
+    IDS_ET_SESSION_STATE_RESET      "Reset"
+    IDS_ET_SESSION_STATE_DOWN       "Down"
+    IDS_ET_SESSION_STATE_INIT       "Init"
+    IDS_ET_CACHE_LATENCY_SUMMARY_FORMAT "L%lu %s latency: %lu cycles (%lu KB)"
+    IDS_ET_DRAM_LATENCY_SUMMARY_FORMAT "DRAM latency: %lu cycles (%lu KB)"
 END
 
 #endif    // English (United States) resources

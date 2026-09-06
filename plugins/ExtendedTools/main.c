@@ -61,7 +61,7 @@ BOOLEAN EtEnableScaleText = FALSE;
 BOOLEAN EtPropagateCpuUsage = FALSE;
 BOOLEAN EtEnableAvxSupport = FALSE;
 static PH_INITONCE EtUiStringsInitOnce = PH_INITONCE_INIT;
-static PPH_STRING EtUiStrings[IDS_ET_GROUP_SESSION_INFORMATION - IDS_ET_DEDICATED_MEMORY + 1];
+static PPH_STRING EtUiStrings[IDS_ET_CACHED_LAST - IDS_ET_CACHED_FIRST + 1];
 
 EXTENDEDTOOLS_INTERFACE PluginInterface =
 {
@@ -77,14 +77,14 @@ PCWSTR EtGetUiString(
     _In_ PCWSTR Fallback
     )
 {
-    if (ResourceId < IDS_ET_DEDICATED_MEMORY || ResourceId > IDS_ET_GROUP_SESSION_INFORMATION)
+    if (ResourceId < IDS_ET_CACHED_FIRST || ResourceId > IDS_ET_CACHED_LAST)
         return Fallback;
 
     if (PhBeginInitOnce(&EtUiStringsInitOnce))
     {
-        for (ULONG resourceId = IDS_ET_DEDICATED_MEMORY; resourceId <= IDS_ET_GROUP_SESSION_INFORMATION; resourceId++)
+        for (ULONG resourceId = IDS_ET_CACHED_FIRST; resourceId <= IDS_ET_CACHED_LAST; resourceId++)
         {
-            EtUiStrings[resourceId - IDS_ET_DEDICATED_MEMORY] = PhLoadUiString(
+            EtUiStrings[resourceId - IDS_ET_CACHED_FIRST] = PhLoadUiString(
                 PluginInstance->DllBase,
                 resourceId,
                 NULL
@@ -95,7 +95,7 @@ PCWSTR EtGetUiString(
     }
 
     return PhGetStringOrDefault(
-        EtUiStrings[ResourceId - IDS_ET_DEDICATED_MEMORY],
+        EtUiStrings[ResourceId - IDS_ET_CACHED_FIRST],
         Fallback
         );
 }

@@ -11,6 +11,11 @@
 
 #include "exttools.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 #define ET_CACHE_LATENCY_SERIALIZE 1
 #define ET_CACHE_LATENCY_TRIALS 10
 #define ET_CACHE_LATENCY_REPEAT_DELAY 1000
@@ -98,13 +103,13 @@ PCWSTR EtCacheLatencyTypeString(
     switch (Type)
     {
     case 1:
-        return L"Data";
+        return EtGetUiString(IDS_ET_CACHE_TYPE_DATA, L"Data");
     case 2:
-        return L"Instruction";
+        return EtGetUiString(IDS_ET_CACHE_TYPE_INSTRUCTION, L"Instruction");
     case 3:
-        return L"Unified";
+        return EtGetUiString(IDS_ET_CACHE_TYPE_UNIFIED, L"Unified");
     default:
-        return L"Unknown";
+        return EtGetUiString(IDS_ET_UNKNOWN, L"Unknown");
     }
 }
 
@@ -1021,11 +1026,11 @@ VOID EtCacheLatencyAddSummaryRows(
         }
 
         PhSetWindowText(Context->SummaryLabelHandles[slot], PhaFormatString(
-            L"L%lu %s latency: %lu cycles (%lu KB)",
+            EtGetUiString(IDS_ET_CACHE_LATENCY_SUMMARY_FORMAT, L"L%lu %s latency: %lu cycles (%lu KB)"),
             cache->Level,
             EtCacheLatencyTypeString(cache->Type),
             samples ? (ULONG)(sum / samples) : 0,
-            1u << row
+            (ULONG)(1u << row)
             )->Buffer);
 
         levelWritten[slot] = TRUE;
@@ -1047,9 +1052,9 @@ VOID EtCacheLatencyAddSummaryRows(
     }
 
     PhSetWindowText(Context->SummaryLabelHandles[3], PhaFormatString(
-        L"DRAM latency: %lu cycles (%lu KB)",
+        EtGetUiString(IDS_ET_DRAM_LATENCY_SUMMARY_FORMAT, L"DRAM latency: %lu cycles (%lu KB)"),
         dramSamples ? (ULONG)(dramSum / dramSamples) : 0,
-        1u << dramRow
+        (ULONG)(1u << dramRow)
         )->Buffer);
 }
 
