@@ -812,7 +812,10 @@ static INT_PTR CALLBACK EtEnvSplitDlgProc(
             context->CancelButtonHandle = GetDlgItem(hwndDlg, IDCANCEL);
 
             PhSetApplicationWindowIcon(hwndDlg);
-            PhSetWindowText(hwndDlg, PhaFormatString(L"Edit %s", PhGetString(context->Name))->Buffer);
+            PhSetWindowText(hwndDlg, PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_EDIT_ENVIRONMENT_TITLE_FORMAT),
+                PhGetString(context->Name)
+                )->Buffer);
 
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 300, L"Value");
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);

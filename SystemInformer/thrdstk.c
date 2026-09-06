@@ -988,7 +988,10 @@ INT_PTR CALLBACK PhpThreadStackDlgProc(
 
             PhSetApplicationWindowIcon(hwndDlg);
 
-            PhSetWindowText(hwndDlg, PhaFormatString(L"Stack - thread %lu", HandleToUlong(context->ThreadId))->Buffer);
+            PhSetWindowText(hwndDlg, PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_STACK_THREAD_TITLE_FORMAT),
+                HandleToUlong(context->ThreadId)
+                )->Buffer);
 
             InitializeThreadStackTree(context);
 

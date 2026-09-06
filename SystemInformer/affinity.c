@@ -399,7 +399,7 @@ INT_PTR CALLBACK PhpProcessAffinityDlgProc(
 
                 windowText = PH_AUTO(PhGetWindowText(hwndDlg));
                 PhSetWindowText(hwndDlg, PhaFormatString(
-                    L"%s (%lu threads)",
+                    PhGetApplicationUiString(IDS_PH_AFFINITY_THREADS_TITLE_FORMAT),
                     windowText->Buffer,
                     context->NumberOfThreads
                     )->Buffer);

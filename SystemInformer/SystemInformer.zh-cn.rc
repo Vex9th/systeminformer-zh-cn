@@ -2320,4 +2320,12 @@ BEGIN
     IDS_PH_NOTIFY_SERVICE_MODIFIED_FORMAT                "服务 %s（%s）已修改"
     IDS_PH_NOTIFY_SERVICE_DELETED_FORMAT                 "服务 %s（%s）已删除"
     IDS_PH_NOTIFY_UNKNOWN_PROCESS                        "未知进程"
+    IDS_PH_MEMORY_RESULTS_TITLE_FORMAT                  "结果 - %s（%lu）"
+    IDS_PH_RESULTS_COUNT_FORMAT                         "%s 个结果。"
+    IDS_PH_FIND_RESULTS_TITLE_FORMAT                    "%s（%lu 个结果）"
+    IDS_PH_AFFINITY_THREADS_TITLE_FORMAT                "%s（%lu 个线程）"
+    IDS_PH_EDIT_ENVIRONMENT_TITLE_FORMAT                "编辑 %s"
+    IDS_PH_MESSAGE_FROM_FORMAT                          "来自 %s 的消息"
+    IDS_PH_STACK_THREAD_TITLE_FORMAT                    "堆栈 - 线程 %lu"
+    IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT                "%lu 个僵尸进程，%lu 个已终止进程。"
 END

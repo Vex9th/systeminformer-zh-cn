@@ -141,7 +141,7 @@ VOID PhZombieProcessesCleanupList(
         PhDereferenceObject(UpdateList);
     }
     {
-        PPH_STRING string = PhFormatString(L"%u zombie process(es), %u terminated process(es).",
+        PPH_STRING string = PhFormatString(PhGetApplicationUiString(IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT),
             NumberOfZombieProcesses, NumberOfTerminatedProcesses);
         PhSetDialogItemText(PhZombieProcessesWindowHandle, IDC_DESCRIPTION, string->Buffer);
         InvalidateRect(GetDlgItem(PhZombieProcessesWindowHandle, IDC_DESCRIPTION), NULL, TRUE);
@@ -617,7 +617,7 @@ INT_PTR CALLBACK PhpZombieProcessesDlgProc(
             if (NT_SUCCESS(status))
             {
                 PhSetDialogItemText(hwndDlg, IDC_DESCRIPTION, PhaFormatString(
-                    L"%u zombie process(es), %u terminated process(es).",
+                    PhGetApplicationUiString(IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT),
                     NumberOfZombieProcesses,
                     NumberOfTerminatedProcesses
                     )->Buffer);

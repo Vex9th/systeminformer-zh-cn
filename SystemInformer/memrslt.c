@@ -268,7 +268,7 @@ INT_PTR CALLBACK PhpMemoryResultsDlgProc(
 
                 if (processItem = PhReferenceProcessItem(context->ProcessId))
                 {
-                    PhSetWindowText(hwndDlg, PhaFormatString(L"Results - %s (%u)",
+                    PhSetWindowText(hwndDlg, PhaFormatString(PhGetApplicationUiString(IDS_PH_MEMORY_RESULTS_TITLE_FORMAT),
                         processItem->ProcessName->Buffer, HandleToUlong(processItem->ProcessId))->Buffer);
                     PhDereferenceObject(processItem);
                 }
@@ -312,7 +312,7 @@ INT_PTR CALLBACK PhpMemoryResultsDlgProc(
 
             ListView_SetItemCount(lvHandle, context->Results->Count);
 
-            PhSetDialogItemText(hwndDlg, IDC_INTRO, PhaFormatString(L"%s results.",
+            PhSetDialogItemText(hwndDlg, IDC_INTRO, PhaFormatString(PhGetApplicationUiString(IDS_PH_RESULTS_COUNT_FORMAT),
                 PhaFormatUInt64(context->Results->Count, TRUE)->Buffer)->Buffer);
 
             {

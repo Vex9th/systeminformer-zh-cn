@@ -79,7 +79,10 @@ INT_PTR CALLBACK PhpSessionSendMessageDlgProc(
                 PhSetDialogItemText(
                     hwndDlg,
                     IDC_TITLE,
-                    PhaFormatString(L"Message from %s", currentUserName->Buffer)->Buffer
+                    PhaFormatString(
+                        PhGetApplicationUiString(IDS_PH_MESSAGE_FROM_FORMAT),
+                        currentUserName->Buffer
+                        )->Buffer
                     );
                 PhDereferenceObject(currentUserName);
             }

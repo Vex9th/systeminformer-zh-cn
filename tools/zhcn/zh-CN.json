@@ -825,7 +825,15 @@
     "The service %s (%s) was deleted": "服务 %s（%s）已删除",
     "Unknown process": "未知进程",
     "New version of System Informer available": "System Informer 有新版本可用",
-    "Help menu > Check for updates": "帮助菜单 > 检查更新"
+    "Help menu > Check for updates": "帮助菜单 > 检查更新",
+    "Results - %s (%lu)": "结果 - %s（%lu）",
+    "%s results.": "%s 个结果。",
+    "%s (%lu results)": "%s（%lu 个结果）",
+    "%s (%lu threads)": "%s（%lu 个线程）",
+    "Edit %s": "编辑 %s",
+    "Message from %s": "来自 %s 的消息",
+    "Stack - thread %lu": "堆栈 - 线程 %lu",
+    "%lu zombie process(es), %lu terminated process(es).": "%lu 个僵尸进程，%lu 个已终止进程。"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

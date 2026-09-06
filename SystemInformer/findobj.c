@@ -1742,7 +1742,7 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
 
             // Add the result count to the window title. (dmex)
             PhSetWindowText(hwndDlg, PhaFormatString(
-                L"%s (%lu results)",
+                PhGetApplicationUiString(IDS_PH_FIND_RESULTS_TITLE_FORMAT),
                 PhGetStringOrEmpty(context->WindowText),
                 context->SearchResultsAddIndex
                 )->Buffer);

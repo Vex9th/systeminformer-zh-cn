@@ -3140,6 +3140,14 @@ BEGIN
     IDS_PH_NOTIFY_SERVICE_MODIFIED_FORMAT                "The service %s (%s) was modified"
     IDS_PH_NOTIFY_SERVICE_DELETED_FORMAT                 "The service %s (%s) was deleted"
     IDS_PH_NOTIFY_UNKNOWN_PROCESS                        "Unknown process"
+    IDS_PH_MEMORY_RESULTS_TITLE_FORMAT                  "Results - %s (%lu)"
+    IDS_PH_RESULTS_COUNT_FORMAT                         "%s results."
+    IDS_PH_FIND_RESULTS_TITLE_FORMAT                    "%s (%lu results)"
+    IDS_PH_AFFINITY_THREADS_TITLE_FORMAT                "%s (%lu threads)"
+    IDS_PH_EDIT_ENVIRONMENT_TITLE_FORMAT                "Edit %s"
+    IDS_PH_MESSAGE_FROM_FORMAT                          "Message from %s"
+    IDS_PH_STACK_THREAD_TITLE_FORMAT                    "Stack - thread %lu"
+    IDS_PH_HIDDEN_PROCESS_SUMMARY_FORMAT                "%lu zombie process(es), %lu terminated process(es)."
 END
 
 /////////////////////////////////////////////////////////////////////////////
