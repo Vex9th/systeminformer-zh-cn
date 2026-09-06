@@ -193,7 +193,7 @@ class PluginFixedGroupResourceTests(unittest.TestCase):
         self.assertEqual(workflow.count("plugins\\WindowExplorer.dll=96"), 2)
         self.assertNotIn("plugins\\HardwareDevices.dll=96", workflow)
         self.assertNotIn("plugins\\WindowExplorer.dll=93", workflow)
-        self.assertIn('self.assertIn("1449 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("1460 strings", result.stdout)', generator_test)
 
     def test_fixed_group_literals_leave_both_plugins_but_dynamic_group_remains(self) -> None:
         entries = []

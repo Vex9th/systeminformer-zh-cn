@@ -99,7 +99,7 @@ INT_PTR CALLBACK PvpLibExportsDlgProc(
                     INT lvItemIndex;
                     PPH_STRING name;
                     WCHAR number[PH_INT32_STR_LEN_1];
-                    PWSTR type;
+                    PCWSTR type;
 
                     name = PhZeroExtendToUtf16(importEntry.DllName);
                     lvItemIndex = PhAddListViewItem(lvHandle, MAXINT, name->Buffer, NULL);
@@ -116,16 +116,16 @@ INT_PTR CALLBACK PvpLibExportsDlgProc(
                     switch (importEntry.Type)
                     {
                     case IMPORT_OBJECT_CODE:
-                        type = L"Code";
+                        type = PvpLoadUiString(IDS_PV_IMPORT_OBJECT_CODE);
                         break;
                     case IMPORT_OBJECT_DATA:
-                        type = L"Data";
+                        type = PvpLoadUiString(IDS_PV_COLUMN_DATA);
                         break;
                     case IMPORT_OBJECT_CONST:
-                        type = L"Const";
+                        type = PvpLoadUiString(IDS_PV_IMPORT_OBJECT_CONST);
                         break;
                     default:
-                        type = L"Unknown";
+                        type = PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN);
                         break;
                     }
 
@@ -134,19 +134,19 @@ INT_PTR CALLBACK PvpLibExportsDlgProc(
                     switch (importEntry.NameType)
                     {
                     case IMPORT_OBJECT_ORDINAL:
-                        type = L"Ordinal";
+                        type = PvpLoadUiString(IDS_PV_COLUMN_ORDINAL);
                         break;
                     case IMPORT_OBJECT_NAME:
-                        type = L"Name";
+                        type = PvpLoadUiString(IDS_PV_COLUMN_NAME);
                         break;
                     case IMPORT_OBJECT_NAME_NO_PREFIX:
-                        type = L"Name, no prefix";
+                        type = PvpLoadUiString(IDS_PV_IMPORT_NAME_NO_PREFIX);
                         break;
                     case IMPORT_OBJECT_NAME_UNDECORATE:
-                        type = L"Name, undecorate";
+                        type = PvpLoadUiString(IDS_PV_IMPORT_NAME_UNDECORATE);
                         break;
                     default:
-                        type = L"Unknown";
+                        type = PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN);
                         break;
                     }
 

@@ -251,18 +251,18 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual(sorted(defines.values()), list(range(3000, 3247)))
+        self.assertEqual(sorted(defines.values()), list(range(3000, 3258)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 247)
-        self.assertEqual(len(chinese), 247)
+        self.assertEqual(len(english), 258)
+        self.assertEqual(len(chinese), 258)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_VERIFYING_COMPANY$",
+            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_ARM64_UNWIND_RESERVED$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3247$",
+            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3258$",
         )
 
     def test_json_uses_existing_owner_and_has_no_layer_overlap(self):
@@ -287,7 +287,8 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("peview.exe=247"), 2)
+        self.assertEqual(workflow.count("peview.exe=258"), 2)
+        self.assertNotIn("peview.exe=247", workflow)
         self.assertNotIn("peview.exe=246", workflow)
 
     def test_audit_fresh_peview_window_text_boundary_is_exact(self):
@@ -303,8 +304,8 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
             if entry["category"] == "c_window_text"
             and entry["file"].startswith("tools/peview/")
         ]
-        self.assertEqual(len({entry["english"] for entry in remaining}), 44)
-        self.assertEqual(len(remaining), 51)
+        self.assertEqual(len({entry["english"] for entry in remaining}), 29)
+        self.assertEqual(len(remaining), 31)
         self.assertFalse(
             {entry["english"] for entry in remaining}
             & {resource[2] for resource in RESOURCES}

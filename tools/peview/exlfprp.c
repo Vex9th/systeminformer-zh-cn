@@ -218,13 +218,13 @@ VOID PvpSetWslImageType(
     switch (PvMappedImage.Header->e_type)
     {
     case ET_REL:
-        type = L"Relocatable";
+        type = PvpLoadUiString(IDS_PV_ELF_TYPE_RELOCATABLE);
         break;
     case ET_DYN:
-        type = L"Dynamic";
+        type = PvpLoadUiString(IDS_PV_ELF_TYPE_DYNAMIC);
         break;
     case ET_EXEC:
-        type = L"Executable";
+        type = PvpLoadUiString(IDS_PV_ELF_TYPE_EXECUTABLE);
         break;
     default:
         type = PvpLoadUiString(IDS_PV_ERROR);

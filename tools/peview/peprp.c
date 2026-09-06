@@ -915,7 +915,7 @@ VOID PvpSetPeImageMachineType(
     )
 {
     ULONG machine;
-    PWSTR type;
+    PCWSTR type;
 
     if (PvMappedImage.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC)
         machine = PvMappedImage.NtHeaders32->FileHeader.Machine;
@@ -940,7 +940,7 @@ VOID PvpSetPeImageMachineType(
         type = PhGetMappedImageCHPEVersion(&PvMappedImage) ? L"ARM64 (ARM64X)" : L"ARM64";
         break;
     default:
-        type = L"Unknown";
+        type = PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN);
         break;
     }
 
@@ -1264,7 +1264,7 @@ VOID PvpSetPeImageSubsystem(
     )
 {
     ULONG subsystem;
-    PWSTR type;
+    PCWSTR type;
 
     if (PvMappedImage.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC)
         subsystem = PvMappedImage.NtHeaders32->OptionalHeader.Subsystem;
@@ -1310,7 +1310,7 @@ VOID PvpSetPeImageSubsystem(
         type = L"Windows Boot Application";
         break;
     default:
-        type = L"Unknown";
+        type = PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN);
         break;
     }
 

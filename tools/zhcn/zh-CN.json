@@ -701,7 +701,16 @@
     "Desktop information": "桌面信息",
     "Type information": "类型信息",
     "Type access information": "类型访问权限信息",
-    "Session information": "会话信息"
+    "Session information": "会话信息",
+    "Code": "代码",
+    "Const": "常量",
+    "Name, no prefix": "名称（无前缀）",
+    "Name, undecorate": "名称（去修饰）",
+    "Relocatable": "可重定位文件",
+    "Executable": "可执行文件",
+    "Full": "完整",
+    "Function": "函数",
+    "Fragment": "片段"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

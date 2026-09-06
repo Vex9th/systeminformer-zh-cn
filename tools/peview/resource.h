@@ -365,8 +365,19 @@
 #define IDS_PV_NOT_AVAILABLE                          3244
 #define IDS_PV_RESOLVING                              3245
 #define IDS_PV_VERIFYING_COMPANY                      3246
+#define IDS_PV_IMPORT_OBJECT_CODE                     3247
+#define IDS_PV_IMPORT_OBJECT_CONST                    3248
+#define IDS_PV_IMPORT_NAME_NO_PREFIX                  3249
+#define IDS_PV_IMPORT_NAME_UNDECORATE                 3250
+#define IDS_PV_ELF_TYPE_RELOCATABLE                   3251
+#define IDS_PV_ELF_TYPE_DYNAMIC                       3252
+#define IDS_PV_ELF_TYPE_EXECUTABLE                    3253
+#define IDS_PV_ARM64_UNWIND_FULL                      3254
+#define IDS_PV_TYPE_FUNCTION                          3255
+#define IDS_PV_ARM64_UNWIND_FRAGMENT                  3256
+#define IDS_PV_ARM64_UNWIND_RESERVED                  3257
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_VERIFYING_COMPANY
+#define IDS_PV_LAST                                IDS_PV_ARM64_UNWIND_RESERVED
 
 // Next default values for new objects
 //
@@ -375,6 +386,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3247
+#define _APS_NEXT_SYMED_VALUE           3258
 #endif
 #endif

@@ -326,7 +326,7 @@ VOID PvEnumerateExceptionEntries(
                 {
                     IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA* data = NULL;
 
-                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"Full");
+                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, PvpLoadUiString(IDS_PV_ARM64_UNWIND_FULL));
 
                     PhPrintPointer(value, UlongToPtr(entry->UnwindData));
                     PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, value);
@@ -345,7 +345,7 @@ VOID PvEnumerateExceptionEntries(
                 {
                     ULONG functionLength = entry->FunctionLength << 2;
 
-                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"Function");
+                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, PvpLoadUiString(IDS_PV_TYPE_FUNCTION));
                     PhPrintPointer(value, PTR_ADD_OFFSET(UlongToPtr(entry->BeginAddress), functionLength));
                     PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, value);
                     PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 5, PhaFormatSize(functionLength, ULONG_MAX)->Buffer);
@@ -355,14 +355,14 @@ VOID PvEnumerateExceptionEntries(
                 {
                     ULONG functionLength = entry->FunctionLength << 2;
 
-                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"Fragment");
+                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, PvpLoadUiString(IDS_PV_ARM64_UNWIND_FRAGMENT));
                     PhPrintPointer(value, PTR_ADD_OFFSET(UlongToPtr(entry->BeginAddress), functionLength));
                     PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, value);
                     PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 5, PhaFormatSize(functionLength, ULONG_MAX)->Buffer);
                 }
                 break;
             case 3: // undocumented
-                PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, L"Reserved"); // ?
+                PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 1, PvpLoadUiString(IDS_PV_ARM64_UNWIND_RESERVED)); // ?
                 break;
             default:
                 break;

@@ -1158,6 +1158,17 @@ BEGIN
     IDS_PV_NOT_AVAILABLE                        "N/A"
     IDS_PV_RESOLVING                            "Resolving..."
     IDS_PV_VERIFYING_COMPANY                    "(Verifying...) %s"
+    IDS_PV_IMPORT_OBJECT_CODE                   "Code"
+    IDS_PV_IMPORT_OBJECT_CONST                  "Const"
+    IDS_PV_IMPORT_NAME_NO_PREFIX                "Name, no prefix"
+    IDS_PV_IMPORT_NAME_UNDECORATE               "Name, undecorate"
+    IDS_PV_ELF_TYPE_RELOCATABLE                 "Relocatable"
+    IDS_PV_ELF_TYPE_DYNAMIC                     "Dynamic"
+    IDS_PV_ELF_TYPE_EXECUTABLE                  "Executable"
+    IDS_PV_ARM64_UNWIND_FULL                    "Full"
+    IDS_PV_TYPE_FUNCTION                        "Function"
+    IDS_PV_ARM64_UNWIND_FRAGMENT                "Fragment"
+    IDS_PV_ARM64_UNWIND_RESERVED                "Reserved"
 END
 
 
