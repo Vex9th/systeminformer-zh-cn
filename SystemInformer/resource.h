@@ -1644,8 +1644,9 @@
 #define IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT                2664
 #define IDS_PH_ACTION_CHANGE_EXECUTION_REQUIRED              2665
 #define IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT              2666
+#define IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT            2667
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT
+#define IDS_PH_LAST                                  IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1657,6 +1658,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2667
+#define _APS_NEXT_SYMED_VALUE           2668
 #endif
 #endif

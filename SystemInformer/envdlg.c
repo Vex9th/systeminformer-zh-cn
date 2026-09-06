@@ -1262,8 +1262,11 @@ static VOID EtEnvironmentDelete(
 
     if (!PhShowConfirmMessageRawObject(
         Context->WindowHandle,
-        L"delete",
-        PhaFormatString(PhTranslateString(L"the environment variable \"%s\""), PhGetString(entry->Name))->Buffer,
+        PhGetApplicationUiString(IDS_PH_ACTION_DELETE),
+        PhaFormatString(
+            PhGetApplicationUiString(IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT),
+            PhGetString(entry->Name)
+            )->Buffer,
         NULL,
         FALSE
         ))

@@ -2445,4 +2445,5 @@ BEGIN
     IDS_PH_PROCESS_AND_DESCENDANTS_FORMAT               "%s 及其子进程"
     IDS_PH_ACTION_CHANGE_EXECUTION_REQUIRED             "更改“需要执行”状态"
     IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT             "更改 %s 的“需要执行”状态"
+    IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT           "环境变量“%s”"
 END

@@ -974,7 +974,8 @@
     "%s and %s": "%s 和 %s",
     "%s and its descendants": "%s 及其子进程",
     "change the execution required state": "更改“需要执行”状态",
-    "change the execution required state of %s": "更改 %s 的“需要执行”状态"
+    "change the execution required state of %s": "更改 %s 的“需要执行”状态",
+    "the environment variable \"%s\"": "环境变量“%s”"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
@@ -3041,7 +3042,6 @@
     "the UIAccess flag": "UIAccess 标志",
     "the computer": "该计算机",
     "the computer for Windows Defender Offline Scan": "该计算机以运行 Windows Defender 脱机扫描",
-    "the environment variable \"%s\"": "环境变量“%s”",
     "the integrity label": "完整性标签",
     "the integrity level": "完整性级别",
     "the job": "该作业",

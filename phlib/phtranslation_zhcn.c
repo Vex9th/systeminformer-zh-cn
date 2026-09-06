@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2344] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L"\"%s\" at position %zu.", L"“%s”，位置 %zu。", },
@@ -2335,7 +2335,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2344] =
     { L"the UIAccess flag", L"UIAccess 标志", },
     { L"the computer", L"该计算机", },
     { L"the computer for Windows Defender Offline Scan", L"该计算机以运行 Windows Defender 脱机扫描", },
-    { L"the environment variable \"%s\"", L"环境变量“%s”", },
     { L"the integrity label", L"完整性标签", },
     { L"the integrity level", L"完整性级别", },
     { L"the job", L"该作业", },

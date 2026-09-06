@@ -512,24 +512,74 @@ class ConfirmRawObjectTests(unittest.TestCase):
             execution_required,
         )
 
-    def test_formatted_environment_variable_name_uses_raw_route(self) -> None:
+    def assert_environment_variable_delete_route(self, source: str) -> None:
         calls = self.calls_in(
-            self.envdlg, "EtEnvironmentDelete", "PhShowConfirmMessageRawObject"
+            source, "EtEnvironmentDelete", "PhShowConfirmMessageRawObject"
         )
 
         self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][1], "PhGetApplicationUiString(IDS_PH_ACTION_DELETE)")
         self.assertIn(
-            'PhaFormatString(PhTranslateString(L"theenvironmentvariable\\"%s\\"")',
+            "PhaFormatString(PhGetApplicationUiString("
+            "IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT)",
             calls[0][2],
         )
+        self.assertNotIn("PhTranslateString(", source)
         self.assertEqual(
-            len(
-                self.calls_in(
-                    self.envdlg, "EtEnvironmentDelete", "PhShowConfirmMessage"
-                )
-            ),
+            len(self.calls_in(source, "EtEnvironmentDelete", "PhShowConfirmMessage")),
             0,
         )
+
+    def test_formatted_environment_variable_name_uses_raw_route(self) -> None:
+        self.assert_environment_variable_delete_route(self.envdlg)
+
+        header = (REPO_ROOT / "SystemInformer" / "resource.h").read_text(
+            encoding="utf-8-sig"
+        )
+        english_rc = (
+            REPO_ROOT / "SystemInformer" / "SystemInformer.rc"
+        ).read_text(encoding="utf-8-sig")
+        chinese_rc = (
+            REPO_ROOT / "SystemInformer" / "SystemInformer.zh-cn.rc"
+        ).read_text(encoding="utf-8-sig")
+        translations = json.loads(
+            (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertRegex(
+            header,
+            r"(?m)^#define\s+IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT\s+2667$",
+        )
+        self.assertRegex(
+            english_rc,
+            r'(?m)^\s*IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT\s+"the environment variable ""%s"""$',
+        )
+        self.assertRegex(
+            chinese_rc,
+            r'(?m)^\s*IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT\s+"环境变量“%s”"$',
+        )
+        self.assertEqual(
+            translations["native_strings"].get('the environment variable "%s"'),
+            "环境变量“%s”",
+        )
+        self.assertNotIn('the environment variable "%s"', translations["strings"])
+
+    def test_environment_variable_route_rejects_wrong_resource_and_runtime_translation(self) -> None:
+        for mutated in (
+            self.envdlg.replace(
+                "IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT",
+                "IDS_PH_EDIT_ENVIRONMENT_TITLE_FORMAT",
+                1,
+            ),
+            self.envdlg.replace(
+                "PhGetApplicationUiString(IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT)",
+                'PhTranslateString(L"the environment variable \\"%s\\"")',
+                1,
+            ),
+        ):
+            with self.assertRaises(AssertionError):
+                self.assert_environment_variable_delete_route(mutated)
 
     def test_fixed_object_confirmations_keep_legacy_route(self) -> None:
         fixed_functions = {

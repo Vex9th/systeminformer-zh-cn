@@ -132,16 +132,16 @@ class SystemInformerNaUnknownResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2667)))
-        self.assertEqual(len(english), 667)
-        self.assertEqual(len(chinese), 667)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2667$")
+        self.assertEqual(numeric_ids, list(range(2000, 2668)))
+        self.assertEqual(len(english), 668)
+        self.assertEqual(len(chinese), 668)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2668$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=667"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=668"), 2)
         self.assertNotIn("sys_info.exe=560", workflow)
 
     def test_every_resource_source_expression_is_accounted_for_by_file(self) -> None:
