@@ -179,6 +179,10 @@
 #define IDS_HD_FILE_SYSTEM_FAT          12093
 #define IDS_HD_FILE_SYSTEM_REFS         12094
 #define IDS_HD_RAPL                     12095
+#define IDS_HD_GROUP_GENERAL            12096
+#define IDS_HD_GROUP_CLASS              12097
+#define IDS_HD_FIRST                    IDS_HD_NO_GRAPHICS_NODES
+#define IDS_HD_LAST                     IDS_HD_GROUP_CLASS
 
 // Next default values for new objects
 //
@@ -187,6 +191,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        118
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1045
-#define _APS_NEXT_SYMED_VALUE           12096
+#define _APS_NEXT_SYMED_VALUE           12098
 #endif
 #endif

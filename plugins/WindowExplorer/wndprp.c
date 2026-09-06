@@ -1573,8 +1573,16 @@ VOID WepGeneralAddListViewItemGroups(
     )
 {
     ListView_EnableGroupView(ListViewHandle, TRUE);
-    PhAddListViewGroup(ListViewHandle, WINDOW_PROPERTIES_CATEGORY_GENERAL, L"General");
-    PhAddListViewGroup(ListViewHandle, WINDOW_PROPERTIES_CATEGORY_CLASS, L"Class");
+    PhAddListViewGroup(
+        ListViewHandle,
+        WINDOW_PROPERTIES_CATEGORY_GENERAL,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_GROUP_GENERAL, NULL)))
+        );
+    PhAddListViewGroup(
+        ListViewHandle,
+        WINDOW_PROPERTIES_CATEGORY_CLASS,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_GROUP_CLASS, NULL)))
+        );
 
     PhAddListViewGroupItem(
         ListViewHandle,
@@ -3494,7 +3502,11 @@ VOID WepUiaAddListViewItemGroups(
         WND_UIA_GROUP_IDENTIFICATION,
         PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_UIA_GROUP_IDENTIFICATION, NULL)))
         );
-    PhAddListViewGroup(ListViewHandle, WND_UIA_GROUP_STATE, L"State");
+    PhAddListViewGroup(
+        ListViewHandle,
+        WND_UIA_GROUP_STATE,
+        PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_WE_GROUP_STATE, NULL)))
+        );
     PhAddListViewGroup(
         ListViewHandle,
         WND_UIA_GROUP_ACCESSIBILITY,

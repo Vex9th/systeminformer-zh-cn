@@ -164,4 +164,7 @@ BEGIN
     IDS_WE_PAUSE                    "暂停"
     IDS_WE_RESUME                   "恢复"
     IDS_WE_PROPERTY_EDITOR          "属性编辑器"
+    IDS_WE_GROUP_GENERAL            "常规"
+    IDS_WE_GROUP_CLASS              "类"
+    IDS_WE_GROUP_STATE              "状态"
 END

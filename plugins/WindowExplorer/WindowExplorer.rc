@@ -252,6 +252,9 @@ BEGIN
     IDS_WE_PAUSE                    "Pause"
     IDS_WE_RESUME                   "Resume"
     IDS_WE_PROPERTY_EDITOR          "Property Editor"
+    IDS_WE_GROUP_GENERAL            "General"
+    IDS_WE_GROUP_CLASS              "Class"
+    IDS_WE_GROUP_STATE              "State"
 END
 
 #endif    // English (United States) resources

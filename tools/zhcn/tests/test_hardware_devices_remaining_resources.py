@@ -98,6 +98,8 @@ RESOURCE_TEXT = {
     "IDS_HD_FILE_SYSTEM_FAT": (12093, "FAT", "FAT"),
     "IDS_HD_FILE_SYSTEM_REFS": (12094, "ReFS", "ReFS"),
     "IDS_HD_RAPL": (12095, "RAPL", "RAPL"),
+    "IDS_HD_GROUP_GENERAL": (12096, "General", "常规"),
+    "IDS_HD_GROUP_CLASS": (12097, "Class", "类"),
 }
 
 RUNTIME_DICTIONARY_OWNED = {
@@ -114,6 +116,8 @@ RUNTIME_DICTIONARY_OWNED = {
     "N/A",
     "Unknown",
     "RAPL",
+    "General",
+    "Class",
 }
 
 GROUP_ITEM_IDS = {
@@ -221,9 +225,9 @@ class HardwareDevicesRemainingResourceTests(unittest.TestCase):
                 self.assertEqual(translations[table].get(english), chinese)
                 self.assertNotIn(english, translations[other_table])
 
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12096$")
-        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", english_rc)), 96)
-        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", chinese_rc)), 96)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12098$")
+        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", english_rc)), 98)
+        self.assertEqual(len(re.findall(r"(?m)^\s*IDS_HD_[A-Z0-9_]+\s+\"", chinese_rc)), 98)
 
     def test_group_item_indexes_use_the_exact_resource(self) -> None:
         audit = load_tool("audit")

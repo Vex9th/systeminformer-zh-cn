@@ -1602,7 +1602,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1444 strings", result.stdout)
+        self.assertIn("1449 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3562,7 +3562,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             },
         }
         expected_aps = {
-            "WindowExplorer": 12093,
+            "WindowExplorer": 12096,
             "OnlineChecks": 12005,
             "Updater": 12007,
         }
@@ -4186,6 +4186,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         expected_resources = {
             "IDS_WE_UIA_GROUP_IDENTIFICATION": ("Identification", "WND_UIA_GROUP_IDENTIFICATION"),
+            "IDS_WE_GROUP_STATE": ("State", "WND_UIA_GROUP_STATE"),
             "IDS_WE_UIA_GROUP_ACCESSIBILITY": ("Accessibility", "WND_UIA_GROUP_ACCESSIBILITY"),
             "IDS_WE_UIA_GROUP_PATTERNS": ("Patterns", "WND_UIA_GROUP_PATTERNS"),
         }
@@ -4200,10 +4201,6 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     rf"PhLoadUiString\([^;]*?{resource_id}[^;]*?\)[^;]*?\);",
                 )
 
-        self.assertRegex(
-            source,
-            r'PhAddListViewGroup\(ListViewHandle, WND_UIA_GROUP_STATE, L"State"\);',
-        )
         self.assertEqual(translation_data["strings"].get("State"), "状态")
         self.assertNotIn("State", translation_data["native_strings"])
 
@@ -5573,13 +5570,13 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     expected_count,
                 )
 
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12096$")
-        self.assertEqual(len(stringtable_ids(english_resource)), 96)
-        self.assertEqual(len(stringtable_ids(chinese_resource)), 96)
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12098$")
+        self.assertEqual(len(stringtable_ids(english_resource)), 98)
+        self.assertEqual(len(stringtable_ids(chinese_resource)), 98)
         self.assertEqual(
             len(
                 re.findall(
-                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=96'",
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=98'",
                     workflow,
                 )
             ),
@@ -6273,9 +6270,9 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 116): 2,
-                    (r"bin\Release64\plugins\HardwareDevices.dll", 96): 2,
+                    (r"bin\Release64\plugins\HardwareDevices.dll", 98): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
-                    (r"bin\Release64\plugins\WindowExplorer.dll", 93): 2,
+                    (r"bin\Release64\plugins\WindowExplorer.dll", 96): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 5): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
                     (r"bin\Release64\plugins\Updater.dll", 7): 2,

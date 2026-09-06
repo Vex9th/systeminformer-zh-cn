@@ -154,6 +154,9 @@
 #define IDS_WE_PAUSE                    12090
 #define IDS_WE_RESUME                   12091
 #define IDS_WE_PROPERTY_EDITOR          12092
+#define IDS_WE_GROUP_GENERAL            12093
+#define IDS_WE_GROUP_CLASS              12094
+#define IDS_WE_GROUP_STATE              12095
 
 // Next default values for new objects
 //
@@ -162,6 +165,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40039
 #define _APS_NEXT_CONTROL_VALUE         1037
-#define _APS_NEXT_SYMED_VALUE           12093
+#define _APS_NEXT_SYMED_VALUE           12096
 #endif
 #endif

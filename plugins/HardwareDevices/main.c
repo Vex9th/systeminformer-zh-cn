@@ -47,7 +47,7 @@ PH_CALLBACK_REGISTRATION SettingsUpdatedCallbackRegistration;
 
 static PH_INITONCE HardwareDevicesUiStringsInitOnce = PH_INITONCE_INIT;
 static PPH_STRING HardwareDevicesUiStrings[
-    IDS_HD_RAPL - IDS_HD_NO_GRAPHICS_NODES + 1
+    IDS_HD_LAST - IDS_HD_FIRST + 1
     ];
 
 PPH_STRING HardwareDevicesGetUiStringObject(
@@ -55,8 +55,8 @@ PPH_STRING HardwareDevicesGetUiStringObject(
     )
 {
     if (
-        ResourceId < IDS_HD_NO_GRAPHICS_NODES ||
-        ResourceId > IDS_HD_RAPL
+        ResourceId < IDS_HD_FIRST ||
+        ResourceId > IDS_HD_LAST
         )
     {
         return NULL;
@@ -64,9 +64,9 @@ PPH_STRING HardwareDevicesGetUiStringObject(
 
     if (PhBeginInitOnce(&HardwareDevicesUiStringsInitOnce))
     {
-        for (ULONG id = IDS_HD_NO_GRAPHICS_NODES; id <= IDS_HD_RAPL; id++)
+        for (ULONG id = IDS_HD_FIRST; id <= IDS_HD_LAST; id++)
         {
-            HardwareDevicesUiStrings[id - IDS_HD_NO_GRAPHICS_NODES] = PhLoadUiString(
+            HardwareDevicesUiStrings[id - IDS_HD_FIRST] = PhLoadUiString(
                 PluginInstance->DllBase,
                 id,
                 NULL
@@ -76,7 +76,7 @@ PPH_STRING HardwareDevicesGetUiStringObject(
         PhEndInitOnce(&HardwareDevicesUiStringsInitOnce);
     }
 
-    return HardwareDevicesUiStrings[ResourceId - IDS_HD_NO_GRAPHICS_NODES];
+    return HardwareDevicesUiStrings[ResourceId - IDS_HD_FIRST];
 }
 
 PCWSTR HardwareDevicesGetUiString(

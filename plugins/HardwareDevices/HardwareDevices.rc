@@ -537,6 +537,8 @@ BEGIN
     IDS_HD_FILE_SYSTEM_FAT          "FAT"
     IDS_HD_FILE_SYSTEM_REFS         "ReFS"
     IDS_HD_RAPL                     "RAPL"
+    IDS_HD_GROUP_GENERAL            "General"
+    IDS_HD_GROUP_CLASS              "Class"
 END
 
 #endif    // English (United States) resources
