@@ -2482,4 +2482,10 @@ BEGIN
     IDS_PH_HANDLE_ALPC_CLIENT_COMMUNICATION             "客户端通信"
     IDS_PH_HANDLE_ALPC_SERVER_COMMUNICATION             "服务器通信"
     IDS_PH_HANDLE_ALPC_UNCONNECTED                      "未连接"
+    IDS_PH_OPTIONS_GENERAL                              "常规"
+    IDS_PH_OPTIONS_ADVANCED                             "高级"
+    IDS_PH_OPTIONS_HIGHLIGHTING                         "高亮"
+    IDS_PH_OPTIONS_TRAY_ICON                            "托盘图标"
+    IDS_PH_OPTIONS_GRAPHS                               "图表"
+    IDS_PH_OPTIONS_PLUGINS                              "插件"
 END

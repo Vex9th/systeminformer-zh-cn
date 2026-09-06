@@ -135,7 +135,7 @@ class SmallPluginRemainingResourceTests(unittest.TestCase):
 
         self.assertRegex(
             header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2019$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2020$",
         )
 
     def test_trigger_warning_uses_localized_format_inside_explicit_auto_pool(self) -> None:

@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2335] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L"\"%s\" at position %zu.", L"“%s”，位置 %zu。", },
@@ -194,7 +194,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
     { L"Add...", L"添加...", },
     { L"Add/Update", L"添加/更新", },
     { L"Address", L"地址", },
-    { L"Advanced", L"高级", },
     { L"Advisory", L"预警", },
     { L"Affinity", L"处理器关联", },
     { L"Affinity controls which CPUs threads are allowed to execute on.", L"处理器关联控制允许线程在哪些 CPU 上执行。", },
@@ -732,7 +731,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
     { L"GPU name", L"GPU 名称", },
     { L"GPU:", L"GPU：", },
     { L"Games", L"游戏", },
-    { L"General", L"常规", },
     { L"GeoLite Update", L"GeoLite 更新", },
     { L"Go to &process...", L"转到进程(&P)...", },
     { L"Go to &upper device driver", L"转到上层设备驱动程序(&u)", },
@@ -748,8 +746,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
     { L"Granted access (symbolic)", L"已授予访问权限 (符号)", },
     { L"Graph history length:", L"图表历史长度：", },
     { L"Graph layout", L"图表布局", },
-    { L"Graphics Devices", L"图形设备", },
-    { L"Graphs", L"图表", },
     { L"Group", L"组", },
     { L"Group:", L"组：", },
     { L"Guid", L"GUID", },
@@ -855,7 +851,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
     { L"Highlight user frames", L"高亮用户帧", },
     { L"Highlight user request", L"高亮用户请求", },
     { L"Highlight writable", L"突出显示可写项", },
-    { L"Highlighting", L"高亮", },
     { L"Highlighting duration:", L"高亮持续时间：", },
     { L"Hint", L"提示", },
     { L"Home directory", L"主目录", },
@@ -1293,7 +1288,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
     { L"Please wait...", L"请稍候...", },
     { L"Plugin", L"插件", },
     { L"Plugin Properties", L"插件属性", },
-    { L"Plugins", L"插件", },
     { L"PnP Devices", L"PnP 设备", },
     { L"Policy", L"策略", },
     { L"Policy app ID", L"策略应用 ID", },
@@ -1370,7 +1364,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
     { L"R&estart", L"重启(&E)", },
     { L"R&estart (Critical)", L"重启(&E)（强制）", },
     { L"R&estart (Native)", L"重启(&E)（原生）", },
-    { L"RAPL Devices", L"RAPL 设备", },
     { L"RAPL Drives", L"RAPL 设备", },
     { L"RAPL name", L"RAPL 名称", },
     { L"RAW (end)", L"RAW（结束）", },
@@ -1900,7 +1893,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2343] =
     { L"Traceroute", L"路由跟踪", },
     { L"Tracing route to xyz...", L"正在跟踪到 xyz 的路由...", },
     { L"Transparent tray icons", L"透明托盘图标", },
-    { L"Tray Icon", L"托盘图标", },
     { L"Tree", L"树", },
     { L"Trigger", L"触发器", },
     { L"Triggers", L"触发器", },

@@ -336,6 +336,7 @@ BEGIN
     IDS_TS_CUSTOMIZE_SEARCH_ALWAYS_SHOW "Always show"
     IDS_TS_CUSTOMIZE_SEARCH_HIDE_INACTIVE "Hide when inactive (Ctrl+K)"
     IDS_TS_CUSTOMIZE_SEPARATOR      "Separator"
+    IDS_TS_OPTIONS_SECTION          "ToolStatus"
 END
 
 #endif    // English (United States) resources

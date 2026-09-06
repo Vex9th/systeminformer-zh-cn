@@ -2092,9 +2092,10 @@ VOID NTAPI ShowOptionsCallback(
 {
     PPH_PLUGIN_OPTIONS_POINTERS optionsEntry = (PPH_PLUGIN_OPTIONS_POINTERS)Parameter;
 
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"ToolStatus",
         PluginInstance->DllBase,
+        IDS_TS_OPTIONS_SECTION,
         MAKEINTRESOURCE(IDD_OPTIONS),
         OptionsDlgProc,
         NULL

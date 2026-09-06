@@ -155,16 +155,17 @@ jobs:
           'bin\Release64\plugins\WindowExplorer.dll'
         )
         python tools\zhcn\validate_templates.py @resourceTargets `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=704' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=710' `
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=89' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=70' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=230' `
-          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=98' `
-          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=22' `
-          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=5' `
-          --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
-          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=9' `
-          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=19' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=231' `
+          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=102' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=23' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=6' `
+          --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
+          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=10' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=20' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=122' `
           --expect-string-count-in 'bin\Release64\peview.exe=311'
 
@@ -318,16 +319,17 @@ jobs:
         python tools\zhcn\validate_templates.py @resourceTargets `
           --require-strings-in 'build\output\systeminformer-build-release-setup.exe' `
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=704' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=710' `
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=89' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=70' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=230' `
-          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=98' `
-          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=22' `
-          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=5' `
-          --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=103' `
-          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=9' `
-          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=19' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=231' `
+          --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=102' `
+          --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=23' `
+          --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=6' `
+          --expect-string-count-in 'bin\Release64\plugins\ToolStatus.dll=104' `
+          --expect-string-count-in 'bin\Release64\plugins\Updater.dll=10' `
+          --expect-string-count-in 'bin\Release64\plugins\UserNotes.dll=20' `
           --expect-string-count-in 'bin\Release64\plugins\WindowExplorer.dll=122' `
           --expect-string-count-in 'bin\Release64\peview.exe=311' `
           --expect-string-count-in 'build\output\systeminformer-build-release-setup.exe=74' `

@@ -70,3 +70,11 @@ BEGIN
     PUSHBUTTON      "浏览...",IDC_BROWSE,194,28,50,14
     LTEXT           "更改需要重启 sys_info 后才能生效。",IDC_STATIC,14,45,210,8
 END
+
+STRINGTABLE
+BEGIN
+    IDS_EN_OPTIONS_PROCESSES        "通知 - 进程"
+    IDS_EN_OPTIONS_SERVICES         "通知 - 服务"
+    IDS_EN_OPTIONS_DEVICES          "通知 - 设备"
+    IDS_EN_OPTIONS_LOGGING          "通知 - 日志"
+END

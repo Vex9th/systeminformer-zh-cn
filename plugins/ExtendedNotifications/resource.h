@@ -17,6 +17,10 @@
 #define IDC_LOGFILENAME                 1014
 #define IDC_BROWSE                      1015
 #define IDC_INFO                        1017
+#define IDS_EN_OPTIONS_PROCESSES        12000
+#define IDS_EN_OPTIONS_SERVICES         12001
+#define IDS_EN_OPTIONS_DEVICES          12002
+#define IDS_EN_OPTIONS_LOGGING          12003
 
 // Next default values for new objects
 //
@@ -25,6 +29,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        109
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1018
-#define _APS_NEXT_SYMED_VALUE           102
+#define _APS_NEXT_SYMED_VALUE           12004
 #endif
 #endif

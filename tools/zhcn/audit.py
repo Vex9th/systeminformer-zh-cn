@@ -2734,7 +2734,7 @@ PAGE_NAME_RE = re.compile(r'(\w*PageText\w*)\s*=\s*PH_STRINGREF_INIT\(\s*(L"(?:[
 
 EMPTY_TEXT_RE = re.compile(r'(\w*EmptyText\w*)\s*=\s*PH_STRINGREF_INIT\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
 
-OPTIONS_SECTION_RE = re.compile(r'PhOptionsCreateSection\w*\(\s*(L"(?:[^"\\]|\\.)*")')
+OPTIONS_SECTION_RE = re.compile(r'\bPhOptionsCreateSection\s*\(\s*(L"(?:[^"\\]|\\.)*")')
 
 
 def scan_extra_statics(path: str, entries):

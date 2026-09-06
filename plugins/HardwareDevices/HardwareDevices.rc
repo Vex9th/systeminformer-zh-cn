@@ -539,6 +539,10 @@ BEGIN
     IDS_HD_RAPL                     "RAPL"
     IDS_HD_GROUP_GENERAL            "General"
     IDS_HD_GROUP_CLASS              "Class"
+    IDS_HD_OPTIONS_DISK_DEVICES     "Disk Devices"
+    IDS_HD_OPTIONS_GRAPHICS_DEVICES "Graphics Devices"
+    IDS_HD_OPTIONS_NETWORK_DEVICES  "Network Devices"
+    IDS_HD_OPTIONS_RAPL_DEVICES     "RAPL Devices"
 END
 
 #endif    // English (United States) resources

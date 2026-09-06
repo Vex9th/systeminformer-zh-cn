@@ -204,9 +204,10 @@ VOID NTAPI ShowOptionsCallback(
 {
     PPH_PLUGIN_OPTIONS_POINTERS optionsEntry = (PPH_PLUGIN_OPTIONS_POINTERS)Parameter;
 
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Updater",
         NtCurrentImageBase(),
+        IDS_UP_OPTIONS_SECTION,
         MAKEINTRESOURCE(IDD_OPTIONS),
         OptionsDlgProc,
         NULL

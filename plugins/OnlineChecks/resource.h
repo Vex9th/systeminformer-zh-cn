@@ -45,6 +45,7 @@
 #define IDS_OC_KEY_STATUS_SET           12002
 #define IDS_OC_KEY_STATUS_UNSET         12003
 #define IDS_OC_PASTE_LICENSE_KEY_HERE   12004
+#define IDS_OC_OPTIONS_SECTION          12005
 
 // Next default values for new objects
 //
@@ -53,6 +54,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1015
-#define _APS_NEXT_SYMED_VALUE           12005
+#define _APS_NEXT_SYMED_VALUE           12006
 #endif
 #endif

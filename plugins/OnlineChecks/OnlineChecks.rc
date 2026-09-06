@@ -159,6 +159,7 @@ BEGIN
     IDS_OC_KEY_STATUS_SET           "Set - using your key"
     IDS_OC_KEY_STATUS_UNSET         "Unset - optional"
     IDS_OC_PASTE_LICENSE_KEY_HERE   "Paste the license key here:"
+    IDS_OC_OPTIONS_SECTION          "OnlineChecks"
 END
 
 #endif    // English (United States) resources

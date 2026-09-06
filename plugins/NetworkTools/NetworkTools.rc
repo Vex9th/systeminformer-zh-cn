@@ -698,6 +698,7 @@ BEGIN
     IDS_NT_TRACERT_RESULT_CONTINUOUS "continuous ping active"
     IDS_NT_TRACERT_RESULT_COMPLETE "complete"
     IDS_NT_WHOIS_TITLE_FORMAT      "Whois %s..."
+    IDS_NT_OPTIONS_SECTION         "NetworkTools"
 END
 
 #endif    // English (United States) resources

@@ -162,8 +162,9 @@
 #define IDS_TS_CUSTOMIZE_SEARCH_ALWAYS_SHOW 12100
 #define IDS_TS_CUSTOMIZE_SEARCH_HIDE_INACTIVE 12101
 #define IDS_TS_CUSTOMIZE_SEPARATOR      12102
+#define IDS_TS_OPTIONS_SECTION          12103
 #define IDS_TS_FIRST                    IDS_TS_PROCESS_NOT_FOUND
-#define IDS_TS_LAST                     IDS_TS_CUSTOMIZE_SEPARATOR
+#define IDS_TS_LAST                     IDS_TS_OPTIONS_SECTION
 
 // Next default values for new objects
 //
@@ -172,6 +173,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         40012
 #define _APS_NEXT_CONTROL_VALUE         1022
-#define _APS_NEXT_SYMED_VALUE           12103
+#define _APS_NEXT_SYMED_VALUE           12104
 #endif
 #endif

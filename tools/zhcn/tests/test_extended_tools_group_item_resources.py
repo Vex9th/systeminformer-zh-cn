@@ -237,7 +237,7 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
                 self.assertNotIn(english, translations[other_table])
 
         self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_RESOURCE_VALUE\s+60043$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61230$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61231$")
         self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', english_rc)), 230)
         self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', chinese_rc)), 230)
 
@@ -418,7 +418,7 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertEqual(
-            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=230"),
+            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=231"),
             2,
         )
         self.assertNotIn("bin\\Release64\\plugins\\ExtendedTools.dll=116", workflow)

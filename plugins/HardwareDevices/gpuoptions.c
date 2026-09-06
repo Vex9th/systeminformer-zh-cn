@@ -879,7 +879,7 @@ INT_PTR CALLBACK GraphicsDeviceOptionsDlgProc(
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             ListView_SetExtendedListViewStyleEx(context->ListViewHandle, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 350, L"Graphics Devices");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 350, HardwareDevicesGetUiString(IDS_HD_OPTIONS_GRAPHICS_DEVICES));
             PhSetExtendedListView(context->ListViewHandle);
             LoadGraphicsDeviceImages(context);
 

@@ -162,6 +162,13 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+STRINGTABLE
+BEGIN
+    IDS_EN_OPTIONS_PROCESSES        "Notifications - Processes"
+    IDS_EN_OPTIONS_SERVICES         "Notifications - Services"
+    IDS_EN_OPTIONS_DEVICES          "Notifications - Devices"
+    IDS_EN_OPTIONS_LOGGING          "Notifications - Logging"
+END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
@@ -177,4 +184,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

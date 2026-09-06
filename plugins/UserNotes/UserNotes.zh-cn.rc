@@ -59,4 +59,5 @@ BEGIN
     IDS_UN_DB_TYPE_SERVICE          "服务"
     IDS_UN_DB_TYPE_COMMAND_LINE     "命令行"
     IDS_UN_STATUS_TRUE              "真"
+    IDS_UN_OPTIONS_SECTION          "用户备注"
 END

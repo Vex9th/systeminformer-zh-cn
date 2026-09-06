@@ -117,6 +117,7 @@ BEGIN
     IDS_UP_NEXT_UPDATE_CHECK_FORMAT "Next update check: %s"
     IDS_UP_NEW_VERSION_AVAILABLE    "New version of System Informer available"
     IDS_UP_CHECK_FOR_UPDATES        "Help menu > Check for updates"
+    IDS_UP_OPTIONS_SECTION          "Updater"
 END
 
 #endif    // English (United States) resources

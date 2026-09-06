@@ -99,6 +99,7 @@ BEGIN
     IDS_UN_DB_TYPE_SERVICE          "Service"
     IDS_UN_DB_TYPE_COMMAND_LINE     "Commandline"
     IDS_UN_STATUS_TRUE              "True"
+    IDS_UN_OPTIONS_SECTION          "UserNotes"
 END
 
 

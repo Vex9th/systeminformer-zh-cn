@@ -131,33 +131,37 @@ VOID NTAPI ShowOptionsCallback(
 {
     PPH_PLUGIN_OPTIONS_POINTERS optionsEntry = (PPH_PLUGIN_OPTIONS_POINTERS)Parameter;
 
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Disk Devices",
         PluginInstance->DllBase,
+        IDS_HD_OPTIONS_DISK_DEVICES,
         MAKEINTRESOURCE(IDD_DISKDRIVE_OPTIONS),
         DiskDriveOptionsDlgProc,
         NULL
         );
 
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Graphics Devices",
         PluginInstance->DllBase,
+        IDS_HD_OPTIONS_GRAPHICS_DEVICES,
         MAKEINTRESOURCE(IDD_GPUDEVICE_OPTIONS),
         GraphicsDeviceOptionsDlgProc,
         NULL
         );
 
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Network Devices",
         PluginInstance->DllBase,
+        IDS_HD_OPTIONS_NETWORK_DEVICES,
         MAKEINTRESOURCE(IDD_NETADAPTER_OPTIONS),
         NetworkAdapterOptionsDlgProc,
         NULL
         );
 
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"RAPL Devices",
         PluginInstance->DllBase,
+        IDS_HD_OPTIONS_RAPL_DEVICES,
         MAKEINTRESOURCE(IDD_RAPLDEVICE_OPTIONS),
         RaplDeviceOptionsDlgProc,
         NULL

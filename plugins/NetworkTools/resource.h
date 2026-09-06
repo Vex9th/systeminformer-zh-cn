@@ -306,6 +306,7 @@
 #define IDS_NT_TRACERT_RESULT_CONTINUOUS 12019
 #define IDS_NT_TRACERT_RESULT_COMPLETE 12020
 #define IDS_NT_WHOIS_TITLE_FORMAT      12021
+#define IDS_NT_OPTIONS_SECTION         12022
 
 // Next default values for new objects
 // 
@@ -314,6 +315,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        112
 #define _APS_NEXT_COMMAND_VALUE         40006
 #define _APS_NEXT_CONTROL_VALUE         1045
-#define _APS_NEXT_SYMED_VALUE           12022
+#define _APS_NEXT_SYMED_VALUE           12023
 #endif
 #endif

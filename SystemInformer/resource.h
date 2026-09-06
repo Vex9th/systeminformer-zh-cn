@@ -1681,8 +1681,14 @@
 #define IDS_PH_HANDLE_ALPC_CLIENT_COMMUNICATION               2701
 #define IDS_PH_HANDLE_ALPC_SERVER_COMMUNICATION               2702
 #define IDS_PH_HANDLE_ALPC_UNCONNECTED                        2703
+#define IDS_PH_OPTIONS_GENERAL                                2704
+#define IDS_PH_OPTIONS_ADVANCED                               2705
+#define IDS_PH_OPTIONS_HIGHLIGHTING                           2706
+#define IDS_PH_OPTIONS_TRAY_ICON                              2707
+#define IDS_PH_OPTIONS_GRAPHS                                 2708
+#define IDS_PH_OPTIONS_PLUGINS                                2709
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_HANDLE_ALPC_UNCONNECTED
+#define IDS_PH_LAST                                  IDS_PH_OPTIONS_PLUGINS
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1694,6 +1700,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2704
+#define _APS_NEXT_SYMED_VALUE           2710
 #endif
 #endif

@@ -327,30 +327,34 @@ VOID NTAPI ShowOptionsCallback(
 {
     PPH_PLUGIN_OPTIONS_POINTERS optionsEntry = (PPH_PLUGIN_OPTIONS_POINTERS)Parameter;
 
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Notifications - Processes",
         NtCurrentImageBase(),
+        IDS_EN_OPTIONS_PROCESSES,
         MAKEINTRESOURCE(IDD_PROCESSES),
         ProcessesDlgProc,
         NULL
         );
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Notifications - Services",
         NtCurrentImageBase(),
+        IDS_EN_OPTIONS_SERVICES,
         MAKEINTRESOURCE(IDD_SERVICES),
         ServicesDlgProc,
         NULL
         );
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Notifications - Devices",
         NtCurrentImageBase(),
+        IDS_EN_OPTIONS_DEVICES,
         MAKEINTRESOURCE(IDD_DEVICES),
         DevicesDlgProc,
         NULL
         );
-    optionsEntry->CreateSection(
+    optionsEntry->CreateSection2(
         L"Notifications - Logging",
         NtCurrentImageBase(),
+        IDS_EN_OPTIONS_LOGGING,
         MAKEINTRESOURCE(IDD_LOGGING),
         LoggingDlgProc,
         NULL

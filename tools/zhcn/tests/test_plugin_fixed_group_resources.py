@@ -16,8 +16,8 @@ PLUGIN_SPECS = {
             ("IDS_HD_GROUP_GENERAL", 12096, "General", "常规", "DEVICE_PROPERTIES_CATEGORY_GENERAL"),
             ("IDS_HD_GROUP_CLASS", 12097, "Class", "类", "DEVICE_PROPERTIES_CATEGORY_CLASS"),
         ),
-        "count": 98,
-        "aps": 12098,
+        "count": 102,
+        "aps": 12102,
     },
     "WindowExplorer": {
         "source": "wndprp.c",
@@ -179,7 +179,7 @@ class PluginFixedGroupResourceTests(unittest.TestCase):
             REPO_ROOT / "plugins" / "HardwareDevices" / "resource.h"
         ).read_text(encoding="utf-8-sig")
         self.assertRegex(hardware_header, r"(?m)^#define\s+IDS_HD_FIRST\s+IDS_HD_NO_GRAPHICS_NODES$")
-        self.assertRegex(hardware_header, r"(?m)^#define\s+IDS_HD_LAST\s+IDS_HD_GROUP_CLASS$")
+        self.assertRegex(hardware_header, r"(?m)^#define\s+IDS_HD_LAST\s+IDS_HD_OPTIONS_RAPL_DEVICES$")
 
     def test_ci_counts_and_generator_total_are_synchronized(self) -> None:
         workflow = (
@@ -189,11 +189,11 @@ class PluginFixedGroupResourceTests(unittest.TestCase):
             REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("plugins\\HardwareDevices.dll=98"), 2)
+        self.assertEqual(workflow.count("plugins\\HardwareDevices.dll=102"), 2)
         self.assertEqual(workflow.count("plugins\\WindowExplorer.dll=122"), 2)
         self.assertNotIn("plugins\\HardwareDevices.dll=96", workflow)
         self.assertNotIn("plugins\\WindowExplorer.dll=93", workflow)
-        self.assertIn('self.assertIn("1856 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("1876 strings", result.stdout)', generator_test)
 
     def test_fixed_group_literals_leave_both_plugins_but_dynamic_group_remains(self) -> None:
         entries = []

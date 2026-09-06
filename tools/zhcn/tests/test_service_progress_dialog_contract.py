@@ -157,12 +157,12 @@ class ServiceProgressDialogContractTests(unittest.TestCase):
                     self.assertNotIn(en, translations["strings"])
                 self.assertEqual(re.findall(r"%(?:%|s)", en), re.findall(r"%(?:%|s)", zh))
 
-        self.assertEqual(len(english), 704)
-        self.assertEqual(len(chinese), 704)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_ALPC_UNCONNECTED$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2704$")
+        self.assertEqual(len(english), 710)
+        self.assertEqual(len(chinese), 710)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_OPTIONS_PLUGINS$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2710$")
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=704"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=710"), 2)
         self.assertNotIn("sys_info.exe=611", workflow)
 
     def test_context_stores_resource_ids_and_initializes_text_from_native_resources(self) -> None:

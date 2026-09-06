@@ -167,9 +167,10 @@ VOID NTAPI ShowOptionsCallback(
 
     if (optionsEntry)
     {
-        optionsEntry->CreateSection(
+        optionsEntry->CreateSection2(
             L"ExtendedTools",
             PluginInstance->DllBase,
+            IDS_ET_OPTIONS_SECTION,
             MAKEINTRESOURCE(IDD_OPTIONS),
             OptionsDlgProc,
             NULL

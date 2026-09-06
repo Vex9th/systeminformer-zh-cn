@@ -181,8 +181,12 @@
 #define IDS_HD_RAPL                     12095
 #define IDS_HD_GROUP_GENERAL            12096
 #define IDS_HD_GROUP_CLASS              12097
+#define IDS_HD_OPTIONS_DISK_DEVICES     12098
+#define IDS_HD_OPTIONS_GRAPHICS_DEVICES 12099
+#define IDS_HD_OPTIONS_NETWORK_DEVICES  12100
+#define IDS_HD_OPTIONS_RAPL_DEVICES     12101
 #define IDS_HD_FIRST                    IDS_HD_NO_GRAPHICS_NODES
-#define IDS_HD_LAST                     IDS_HD_GROUP_CLASS
+#define IDS_HD_LAST                     IDS_HD_OPTIONS_RAPL_DEVICES
 
 // Next default values for new objects
 //
@@ -191,6 +195,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        118
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1045
-#define _APS_NEXT_SYMED_VALUE           12098
+#define _APS_NEXT_SYMED_VALUE           12102
 #endif
 #endif

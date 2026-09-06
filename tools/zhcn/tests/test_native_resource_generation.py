@@ -1068,11 +1068,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('L"', tray_array)
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_ALPC_UNCONNECTED$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_OPTIONS_PLUGINS$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2704$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2710$",
         )
 
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
@@ -1595,7 +1595,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1856 strings", result.stdout)
+        self.assertIn("1876 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2044,7 +2044,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 704)
+        self.assertEqual(len(stringtable_ids(resource_script)), 710)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -2084,7 +2084,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2704)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2710)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -2577,11 +2577,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_ALPC_UNCONNECTED$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_OPTIONS_PLUGINS$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2704$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2710$",
         )
 
     def test_early_crash_prompt_does_not_depend_on_ui_string_cache(self) -> None:
@@ -3320,7 +3320,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61230$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61231$",
         )
 
     def test_module_services_thread_does_not_use_auto_pool_before_initialization(
@@ -3557,8 +3557,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
         }
         expected_aps = {
             "WindowExplorer": 12122,
-            "OnlineChecks": 12005,
-            "Updater": 12009,
+            "OnlineChecks": 12006,
+            "Updater": 12010,
         }
 
         for plugin, resources in expected_resources.items():
@@ -5311,7 +5311,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertLess(status_update, result_release)
         self.assertLess(result_release, tree_update)
 
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12022$")
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12023$")
         migrated_resource_ids = "|".join(
             re.escape(resource_id) for resource_id in expected_resources
         )
@@ -5331,7 +5331,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(
             len(
                 re.findall(
-                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\NetworkTools\.dll=22'",
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\NetworkTools\.dll=23'",
                     workflow,
                 )
             ),
@@ -5564,13 +5564,13 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     expected_count,
                 )
 
-        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12098$")
-        self.assertEqual(len(stringtable_ids(english_resource)), 98)
-        self.assertEqual(len(stringtable_ids(chinese_resource)), 98)
+        self.assertRegex(resource_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12102$")
+        self.assertEqual(len(stringtable_ids(english_resource)), 102)
+        self.assertEqual(len(stringtable_ids(chinese_resource)), 102)
         self.assertEqual(
             len(
                 re.findall(
-                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=98'",
+                    r"--expect-string-count-in\s+'bin\\Release64\\plugins\\HardwareDevices\.dll=102'",
                     workflow,
                 )
             ),
@@ -6264,17 +6264,18 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 704): 2,
+                    (r"bin\Release64\sys_info.exe", 710): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
+                    (r"bin\Release64\plugins\ExtendedNotifications.dll", 4): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 70): 2,
-                    (r"bin\Release64\plugins\ExtendedTools.dll", 230): 2,
-                    (r"bin\Release64\plugins\HardwareDevices.dll", 98): 2,
-                    (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
+                    (r"bin\Release64\plugins\ExtendedTools.dll", 231): 2,
+                    (r"bin\Release64\plugins\HardwareDevices.dll", 102): 2,
+                    (r"bin\Release64\plugins\NetworkTools.dll", 23): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 122): 2,
-                    (r"bin\Release64\plugins\OnlineChecks.dll", 5): 2,
-                    (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
-                    (r"bin\Release64\plugins\Updater.dll", 9): 2,
-                    (r"bin\Release64\plugins\UserNotes.dll", 19): 2,
+                    (r"bin\Release64\plugins\OnlineChecks.dll", 6): 2,
+                    (r"bin\Release64\plugins\ToolStatus.dll", 104): 2,
+                    (r"bin\Release64\plugins\Updater.dll", 10): 2,
+                    (r"bin\Release64\plugins\UserNotes.dll", 20): 2,
                     (r"bin\Release64\peview.exe", 311): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,
                     (r"build\output\systeminformer-build-canary-setup.exe", 74): 1,

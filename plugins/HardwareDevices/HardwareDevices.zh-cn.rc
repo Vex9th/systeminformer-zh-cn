@@ -367,4 +367,8 @@ BEGIN
     IDS_HD_RAPL                     "RAPL"
     IDS_HD_GROUP_GENERAL            "常规"
     IDS_HD_GROUP_CLASS              "类"
+    IDS_HD_OPTIONS_DISK_DEVICES     "磁盘设备"
+    IDS_HD_OPTIONS_GRAPHICS_DEVICES "图形设备"
+    IDS_HD_OPTIONS_NETWORK_DEVICES  "网络设备"
+    IDS_HD_OPTIONS_RAPL_DEVICES     "RAPL 设备"
 END

@@ -21,6 +21,7 @@
 #define IDS_UP_NEXT_UPDATE_CHECK_FORMAT 12006
 #define IDS_UP_NEW_VERSION_AVAILABLE    12007
 #define IDS_UP_CHECK_FOR_UPDATES        12008
+#define IDS_UP_OPTIONS_SECTION          12009
 
 // Next default values for new objects
 // 
@@ -29,6 +30,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1009
-#define _APS_NEXT_SYMED_VALUE           12009
+#define _APS_NEXT_SYMED_VALUE           12010
 #endif
 #endif

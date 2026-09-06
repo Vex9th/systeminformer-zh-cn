@@ -46,4 +46,5 @@ BEGIN
     IDS_UP_NEXT_UPDATE_CHECK_FORMAT "下次检查更新：%s"
     IDS_UP_NEW_VERSION_AVAILABLE    "System Informer 有新版本可用"
     IDS_UP_CHECK_FOR_UPDATES        "帮助菜单 > 检查更新"
+    IDS_UP_OPTIONS_SECTION          "更新检查"
 END

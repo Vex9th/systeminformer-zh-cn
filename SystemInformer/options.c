@@ -12,8 +12,6 @@
 
 #include <phapp.h>
 
-#include <phtranslation.h>
-
 #include <commdlg.h>
 #include <colmgr.h>
 #include <colorbox.h>
@@ -120,9 +118,20 @@ PPH_OPTIONS_SECTION PhOptionsCreateSection(
     _In_opt_ PVOID Parameter
     );
 
+_Function_class_(PH_OPTIONS_CREATE_SECTION2)
+PPH_OPTIONS_SECTION PhOptionsCreateSection2(
+    _In_ PCWSTR Name,
+    _In_ PVOID Instance,
+    _In_ ULONG NameResourceId,
+    _In_ PCWSTR Template,
+    _In_ DLGPROC DialogProc,
+    _In_opt_ PVOID Parameter
+    );
+
 PPH_OPTIONS_SECTION PhOptionsCreateSectionAdvanced(
     _In_ PCWSTR Name,
     _In_ PVOID Instance,
+    _In_ ULONG NameResourceId,
     _In_ PCWSTR Template,
     _In_ DLGPROC DialogProc,
     _In_opt_ PVOID Parameter
@@ -224,7 +233,7 @@ static HTREEITEM PhpTreeViewInsertItem(
     insert.hParent = TVI_ROOT;
     insert.hInsertAfter = HandleInsertAfter;
     insert.item.mask = TVIF_TEXT | TVIF_PARAM;
-    insert.item.pszText = (PWSTR)PhTranslateString(Text);
+    insert.item.pszText = (PWSTR)Text;
     insert.item.lParam = (LPARAM)Context;
 
     return TreeView_InsertItem(OptionsTreeControl, &insert);
@@ -262,7 +271,7 @@ static VOID PhpOptionsShowHideTreeViewItem(
         {
             advancedSection->TreeItemHandle = PhpTreeViewInsertItem(
                 generalSection->TreeItemHandle,
-                advancedName.Buffer,
+                PhGetString(advancedSection->DisplayName),
                 advancedSection
                 );
         }
@@ -455,12 +464,12 @@ INT_PTR CALLBACK PhOptionsDialogProc(
                 SectionList = PhCreateList(8);
                 CurrentSection = NULL;
 
-                section = PhOptionsCreateSection(L"General", PhInstanceHandle, MAKEINTRESOURCE(IDD_OPTGENERAL), PhpOptionsGeneralDlgProc, NULL);
-                PhOptionsCreateSectionAdvanced(L"Advanced", PhInstanceHandle, MAKEINTRESOURCE(IDD_OPTADVANCED), PhpOptionsAdvancedDlgProc, NULL);
-                PhOptionsCreateSection(L"Highlighting", PhInstanceHandle, MAKEINTRESOURCE(IDD_OPTHIGHLIGHTING), PhpOptionsHighlightingDlgProc, NULL);
-                PhOptionsCreateSection(L"Tray Icon", PhInstanceHandle, MAKEINTRESOURCE(IDD_OPTTRAYICON), PhpOptionsTrayIconDlgProc, NULL);
-                PhOptionsCreateSection(L"Graphs", PhInstanceHandle, MAKEINTRESOURCE(IDD_OPTGRAPHS), PhpOptionsGraphsDlgProc, NULL);
-                PhOptionsCreateSection(L"Plugins", PhInstanceHandle, MAKEINTRESOURCE(IDD_PLUGINS), PhPluginsDlgProc, NULL);
+                section = PhOptionsCreateSection2(L"General", PhInstanceHandle, IDS_PH_OPTIONS_GENERAL, MAKEINTRESOURCE(IDD_OPTGENERAL), PhpOptionsGeneralDlgProc, NULL);
+                PhOptionsCreateSectionAdvanced(L"Advanced", PhInstanceHandle, IDS_PH_OPTIONS_ADVANCED, MAKEINTRESOURCE(IDD_OPTADVANCED), PhpOptionsAdvancedDlgProc, NULL);
+                PhOptionsCreateSection2(L"Highlighting", PhInstanceHandle, IDS_PH_OPTIONS_HIGHLIGHTING, MAKEINTRESOURCE(IDD_OPTHIGHLIGHTING), PhpOptionsHighlightingDlgProc, NULL);
+                PhOptionsCreateSection2(L"Tray Icon", PhInstanceHandle, IDS_PH_OPTIONS_TRAY_ICON, MAKEINTRESOURCE(IDD_OPTTRAYICON), PhpOptionsTrayIconDlgProc, NULL);
+                PhOptionsCreateSection2(L"Graphs", PhInstanceHandle, IDS_PH_OPTIONS_GRAPHS, MAKEINTRESOURCE(IDD_OPTGRAPHS), PhpOptionsGraphsDlgProc, NULL);
+                PhOptionsCreateSection2(L"Plugins", PhInstanceHandle, IDS_PH_OPTIONS_PLUGINS, MAKEINTRESOURCE(IDD_PLUGINS), PhPluginsDlgProc, NULL);
 
                 if (PhPluginsEnabled)
                 {
@@ -470,6 +479,7 @@ INT_PTR CALLBACK PhOptionsDialogProc(
                     pointers.CreateSection = PhOptionsCreateSection;
                     pointers.FindSection = PhOptionsFindSection;
                     pointers.EnterSectionView = PhOptionsEnterSectionView;
+                    pointers.CreateSection2 = PhOptionsCreateSection2;
 
                     PhInvokeCallback(PhGetGeneralCallback(GeneralCallbackOptionsWindowInitializing), &pointers);
                 }
@@ -696,6 +706,47 @@ VOID PhOptionsOnSize(
     }
 }
 
+static PPH_OPTIONS_SECTION PhpOptionsCreateSection(
+    _In_ PCWSTR Name,
+    _In_ PVOID Instance,
+    _In_ ULONG NameResourceId,
+    _In_ PCWSTR Template,
+    _In_ DLGPROC DialogProc,
+    _In_opt_ PVOID Parameter,
+    _In_ BOOLEAN InsertTreeItem
+    )
+{
+    PPH_OPTIONS_SECTION section;
+
+    section = PhAllocateZero(sizeof(PH_OPTIONS_SECTION));
+    section->NameString = PhCreateString(Name);
+    section->Name = section->NameString->sr;
+
+    if (NameResourceId)
+        section->DisplayName = PhLoadUiString(Instance, NameResourceId, NULL);
+
+    if (!section->DisplayName)
+        section->DisplayName = PhReferenceObject(section->NameString);
+
+    section->Instance = Instance;
+    section->Template = Template;
+    section->DialogProc = DialogProc;
+    section->Parameter = Parameter;
+
+    if (InsertTreeItem)
+    {
+        section->TreeItemHandle = PhpTreeViewInsertItem(
+            TVI_LAST,
+            PhGetString(section->DisplayName),
+            section
+            );
+    }
+
+    PhAddItemList(SectionList, section);
+
+    return section;
+}
+
 _Function_class_(PH_OPTIONS_CREATE_SECTION)
 PPH_OPTIONS_SECTION PhOptionsCreateSection(
     _In_ PCWSTR Name,
@@ -705,47 +756,40 @@ PPH_OPTIONS_SECTION PhOptionsCreateSection(
     _In_opt_ PVOID Parameter
     )
 {
-    PPH_OPTIONS_SECTION section;
-
-    section = PhAllocateZero(sizeof(PH_OPTIONS_SECTION));
-    PhInitializeStringRefLongHint(&section->Name, Name);
-    section->Instance = Instance;
-    section->Template = Template;
-    section->DialogProc = DialogProc;
-    section->Parameter = Parameter;
-    section->TreeItemHandle = PhpTreeViewInsertItem(TVI_LAST, Name, section);
-
-    PhAddItemList(SectionList, section);
-
-    return section;
+    return PhpOptionsCreateSection(Name, Instance, 0, Template, DialogProc, Parameter, TRUE);
 }
 
-PPH_OPTIONS_SECTION PhOptionsCreateSectionAdvanced(
+_Function_class_(PH_OPTIONS_CREATE_SECTION2)
+PPH_OPTIONS_SECTION PhOptionsCreateSection2(
     _In_ PCWSTR Name,
     _In_ PVOID Instance,
+    _In_ ULONG NameResourceId,
     _In_ PCWSTR Template,
     _In_ DLGPROC DialogProc,
     _In_opt_ PVOID Parameter
     )
 {
-    PPH_OPTIONS_SECTION section;
+    return PhpOptionsCreateSection(Name, Instance, NameResourceId, Template, DialogProc, Parameter, TRUE);
+}
 
-    section = PhAllocateZero(sizeof(PH_OPTIONS_SECTION));
-    PhInitializeStringRefLongHint(&section->Name, Name);
-    section->Instance = Instance;
-    section->Template = Template;
-    section->DialogProc = DialogProc;
-    section->Parameter = Parameter;
-
-    PhAddItemList(SectionList, section);
-
-    return section;
+PPH_OPTIONS_SECTION PhOptionsCreateSectionAdvanced(
+    _In_ PCWSTR Name,
+    _In_ PVOID Instance,
+    _In_ ULONG NameResourceId,
+    _In_ PCWSTR Template,
+    _In_ DLGPROC DialogProc,
+    _In_opt_ PVOID Parameter
+    )
+{
+    return PhpOptionsCreateSection(Name, Instance, NameResourceId, Template, DialogProc, Parameter, FALSE);
 }
 
 VOID PhOptionsDestroySection(
     _In_ PPH_OPTIONS_SECTION Section
     )
 {
+    PhDereferenceObject(Section->NameString);
+    PhDereferenceObject(Section->DisplayName);
     PhFree(Section);
 }
 

@@ -3302,6 +3302,12 @@ BEGIN
     IDS_PH_HANDLE_ALPC_CLIENT_COMMUNICATION             "Client communication"
     IDS_PH_HANDLE_ALPC_SERVER_COMMUNICATION             "Server communication"
     IDS_PH_HANDLE_ALPC_UNCONNECTED                      "Unconnected"
+    IDS_PH_OPTIONS_GENERAL                              "General"
+    IDS_PH_OPTIONS_ADVANCED                             "Advanced"
+    IDS_PH_OPTIONS_HIGHLIGHTING                         "Highlighting"
+    IDS_PH_OPTIONS_TRAY_ICON                            "Tray Icon"
+    IDS_PH_OPTIONS_GRAPHS                               "Graphs"
+    IDS_PH_OPTIONS_PLUGINS                              "Plugins"
 END
 
 /////////////////////////////////////////////////////////////////////////////
