@@ -565,14 +565,14 @@ VOID PhpInitializeHandleObjectTree(
     TreeNew_SetCallback(Context->TreeNewHandle, PhpHandleObjectTreeNewCallback, Context);
 
     // Default columns
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_PROCESS, TRUE, L"Process", 100, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_TYPE, TRUE, L"Type", 100, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_NAME, TRUE, L"Name", 200, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_HANDLE, TRUE, L"Handle", 80, PH_ALIGN_LEFT, 3, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_PROCESS, TRUE, PhGetApplicationUiString(IDS_PH_LISTVIEW_PROCESS), 100, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_TYPE, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE), 100, PH_ALIGN_LEFT, 1, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_NAME, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), 200, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_HANDLE, TRUE, PhGetApplicationUiString(IDS_PH_LISTVIEW_HANDLE), 80, PH_ALIGN_LEFT, 3, 0);
     // Customizable columns
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_OBJECTADDRESS, FALSE, L"Object address", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_ORIGINALNAME, FALSE, L"Original name", 200, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_GRANTEDACCESS, FALSE, L"Granted access", 200, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_OBJECTADDRESS, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_OBJECT_ADDRESS), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_ORIGINALNAME, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ORIGINAL_NAME), 200, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_OBJECT_SEARCH_TREE_COLUMN_GRANTEDACCESS, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_GRANTED_ACCESS), 200, PH_ALIGN_LEFT, ULONG_MAX, 0);
 
     TreeNew_SetTriState(Context->TreeNewHandle, TRUE);
     TreeNew_SetRedraw(Context->TreeNewHandle, TRUE);

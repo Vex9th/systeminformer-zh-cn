@@ -154,7 +154,7 @@ jobs:
           'bin\Release64\plugins\WindowExplorer.dll'
         )
         python tools\zhcn\validate_templates.py @resourceTargets `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=1126' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=1296' `
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=108' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `
@@ -316,7 +316,7 @@ jobs:
         python tools\zhcn\validate_templates.py @resourceTargets `
           --require-strings-in 'build\output\systeminformer-build-release-setup.exe' `
           --require-strings-in 'build\output\systeminformer-build-canary-setup.exe' `
-          --expect-string-count-in 'bin\Release64\sys_info.exe=1126' `
+          --expect-string-count-in 'bin\Release64\sys_info.exe=1296' `
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=108' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `

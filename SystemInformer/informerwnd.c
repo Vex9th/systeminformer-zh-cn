@@ -3045,20 +3045,20 @@ VOID PhpInformerInitializeColumns(
 
     TreeNew_SetSort(tn, PHIC_TIME, NoSortOrder);
 
-    PhAddTreeNewColumn(tn, PHIC_TIME, TRUE, L"Time", 140, PH_ALIGN_RIGHT, 0, DT_RIGHT);
-    PhAddTreeNewColumn(tn, PHIC_DURATION, FALSE, L"Duration", 70, PH_ALIGN_RIGHT, 1, DT_RIGHT);
-    PhAddTreeNewColumn(tn, PHIC_PROCESS,TRUE, L"Process", 120, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(tn, PHIC_TIME, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_TIME), 140, PH_ALIGN_RIGHT, 0, DT_RIGHT);
+    PhAddTreeNewColumn(tn, PHIC_DURATION, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_DURATION), 70, PH_ALIGN_RIGHT, 1, DT_RIGHT);
+    PhAddTreeNewColumn(tn, PHIC_PROCESS,TRUE, PhGetApplicationUiString(IDS_PH_LISTVIEW_PROCESS), 120, PH_ALIGN_LEFT, 2, 0);
     PhAddTreeNewColumn(tn, PHIC_PID, TRUE, PhGetApplicationUiString(IDS_PH_PID), 50, PH_ALIGN_RIGHT, 3, DT_RIGHT);
-    PhAddTreeNewColumn(tn, PHIC_TID, TRUE, L"TID", 50, PH_ALIGN_RIGHT, 4, DT_RIGHT);
-    PhAddTreeNewColumn(tn, PHIC_START_KEY, FALSE, L"Start key", 140, PH_ALIGN_LEFT, 5, 0);
-    PhAddTreeNewColumn(tn, PHIC_ATTACHED_PROCESS, FALSE, L"Attached process", 120, PH_ALIGN_LEFT, 6, 0);
-    PhAddTreeNewColumn(tn, PHIC_ATTACHED_PID, FALSE, L"Attached PID", 60, PH_ALIGN_RIGHT, 7, DT_RIGHT);
-    PhAddTreeNewColumn(tn, PHIC_ATTACHED_START_KEY, FALSE, L"Attached start key", 140, PH_ALIGN_LEFT, 8, 0);
-    PhAddTreeNewColumn(tn, PHIC_CATEGORY, TRUE, L"Category", 60, PH_ALIGN_LEFT, 9, 0);
-    PhAddTreeNewColumn(tn, PHIC_EVENT, TRUE, L"Event", 100, PH_ALIGN_LEFT, 10, 0);
-    PhAddTreeNewColumn(tn, PHIC_PATH, TRUE, L"Path", 200, PH_ALIGN_LEFT, 11, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(tn, PHIC_RESULT, TRUE, L"Result", 60, PH_ALIGN_LEFT, 12, 0);
-    PhAddTreeNewColumn(tn, PHIC_DETAILS, TRUE, L"Details", 200, PH_ALIGN_LEFT, 13, 0);
+    PhAddTreeNewColumn(tn, PHIC_TID, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_TID), 50, PH_ALIGN_RIGHT, 4, DT_RIGHT);
+    PhAddTreeNewColumn(tn, PHIC_START_KEY, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_START_KEY), 140, PH_ALIGN_LEFT, 5, 0);
+    PhAddTreeNewColumn(tn, PHIC_ATTACHED_PROCESS, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ATTACHED_PROCESS), 120, PH_ALIGN_LEFT, 6, 0);
+    PhAddTreeNewColumn(tn, PHIC_ATTACHED_PID, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ATTACHED_PID), 60, PH_ALIGN_RIGHT, 7, DT_RIGHT);
+    PhAddTreeNewColumn(tn, PHIC_ATTACHED_START_KEY, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ATTACHED_START_KEY), 140, PH_ALIGN_LEFT, 8, 0);
+    PhAddTreeNewColumn(tn, PHIC_CATEGORY, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_CATEGORY), 60, PH_ALIGN_LEFT, 9, 0);
+    PhAddTreeNewColumn(tn, PHIC_EVENT, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_EVENT), 100, PH_ALIGN_LEFT, 10, 0);
+    PhAddTreeNewColumn(tn, PHIC_PATH, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_PATH), 200, PH_ALIGN_LEFT, 11, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(tn, PHIC_RESULT, TRUE, PhGetApplicationUiString(IDS_PH_LISTVIEW_RESULT), 60, PH_ALIGN_LEFT, 12, 0);
+    PhAddTreeNewColumn(tn, PHIC_DETAILS, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_DETAILS), 200, PH_ALIGN_LEFT, 13, 0);
 
     PhCmInitializeManager(&Context->Cm, tn, PHIC_MAXIMUM, PhpInformerPostSortFunction);
 

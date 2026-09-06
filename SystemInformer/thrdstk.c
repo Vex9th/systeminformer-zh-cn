@@ -814,19 +814,19 @@ VOID InitializeThreadStackTree(
     TreeNew_SetCallback(Context->TreeNewHandle, ThreadStackTreeNewCallback, Context);
 
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_INDEX, TRUE, L"#", 30, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_SYMBOL, TRUE, L"Name", 250, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_STACKADDRESS, FALSE, L"Stack address", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_FRAMEADDRESS, FALSE, L"Frame address", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER1, FALSE, L"Stack parameter #1", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER2, FALSE, L"Stack parameter #2", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER3, FALSE, L"Stack parameter #3", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER4, FALSE, L"Stack parameter #4", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_CONTROLADDRESS, FALSE, L"Control address", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_RETURNADDRESS, FALSE, L"Return address", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_SYMBOL, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), 250, PH_ALIGN_LEFT, 1, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_STACKADDRESS, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_STACK_ADDRESS), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_FRAMEADDRESS, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_FRAME_ADDRESS), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER1, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_STACK_PARAMETER_1), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER2, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_STACK_PARAMETER_2), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER3, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_STACK_PARAMETER_3), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_PARAMETER4, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_STACK_PARAMETER_4), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_CONTROLADDRESS, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_CONTROL_ADDRESS), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_RETURNADDRESS, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_RETURN_ADDRESS), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_FILENAME, FALSE, PhGetApplicationUiString(IDS_PH_FILE_NAME), 100, PH_ALIGN_LEFT, ULONG_MAX, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_LINETEXT, FALSE, L"Line number", 100, PH_ALIGN_LEFT, ULONG_MAX, DT_PATH_ELLIPSIS);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_ARCHITECTURE, FALSE, L"Architecture", 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_FRAMEDISTANCE, FALSE, L"Frame distance", 100, PH_ALIGN_RIGHT, ULONG_MAX, DT_RIGHT);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_LINETEXT, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_LINE_NUMBER), 100, PH_ALIGN_LEFT, ULONG_MAX, DT_PATH_ELLIPSIS);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_ARCHITECTURE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ARCHITECTURE), 100, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(Context->TreeNewHandle, PH_STACK_TREE_COLUMN_FRAMEDISTANCE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_FRAME_DISTANCE), 100, PH_ALIGN_RIGHT, ULONG_MAX, DT_RIGHT);
 
     PhInitializeTreeNewFilterSupport(&Context->TreeFilterSupport, Context->TreeNewHandle, Context->NodeList);
     Context->TreeFilterEntry = PhAddTreeNewFilter(&Context->TreeFilterSupport, PhpThreadStackTreeFilterCallback, Context);

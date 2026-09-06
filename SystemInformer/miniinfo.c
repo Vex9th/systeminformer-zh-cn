@@ -1653,7 +1653,7 @@ INT_PTR CALLBACK PhMipListSectionDialogProc(
             TreeNew_SetRedraw(listSection->TreeNewHandle, FALSE);
             TreeNew_SetCallback(listSection->TreeNewHandle, PhMipListSectionTreeNewCallback, listSection);
             TreeNew_SetRowHeight(listSection->TreeNewHandle, PhMipCalculateRowHeight(hwndDlg));
-            PhAddTreeNewColumnEx2(listSection->TreeNewHandle, MIP_SINGLE_COLUMN_ID, TRUE, L"Process", 1, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
+            PhAddTreeNewColumnEx2(listSection->TreeNewHandle, MIP_SINGLE_COLUMN_ID, TRUE, PhGetApplicationUiString(IDS_PH_LISTVIEW_PROCESS), 1, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
             TreeNew_SetRedraw(listSection->TreeNewHandle, TRUE);
 
             listSection->Callback(listSection, MiListSectionDialogCreated, hwndDlg, NULL);

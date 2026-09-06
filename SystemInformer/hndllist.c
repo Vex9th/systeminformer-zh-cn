@@ -86,21 +86,21 @@ VOID PhInitializeHandleList(
     TreeNew_SetRedraw(hwnd, FALSE);
 
     // Default columns
-    PhAddTreeNewColumn(hwnd, PHHNTLC_TYPE, TRUE, L"Type", 100, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_NAME, TRUE, L"Name", 200, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_GRANTEDACCESSSYMBOLIC, TRUE, L"Granted access (symbolic)", 140, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_TYPE, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE), 100, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_NAME, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), 200, PH_ALIGN_LEFT, 1, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_GRANTEDACCESSSYMBOLIC, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_GRANTED_ACCESS_SYMBOLIC), 140, PH_ALIGN_LEFT, 2, 0);
 
-    PhAddTreeNewColumn(hwnd, PHHNTLC_HANDLE, FALSE, L"Handle", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_OBJECTADDRESS, FALSE, L"Object address", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumnEx(hwnd, PHHNTLC_ATTRIBUTES, FALSE, L"Attributes", 120, PH_ALIGN_LEFT, ULONG_MAX, 0, TRUE);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_GRANTEDACCESS, FALSE, L"Granted access", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_ORIGINALNAME, FALSE, L"Original name", 200, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumnEx(hwnd, PHHNTLC_FILESHAREACCESS, FALSE, L"File share access", 50, PH_ALIGN_LEFT, ULONG_MAX, 0, TRUE);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_HANDLEVALUE, FALSE, L"Handle value", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_HANDLECOUNT, FALSE, L"Handle count", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_POINTERCOUNT, FALSE, L"Reference count", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_PAGEDSIZE, FALSE, L"Paged size", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(hwnd, PHHNTLC_NONPAGEDSIZE, FALSE, L"Nonpaged size", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_HANDLE, FALSE, PhGetApplicationUiString(IDS_PH_LISTVIEW_HANDLE), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_OBJECTADDRESS, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_OBJECT_ADDRESS), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumnEx(hwnd, PHHNTLC_ATTRIBUTES, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ATTRIBUTES), 120, PH_ALIGN_LEFT, ULONG_MAX, 0, TRUE);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_GRANTEDACCESS, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_GRANTED_ACCESS), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_ORIGINALNAME, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ORIGINAL_NAME), 200, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumnEx(hwnd, PHHNTLC_FILESHAREACCESS, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_FILE_SHARE_ACCESS), 50, PH_ALIGN_LEFT, ULONG_MAX, 0, TRUE);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_HANDLEVALUE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_HANDLE_VALUE), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_HANDLECOUNT, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_HANDLE_COUNT), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_POINTERCOUNT, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_REFERENCE_COUNT), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_PAGEDSIZE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_PAGED_SIZE), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(hwnd, PHHNTLC_NONPAGEDSIZE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_NONPAGED_SIZE), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
 
     TreeNew_SetRedraw(hwnd, TRUE);
 

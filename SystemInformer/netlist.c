@@ -126,21 +126,21 @@ VOID PhInitializeNetworkTreeList(
     TreeNew_SetImageList(TreeNewHandle, PhProcessSmallImageList);
 
     // Default columns
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_PROCESS, TRUE, L"Name", 100, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_PROCESS, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), 100, PH_ALIGN_LEFT, 0, 0);
     PhAddTreeNewColumn(TreeNewHandle, PHNETLC_PID, TRUE, PhGetApplicationUiString(IDS_PH_PID), 50, PH_ALIGN_RIGHT, 1, DT_RIGHT);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_LOCALADDRESS, TRUE, L"Local address", 120, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_LOCALPORT, TRUE, L"Local port", 50, PH_ALIGN_RIGHT, 3, DT_RIGHT);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_REMOTEADDRESS, TRUE, L"Remote address", 120, PH_ALIGN_LEFT, 4, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_REMOTEPORT, TRUE, L"Remote port", 50, PH_ALIGN_RIGHT, 5, DT_RIGHT);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_PROTOCOL, TRUE, L"Protocol", 45, PH_ALIGN_LEFT, 6, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_STATE, TRUE, L"State", 70, PH_ALIGN_LEFT, 7, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_OWNER, TRUE, L"Owner", 80, PH_ALIGN_LEFT, 8, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_LOCALADDRESS, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_LOCAL_ADDRESS), 120, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_LOCALPORT, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_LOCAL_PORT), 50, PH_ALIGN_RIGHT, 3, DT_RIGHT);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_REMOTEADDRESS, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_REMOTE_ADDRESS), 120, PH_ALIGN_LEFT, 4, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_REMOTEPORT, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_REMOTE_PORT), 50, PH_ALIGN_RIGHT, 5, DT_RIGHT);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_PROTOCOL, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_PROTOCOL), 45, PH_ALIGN_LEFT, 6, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_STATE, TRUE, PhGetApplicationUiString(IDS_PH_SESSION_STATE), 70, PH_ALIGN_LEFT, 7, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_OWNER, TRUE, PhGetApplicationUiString(IDS_PH_HANDLE_SECURITY_OWNER), 80, PH_ALIGN_LEFT, 8, 0);
 
-    PhAddTreeNewColumnEx(TreeNewHandle, PHNETLC_TIMESTAMP, FALSE, L"Time stamp", 100, PH_ALIGN_LEFT, ULONG_MAX, 0, TRUE);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_LOCALHOSTNAME, FALSE, L"Local hostname", 120, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_REMOTEHOSTNAME, FALSE, L"Remote hostname", 120, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumnEx(TreeNewHandle, PHNETLC_TIMESTAMP, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_TIME_STAMP), 100, PH_ALIGN_LEFT, ULONG_MAX, 0, TRUE);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_LOCALHOSTNAME, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_LOCAL_HOSTNAME), 120, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_REMOTEHOSTNAME, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_REMOTE_HOSTNAME), 120, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumnEx2(TreeNewHandle, PHNETLC_TIMELINE, FALSE, PhGetApplicationUiString(IDS_PH_TIMELINE), 100, PH_ALIGN_LEFT, ULONG_MAX, 0, TN_COLUMN_FLAG_CUSTOMDRAW | TN_COLUMN_FLAG_SORTDESCENDING);
-    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_HV_SERVICE, FALSE, L"Hyper-V service", 120, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHNETLC_HV_SERVICE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_HYPER_V_SERVICE), 120, PH_ALIGN_LEFT, ULONG_MAX, 0);
 
     PhCmInitializeManager(&NetworkTreeListCm, TreeNewHandle, PHNETLC_MAXIMUM, PhpNetworkTreeNewPostSortFunction);
     PhInitializeTreeNewFilterSupport(&FilterSupport, TreeNewHandle, NetworkNodeList);

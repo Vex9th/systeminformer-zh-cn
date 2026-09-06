@@ -3283,7 +3283,7 @@ VOID PhpInitializeAttributeTreeContext(
     TreeNew_SetRedraw(TreeNewHandle, FALSE);
     TreeNew_SetCallback(TreeNewHandle, PhpAttributeTreeNewCallback, Context);
     //TreeNew_GetViewParts(TreeNewHandle, &parts); // column width = (parts.ClientRect.right - parts.VScrollWidth) // TODO: VScrollWidth not set during INITDIALOG. (dmex)
-    PhAddTreeNewColumnEx2(TreeNewHandle, 0, TRUE, L"Attributes", 200, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_NODPISCALEONADD);
+    PhAddTreeNewColumnEx2(TreeNewHandle, 0, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_ATTRIBUTES), 200, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_NODPISCALEONADD);
     TreeNew_SetRedraw(TreeNewHandle, TRUE);
 }
 
@@ -3457,7 +3457,7 @@ INT_PTR CALLBACK PhpTokenCapabilitiesPageProc(
             TreeNew_SetRedraw(tnHandle, FALSE);
             TreeNew_SetEmptyText(tnHandle, &PhpEmptyTokenCapabilitiesText, 0);
             TreeNew_SetCallback(tnHandle, PhpAttributeTreeNewCallback, &tokenPageContext->CapsTreeContext);
-            PhAddTreeNewColumnEx2(tnHandle, 0, TRUE, L"Capabilities", 200, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_NODPISCALEONADD);
+            PhAddTreeNewColumnEx2(tnHandle, 0, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_CAPABILITIES), 200, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_NODPISCALEONADD);
             PhpAddTokenCapabilities(tokenPageContext, tnHandle);
             TreeNew_NodesStructured(tnHandle);
             TreeNew_SetRedraw(tnHandle, TRUE);
@@ -6276,7 +6276,7 @@ INT_PTR CALLBACK PhpTokenAppPolicyPageProc(
             TreeNew_SetRedraw(tnHandle, FALSE);
             TreeNew_SetEmptyText(tnHandle, &PhAppPolicyLoadingText, 0);
             TreeNew_SetCallback(tnHandle, PhpAppPolicyTreeNewCallback, &tokenPageContext->AppPolicyTreeContext);
-            PhAddTreeNewColumnEx2(tnHandle, 0, TRUE, L"Policy", 220, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_NODPISCALEONADD);
+            PhAddTreeNewColumnEx2(tnHandle, 0, TRUE, PhGetApplicationUiString(IDS_PH_LISTVIEW_POLICY), 220, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_NODPISCALEONADD);
             PhAddTreeNewColumnEx2(tnHandle, 1, TRUE, PhGetApplicationUiString(IDS_PH_VALUE), 150, PH_ALIGN_LEFT, 1, 0, TN_COLUMN_FLAG_NODPISCALEONADD);
             TreeNew_SetTriState(tnHandle, TRUE);
             TreeNew_SetRedraw(tnHandle, TRUE);

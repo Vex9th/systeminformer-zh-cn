@@ -596,8 +596,8 @@ VOID PhRunAsPackageInitializeTree(
     TreeNew_SetCallback(Context->TreeNewHandle, PhRunAsPackageTreeNewCallback, Context);
     TreeNew_SetRowHeight(Context->TreeNewHandle, PhScaleToDisplay(48, Context->WindowDpi));
 
-    PhAddTreeNewColumnEx2(Context->TreeNewHandle, PH_RUNASPACKAGE_TREE_COLUMN_ITEM_NAME, TRUE, L"Package", 80, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
-    //PhAddTreeNewColumnEx2(Context->TreeNewHandle, PH_PLUGIN_TREE_COLUMN_ITEM_VERSION, TRUE, L"Version", 80, PH_ALIGN_CENTER, 1, DT_CENTER, 0);
+    PhAddTreeNewColumnEx2(Context->TreeNewHandle, PH_RUNASPACKAGE_TREE_COLUMN_ITEM_NAME, TRUE, PhGetApplicationUiString(IDS_PH_GROUP_PACKAGE), 80, PH_ALIGN_LEFT, 0, 0, TN_COLUMN_FLAG_CUSTOMDRAW);
+    //PhAddTreeNewColumnEx2(Context->TreeNewHandle, PH_PLUGIN_TREE_COLUMN_ITEM_VERSION, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_VERSION), 80, PH_ALIGN_CENTER, 1, DT_CENTER, 0);
 
     //PhRunAsPackageLoadSettingsTreeList(Context);
 

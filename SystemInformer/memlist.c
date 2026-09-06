@@ -63,23 +63,23 @@ VOID PhInitializeMemoryList(
     TreeNew_SetCallback(TreeNewHandle, PhpMemoryTreeNewCallback, Context);
 
     // Default columns
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_BASEADDRESS, TRUE, L"Base address", 120, PH_ALIGN_LEFT | (enableMonospaceFont ? PH_ALIGN_MONOSPACE_FONT : 0), -2, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_TYPE, TRUE, L"Type", 90, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_SIZE, TRUE, L"Size", 80, PH_ALIGN_RIGHT, 1, DT_RIGHT, TRUE);
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_PROTECTION, TRUE, L"Protection", 60, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_USE, TRUE, L"Use", 200, PH_ALIGN_LEFT, 3, 0);
-    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_TOTALWS, TRUE, L"Total WS", 80, PH_ALIGN_RIGHT, 4, DT_RIGHT, TRUE);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_BASEADDRESS, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_BASE_ADDRESS), 120, PH_ALIGN_LEFT | (enableMonospaceFont ? PH_ALIGN_MONOSPACE_FONT : 0), -2, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_TYPE, TRUE, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE), 90, PH_ALIGN_LEFT, 0, 0);
+    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_SIZE, TRUE, PhGetApplicationUiString(IDS_PH_HANDLE_SIZE), 80, PH_ALIGN_RIGHT, 1, DT_RIGHT, TRUE);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_PROTECTION, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_PROTECTION), 60, PH_ALIGN_LEFT, 2, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_USE, TRUE, PhGetApplicationUiString(IDS_PH_LISTVIEW_USE), 200, PH_ALIGN_LEFT, 3, 0);
+    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_TOTALWS, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_TOTAL_WS), 80, PH_ALIGN_RIGHT, 4, DT_RIGHT, TRUE);
     PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_PRIVATEWS, TRUE, PhGetApplicationUiString(IDS_PH_STAT_PRIVATEWS), 80, PH_ALIGN_RIGHT, 5, DT_RIGHT, TRUE);
     PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_SHAREABLEWS, TRUE, PhGetApplicationUiString(IDS_PH_STAT_SHAREABLEWS), 80, PH_ALIGN_RIGHT, 6, DT_RIGHT, TRUE);
     PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_SHAREDWS, TRUE, PhGetApplicationUiString(IDS_PH_STAT_SHAREDWS), 80, PH_ALIGN_RIGHT, 7, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_LOCKEDWS, TRUE, L"Locked WS", 80, PH_ALIGN_RIGHT, 8, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_LOCKEDWS, TRUE, PhGetApplicationUiString(IDS_PH_TREENEW_LOCKED_WS), 80, PH_ALIGN_RIGHT, 8, DT_RIGHT, TRUE);
     // Customizable columns
-    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_COMMITTED, FALSE, L"Committed", 80, PH_ALIGN_RIGHT, ULONG_MAX, DT_RIGHT, TRUE);
-    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_PRIVATE, FALSE, L"Private", 80, PH_ALIGN_RIGHT, ULONG_MAX, DT_RIGHT, TRUE);
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_SIGNING_LEVEL, FALSE, L"Signing level", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_ORIGINAL_PROTECTION, FALSE, L"Original protection", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_ORIGINAL_PAGES, FALSE, L"Original pages", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
-    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_REGIONTYPE, FALSE, L"Region type", 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_COMMITTED, FALSE, PhGetApplicationUiString(IDS_PH_LISTVIEW_COMMITTED), 80, PH_ALIGN_RIGHT, ULONG_MAX, DT_RIGHT, TRUE);
+    PhAddTreeNewColumnEx(TreeNewHandle, PHMMTLC_PRIVATE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_PRIVATE), 80, PH_ALIGN_RIGHT, ULONG_MAX, DT_RIGHT, TRUE);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_SIGNING_LEVEL, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_SIGNING_LEVEL), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_ORIGINAL_PROTECTION, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ORIGINAL_PROTECTION), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_ORIGINAL_PAGES, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_ORIGINAL_PAGES), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
+    PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_REGIONTYPE, FALSE, PhGetApplicationUiString(IDS_PH_TREENEW_REGION_TYPE), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
     PhAddTreeNewColumn(TreeNewHandle, PHMMTLC_PRIORITY, FALSE, PhGetApplicationUiString(IDS_PH_STAT_PRIORITY), 80, PH_ALIGN_LEFT, ULONG_MAX, 0);
 
     PhCmInitializeManager(&Context->Cm, TreeNewHandle, PHMMTLC_MAXIMUM, PhpMemoryTreeNewPostSortFunction);
