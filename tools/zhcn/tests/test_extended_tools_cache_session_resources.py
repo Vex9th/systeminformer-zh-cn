@@ -171,7 +171,7 @@ class ExtendedToolsCacheSessionResourceTests(unittest.TestCase):
         helper = function_body(main, "EtGetUiString")
 
         self.assertRegex(header, r"(?m)^#define IDS_ET_CACHED_FIRST\s+IDS_ET_DEDICATED_MEMORY$")
-        self.assertRegex(header, r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_WCT_DATE_TIME_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_UNABLE_CREATE_FILE$")
         self.assertRegex(
             main,
             r"static\s+PPH_STRING\s+EtUiStrings\[IDS_ET_CACHED_LAST\s*-\s*IDS_ET_CACHED_FIRST\s*\+\s*1\]",
@@ -218,23 +218,23 @@ class ExtendedToolsCacheSessionResourceTests(unittest.TestCase):
                 self.assertNotIn(en, data[other])
 
         self.assertEqual([row[1] for row in RESOURCES], list(range(61116, 61132)))
-        self.assertEqual(sorted(defines.values()), list(range(61000, 61169)))
+        self.assertEqual(sorted(defines.values()), list(range(61000, 61188)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 169)
-        self.assertEqual(len(chinese), 169)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61169$")
+        self.assertEqual(len(english), 188)
+        self.assertEqual(len(chinese), 188)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61188$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=169"), 2)
+        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=188"), 2)
         self.assertNotIn("plugins\\ExtendedTools.dll=116", workflow)
 
         generator_test = (
             REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py"
         ).read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("1542 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("1561 strings", result.stdout)', generator_test)
 
     def test_migrated_literals_leave_the_fresh_audit(self):
         audit = load_audit_module()

@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2355] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2354] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and its descendants", L"及其子进程", },
@@ -2233,7 +2233,6 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2355] =
     { L"Window title", L"窗口标题", },
     { L"Windows", L"窗口", },
     { L"Windows Defender Offline Scan", L"Windows Defender 脱机扫描", },
-    { L"Windows was installed using legacy BIOS.", L"Windows 是使用传统 BIOS 安装的。", },
     { L"With AVX state context registers", L"附带 AVX 状态上下文寄存器", },
     { L"With Intel processor trace data", L"附带 Intel 处理器跟踪数据", },
     { L"With code segments", L"附带代码段", },

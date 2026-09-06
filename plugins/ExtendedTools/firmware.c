@@ -14,6 +14,21 @@
 #include "Efi\EfiTypes.h"
 #include "Efi\EfiDevicePath.h"
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
+static VOID EtAppendFirmwareAttribute(
+    _Inout_ PPH_STRING_BUILDER Builder,
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    )
+{
+    PhAppendStringBuilder2(Builder, EtGetUiString(ResourceId, Fallback));
+    PhAppendStringBuilder2(Builder, L", ");
+}
+
 PPH_STRING EtFirmwareAttributeToString(
     _In_ ULONG Attribute
     )
@@ -23,25 +38,53 @@ PPH_STRING EtFirmwareAttributeToString(
     PhInitializeStringBuilder(&sb, 0x100);
 
     if (Attribute & EFI_VARIABLE_NON_VOLATILE)
-        PhAppendStringBuilder2(&sb, L"Non Volatile, ");
+        EtAppendFirmwareAttribute(
+            &sb,
+            IDS_ET_FIRMWARE_ATTRIBUTE_NON_VOLATILE,
+            L"Non Volatile"
+            );
 
     if (Attribute & EFI_VARIABLE_BOOTSERVICE_ACCESS)
-        PhAppendStringBuilder2(&sb, L"Boot Service, ");
+        EtAppendFirmwareAttribute(
+            &sb,
+            IDS_ET_FIRMWARE_ATTRIBUTE_BOOT_SERVICE,
+            L"Boot Service"
+            );
 
     if (Attribute & EFI_VARIABLE_RUNTIME_ACCESS)
-        PhAppendStringBuilder2(&sb, L"Runtime Access, ");
+        EtAppendFirmwareAttribute(
+            &sb,
+            IDS_ET_FIRMWARE_ATTRIBUTE_RUNTIME_ACCESS,
+            L"Runtime Access"
+            );
 
     if (Attribute & EFI_VARIABLE_HARDWARE_ERROR_RECORD)
-        PhAppendStringBuilder2(&sb, L"Hardware Error Record, ");
+        EtAppendFirmwareAttribute(
+            &sb,
+            IDS_ET_FIRMWARE_ATTRIBUTE_HARDWARE_ERROR_RECORD,
+            L"Hardware Error Record"
+            );
 
     if (Attribute & EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS)
-        PhAppendStringBuilder2(&sb, L"Authenticated Write Access, ");
+        EtAppendFirmwareAttribute(
+            &sb,
+            IDS_ET_FIRMWARE_ATTRIBUTE_AUTHENTICATED_WRITE,
+            L"Authenticated Write Access"
+            );
 
     if (Attribute & EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS)
-        PhAppendStringBuilder2(&sb, L"Authenticated Write Access (Time Based), ");
+        EtAppendFirmwareAttribute(
+            &sb,
+            IDS_ET_FIRMWARE_ATTRIBUTE_TIME_BASED_AUTHENTICATED_WRITE,
+            L"Authenticated Write Access (Time Based)"
+            );
 
     if (Attribute & EFI_VARIABLE_APPEND_WRITE)
-        PhAppendStringBuilder2(&sb, L"Append Write, ");
+        EtAppendFirmwareAttribute(
+            &sb,
+            IDS_ET_FIRMWARE_ATTRIBUTE_APPEND_WRITE,
+            L"Append Write"
+            );
 
     if (PhEndsWithStringRef2(&sb.String->sr, L", ", FALSE))
         PhRemoveEndStringBuilder(&sb, 2);
@@ -243,11 +286,16 @@ INT_PTR CALLBACK EtFirmwareDlgProc(
             PhSetListViewStyle(context->ListViewHandle, TRUE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");
             SetWindowFont(context->ListViewHandle, context->WindowFont, FALSE);
-            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 100, L"Name");
-            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 140, L"Attributes");
-            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 140, L"Guid Name");
-            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 140, L"Guid");
-            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 50, L"Data Length");
+            PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 100,
+                EtGetUiString(IDS_ET_FIRMWARE_COLUMN_NAME, L"Name"));
+            PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 140,
+                EtGetUiString(IDS_ET_FIRMWARE_COLUMN_ATTRIBUTES, L"Attributes"));
+            PhAddListViewColumn(context->ListViewHandle, 2, 2, 2, LVCFMT_LEFT, 140,
+                EtGetUiString(IDS_ET_FIRMWARE_COLUMN_GUID_NAME, L"Guid Name"));
+            PhAddListViewColumn(context->ListViewHandle, 3, 3, 3, LVCFMT_LEFT, 140,
+                EtGetUiString(IDS_ET_FIRMWARE_COLUMN_GUID, L"Guid"));
+            PhAddListViewColumn(context->ListViewHandle, 4, 4, 4, LVCFMT_LEFT, 50,
+                EtGetUiString(IDS_ET_FIRMWARE_COLUMN_DATA_LENGTH, L"Data Length"));
             PhSetExtendedListView(context->ListViewHandle);
 
             //ExtendedListView_SetSortFast(context->ListViewHandle, TRUE);
@@ -362,11 +410,14 @@ INT_PTR CALLBACK EtFirmwareDlgProc(
                 if (PhGetSelectedListViewItemParams(context->ListViewHandle, &listviewItems, &numberOfItems))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"&Edit", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1,
+                        EtGetUiString(IDS_ET_MENU_EDIT, L"&Edit"), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"&Delete", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2,
+                        EtGetUiString(IDS_ET_MENU_DELETE, L"&Delete"), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY, L"&Copy", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PHAPP_IDC_COPY,
+                        EtGetUiString(IDS_ET_MENU_COPY, L"&Copy"), NULL, NULL), ULONG_MAX);
                     PhInsertCopyListViewEMenuItem(menu, PHAPP_IDC_COPY, context->ListViewHandle);
 
                     item = PhShowEMenu(
@@ -472,7 +523,10 @@ VOID EtShowFirmwareDialog(
             ParentWindowHandle,
             PhGetString(PH_AUTO(PhLoadUiString(PluginInstance->DllBase, IDS_ET_UNABLE_QUERY_FIRMWARE_TABLE, NULL))),
             L"%s",
-            L"Windows was installed using legacy BIOS."
+            EtGetUiString(
+                IDS_ET_FIRMWARE_LEGACY_BIOS,
+                L"Windows was installed using legacy BIOS."
+                )
             );
     }
 

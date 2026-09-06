@@ -12,6 +12,11 @@
 #include "exttools.h"
 #include <hexedit.h>
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 typedef struct _ET_TPM_EDITOR_CONTEXT
 {
     HWND WindowHandle;
@@ -214,12 +219,27 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
                 break;
             case IDC_TPM_SAVE:
                 {
-                    static PH_FILETYPE_FILTER filters[] =
-                    {
-                        { L"Binary files (*.bin)", L"*.bin" },
-                        { L"All files (*.*)", L"*.*" }
-                    };
+                    PPH_STRING binaryFilesFilter;
+                    PPH_STRING allFilesFilter;
+                    PH_FILETYPE_FILTER filters[2];
                     PVOID fileDialog;
+
+                    binaryFilesFilter = PH_AUTO(PhLoadUiString(
+                        PluginInstance->DllBase,
+                        IDS_ET_FILTER_BINARY_FILES,
+                        NULL
+                        ));
+                    allFilesFilter = PH_AUTO(PhLoadUiString(
+                        PluginInstance->DllBase,
+                        IDS_ET_FILTER_ALL_FILES,
+                        NULL
+                        ));
+                    filters[0].Name = binaryFilesFilter ?
+                        binaryFilesFilter->Buffer : L"Binary files (*.bin)";
+                    filters[0].Filter = L"*.bin";
+                    filters[1].Name = allFilesFilter ?
+                        allFilesFilter->Buffer : L"All files (*.*)";
+                    filters[1].Filter = L"*.*";
 
                     fileDialog = PhCreateSaveFileDialog();
                     PhSetFileDialogFilter(fileDialog, filters, ARRAYSIZE(filters));
@@ -250,7 +270,10 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
                         }
 
                         if (!NT_SUCCESS(status))
-                            PhShowStatus(WindowHandle, L"Unable to create the file", status, 0);
+                            PhShowStatus(WindowHandle, EtGetUiString(
+                                IDS_ET_UNABLE_CREATE_FILE,
+                                L"Unable to create the file"
+                                ), status, 0);
                     }
 
                     PhFreeFileDialog(fileDialog);
