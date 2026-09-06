@@ -402,9 +402,9 @@ HFONT PhInitializeFont(
 {
     HFONT fontHandle;
 
-    if (fontHandle = PhCreateFont(L"Microsoft Sans Serif", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi))
+    if (fontHandle = PhCreateFontHandle(L"Microsoft Sans Serif", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi))
         return fontHandle;
-    if (fontHandle = PhCreateFont(L"Tahoma", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi))
+    if (fontHandle = PhCreateFontHandle(L"Tahoma", 8, FW_NORMAL, DEFAULT_PITCH, WindowDpi))
         return fontHandle;
     if (fontHandle = PhCreateMessageFont(WindowDpi))
         return fontHandle;
@@ -418,11 +418,11 @@ HFONT PhInitializeMonospaceFont(
 {
     HFONT fontHandle;
 
-    if (fontHandle = PhCreateFont(L"Lucida Console", 9, FW_DONTCARE, FF_MODERN, WindowDpi))
+    if (fontHandle = PhCreateFontHandle(L"Lucida Console", 9, FW_DONTCARE, FF_MODERN, WindowDpi))
         return fontHandle;
-    if (fontHandle = PhCreateFont(L"Courier New", 9, FW_DONTCARE, FF_MODERN, WindowDpi))
+    if (fontHandle = PhCreateFontHandle(L"Courier New", 9, FW_DONTCARE, FF_MODERN, WindowDpi))
         return fontHandle;
-    if (fontHandle = PhCreateFont(NULL, 9, FW_DONTCARE, FF_MODERN, WindowDpi))
+    if (fontHandle = PhCreateFontHandle(NULL, 9, FW_DONTCARE, FF_MODERN, WindowDpi))
         return fontHandle;
 
     //{
