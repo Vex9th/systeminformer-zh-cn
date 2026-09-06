@@ -1489,8 +1489,21 @@
 #define IDS_PH_GROUP_TCP_INFORMATION                        2495
 #define IDS_PH_GROUP_UDP_LEVEL_OPTIONS                      2496
 #define IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS                   2497
+#define IDS_PH_GROUP_FLAGS                                  2498
+#define IDS_PH_GROUP_PRIVILEGES                             2499
+#define IDS_PH_GROUP_RESTRICTING_SIDS                       2500
+#define IDS_PH_GROUPS                                       2501
+#define IDS_PH_GROUPS_LOGON_SID                             2502
+#define IDS_PH_GROUPS_MANDATORY_LABEL                       2503
+#define IDS_PH_GROUP_GENERAL                                2504
+#define IDS_PH_GROUP_LUIDS                                  2505
+#define IDS_PH_GROUP_TRUST_LEVEL                            2506
+#define IDS_PH_GROUP_PROFILE                                2507
+#define IDS_PH_GROUP_SYSTEM_ID                              2508
+#define IDS_PH_GROUP_PARENT                                 2509
+#define IDS_PH_GROUP_PACKAGE                                2510
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS
+#define IDS_PH_LAST                                  IDS_PH_GROUP_PACKAGE
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1502,6 +1515,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2498
+#define _APS_NEXT_SYMED_VALUE           2511
 #endif
 #endif

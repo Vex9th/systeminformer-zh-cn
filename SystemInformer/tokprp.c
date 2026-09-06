@@ -1365,12 +1365,36 @@ INT_PTR CALLBACK PhpTokenPageProc(
             ExtendedListView_SetCompareFunction(tokenPageContext->ListViewHandle, 1, PhpTokenStatusColumnCompareFunction);
             ExtendedListView_SetItemColorFunction(tokenPageContext->ListViewHandle, PhpTokenGroupColorFunction);
             ListView_EnableGroupView(tokenPageContext->ListViewHandle, TRUE);
-            PhAddListViewGroup(tokenPageContext->ListViewHandle, PH_PROCESS_TOKEN_CATEGORY_FLAGS, L"Flags");
-            PhAddListViewGroup(tokenPageContext->ListViewHandle, PH_PROCESS_TOKEN_CATEGORY_PRIVILEGES, L"Privileges");
-            PhAddListViewGroup(tokenPageContext->ListViewHandle, PH_PROCESS_TOKEN_CATEGORY_RESTRICTED, L"Restricting SIDs");
-            PhAddListViewGroup(tokenPageContext->ListViewHandle, PH_PROCESS_TOKEN_CATEGORY_GROUPS, L"Groups");
-            PhAddListViewGroup(tokenPageContext->ListViewHandle, PH_PROCESS_TOKEN_CATEGORY_LOGON, L"Groups (Logon SID)");
-            PhAddListViewGroup(tokenPageContext->ListViewHandle, PH_PROCESS_TOKEN_CATEGORY_INTEGRITY, L"Groups (Mandatory label)");
+            PhAddListViewGroup(
+                tokenPageContext->ListViewHandle,
+                PH_PROCESS_TOKEN_CATEGORY_FLAGS,
+                PhGetApplicationUiString(IDS_PH_GROUP_FLAGS)
+                );
+            PhAddListViewGroup(
+                tokenPageContext->ListViewHandle,
+                PH_PROCESS_TOKEN_CATEGORY_PRIVILEGES,
+                PhGetApplicationUiString(IDS_PH_GROUP_PRIVILEGES)
+                );
+            PhAddListViewGroup(
+                tokenPageContext->ListViewHandle,
+                PH_PROCESS_TOKEN_CATEGORY_RESTRICTED,
+                PhGetApplicationUiString(IDS_PH_GROUP_RESTRICTING_SIDS)
+                );
+            PhAddListViewGroup(
+                tokenPageContext->ListViewHandle,
+                PH_PROCESS_TOKEN_CATEGORY_GROUPS,
+                PhGetApplicationUiString(IDS_PH_GROUPS)
+                );
+            PhAddListViewGroup(
+                tokenPageContext->ListViewHandle,
+                PH_PROCESS_TOKEN_CATEGORY_LOGON,
+                PhGetApplicationUiString(IDS_PH_GROUPS_LOGON_SID)
+                );
+            PhAddListViewGroup(
+                tokenPageContext->ListViewHandle,
+                PH_PROCESS_TOKEN_CATEGORY_INTEGRITY,
+                PhGetApplicationUiString(IDS_PH_GROUPS_MANDATORY_LABEL)
+                );
             PhLoadListViewColumnsFromSetting(SETTING_TOKEN_GROUPS_LIST_VIEW_COLUMNS, tokenPageContext->ListViewHandle);
             PhLoadListViewGroupStatesFromSetting(SETTING_TOKEN_GROUPS_LIST_VIEW_STATES, tokenPageContext->ListViewHandle);
             PhLoadListViewSortColumnsFromSetting(SETTING_TOKEN_GROUPS_LIST_VIEW_SORT, tokenPageContext->ListViewHandle);
@@ -2788,10 +2812,26 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"General");
-            PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"LUIDs");
-            PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"Memory");
-            PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"Properties");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                listViewGroupIndex++,
+                PhGetApplicationUiString(IDS_PH_GROUP_GENERAL)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                listViewGroupIndex++,
+                PhGetApplicationUiString(IDS_PH_GROUP_LUIDS)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                listViewGroupIndex++,
+                PhGetApplicationUiString(IDS_PH_GROUP_MEMORY)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                listViewGroupIndex++,
+                PhGetApplicationUiString(IDS_PH_PLUGIN_PROPERTIES)
+                );
             PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_IMPERSONATION_LEVEL), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, 1, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_LUID), NULL);
@@ -2845,7 +2885,11 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                     LONG trustLevelSidIndex;
                     LONG trustLevelNameIndex;
 
-                    trustLevelGroupIndex = PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"TrustLevel");
+                    trustLevelGroupIndex = PhAddListViewGroup(
+                        context->ListViewHandle,
+                        listViewGroupIndex++,
+                        PhGetApplicationUiString(IDS_PH_GROUP_TRUST_LEVEL)
+                        );
                     trustLevelSidIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TRUSTLEVEL_SID), NULL);
                     trustLevelNameIndex = PhAddListViewGroupItem(context->ListViewHandle, trustLevelGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TRUSTLEVEL_NAME), NULL);
                     PhSetListViewSubItem(context->ListViewHandle, trustLevelSidIndex, 1, PhGetStringOrDefault(tokenTrustLevelSidString, L"N/A"));
@@ -2874,7 +2918,11 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                     LONG profileFolderIndex;
                     LONG profileRegistryIndex;
 
-                    profileGroupIndex = PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"Profile");
+                    profileGroupIndex = PhAddListViewGroup(
+                        context->ListViewHandle,
+                        listViewGroupIndex++,
+                        PhGetApplicationUiString(IDS_PH_GROUP_PROFILE)
+                        );
                     profileFolderIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_FOLDER_PATH), NULL);
                     profileRegistryIndex = PhAddListViewGroupItem(context->ListViewHandle, profileGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_REGISTRY_PATH), NULL);
 
@@ -2902,7 +2950,11 @@ INT_PTR CALLBACK PhpTokenAdvancedPageProc(
                 LONG systemIdPublisherIndex;
                 LONG systemIdUserIndex;
 
-                systemIdGroupIndex = PhAddListViewGroup(context->ListViewHandle, listViewGroupIndex++, L"System ID");
+                systemIdGroupIndex = PhAddListViewGroup(
+                    context->ListViewHandle,
+                    listViewGroupIndex++,
+                    PhGetApplicationUiString(IDS_PH_GROUP_SYSTEM_ID)
+                    );
                 systemIdPublisherIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_HWID_PUBLISHER), NULL);
                 systemIdUserIndex = PhAddListViewGroupItem(context->ListViewHandle, systemIdGroupIndex, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_HWID_USER), NULL);
 
@@ -4454,11 +4506,31 @@ INT_PTR CALLBACK PhpTokenContainerPageProc(
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, 0, L"General");
-            PhAddListViewGroup(context->ListViewHandle, 1, L"Properties");
-            PhAddListViewGroup(context->ListViewHandle, 2, L"Parent");
-            PhAddListViewGroup(context->ListViewHandle, 3, L"Package");
-            PhAddListViewGroup(context->ListViewHandle, 4, L"Profile");
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                0,
+                PhGetApplicationUiString(IDS_PH_GROUP_GENERAL)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                1,
+                PhGetApplicationUiString(IDS_PH_PLUGIN_PROPERTIES)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                2,
+                PhGetApplicationUiString(IDS_PH_GROUP_PARENT)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                3,
+                PhGetApplicationUiString(IDS_PH_GROUP_PACKAGE)
+                );
+            PhAddListViewGroup(
+                context->ListViewHandle,
+                4,
+                PhGetApplicationUiString(IDS_PH_GROUP_PROFILE)
+                );
 
             PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_NAME), NULL);
             PhAddListViewGroupItem(context->ListViewHandle, 0, MAXINT, PhGetApplicationUiString(IDS_PH_TOKEN_TYPE), NULL);

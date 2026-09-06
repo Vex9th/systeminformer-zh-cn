@@ -680,7 +680,17 @@
     "TCP-level options": "TCP 级选项",
     "TCP information": "TCP 信息",
     "UDP-level options": "UDP 级选项",
-    "Hyper-V-level options": "Hyper-V 级选项"
+    "Hyper-V-level options": "Hyper-V 级选项",
+    "Privileges": "特权",
+    "Restricting SIDs": "限制 SID",
+    "Groups": "组",
+    "Groups (Logon SID)": "组（登录 SID）",
+    "Groups (Mandatory label)": "组（强制标签）",
+    "LUIDs": "LUID",
+    "TrustLevel": "信任级别",
+    "Profile": "配置文件",
+    "System ID": "系统 ID",
+    "Parent": "父级"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

@@ -3096,6 +3096,19 @@ BEGIN
     IDS_PH_GROUP_TCP_INFORMATION                         "TCP information"
     IDS_PH_GROUP_UDP_LEVEL_OPTIONS                       "UDP-level options"
     IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS                    "Hyper-V-level options"
+    IDS_PH_GROUP_FLAGS                                   "Flags"
+    IDS_PH_GROUP_PRIVILEGES                              "Privileges"
+    IDS_PH_GROUP_RESTRICTING_SIDS                        "Restricting SIDs"
+    IDS_PH_GROUPS                                        "Groups"
+    IDS_PH_GROUPS_LOGON_SID                              "Groups (Logon SID)"
+    IDS_PH_GROUPS_MANDATORY_LABEL                        "Groups (Mandatory label)"
+    IDS_PH_GROUP_GENERAL                                 "General"
+    IDS_PH_GROUP_LUIDS                                   "LUIDs"
+    IDS_PH_GROUP_TRUST_LEVEL                             "TrustLevel"
+    IDS_PH_GROUP_PROFILE                                 "Profile"
+    IDS_PH_GROUP_SYSTEM_ID                               "System ID"
+    IDS_PH_GROUP_PARENT                                  "Parent"
+    IDS_PH_GROUP_PACKAGE                                 "Package"
 END
 
 /////////////////////////////////////////////////////////////////////////////

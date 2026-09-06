@@ -48,6 +48,19 @@ IDS_PH_GROUP_TCP_LEVEL_OPTIONS|2494|TCP-level options|TCP 级选项
 IDS_PH_GROUP_TCP_INFORMATION|2495|TCP information|TCP 信息
 IDS_PH_GROUP_UDP_LEVEL_OPTIONS|2496|UDP-level options|UDP 级选项
 IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS|2497|Hyper-V-level options|Hyper-V 级选项
+IDS_PH_GROUP_FLAGS|2498|Flags|标志
+IDS_PH_GROUP_PRIVILEGES|2499|Privileges|特权
+IDS_PH_GROUP_RESTRICTING_SIDS|2500|Restricting SIDs|限制 SID
+IDS_PH_GROUPS|2501|Groups|组
+IDS_PH_GROUPS_LOGON_SID|2502|Groups (Logon SID)|组（登录 SID）
+IDS_PH_GROUPS_MANDATORY_LABEL|2503|Groups (Mandatory label)|组（强制标签）
+IDS_PH_GROUP_GENERAL|2504|General|常规
+IDS_PH_GROUP_LUIDS|2505|LUIDs|LUID
+IDS_PH_GROUP_TRUST_LEVEL|2506|TrustLevel|信任级别
+IDS_PH_GROUP_PROFILE|2507|Profile|配置文件
+IDS_PH_GROUP_SYSTEM_ID|2508|System ID|系统 ID
+IDS_PH_GROUP_PARENT|2509|Parent|父级
+IDS_PH_GROUP_PACKAGE|2510|Package|程序包
 """.strip()
 
 
@@ -56,6 +69,7 @@ IDS_PH_LOGON_NETWORK|2250|Network|网络
 IDS_PH_STAT_HANDLES|2394|Handles|句柄
 IDS_PH_STAT_CPU|2340|CPU|CPU
 IDS_PH_STAT_OTHER|2386|Other|其他
+IDS_PH_PLUGIN_PROPERTIES|2242|Properties|属性
 """.strip()
 
 
@@ -120,6 +134,24 @@ ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_TCP|
 ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_TCP_INFO|IDS_PH_GROUP_TCP_INFORMATION
 ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_UDP|IDS_PH_GROUP_UDP_LEVEL_OPTIONS
 ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_HVSOCKET|IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS
+tokprp.c|PhAddListViewGroup|tokenPageContext->ListViewHandle|PH_PROCESS_TOKEN_CATEGORY_FLAGS|IDS_PH_GROUP_FLAGS
+tokprp.c|PhAddListViewGroup|tokenPageContext->ListViewHandle|PH_PROCESS_TOKEN_CATEGORY_PRIVILEGES|IDS_PH_GROUP_PRIVILEGES
+tokprp.c|PhAddListViewGroup|tokenPageContext->ListViewHandle|PH_PROCESS_TOKEN_CATEGORY_RESTRICTED|IDS_PH_GROUP_RESTRICTING_SIDS
+tokprp.c|PhAddListViewGroup|tokenPageContext->ListViewHandle|PH_PROCESS_TOKEN_CATEGORY_GROUPS|IDS_PH_GROUPS
+tokprp.c|PhAddListViewGroup|tokenPageContext->ListViewHandle|PH_PROCESS_TOKEN_CATEGORY_LOGON|IDS_PH_GROUPS_LOGON_SID
+tokprp.c|PhAddListViewGroup|tokenPageContext->ListViewHandle|PH_PROCESS_TOKEN_CATEGORY_INTEGRITY|IDS_PH_GROUPS_MANDATORY_LABEL
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|listViewGroupIndex++|IDS_PH_GROUP_GENERAL
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|listViewGroupIndex++|IDS_PH_GROUP_LUIDS
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|listViewGroupIndex++|IDS_PH_GROUP_MEMORY
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|listViewGroupIndex++|IDS_PH_PLUGIN_PROPERTIES
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|listViewGroupIndex++|IDS_PH_GROUP_TRUST_LEVEL
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|listViewGroupIndex++|IDS_PH_GROUP_PROFILE
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|listViewGroupIndex++|IDS_PH_GROUP_SYSTEM_ID
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|0|IDS_PH_GROUP_GENERAL
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|1|IDS_PH_PLUGIN_PROPERTIES
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|2|IDS_PH_GROUP_PARENT
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|3|IDS_PH_GROUP_PACKAGE
+tokprp.c|PhAddListViewGroup|context->ListViewHandle|4|IDS_PH_GROUP_PROFILE
 """.strip()
 
 
@@ -149,6 +181,7 @@ def parse_active_routes():
         "sessprp.c",
         "hndlprp.c",
         "ntobjprp.c",
+        "tokprp.c",
     ):
         source = (SYSTEM_INFORMER_ROOT / source_name).read_text(encoding="utf-8-sig")
         masked = audit.mask_c_comments(source)
@@ -219,17 +252,20 @@ def parse_stringtable(path):
 
 class SystemInformerListViewGroupResourceTests(unittest.TestCase):
     def test_tables_have_exact_cardinality(self):
-        self.assertEqual(len(NEW_RESOURCES), 34)
-        self.assertEqual(len(REUSED_RESOURCES), 4)
-        self.assertEqual(len(ROUTES), 41)
-        self.assertEqual(len({symbol for symbol, *_ in NEW_RESOURCES}), 34)
+        self.assertEqual(len(NEW_RESOURCES), 47)
+        self.assertEqual(len(REUSED_RESOURCES), 5)
+        self.assertEqual(len(ROUTES), 59)
+        self.assertEqual(len({symbol for symbol, *_ in NEW_RESOURCES}), 47)
         self.assertEqual(
             Counter(symbol for *_, symbol in ROUTES),
             Counter(
                 {
-                    "IDS_PH_GROUP_MEMORY": 2,
+                    "IDS_PH_GROUP_MEMORY": 3,
                     "IDS_PH_GROUP_USER": 2,
                     "IDS_PH_GROUP_SECURITY_INFORMATION": 2,
+                    "IDS_PH_GROUP_GENERAL": 2,
+                    "IDS_PH_PLUGIN_PROPERTIES": 2,
+                    "IDS_PH_GROUP_PROFILE": 2,
                     **{
                         symbol: 1
                         for symbol, *_ in ALL_RESOURCES
@@ -237,6 +273,9 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
                             "IDS_PH_GROUP_MEMORY",
                             "IDS_PH_GROUP_USER",
                             "IDS_PH_GROUP_SECURITY_INFORMATION",
+                            "IDS_PH_GROUP_GENERAL",
+                            "IDS_PH_PLUGIN_PROPERTIES",
+                            "IDS_PH_GROUP_PROFILE",
                         }
                     },
                 }
@@ -250,6 +289,28 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         ]
         self.assertEqual(parse_active_routes(), expected)
 
+    def test_dynamic_token_groups_keep_return_assignments(self):
+        audit = load_audit_module()
+        source = (SYSTEM_INFORMER_ROOT / "tokprp.c").read_text(encoding="utf-8-sig")
+        masked = audit.mask_c_comments(source)
+
+        expected = {
+            "trustLevelGroupIndex": "IDS_PH_GROUP_TRUST_LEVEL",
+            "profileGroupIndex": "IDS_PH_GROUP_PROFILE",
+            "systemIdGroupIndex": "IDS_PH_GROUP_SYSTEM_ID",
+        }
+
+        for variable, symbol in expected.items():
+            with self.subTest(variable=variable):
+                pattern = (
+                    rf"\b{variable}\s*=\s*PhAddListViewGroup\(\s*"
+                    rf"context->ListViewHandle\s*,\s*listViewGroupIndex\+\+\s*,\s*"
+                    rf"PhGetApplicationUiString\(\s*{symbol}\s*\)\s*\)\s*;"
+                )
+                self.assertEqual(len(re.findall(pattern, masked, re.S)), 1)
+
+        self.assertNotIn('L"Logon"', masked)
+
     def test_resources_are_contiguous_and_match_both_stringtables(self):
         numeric, aliases, header = parse_defines()
         english = parse_stringtable(SYSTEM_INFORMER_ROOT / "SystemInformer.rc")
@@ -262,7 +323,7 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
         self.assertEqual(
-            aliases.get("IDS_PH_LAST"), "IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS"
+            aliases.get("IDS_PH_LAST"), "IDS_PH_GROUP_PACKAGE"
         )
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
@@ -273,9 +334,9 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         )
         self.assertEqual({numeric[symbol] for symbol in english}, expected_ids)
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
-        self.assertEqual(len(english), 498)
-        self.assertEqual(len(chinese), 498)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2498$")
+        self.assertEqual(len(english), 511)
+        self.assertEqual(len(chinese), 511)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2511$")
 
     def test_json_uses_exact_existing_and_native_layers(self):
         data = json.loads(
@@ -310,10 +371,20 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
                 "TCP information",
                 "UDP-level options",
                 "Hyper-V-level options",
+                "Privileges",
+                "Restricting SIDs",
+                "Groups",
+                "Groups (Logon SID)",
+                "Groups (Mandatory label)",
+                "LUIDs",
+                "TrustLevel",
+                "Profile",
+                "System ID",
+                "Parent",
             }
         }
-        self.assertEqual(len(string_keys), 16)
-        self.assertEqual(len(ALL_RESOURCES) - len(string_keys), 22)
+        self.assertEqual(len(string_keys), 20)
+        self.assertEqual(len(ALL_RESOURCES) - len(string_keys), 32)
 
         for _symbol, _resource_id, english, chinese in ALL_RESOURCES:
             table = strings if english in string_keys else native_strings
@@ -325,10 +396,10 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         workflow = (
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=498"), 2)
-        self.assertNotIn("sys_info.exe=488", workflow)
+        self.assertEqual(workflow.count("sys_info.exe=511"), 2)
+        self.assertNotIn("sys_info.exe=498", workflow)
 
-    def test_fresh_scan_removes_only_batches_a_b_and_c_groups(self):
+    def test_fresh_scan_removes_all_systeminformer_groups(self):
         audit = load_audit_module()
         entries = []
         for path in sorted(SYSTEM_INFORMER_ROOT.rglob("*.c")):
@@ -341,14 +412,10 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         remaining_english = Counter(entry["english"] for entry in remaining)
         remaining_files = Counter(pathlib.Path(entry["file"]).name for entry in remaining)
 
-        self.assertEqual(len(remaining), 18)
-        self.assertEqual(len(remaining_english), 15)
-        self.assertEqual(target_english & remaining_english.keys(), {"Memory"})
-        self.assertEqual(remaining_english["Memory"], 1)
-        self.assertEqual(
-            remaining_files,
-            Counter({"tokprp.c": 18}),
-        )
+        self.assertEqual(remaining, [])
+        self.assertEqual(remaining_english, Counter())
+        self.assertEqual(target_english & remaining_english.keys(), set())
+        self.assertEqual(remaining_files, Counter())
 
 
 if __name__ == "__main__":
