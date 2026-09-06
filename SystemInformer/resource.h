@@ -1602,8 +1602,33 @@
 #define IDS_PH_SERVICE_PAUSE_WARNING                        2622
 #define IDS_PH_SERVICE_STOP_WARNING                         2623
 #define IDS_PH_SERVICE_RESTART_WARNING                      2624
+#define IDS_PH_HANDLE_OBJECT_ADDRESS                        2625
+#define IDS_PH_HANDLE_FULL_PATH                             2626
+#define IDS_PH_HANDLE_GRANTED_ACCESS                        2627
+#define IDS_PH_HANDLE_GRANTED_ACCESS_GENERIC                2628
+#define IDS_PH_HANDLE_GRANTED_ACCESS_MASK                   2629
+#define IDS_PH_HANDLE_SDDL                                  2630
+#define IDS_PH_HANDLE_PAGED                                 2631
+#define IDS_PH_HANDLE_SEQUENCE_NUMBER                       2632
+#define IDS_PH_HANDLE_PORT_CONTEXT                          2633
+#define IDS_PH_HANDLE_CONNECTION                            2634
+#define IDS_PH_HANDLE_SERVER                                2635
+#define IDS_PH_HANDLE_CLIENT                                2636
+#define IDS_PH_HANDLE_GUID                                  2637
+#define IDS_PH_HANDLE_MODE                                  2638
+#define IDS_PH_HANDLE_POSITION                              2639
+#define IDS_PH_HANDLE_SIZE                                  2640
+#define IDS_PH_HANDLE_DRIVER                                2641
+#define IDS_PH_HANDLE_DRIVER_IMAGE                          2642
+#define IDS_PH_HANDLE_FILE                                  2643
+#define IDS_PH_HANDLE_COUNT                                 2644
+#define IDS_PH_HANDLE_ABANDONED                             2645
+#define IDS_PH_HANDLE_CREATED                               2646
+#define IDS_PH_HANDLE_EXITED                                2647
+#define IDS_PH_HANDLE_EXIT_STATUS                           2648
+#define IDS_PH_HANDLE_LINK_TARGET                           2649
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_SERVICE_RESTART_WARNING
+#define IDS_PH_LAST                                  IDS_PH_HANDLE_LINK_TARGET
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1615,6 +1640,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2625
+#define _APS_NEXT_SYMED_VALUE           2650
 #endif
 #endif

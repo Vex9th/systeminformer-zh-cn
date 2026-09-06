@@ -280,7 +280,7 @@ class HandleListViewWrapperAuditTests(unittest.TestCase):
             if entry["category"] == "c_window_text"
         ]
 
-        self.assertEqual((len(group_text), len(set(group_text))), (43, 34))
+        self.assertEqual((len(group_text), len(set(group_text))), (0, 0))
         self.assertEqual((len(window_text), len(set(window_text))), (33, 17))
 
 

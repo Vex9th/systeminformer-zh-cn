@@ -11,7 +11,7 @@
 
 #include <wchar.h>
 
-const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2347] =
+const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2348] =
 {
     { L" Are you sure you want to continue?", L"确定要继续吗？", },
     { L" and ", L" 和 ", },
@@ -393,6 +393,7 @@ const PH_TRANSLATION_ENTRY PhTranslationTableZhCn[2347] =
     { L"Config", L"配置", },
     { L"Configuration", L"配置", },
     { L"Configure", L"配置", },
+    { L"Connection", L"连接", },
     { L"Connection type:", L"连接类型：", },
     { L"Container ID", L"容器 ID", },
     { L"Containers", L"容器", },
