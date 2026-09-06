@@ -3086,6 +3086,16 @@ BEGIN
     IDS_PH_GROUP_THREAD_INFORMATION                      "Thread information"
     IDS_PH_GROUP_SYMBOLIC_LINK_INFORMATION               "Symbolic Link information"
     IDS_PH_GROUP_AUDITING_INFORMATION                    "Auditing information"
+    IDS_PH_GROUP_SHARED_WINSOCK_CONTEXT                  "Shared Winsock context"
+    IDS_PH_GROUP_ADDRESSES                               "Addresses"
+    IDS_PH_GROUP_AFD_INFO_CLASSES                        "AFD info classes"
+    IDS_PH_GROUP_TDI_DEVICES                             "TDI devices"
+    IDS_PH_GROUP_SOCKET_LEVEL_OPTIONS                    "Socket-level options"
+    IDS_PH_GROUP_IP_LEVEL_OPTIONS                        "IP-level options"
+    IDS_PH_GROUP_TCP_LEVEL_OPTIONS                       "TCP-level options"
+    IDS_PH_GROUP_TCP_INFORMATION                         "TCP information"
+    IDS_PH_GROUP_UDP_LEVEL_OPTIONS                       "UDP-level options"
+    IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS                    "Hyper-V-level options"
 END
 
 /////////////////////////////////////////////////////////////////////////////

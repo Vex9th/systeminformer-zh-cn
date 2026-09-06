@@ -1479,8 +1479,18 @@
 #define IDS_PH_GROUP_THREAD_INFORMATION                     2485
 #define IDS_PH_GROUP_SYMBOLIC_LINK_INFORMATION              2486
 #define IDS_PH_GROUP_AUDITING_INFORMATION                   2487
+#define IDS_PH_GROUP_SHARED_WINSOCK_CONTEXT                 2488
+#define IDS_PH_GROUP_ADDRESSES                              2489
+#define IDS_PH_GROUP_AFD_INFO_CLASSES                       2490
+#define IDS_PH_GROUP_TDI_DEVICES                            2491
+#define IDS_PH_GROUP_SOCKET_LEVEL_OPTIONS                   2492
+#define IDS_PH_GROUP_IP_LEVEL_OPTIONS                       2493
+#define IDS_PH_GROUP_TCP_LEVEL_OPTIONS                      2494
+#define IDS_PH_GROUP_TCP_INFORMATION                        2495
+#define IDS_PH_GROUP_UDP_LEVEL_OPTIONS                      2496
+#define IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS                   2497
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_GROUP_AUDITING_INFORMATION
+#define IDS_PH_LAST                                  IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1492,6 +1502,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2488
+#define _APS_NEXT_SYMED_VALUE           2498
 #endif
 #endif

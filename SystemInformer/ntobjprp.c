@@ -1982,7 +1982,11 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
             PhListView_AddColumn(context->ListViewContext, 1, 1, 1, LVCFMT_LEFT, 225, L"Value");
             PhListView_EnableGroupView(context->ListViewContext, TRUE);
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_SHARED, L"Shared Winsock context");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_SHARED,
+                PhGetApplicationUiString(IDS_PH_GROUP_SHARED_WINSOCK_CONTEXT)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SHARED, PH_AFD_SOCKET_ITEM_STATE, L"Socket state");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SHARED, PH_AFD_SOCKET_ITEM_TYPE, L"Socket type");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SHARED, PH_AFD_SOCKET_ITEM_ADDRESS_FAMILY, L"Address family");
@@ -1998,11 +2002,19 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SHARED, PH_AFD_SOCKET_ITEM_CREATION_FLAGS, L"Creation flags");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SHARED, PH_AFD_SOCKET_ITEM_FLAGS, L"Flags");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_ADDRESSES, L"Addresses");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_ADDRESSES,
+                PhGetApplicationUiString(IDS_PH_GROUP_ADDRESSES)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_ADDRESSES, PH_AFD_SOCKET_ITEM_ADDRESS, L"Local address");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_ADDRESSES, PH_AFD_SOCKET_ITEM_REMOTE_ADDRESS, L"Remote address");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_INFOCLASS, L"AFD info classes");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_INFOCLASS,
+                PhGetApplicationUiString(IDS_PH_GROUP_AFD_INFO_CLASSES)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_INFOCLASS, PH_AFD_SOCKET_ITEM_CONNECT_TIME, L"Connect time");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_INFOCLASS, PH_AFD_SOCKET_ITEM_DELIVERY_AVAILABLE, L"Delivery available");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_INFOCLASS, PH_AFD_SOCKET_ITEM_PENDED_RECEIVE_REQUESTS, L"Pending receive requests");
@@ -2013,11 +2025,19 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_INFOCLASS, PH_AFD_SOCKET_ITEM_GROUP_ID, L"Group ID");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_INFOCLASS, PH_AFD_SOCKET_ITEM_GROUP_TYPE, L"Group type");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_TDI, L"TDI devices");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_TDI,
+                PhGetApplicationUiString(IDS_PH_GROUP_TDI_DEVICES)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TDI, PH_AFD_SOCKET_ITEM_TDI_ADDRESS_DEVICE, L"TDI address device");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TDI, PH_AFD_SOCKET_ITEM_TDI_CONNECTION_DEVICE, L"TDI connection device");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_SO, L"Socket-level options");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_SO,
+                PhGetApplicationUiString(IDS_PH_GROUP_SOCKET_LEVEL_OPTIONS)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SO, PH_AFD_SOCKET_ITEM_SO_REUSEADDR, L"Reuse address");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SO, PH_AFD_SOCKET_ITEM_SO_KEEPALIVE, L"Keep alive");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SO, PH_AFD_SOCKET_ITEM_SO_DONTROUTE, L"Don't route");
@@ -2032,7 +2052,11 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SO, PH_AFD_SOCKET_ITEM_SO_REUSE_UNICASTPORT, L"Reuse unicast port");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_SO, PH_AFD_SOCKET_ITEM_SO_EXCLUSIVEADDRUSE, L"Exclusive address use");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_IP, L"IP-level options");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_IP,
+                PhGetApplicationUiString(IDS_PH_GROUP_IP_LEVEL_OPTIONS)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_IP, PH_AFD_SOCKET_ITEM_IP_HDRINCL, L"Header included");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_IP, PH_AFD_SOCKET_ITEM_IP_TOS, L"Type-of-service");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_IP, PH_AFD_SOCKET_ITEM_IP_TTL, L"Unicast TTL");
@@ -2061,7 +2085,11 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_IP, PH_AFD_SOCKET_ITEM_IP_RECVERR, L"Receive ICMP errors");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_IP, PH_AFD_SOCKET_ITEM_IP_USER_MTU, L"Upper MTU bound");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_TCP, L"TCP-level options");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_TCP,
+                PhGetApplicationUiString(IDS_PH_GROUP_TCP_LEVEL_OPTIONS)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP, PH_AFD_SOCKET_ITEM_TCP_NODELAY, L"No delay");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP, PH_AFD_SOCKET_ITEM_TCP_EXPEDITED, L"Expedited data");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP, PH_AFD_SOCKET_ITEM_TCP_KEEPALIVE, L"Keep alive");
@@ -2080,7 +2108,11 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP, PH_AFD_SOCKET_ITEM_TCP_KEEPINTVL, L"Keep alive interval");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP, PH_AFD_SOCKET_ITEM_TCP_FAIL_CONNECT_ON_ICMP_ERROR, L"Fail on ICMP error");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_TCP_INFO, L"TCP information");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_TCP_INFO,
+                PhGetApplicationUiString(IDS_PH_GROUP_TCP_INFORMATION)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP_INFO, PH_AFD_SOCKET_ITEM_TCP_INFO_STATE, L"TCP state");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP_INFO, PH_AFD_SOCKET_ITEM_TCP_INFO_MSS, L"Maximum segment size");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP_INFO, PH_AFD_SOCKET_ITEM_TCP_INFO_CONNECTION_TIME, L"Connection time");
@@ -2114,12 +2146,20 @@ INT_PTR CALLBACK PhpAfdSocketPageProc(
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP_INFO, PH_AFD_SOCKET_ITEM_TCP_INFO_ECE_ACKS_IN, L"ECE ACKs");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_TCP_INFO, PH_AFD_SOCKET_ITEM_TCP_INFO_PTO_EPISODES, L"Probe timeout episodes");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_UDP, L"UDP-level options");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_UDP,
+                PhGetApplicationUiString(IDS_PH_GROUP_UDP_LEVEL_OPTIONS)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_UDP, PH_AFD_SOCKET_ITEM_UDP_NOCHECKSUM, L"No checksum");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_UDP, PH_AFD_SOCKET_ITEM_UDP_SEND_MSG_SIZE, L"Maximum message size");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_UDP, PH_AFD_SOCKET_ITEM_UDP_RECV_MAX_COALESCED_SIZE, L"Maximum coalesced size");
 
-            PhListView_AddGroup(context->ListViewContext, PH_AFD_SOCKET_GROUP_HVSOCKET, L"Hyper-V-level options");
+            PhListView_AddGroup(
+                context->ListViewContext,
+                PH_AFD_SOCKET_GROUP_HVSOCKET,
+                PhGetApplicationUiString(IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS)
+                );
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_HVSOCKET, PH_AFD_SOCKET_ITEM_HVSOCKET_CONNECT_TIMEOUT, L"Connect timeout");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_HVSOCKET, PH_AFD_SOCKET_ITEM_HVSOCKET_CONTAINER_PASSTHRU, L"Container passthru");
             PhAddSocketListViewItem(context, PH_AFD_SOCKET_GROUP_HVSOCKET, PH_AFD_SOCKET_ITEM_HVSOCKET_CONNECTED_SUSPEND, L"Connected suspend");

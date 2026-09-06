@@ -38,6 +38,16 @@ IDS_PH_GROUP_PROCESS_INFORMATION|2484|Process information|进程信息
 IDS_PH_GROUP_THREAD_INFORMATION|2485|Thread information|线程信息
 IDS_PH_GROUP_SYMBOLIC_LINK_INFORMATION|2486|Symbolic Link information|符号链接信息
 IDS_PH_GROUP_AUDITING_INFORMATION|2487|Auditing information|审核信息
+IDS_PH_GROUP_SHARED_WINSOCK_CONTEXT|2488|Shared Winsock context|共享 Winsock 上下文
+IDS_PH_GROUP_ADDRESSES|2489|Addresses|地址
+IDS_PH_GROUP_AFD_INFO_CLASSES|2490|AFD info classes|AFD 信息类
+IDS_PH_GROUP_TDI_DEVICES|2491|TDI devices|TDI 设备
+IDS_PH_GROUP_SOCKET_LEVEL_OPTIONS|2492|Socket-level options|套接字级选项
+IDS_PH_GROUP_IP_LEVEL_OPTIONS|2493|IP-level options|IP 级选项
+IDS_PH_GROUP_TCP_LEVEL_OPTIONS|2494|TCP-level options|TCP 级选项
+IDS_PH_GROUP_TCP_INFORMATION|2495|TCP information|TCP 信息
+IDS_PH_GROUP_UDP_LEVEL_OPTIONS|2496|UDP-level options|UDP 级选项
+IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS|2497|Hyper-V-level options|Hyper-V 级选项
 """.strip()
 
 
@@ -100,6 +110,16 @@ hndlprp.c|PhListView_AddGroup|Context->ListViewClass|PH_HANDLE_GENERAL_CATEGORY_
 hndlprp.c|PhListView_AddGroup|Context->ListViewClass|PH_HANDLE_GENERAL_CATEGORY_SYMBOLICLINK|IDS_PH_GROUP_SYMBOLIC_LINK_INFORMATION
 hndlprp.c|PhAddListViewGroup|Context->ListViewHeader|PH_HANDLE_GENERAL_CATEGORY_SECURITY|IDS_PH_GROUP_SECURITY_INFORMATION
 hndlprp.c|PhAddListViewGroup|Context->ListViewHeader|PH_HANDLE_GENERAL_CATEGORY_SECURITY|IDS_PH_GROUP_AUDITING_INFORMATION
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_SHARED|IDS_PH_GROUP_SHARED_WINSOCK_CONTEXT
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_ADDRESSES|IDS_PH_GROUP_ADDRESSES
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_INFOCLASS|IDS_PH_GROUP_AFD_INFO_CLASSES
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_TDI|IDS_PH_GROUP_TDI_DEVICES
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_SO|IDS_PH_GROUP_SOCKET_LEVEL_OPTIONS
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_IP|IDS_PH_GROUP_IP_LEVEL_OPTIONS
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_TCP|IDS_PH_GROUP_TCP_LEVEL_OPTIONS
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_TCP_INFO|IDS_PH_GROUP_TCP_INFORMATION
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_UDP|IDS_PH_GROUP_UDP_LEVEL_OPTIONS
+ntobjprp.c|PhListView_AddGroup|context->ListViewContext|PH_AFD_SOCKET_GROUP_HVSOCKET|IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS
 """.strip()
 
 
@@ -128,6 +148,7 @@ def parse_active_routes():
         "envdlg.c",
         "sessprp.c",
         "hndlprp.c",
+        "ntobjprp.c",
     ):
         source = (SYSTEM_INFORMER_ROOT / source_name).read_text(encoding="utf-8-sig")
         masked = audit.mask_c_comments(source)
@@ -198,10 +219,10 @@ def parse_stringtable(path):
 
 class SystemInformerListViewGroupResourceTests(unittest.TestCase):
     def test_tables_have_exact_cardinality(self):
-        self.assertEqual(len(NEW_RESOURCES), 24)
+        self.assertEqual(len(NEW_RESOURCES), 34)
         self.assertEqual(len(REUSED_RESOURCES), 4)
-        self.assertEqual(len(ROUTES), 31)
-        self.assertEqual(len({symbol for symbol, *_ in NEW_RESOURCES}), 24)
+        self.assertEqual(len(ROUTES), 41)
+        self.assertEqual(len({symbol for symbol, *_ in NEW_RESOURCES}), 34)
         self.assertEqual(
             Counter(symbol for *_, symbol in ROUTES),
             Counter(
@@ -241,7 +262,7 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
         self.assertEqual(
-            aliases.get("IDS_PH_LAST"), "IDS_PH_GROUP_AUDITING_INFORMATION"
+            aliases.get("IDS_PH_LAST"), "IDS_PH_GROUP_HYPERV_LEVEL_OPTIONS"
         )
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
@@ -252,9 +273,9 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         )
         self.assertEqual({numeric[symbol] for symbol in english}, expected_ids)
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
-        self.assertEqual(len(english), 488)
-        self.assertEqual(len(chinese), 488)
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2488$")
+        self.assertEqual(len(english), 498)
+        self.assertEqual(len(chinese), 498)
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2498$")
 
     def test_json_uses_exact_existing_and_native_layers(self):
         data = json.loads(
@@ -279,10 +300,20 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
                 "Thread information",
                 "Symbolic Link information",
                 "Auditing information",
+                "Shared Winsock context",
+                "Addresses",
+                "AFD info classes",
+                "TDI devices",
+                "Socket-level options",
+                "IP-level options",
+                "TCP-level options",
+                "TCP information",
+                "UDP-level options",
+                "Hyper-V-level options",
             }
         }
         self.assertEqual(len(string_keys), 16)
-        self.assertEqual(len(ALL_RESOURCES) - len(string_keys), 12)
+        self.assertEqual(len(ALL_RESOURCES) - len(string_keys), 22)
 
         for _symbol, _resource_id, english, chinese in ALL_RESOURCES:
             table = strings if english in string_keys else native_strings
@@ -294,10 +325,10 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         workflow = (
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=488"), 2)
-        self.assertNotIn("sys_info.exe=475", workflow)
+        self.assertEqual(workflow.count("sys_info.exe=498"), 2)
+        self.assertNotIn("sys_info.exe=488", workflow)
 
-    def test_fresh_scan_removes_only_batches_a_and_b_groups(self):
+    def test_fresh_scan_removes_only_batches_a_b_and_c_groups(self):
         audit = load_audit_module()
         entries = []
         for path in sorted(SYSTEM_INFORMER_ROOT.rglob("*.c")):
@@ -310,13 +341,13 @@ class SystemInformerListViewGroupResourceTests(unittest.TestCase):
         remaining_english = Counter(entry["english"] for entry in remaining)
         remaining_files = Counter(pathlib.Path(entry["file"]).name for entry in remaining)
 
-        self.assertEqual(len(remaining), 28)
-        self.assertEqual(len(remaining_english), 25)
+        self.assertEqual(len(remaining), 18)
+        self.assertEqual(len(remaining_english), 15)
         self.assertEqual(target_english & remaining_english.keys(), {"Memory"})
         self.assertEqual(remaining_english["Memory"], 1)
         self.assertEqual(
             remaining_files,
-            Counter({"ntobjprp.c": 10, "tokprp.c": 18}),
+            Counter({"tokprp.c": 18}),
         )
 
 

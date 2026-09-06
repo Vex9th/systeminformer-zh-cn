@@ -670,7 +670,17 @@
     "Process information": "进程信息",
     "Thread information": "线程信息",
     "Symbolic Link information": "符号链接信息",
-    "Auditing information": "审核信息"
+    "Auditing information": "审核信息",
+    "Shared Winsock context": "共享 Winsock 上下文",
+    "Addresses": "地址",
+    "AFD info classes": "AFD 信息类",
+    "TDI devices": "TDI 设备",
+    "Socket-level options": "套接字级选项",
+    "IP-level options": "IP 级选项",
+    "TCP-level options": "TCP 级选项",
+    "TCP information": "TCP 信息",
+    "UDP-level options": "UDP 级选项",
+    "Hyper-V-level options": "Hyper-V 级选项"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
