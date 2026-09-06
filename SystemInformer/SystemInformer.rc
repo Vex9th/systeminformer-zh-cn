@@ -3073,6 +3073,19 @@ BEGIN
     IDS_PH_GROUP_IO                                      "I/O"
     IDS_PH_GROUP_USER                                    "User"
     IDS_PH_GROUP_SYSTEM                                  "System"
+    IDS_PH_GROUP_BASIC_INFORMATION                       "Basic information"
+    IDS_PH_GROUP_SECURITY_INFORMATION                    "Security information"
+    IDS_PH_GROUP_REFERENCES                              "References"
+    IDS_PH_GROUP_QUOTA_CHARGES                           "Quota charges"
+    IDS_PH_GROUP_ALPC_PORT                               "ALPC Port"
+    IDS_PH_GROUP_EVENT_TRACE_INFORMATION                 "Event trace information"
+    IDS_PH_GROUP_FILE_INFORMATION                        "File information"
+    IDS_PH_GROUP_SECTION_INFORMATION                     "Section information"
+    IDS_PH_GROUP_MUTANT_INFORMATION                      "Mutant information"
+    IDS_PH_GROUP_PROCESS_INFORMATION                     "Process information"
+    IDS_PH_GROUP_THREAD_INFORMATION                      "Thread information"
+    IDS_PH_GROUP_SYMBOLIC_LINK_INFORMATION               "Symbolic Link information"
+    IDS_PH_GROUP_AUDITING_INFORMATION                    "Auditing information"
 END
 
 /////////////////////////////////////////////////////////////////////////////

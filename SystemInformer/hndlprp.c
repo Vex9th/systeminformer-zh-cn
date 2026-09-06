@@ -285,6 +285,7 @@ BOOLEAN PhpIsVerboseBestObjectName(
     return FALSE;
 }
 
+
 _Function_class_(PH_TYPE_DELETE_PROCEDURE)
 static VOID PhHandlePropertiesContextDeleteProcedure(
     _In_ PVOID Object,
@@ -542,10 +543,26 @@ VOID PhpUpdateHandleGeneralListViewGroups(
     )
 {
     PhListView_EnableGroupView(Context->ListViewClass, TRUE);
-    PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_BASICINFO, L"Basic information");
-    PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_SECURITY, L"Security information");
-    PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_REFERENCES, L"References");
-    PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_QUOTA, L"Quota charges");
+    PhListView_AddGroup(
+        Context->ListViewClass,
+        PH_HANDLE_GENERAL_CATEGORY_BASICINFO,
+        PhGetApplicationUiString(IDS_PH_GROUP_BASIC_INFORMATION)
+        );
+    PhListView_AddGroup(
+        Context->ListViewClass,
+        PH_HANDLE_GENERAL_CATEGORY_SECURITY,
+        PhGetApplicationUiString(IDS_PH_GROUP_SECURITY_INFORMATION)
+        );
+    PhListView_AddGroup(
+        Context->ListViewClass,
+        PH_HANDLE_GENERAL_CATEGORY_REFERENCES,
+        PhGetApplicationUiString(IDS_PH_GROUP_REFERENCES)
+        );
+    PhListView_AddGroup(
+        Context->ListViewClass,
+        PH_HANDLE_GENERAL_CATEGORY_QUOTA,
+        PhGetApplicationUiString(IDS_PH_GROUP_QUOTA_CHARGES)
+        );
 
     PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_BASICINFO, PH_HANDLE_GENERAL_INDEX_NAME, L"Name");
     PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_BASICINFO, PH_HANDLE_GENERAL_INDEX_TYPE, L"Type");
@@ -568,7 +585,11 @@ VOID PhpUpdateHandleGeneralListViewGroups(
     }
     else if (PhEqualString2(Context->HandleItem->TypeName, L"ALPC Port", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_ALPC, L"ALPC Port");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_ALPC,
+            PhGetApplicationUiString(IDS_PH_GROUP_ALPC_PORT)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_ALPC, PH_HANDLE_GENERAL_INDEX_FLAGS, L"Flags");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_ALPC, PH_HANDLE_GENERAL_INDEX_SEQUENCENUMBER, L"Sequence Number");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_ALPC, PH_HANDLE_GENERAL_INDEX_PORTCONTEXT, L"Port Context");
@@ -588,13 +609,21 @@ VOID PhpUpdateHandleGeneralListViewGroups(
     }
     else if (PhEqualString2(Context->HandleItem->TypeName, L"EtwRegistration", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_ETW, L"Event trace information");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_ETW,
+            PhGetApplicationUiString(IDS_PH_GROUP_EVENT_TRACE_INFORMATION)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_ETW, PH_HANDLE_GENERAL_INDEX_ETWORIGINALNAME, L"GUID");
         //PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_ETW, PH_HANDLE_GENERAL_INDEX_ETWGROUPNAME, L"Group GUID");
     }
     else if (PhEqualStringRef2(&Context->HandleItem->TypeName->sr, L"File", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_FILE, L"File information");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_FILE,
+            PhGetApplicationUiString(IDS_PH_GROUP_FILE_INFORMATION)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_FILE, PH_HANDLE_GENERAL_INDEX_FILETYPE, L"Type");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_FILE, PH_HANDLE_GENERAL_INDEX_FILEMODE, L"Mode");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_FILE, PH_HANDLE_GENERAL_INDEX_FILEPOSITION, L"Position");
@@ -609,21 +638,33 @@ VOID PhpUpdateHandleGeneralListViewGroups(
     }
     else if (PhEqualStringRef2(&Context->HandleItem->TypeName->sr, L"Section", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_SECTION, L"Section information");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_SECTION,
+            PhGetApplicationUiString(IDS_PH_GROUP_SECTION_INFORMATION)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_SECTION, PH_HANDLE_GENERAL_INDEX_SECTIONTYPE, L"Type");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_SECTION, PH_HANDLE_GENERAL_INDEX_SECTIONFILE, L"File");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_SECTION, PH_HANDLE_GENERAL_INDEX_SECTIONSIZE, L"Size");
     }
     else if (PhEqualStringRef2(&Context->HandleItem->TypeName->sr, L"Mutant", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_MUTANT, L"Mutant information");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_MUTANT,
+            PhGetApplicationUiString(IDS_PH_GROUP_MUTANT_INFORMATION)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_MUTANT, PH_HANDLE_GENERAL_INDEX_MUTANTCOUNT, L"Count");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_MUTANT, PH_HANDLE_GENERAL_INDEX_MUTANTABANDONED, L"Abandoned");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_MUTANT, PH_HANDLE_GENERAL_INDEX_MUTANTOWNER, L"Owner");
     }
     else if (PhEqualStringRef2(&Context->HandleItem->TypeName->sr, L"Process", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, L"Process information");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD,
+            PhGetApplicationUiString(IDS_PH_GROUP_PROCESS_INFORMATION)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, PH_HANDLE_GENERAL_INDEX_PROCESSTHREADNAME, L"Name");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, PH_HANDLE_GENERAL_INDEX_PROCESSTHREADCREATETIME, L"Created");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, PH_HANDLE_GENERAL_INDEX_PROCESSTHREADEXITTIME, L"Exited");
@@ -631,7 +672,11 @@ VOID PhpUpdateHandleGeneralListViewGroups(
     }
     else if (PhEqualStringRef2(&Context->HandleItem->TypeName->sr, L"Thread", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, L"Thread information");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD,
+            PhGetApplicationUiString(IDS_PH_GROUP_THREAD_INFORMATION)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, PH_HANDLE_GENERAL_INDEX_PROCESSTHREADNAME, L"Name");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, PH_HANDLE_GENERAL_INDEX_PROCESSTHREADCREATETIME, L"Created");
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_PROCESSTHREAD, PH_HANDLE_GENERAL_INDEX_PROCESSTHREADEXITTIME, L"Exited");
@@ -639,7 +684,11 @@ VOID PhpUpdateHandleGeneralListViewGroups(
     }
     else if (PhEqualStringRef2(&Context->HandleItem->TypeName->sr, L"SymbolicLink", TRUE))
     {
-        PhListView_AddGroup(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_SYMBOLICLINK, L"Symbolic Link information");
+        PhListView_AddGroup(
+            Context->ListViewClass,
+            PH_HANDLE_GENERAL_CATEGORY_SYMBOLICLINK,
+            PhGetApplicationUiString(IDS_PH_GROUP_SYMBOLIC_LINK_INFORMATION)
+            );
         PhAddHandleListViewItem(Context->ListViewClass, PH_HANDLE_GENERAL_CATEGORY_SYMBOLICLINK, PH_HANDLE_GENERAL_INDEX_SYMBOLICLINKLINK, L"Link target");
     }
 }
@@ -2824,7 +2873,11 @@ VOID PhUpdateHandlePermissionSecurity(
     PhSetExtendedListView(Context->ListViewHeader);
 
     ListView_EnableGroupView(Context->ListViewHeader, TRUE);
-    PhAddListViewGroup(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, L"Security information");
+    PhAddListViewGroup(
+        Context->ListViewHeader,
+        PH_HANDLE_GENERAL_CATEGORY_SECURITY,
+        PhGetApplicationUiString(IDS_PH_GROUP_SECURITY_INFORMATION)
+        );
     PhAddListViewGroupItem(
         Context->ListViewHeader,
         PH_HANDLE_GENERAL_CATEGORY_SECURITY,
@@ -2929,7 +2982,11 @@ VOID PhUpdateHandleAuditingSecurity(
     PhSetExtendedListView(Context->ListViewHeader);
 
     ListView_EnableGroupView(Context->ListViewHeader, TRUE);
-    PhAddListViewGroup(Context->ListViewHeader, PH_HANDLE_GENERAL_CATEGORY_SECURITY, L"Auditing information");
+    PhAddListViewGroup(
+        Context->ListViewHeader,
+        PH_HANDLE_GENERAL_CATEGORY_SECURITY,
+        PhGetApplicationUiString(IDS_PH_GROUP_AUDITING_INFORMATION)
+        );
     PhAddListViewGroupItem(
         Context->ListViewHeader,
         PH_HANDLE_GENERAL_CATEGORY_SECURITY,
@@ -3368,4 +3425,3 @@ INT_PTR CALLBACK PhpHandleAuditingDlgProc(
 
     return FALSE;
 }
-

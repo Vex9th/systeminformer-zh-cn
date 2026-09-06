@@ -1466,8 +1466,21 @@
 #define IDS_PH_GROUP_IO                                     2472
 #define IDS_PH_GROUP_USER                                   2473
 #define IDS_PH_GROUP_SYSTEM                                 2474
+#define IDS_PH_GROUP_BASIC_INFORMATION                      2475
+#define IDS_PH_GROUP_SECURITY_INFORMATION                   2476
+#define IDS_PH_GROUP_REFERENCES                             2477
+#define IDS_PH_GROUP_QUOTA_CHARGES                          2478
+#define IDS_PH_GROUP_ALPC_PORT                              2479
+#define IDS_PH_GROUP_EVENT_TRACE_INFORMATION                2480
+#define IDS_PH_GROUP_FILE_INFORMATION                       2481
+#define IDS_PH_GROUP_SECTION_INFORMATION                    2482
+#define IDS_PH_GROUP_MUTANT_INFORMATION                     2483
+#define IDS_PH_GROUP_PROCESS_INFORMATION                    2484
+#define IDS_PH_GROUP_THREAD_INFORMATION                     2485
+#define IDS_PH_GROUP_SYMBOLIC_LINK_INFORMATION              2486
+#define IDS_PH_GROUP_AUDITING_INFORMATION                   2487
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_GROUP_SYSTEM
+#define IDS_PH_LAST                                  IDS_PH_GROUP_AUDITING_INFORMATION
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1479,6 +1492,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2475
+#define _APS_NEXT_SYMED_VALUE           2488
 #endif
 #endif

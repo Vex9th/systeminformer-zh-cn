@@ -659,7 +659,18 @@
     "Image information": "映像信息",
     "File information": "文件信息",
     "Debug information": "调试信息",
-    "Internal information": "内部信息"
+    "Internal information": "内部信息",
+    "Basic information": "基本信息",
+    "Security information": "安全信息",
+    "Quota charges": "配额占用",
+    "ALPC Port": "ALPC 端口",
+    "Event trace information": "事件跟踪信息",
+    "Section information": "节对象信息",
+    "Mutant information": "互斥体信息",
+    "Process information": "进程信息",
+    "Thread information": "线程信息",
+    "Symbolic Link information": "符号链接信息",
+    "Auditing information": "审核信息"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",
