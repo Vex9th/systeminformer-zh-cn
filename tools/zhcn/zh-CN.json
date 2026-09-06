@@ -941,7 +941,19 @@
     "Scroll Left": "向左滚动",
     "Scroll Up": "向上滚动",
     "Scroll Right": "向右滚动",
-    "Scroll Down": "向下滚动"
+    "Scroll Down": "向下滚动",
+    "Completed": "已完成",
+    "You will need to provide administrator permission. Click Continue to complete this operation.": "你需要提供管理员权限。单击“继续”完成此操作。",
+    "Unable to %s one or more services:": "无法%s一个或多个服务：",
+    "Attempting to %s %s...": "正在%s%s...",
+    "Do you want to %s %s?": "确定要%s%s吗？",
+    "%s Are you sure you want to continue?": "%s 确定要继续吗？",
+    "Unable to create a service worker thread.": "无法创建服务工作线程。",
+    "Starting a service might prevent the system from functioning properly.": "启动服务可能导致系统无法正常运行。",
+    "Continuing a service might prevent the system from functioning properly.": "继续运行服务可能导致系统无法正常运行。",
+    "Pausing a service might prevent the system from functioning properly.": "暂停服务可能导致系统无法正常运行。",
+    "Stopping a service might prevent the system from functioning properly.": "停止服务可能导致系统无法正常运行。",
+    "Restarting a service might prevent the system from functioning properly.": "重启服务可能导致系统无法正常运行。"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

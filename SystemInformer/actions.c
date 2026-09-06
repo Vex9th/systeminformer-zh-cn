@@ -4215,11 +4215,11 @@ BOOLEAN PhUiSetBoostPriorityProcess(
 #pragma region Service Progress Dialog
 typedef struct _PH_UI_SERVICE_PROGRESS_DIALOG
 {
-    HWND WindowHandle;
+    volatile HWND WindowHandle;
     HWND ParentWindowHandle;
 
-    PCWSTR Verb;
-    PCWSTR Message;
+    ULONG VerbId;
+    ULONG MessageId;
 
     PPH_STRING StatusMessage;
     PPH_STRING StatusContent;
@@ -4263,31 +4263,26 @@ VOID PhShowServiceProgressDialogStatusPage(
  * \param Context A pointer to the service progress dialog context.
  * \param Verb A pointer to a string that receives the lowercase verb.
  * \param VerbCaps A pointer to a string that receives the capitalized verb.
- * \param Action A pointer to a string that receives the action text.
  * \param Object A pointer to a string that receives the object text.
  */
 VOID PhpShowServiceProgressInitializeText(
     _In_ PPH_UI_SERVICE_PROGRESS_DIALOG Context,
     _Out_ PPH_STRING* Verb,
     _Out_ PPH_STRING* VerbCaps,
-    _Out_ PPH_STRING* Action,
     _Out_ PCWSTR* Object
     )
 {
     if (Context->ServiceItemList->Count == 1)
-        *Object = L"the selected service";
+        *Object = PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_SERVICE);
     else
-        *Object = L"the selected services";
+        *Object = PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_SERVICES);
 
     // Make sure the verb is all lowercase.
-    *Verb = PhaLowerString(PhaCreateString(Context->Verb));
+    *Verb = PhaLowerString(PhaCreateString(PhGetApplicationUiString(Context->VerbId)));
 
     // "terminate" -> "Terminate"
     *VerbCaps = PhaDuplicateString(*Verb);
     if (!PhIsNullOrEmptyString(*VerbCaps)) (*VerbCaps)->Buffer[0] = PhUpcaseUnicodeChar((*VerbCaps)->Buffer[0]);
-
-    // "terminate", "the process" -> "terminate the process"
-    *Action = PhaConcatStrings(3, (*Verb)->Buffer, L" ", *Object);
 }
 
 /**
@@ -4351,13 +4346,13 @@ VOID PhUiNavigateServiceErrorDialogPage(
 {
     CONST TASKDIALOG_BUTTON buttons[2] =
     {
-        { IDRETRY, L"Retry" },
+        { IDRETRY, PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_RETRY) },
         { IDNO, PhGetApplicationUiString(IDS_PH_CLOSE) }
     };
     CONST TASKDIALOG_BUTTON buttonsElevation[2] =
     {
-        { IDYES, L"Continue" },
-        { IDNO, L"Cancel" },
+        { IDYES, PhGetApplicationUiString(IDS_PH_SERVICE_CONTINUE) },
+        { IDNO, PhGetApplicationUiString(IDS_PH_CANCEL) },
     };
     TASKDIALOGCONFIG config;
 
@@ -4388,6 +4383,28 @@ VOID PhUiNavigateServiceErrorDialogPage(
     PhTaskDialogNavigatePage(Context->WindowHandle, &config);
 }
 
+static BOOLEAN PhpSendServiceProgressMessage(
+    _In_ PPH_UI_SERVICE_PROGRESS_DIALOG Context,
+    _In_ UINT WindowMessage
+    )
+{
+    HWND windowHandle;
+
+    windowHandle = InterlockedCompareExchangePointer(&Context->WindowHandle, NULL, NULL);
+
+    if (!windowHandle)
+        return FALSE;
+
+    return PhSendMessageTimeout(
+        windowHandle,
+        WindowMessage,
+        0,
+        (LPARAM)Context,
+        1000,
+        NULL
+        );
+}
+
 /**
  * Navigates the service progress dialog to the complete state.
  *
@@ -4397,7 +4414,7 @@ VOID PhUiNavigateServiceCompleteDialogPage(
     _In_ PPH_UI_SERVICE_PROGRESS_DIALOG Context
     )
 {
-    PostMessage(Context->WindowHandle, WM_PHSVC_EXIT, 0, 0);
+    PhpSendServiceProgressMessage(Context, WM_PHSVC_EXIT);
 }
 
 /**
@@ -4409,7 +4426,7 @@ VOID PhUiNavigateServiceErrorDialogPageFromThread(
     _In_ PPH_UI_SERVICE_PROGRESS_DIALOG Context
     )
 {
-    PostMessage(Context->WindowHandle, WM_PHSVC_ERROR, 0, 0);
+    PhpSendServiceProgressMessage(Context, WM_PHSVC_ERROR);
 }
 
 static PPH_UI_SERVICE_ITEM PhpFindServiceProgressResult(
@@ -4472,7 +4489,7 @@ static VOID PhpAppendServiceProgressResultText(
 
     if (NT_SUCCESS(Result->Status))
     {
-        PhAppendStringBuilder2(StringBuilder, L"Completed");
+        PhAppendStringBuilder2(StringBuilder, PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_COMPLETED));
     }
     else
     {
@@ -4615,19 +4632,28 @@ NTSTATUS PhpUiServicePendingStartCallback(
         if (InterlockedCompareExchange(&Context->RequireElevation, FALSE, FALSE))
         {
             PhAppendStringBuilder2(&stringBuilder, L"\r\n\r\n");
-            PhAppendStringBuilder2(&stringBuilder, L"You will need to provide administrator permission. "
-                L"Click Continue to complete this operation.");
+            PhAppendStringBuilder2(
+                &stringBuilder,
+                PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_ELEVATION_CONTENT)
+                );
         }
 
         {
             PPH_STRING message;
             PPH_STRING content;
+            PPH_STRING oldMessage;
+            PPH_STRING oldContent;
 
-            message = PhFormatString(L"Unable to %s one or more services:", Context->Verb);
+            message = PhFormatString(
+                PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_UNABLE_FORMAT),
+                PhGetApplicationUiString(Context->VerbId)
+                );
             content = PhFinalStringBuilderString(&stringBuilder);
 
-            InterlockedExchangePointer(&Context->StatusMessage, message);
-            InterlockedExchangePointer(&Context->StatusContent, content);
+            oldMessage = InterlockedExchangePointer(&Context->StatusMessage, message);
+            oldContent = InterlockedExchangePointer(&Context->StatusContent, content);
+            PhClearReference(&oldMessage);
+            PhClearReference(&oldContent);
 
             PhUiNavigateServiceErrorDialogPageFromThread(Context);
         }
@@ -4641,6 +4667,23 @@ CleanupExit:
     PhDereferenceObject(Context);
 
     return STATUS_SUCCESS;
+}
+
+static VOID PhpShowServiceProgressThreadError(
+    _In_ PPH_UI_SERVICE_PROGRESS_DIALOG Context,
+    _In_ NTSTATUS Status
+    )
+{
+    PPH_STRING message;
+    PPH_STRING content;
+
+    message = PhCreateString(PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_UNABLE_CREATE_THREAD));
+    content = PhGetStatusMessage(Status, 0);
+
+    PhUiNavigateServiceErrorDialogPage(Context, message, content);
+
+    PhDereferenceObject(message);
+    PhClearReference(&content);
 }
 
 /**
@@ -4662,6 +4705,7 @@ HRESULT CALLBACK PhpUiServiceProgressDialogCallbackProc(
     )
 {
     PPH_UI_SERVICE_PROGRESS_DIALOG context = (PPH_UI_SERVICE_PROGRESS_DIALOG)Context;
+    NTSTATUS status;
 
     switch (WindowMessage)
     {
@@ -4671,7 +4715,13 @@ HRESULT CALLBACK PhpUiServiceProgressDialogCallbackProc(
             SendMessage(WindowHandle, TDM_SET_PROGRESS_BAR_MARQUEE, TRUE, 1);
 
             PhReferenceObject(context);
-            PhCreateThread2(PhpUiServicePendingStartCallback, context);
+            status = PhCreateThread2(PhpUiServicePendingStartCallback, context);
+
+            if (!NT_SUCCESS(status))
+            {
+                PhDereferenceObject(context);
+                PhpShowServiceProgressThreadError(context, status);
+            }
         }
         break;
     case TDN_BUTTON_CLICKED:
@@ -4701,10 +4751,9 @@ VOID PhShowServiceProgressDialogStatusPage(
     TASKDIALOGCONFIG config;
     PPH_STRING verb;
     PPH_STRING verbCaps;
-    PPH_STRING action;
     PCWSTR object;
 
-    PhpShowServiceProgressInitializeText(Context, &verb, &verbCaps, &action, &object);
+    PhpShowServiceProgressInitializeText(Context, &verb, &verbCaps, &object);
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -4714,7 +4763,11 @@ VOID PhShowServiceProgressDialogStatusPage(
     config.dwCommonButtons = TDCBF_CANCEL_BUTTON;
     config.lpCallbackData = (LONG_PTR)Context;
     config.pfCallback = PhpUiServiceProgressDialogCallbackProc;
-    config.pszMainInstruction = PhaConcatStrings(5, L"Attempting to ", PhGetString(verb), L" ", object, L"...")->Buffer;
+    config.pszMainInstruction = PhaFormatString(
+        PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_ATTEMPT_FORMAT),
+        verb->Buffer,
+        object
+        )->Buffer;
     config.cxWidth = 200;
 
     PhTaskDialogNavigatePage(Context->WindowHandle, &config);
@@ -4771,10 +4824,9 @@ VOID PhShowServiceProgressDialogConfirmMessage(
     TASKDIALOG_BUTTON buttons[2];
     PPH_STRING verb;
     PPH_STRING verbCaps;
-    PPH_STRING action;
     PCWSTR object;
 
-    PhpShowServiceProgressInitializeText(Context, &verb, &verbCaps, &action, &object);
+    PhpShowServiceProgressInitializeText(Context, &verb, &verbCaps, &object);
 
     memset(&config, 0, sizeof(TASKDIALOGCONFIG));
     config.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -4783,13 +4835,23 @@ VOID PhShowServiceProgressDialogConfirmMessage(
     config.lpCallbackData = (LONG_PTR)Context;
     config.pfCallback = PhpUiServiceConfirmDialogCallbackProc;
     config.pszMainIcon = Context->Warning ? TD_WARNING_ICON : TD_INFORMATION_ICON;
-    config.pszMainInstruction = PhaConcatStrings(3, L"Do you want to ", action->Buffer, L"?")->Buffer;
-    if (Context->Message) config.pszContent = PhaConcatStrings2(Context->Message, L" Are you sure you want to continue?")->Buffer;
+    config.pszMainInstruction = PhaFormatString(
+        PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_CONFIRM_FORMAT),
+        verb->Buffer,
+        object
+        )->Buffer;
+    if (Context->MessageId)
+    {
+        config.pszContent = PhaFormatString(
+            PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_CONFIRM_CONTENT_FORMAT),
+            PhGetApplicationUiString(Context->MessageId)
+            )->Buffer;
+    }
 
     buttons[0].nButtonID = IDYES;
     buttons[0].pszButtonText = verbCaps->Buffer;
     buttons[1].nButtonID = IDNO;
-    buttons[1].pszButtonText = L"Cancel";
+    buttons[1].pszButtonText = PhGetApplicationUiString(IDS_PH_CANCEL);
 
     config.cButtons = 2;
     config.pButtons = buttons;
@@ -4829,6 +4891,8 @@ static LRESULT CALLBACK PhpUiServiceProgressDialogWndProc(
     {
     case WM_DESTROY:
         {
+            InterlockedExchangePointer(&context->WindowHandle, NULL);
+            PhUnregisterWindowCallback(WindowHandle);
             PhSetWindowProcedure(WindowHandle, oldWndProc);
             PhRemoveWindowContext(WindowHandle, MAXCHAR);
         }
@@ -4843,6 +4907,9 @@ static LRESULT CALLBACK PhpUiServiceProgressDialogWndProc(
             PPH_STRING message;
             PPH_STRING content;
 
+            if ((PPH_UI_SERVICE_PROGRESS_DIALOG)lParam != context)
+                return CallWindowProc(oldWndProc, WindowHandle, WindowMessage, wParam, lParam);
+
             message = InterlockedExchangePointer(&context->StatusMessage, NULL);
             content = InterlockedExchangePointer(&context->StatusContent, NULL);
 
@@ -4854,13 +4921,18 @@ static LRESULT CALLBACK PhpUiServiceProgressDialogWndProc(
 
             PhClearReference(&message);
             PhClearReference(&content);
+
+            return TRUE;
         }
-        goto DefaultWndProc;
     case WM_PHSVC_EXIT:
         {
+            if ((PPH_UI_SERVICE_PROGRESS_DIALOG)lParam != context)
+                return CallWindowProc(oldWndProc, WindowHandle, WindowMessage, wParam, lParam);
+
             CallWindowProc(oldWndProc, WindowHandle, TDM_CLICK_BUTTON, IDCANCEL, 0);
+
+            return TRUE;
         }
-        goto DefaultWndProc;
     }
 
     return CallWindowProc(oldWndProc, WindowHandle, WindowMessage, wParam, lParam);
@@ -4893,8 +4965,6 @@ HRESULT CALLBACK PhpUiServiceInitializeDialogCallbackProc(
     {
     case TDN_DIALOG_CONSTRUCTED:
         {
-            context->WindowHandle = WindowHandle;
-
             PhSetApplicationWindowIconEx(WindowHandle, PhGetWindowDpi(WindowHandle));
 
             PhCenterWindow(WindowHandle, context->ParentWindowHandle);
@@ -4904,6 +4974,7 @@ HRESULT CALLBACK PhpUiServiceInitializeDialogCallbackProc(
             context->OldWndProc = PhGetWindowProcedure(WindowHandle);
             PhSetWindowContext(WindowHandle, MAXCHAR, context);
             PhSetWindowProcedure(WindowHandle, PhpUiServiceProgressDialogWndProc);
+            InterlockedExchangePointer(&context->WindowHandle, WindowHandle);
 
             if (
                 PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) &&
@@ -4946,7 +5017,7 @@ NTSTATUS PhShowServiceProgressDialogThread(
     config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_CAN_BE_MINIMIZED;
     config.pfCallback = PhpUiServiceInitializeDialogCallbackProc;
     config.lpCallbackData = (LONG_PTR)Context;
-    config.pszContent = L"Initializing...";
+    config.pszContent = PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_INITIALIZING);
     config.cxWidth = 200;
 
     PhShowTaskDialog(&config, NULL, NULL, NULL);
@@ -4970,6 +5041,13 @@ static VOID PhServiceProgressContextDeleteProcedure(
     )
 {
     PPH_UI_SERVICE_PROGRESS_DIALOG context = Object;
+    PPH_STRING message;
+    PPH_STRING content;
+
+    message = InterlockedExchangePointer(&context->StatusMessage, NULL);
+    content = InterlockedExchangePointer(&context->StatusContent, NULL);
+    PhClearReference(&message);
+    PhClearReference(&content);
 
     if (context->ServiceResultList)
     {
@@ -5014,8 +5092,8 @@ PPH_UI_SERVICE_PROGRESS_DIALOG PhCreateServiceProgressContext(
  * Shows the service progress dialog.
  *
  * \param WindowHandle Parent window handle.
- * \param Verb Action verb.
- * \param Message Action message.
+ * \param VerbId Action verb resource identifier.
+ * \param MessageId Action message resource identifier.
  * \param Warning TRUE to show a warning icon.
  * \param Services Array of service items.
  * \param NumberOfServices Number of service items.
@@ -5024,8 +5102,8 @@ PPH_UI_SERVICE_PROGRESS_DIALOG PhCreateServiceProgressContext(
  */
 VOID PhShowServiceProgressDialog(
     _In_ HWND WindowHandle,
-    _In_ PCWSTR Verb,
-    _In_ PCWSTR Message,
+    _In_ ULONG VerbId,
+    _In_ ULONG MessageId,
     _In_ BOOLEAN Warning,
     _In_ PPH_SERVICE_ITEM* Services,
     _In_ ULONG NumberOfServices,
@@ -5034,6 +5112,7 @@ VOID PhShowServiceProgressDialog(
     )
 {
     PPH_UI_SERVICE_PROGRESS_DIALOG context;
+    NTSTATUS status;
 
     if (NumberOfServices == 0)
         return;
@@ -5042,23 +5121,34 @@ VOID PhShowServiceProgressDialog(
 
     context = PhCreateServiceProgressContext();
     context->ParentWindowHandle = WindowHandle;
-    context->Verb = Verb;
-    context->Message = Message;
+    context->VerbId = VerbId;
+    context->MessageId = MessageId;
     context->Warning = Warning;
     context->ActionCallback = ActionCallback;
     context->ActionCommand = ActionCommand;
     context->ServiceItemList = PhCreateList(NumberOfServices);
     PhAddItemsList(context->ServiceItemList, Services, NumberOfServices);
 
-    PhCreateThread2(PhShowServiceProgressDialogThread, context);
+    status = PhCreateThread2(PhShowServiceProgressDialogThread, context);
+
+    if (!NT_SUCCESS(status))
+    {
+        PhShowStatus(
+            WindowHandle,
+            PhGetApplicationUiString(IDS_PH_SERVICE_PROGRESS_UNABLE_CREATE_THREAD),
+            status,
+            0
+            );
+        PhDereferenceObject(context);
+    }
 }
 
 /**
  * Shows a confirmation message for service actions.
  *
  * \param WindowHandle Parent window handle.
- * \param Verb Action verb.
- * \param Message Action message.
+ * \param VerbId Action verb resource identifier.
+ * \param MessageId Action message resource identifier.
  * \param Warning TRUE to show a warning icon.
  * \param Services Array of service items.
  * \param NumberOfServices Number of service items.
@@ -5066,8 +5156,8 @@ VOID PhShowServiceProgressDialog(
  */
 static BOOLEAN PhpShowContinueMessageServices(
     _In_ HWND WindowHandle,
-    _In_ PCWSTR Verb,
-    _In_ PCWSTR Message,
+    _In_ ULONG VerbId,
+    _In_ ULONG MessageId,
     _In_ BOOLEAN Warning,
     _In_ PPH_SERVICE_ITEM* Services,
     _In_ ULONG NumberOfServices
@@ -5091,9 +5181,9 @@ static BOOLEAN PhpShowContinueMessageServices(
 
         return PhShowConfirmMessage(
             WindowHandle,
-            Verb,
+            PhGetApplicationUiString(VerbId),
             object,
-            Message,
+            PhGetApplicationUiString(MessageId),
             Warning
             );
     }
@@ -5177,8 +5267,8 @@ BOOLEAN PhUiStartServices(
     {
         PhShowServiceProgressDialog(
             WindowHandle,
-            L"start",
-            L"Starting a service might prevent the system from functioning properly.",
+            IDS_PH_ACTION_START,
+            IDS_PH_SERVICE_START_WARNING,
             FALSE,
             Services,
             NumberOfServices,
@@ -5190,8 +5280,8 @@ BOOLEAN PhUiStartServices(
 
     if (!PhpShowContinueMessageServices(
         WindowHandle,
-        L"start",
-        L"Starting a service might prevent the system from functioning properly.",
+        IDS_PH_ACTION_START,
+        IDS_PH_SERVICE_START_WARNING,
         FALSE,
         Services,
         NumberOfServices
@@ -5383,8 +5473,8 @@ BOOLEAN PhUiContinueServices(
     {
         PhShowServiceProgressDialog(
             WindowHandle,
-            L"continue",
-            L"Continuing a service might prevent the system from functioning properly.",
+            IDS_PH_ACTION_CONTINUE,
+            IDS_PH_SERVICE_CONTINUE_WARNING,
             FALSE,
             Services,
             NumberOfServices,
@@ -5396,8 +5486,8 @@ BOOLEAN PhUiContinueServices(
 
     if (!PhpShowContinueMessageServices(
         WindowHandle,
-        L"continue",
-        L"Continuing a service might prevent the system from functioning properly.",
+        IDS_PH_ACTION_CONTINUE,
+        IDS_PH_SERVICE_CONTINUE_WARNING,
         FALSE,
         Services,
         NumberOfServices
@@ -5612,8 +5702,8 @@ BOOLEAN PhUiPauseServices(
     {
         PhShowServiceProgressDialog(
             WindowHandle,
-            L"pause",
-            L"Pausing a service might prevent the system from functioning properly.",
+            IDS_PH_ACTION_PAUSE,
+            IDS_PH_SERVICE_PAUSE_WARNING,
             FALSE,
             Services,
             NumberOfServices,
@@ -5625,8 +5715,8 @@ BOOLEAN PhUiPauseServices(
 
     if (!PhpShowContinueMessageServices(
         WindowHandle,
-        L"pause",
-        L"Pausing a service might prevent the system from functioning properly.",
+        IDS_PH_ACTION_PAUSE,
+        IDS_PH_SERVICE_PAUSE_WARNING,
         FALSE,
         Services,
         NumberOfServices
@@ -5841,8 +5931,8 @@ BOOLEAN PhUiStopServices(
     {
         PhShowServiceProgressDialog(
             WindowHandle,
-            L"stop",
-            L"Stopping a service might prevent the system from functioning properly.",
+            IDS_PH_ACTION_STOP,
+            IDS_PH_SERVICE_STOP_WARNING,
             FALSE,
             Services,
             NumberOfServices,
@@ -5854,8 +5944,8 @@ BOOLEAN PhUiStopServices(
 
     if (!PhpShowContinueMessageServices(
         WindowHandle,
-        L"stop",
-        L"Stopping a service might prevent the system from functioning properly.",
+        IDS_PH_ACTION_STOP,
+        IDS_PH_SERVICE_STOP_WARNING,
         FALSE,
         Services,
         NumberOfServices
@@ -6166,8 +6256,8 @@ BOOLEAN PhUiRestartServices(
     {
         PhShowServiceProgressDialog(
             WindowHandle,
-            L"restart",
-            L"Restarting a service might prevent the system from functioning properly.",
+            IDS_PH_ACTION_RESTART,
+            IDS_PH_SERVICE_RESTART_WARNING,
             FALSE,
             Services,
             NumberOfServices,
@@ -6179,8 +6269,8 @@ BOOLEAN PhUiRestartServices(
 
     if (!PhpShowContinueMessageServices(
         WindowHandle,
-        L"restart",
-        L"Restarting a service might prevent the system from functioning properly.",
+        IDS_PH_ACTION_RESTART,
+        IDS_PH_SERVICE_RESTART_WARNING,
         FALSE,
         Services,
         NumberOfServices

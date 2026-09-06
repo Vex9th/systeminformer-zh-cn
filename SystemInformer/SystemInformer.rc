@@ -3209,6 +3209,20 @@ BEGIN
     IDS_PH_SCROLL_UP                                    "Scroll Up"
     IDS_PH_SCROLL_RIGHT                                 "Scroll Right"
     IDS_PH_SCROLL_DOWN                                  "Scroll Down"
+    IDS_PH_SERVICE_PROGRESS_RETRY                       "Retry"
+    IDS_PH_SERVICE_PROGRESS_COMPLETED                   "Completed"
+    IDS_PH_SERVICE_PROGRESS_ELEVATION_CONTENT           "You will need to provide administrator permission. Click Continue to complete this operation."
+    IDS_PH_SERVICE_PROGRESS_UNABLE_FORMAT               "Unable to %s one or more services:"
+    IDS_PH_SERVICE_PROGRESS_ATTEMPT_FORMAT              "Attempting to %s %s..."
+    IDS_PH_SERVICE_PROGRESS_CONFIRM_FORMAT              "Do you want to %s %s?"
+    IDS_PH_SERVICE_PROGRESS_CONFIRM_CONTENT_FORMAT      "%s Are you sure you want to continue?"
+    IDS_PH_SERVICE_PROGRESS_INITIALIZING                "Initializing..."
+    IDS_PH_SERVICE_PROGRESS_UNABLE_CREATE_THREAD        "Unable to create a service worker thread."
+    IDS_PH_SERVICE_START_WARNING                        "Starting a service might prevent the system from functioning properly."
+    IDS_PH_SERVICE_CONTINUE_WARNING                     "Continuing a service might prevent the system from functioning properly."
+    IDS_PH_SERVICE_PAUSE_WARNING                        "Pausing a service might prevent the system from functioning properly."
+    IDS_PH_SERVICE_STOP_WARNING                         "Stopping a service might prevent the system from functioning properly."
+    IDS_PH_SERVICE_RESTART_WARNING                      "Restarting a service might prevent the system from functioning properly."
 END
 
 /////////////////////////////////////////////////////////////////////////////

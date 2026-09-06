@@ -156,11 +156,11 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2611)))
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_SCROLL_DOWN$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2611$")
-        self.assertEqual(len(english), 611)
-        self.assertEqual(len(chinese), 611)
+        self.assertEqual(numeric_ids, list(range(2000, 2625)))
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_SERVICE_RESTART_WARNING$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2625$")
+        self.assertEqual(len(english), 625)
+        self.assertEqual(len(chinese), 625)
 
     def test_json_and_ci_have_exact_native_ownership(self) -> None:
         translations = json.loads(
@@ -176,7 +176,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=611"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=625"), 2)
         self.assertNotIn("sys_info.exe=511", workflow)
 
     def test_exact_confirm_routes_preserve_dynamic_object_boundary(self) -> None:
@@ -251,7 +251,15 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
             call_arguments(
                 actions, "PhpShowContinueMessageServices", "PhShowConfirmMessage", self.audit
             ),
-            [("WindowHandle", "Verb", "object", "Message", "Warning")],
+            [
+                (
+                    "WindowHandle",
+                    "PhGetApplicationUiString(VerbId)",
+                    "object",
+                    "PhGetApplicationUiString(MessageId)",
+                    "Warning",
+                )
+            ],
         )
         self.assertEqual(
             call_arguments(
@@ -324,6 +332,8 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
         expected_uses = Counter({symbol: 1 for symbol, *_ in RESOURCES})
         expected_uses.update(
             {
+                "IDS_PH_CONFIRM_SELECTED_SERVICE": 1,
+                "IDS_PH_CONFIRM_SELECTED_SERVICES": 1,
                 "IDS_PH_ACTION_UNMAP": 1,
                 "IDS_PH_ACTION_UNLOAD": 1,
                 "IDS_PH_CONFIRM_SELECTED_HANDLES": 1,
@@ -339,7 +349,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
             Counter({symbol: all_uses[symbol] for symbol in expected_uses}),
             expected_uses,
         )
-        self.assertEqual(sum(expected_uses.values()), 19)
+        self.assertEqual(sum(expected_uses.values()), 21)
 
     def test_fresh_scan_has_no_untranslated_target_confirm_text(self) -> None:
         entries = []
