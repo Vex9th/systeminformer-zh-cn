@@ -838,7 +838,12 @@
     "%s total": "总计 %s",
     "%s Strings": "%s 字符串",
     "Thread count... (auto)": "线程数...（自动）",
-    "Thread count... (%lu)": "线程数...（%lu）"
+    "Thread count... (%lu)": "线程数...（%lu）",
+    "<a>(Verified) %s</a>": "<a>（已验证）%s</a>",
+    "(Verified) %s": "（已验证）%s",
+    "(UNVERIFIED) %s": "（未验证）%s",
+    "Non-existent process (%lu)": "不存在的进程（%lu）",
+    "Unknown process (%lu)": "未知进程（%lu）"
   },
   "strings": {
     " Are you sure you want to continue?": "确定要继续吗？",

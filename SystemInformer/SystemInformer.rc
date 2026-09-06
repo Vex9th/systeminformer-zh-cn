@@ -3153,6 +3153,11 @@ BEGIN
     IDS_PH_MEMORY_STRINGS_TITLE_FORMAT                  "%s Strings"
     IDS_PH_THREAD_COUNT_AUTO                            "Thread count... (auto)"
     IDS_PH_THREAD_COUNT_FORMAT                          "Thread count... (%lu)"
+    IDS_PH_VERIFIED_LINK_FORMAT                         "<a>(Verified) %s</a>"
+    IDS_PH_VERIFIED_COMPANY_FORMAT                      "(Verified) %s"
+    IDS_PH_UNVERIFIED_COMPANY_FORMAT                    "(UNVERIFIED) %s"
+    IDS_PH_NON_EXISTENT_PROCESS_FORMAT                  "Non-existent process (%lu)"
+    IDS_PH_UNKNOWN_PROCESS_FORMAT                       "Unknown process (%lu)"
 END
 
 /////////////////////////////////////////////////////////////////////////////

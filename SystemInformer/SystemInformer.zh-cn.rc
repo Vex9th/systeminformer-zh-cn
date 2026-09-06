@@ -2333,4 +2333,9 @@ BEGIN
     IDS_PH_MEMORY_STRINGS_TITLE_FORMAT                  "%s 字符串"
     IDS_PH_THREAD_COUNT_AUTO                            "线程数...（自动）"
     IDS_PH_THREAD_COUNT_FORMAT                          "线程数...（%lu）"
+    IDS_PH_VERIFIED_LINK_FORMAT                         "<a>（已验证）%s</a>"
+    IDS_PH_VERIFIED_COMPANY_FORMAT                      "（已验证）%s"
+    IDS_PH_UNVERIFIED_COMPANY_FORMAT                    "（未验证）%s"
+    IDS_PH_NON_EXISTENT_PROCESS_FORMAT                  "不存在的进程（%lu）"
+    IDS_PH_UNKNOWN_PROCESS_FORMAT                       "未知进程（%lu）"
 END

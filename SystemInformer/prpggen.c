@@ -489,15 +489,16 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                 if (processItem->VerifySignerName)
                 {
                     PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME_LINK,
-                        PhaFormatString(L"<a>(Verified) %s</a>", processItem->VerifySignerName->Buffer)->Buffer);
+                        PhaFormatString(PhGetApplicationUiString(IDS_PH_VERIFIED_LINK_FORMAT),
+                            processItem->VerifySignerName->Buffer)->Buffer);
                     ShowWindow(GetDlgItem(hwndDlg, IDC_COMPANYNAME), SW_HIDE);
                     ShowWindow(GetDlgItem(hwndDlg, IDC_COMPANYNAME_LINK), SW_SHOW);
                 }
                 else
                 {
                     PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME,
-                        PhaConcatStrings2(
-                        L"(Verified) ",
+                        PhaFormatString(
+                        PhGetApplicationUiString(IDS_PH_VERIFIED_COMPANY_FORMAT),
                         PhGetStringOrEmpty(processItem->VersionInfo.CompanyName)
                         )->Buffer);
                 }
@@ -505,8 +506,8 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
             else if (processItem->VerifyResult != VrUnknown)
             {
                 PhSetDialogItemText(hwndDlg, IDC_COMPANYNAME,
-                    PhaConcatStrings2(
-                    L"(UNVERIFIED) ",
+                    PhaFormatString(
+                    PhGetApplicationUiString(IDS_PH_UNVERIFIED_COMPANY_FORMAT),
                     PhGetStringOrEmpty(processItem->VersionInfo.CompanyName)
                     )->Buffer);
             }
@@ -604,7 +605,8 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                 else
                 {
                     PhSetDialogItemText(hwndDlg, IDC_PARENTPROCESS, PhaFormatString(
-                        L"Non-existent process (%lu)", HandleToUlong(processItem->ParentProcessId))->Buffer);
+                        PhGetApplicationUiString(IDS_PH_NON_EXISTENT_PROCESS_FORMAT),
+                        HandleToUlong(processItem->ParentProcessId))->Buffer);
                 }
 
                 EnableWindow(GetDlgItem(hwndDlg, IDC_VIEWPARENTPROCESS), FALSE);

@@ -30,6 +30,11 @@ RESOURCES = (
     ("IDS_PH_MEMORY_STRINGS_TITLE_FORMAT", 2552, "%s Strings", "%s 字符串"),
     ("IDS_PH_THREAD_COUNT_AUTO", 2553, "Thread count... (auto)", "线程数...（自动）"),
     ("IDS_PH_THREAD_COUNT_FORMAT", 2554, "Thread count... (%lu)", "线程数...（%lu）"),
+    ("IDS_PH_VERIFIED_LINK_FORMAT", 2555, "<a>(Verified) %s</a>", "<a>（已验证）%s</a>"),
+    ("IDS_PH_VERIFIED_COMPANY_FORMAT", 2556, "(Verified) %s", "（已验证）%s"),
+    ("IDS_PH_UNVERIFIED_COMPANY_FORMAT", 2557, "(UNVERIFIED) %s", "（未验证）%s"),
+    ("IDS_PH_NON_EXISTENT_PROCESS_FORMAT", 2558, "Non-existent process (%lu)", "不存在的进程（%lu）"),
+    ("IDS_PH_UNKNOWN_PROCESS_FORMAT", 2559, "Unknown process (%lu)", "未知进程（%lu）"),
 )
 
 
@@ -90,6 +95,8 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                 "hidnproc.c",
                 "sysscmem.c",
                 "memsrcht.c",
+                "prpggen.c",
+                "procrec.c",
             )
         }
 
@@ -104,7 +111,7 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
 
-        self.assertEqual([row[1] for row in RESOURCES], list(range(2542, 2555)))
+        self.assertEqual([row[1] for row in RESOURCES], list(range(2542, 2560)))
         for symbol, resource_id, en, zh in RESOURCES:
             with self.subTest(symbol=symbol):
                 self.assertRegex(header, rf"(?m)^#define\s+{symbol}\s+{resource_id}$")
@@ -120,17 +127,17 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2555)))
-        self.assertEqual(len(english), 555)
-        self.assertEqual(len(chinese), 555)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_THREAD_COUNT_FORMAT$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2555$")
+        self.assertEqual(numeric_ids, list(range(2000, 2560)))
+        self.assertEqual(len(english), 560)
+        self.assertEqual(len(chinese), 560)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_UNKNOWN_PROCESS_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2560$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=555"), 2)
-        self.assertNotIn("sys_info.exe=550", workflow)
+        self.assertEqual(workflow.count("sys_info.exe=560"), 2)
+        self.assertNotIn("sys_info.exe=555", workflow)
 
     def test_each_resource_is_bound_to_the_exact_runtime_arguments(self) -> None:
         masked = {name: self.audit.mask_c_comments(source) for name, source in self.sources.items()}
@@ -188,6 +195,31 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                 "IDS_PH_MEMORY_STRINGS_TITLE_FORMAT",
                 "PhGetStringOrEmpty(PH_AUTO(PhGetClientIdName(&clientId)))",
             ),),
+            "prpggen.c": (
+                ("IDS_PH_VERIFIED_LINK_FORMAT", "processItem->VerifySignerName->Buffer"),
+                (
+                    "IDS_PH_VERIFIED_COMPANY_FORMAT",
+                    "PhGetStringOrEmpty(processItem->VersionInfo.CompanyName)",
+                ),
+                (
+                    "IDS_PH_UNVERIFIED_COMPANY_FORMAT",
+                    "PhGetStringOrEmpty(processItem->VersionInfo.CompanyName)",
+                ),
+                (
+                    "IDS_PH_NON_EXISTENT_PROCESS_FORMAT",
+                    "HandleToUlong(processItem->ParentProcessId)",
+                ),
+            ),
+            "procrec.c": (
+                (
+                    "IDS_PH_NON_EXISTENT_PROCESS_FORMAT",
+                    "HandleToUlong(context->Record->ParentProcessId)",
+                ),
+                (
+                    "IDS_PH_UNKNOWN_PROCESS_FORMAT",
+                    "HandleToUlong(context->Record->ParentProcessId)",
+                ),
+            ),
         }
 
         actual = Counter()
@@ -208,6 +240,59 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
             for call in calls
         )
         self.assertEqual(actual, expected)
+
+    def test_signature_formats_stay_bound_to_their_verification_states(self) -> None:
+        body = function_body(self.sources["prpggen.c"], "PhpProcessGeneralDlgProc", self.audit)
+        self.assertRegex(
+            body,
+            r"(?s)if\s*\(processItem->VerifyResult\s*==\s*VrTrusted\).*?"
+            r"if\s*\(processItem->VerifySignerName\).*?"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_COMPANYNAME_LINK\s*,\s*"
+            r"PhaFormatString\(PhGetApplicationUiString\(IDS_PH_VERIFIED_LINK_FORMAT\)\s*,\s*"
+            r"processItem->VerifySignerName->Buffer\)->Buffer\s*\).*?"
+            r"else.*?PhSetDialogItemText\(hwndDlg\s*,\s*IDC_COMPANYNAME\s*,\s*"
+            r"PhaFormatString\(\s*PhGetApplicationUiString\(IDS_PH_VERIFIED_COMPANY_FORMAT\)\s*,\s*"
+            r"PhGetStringOrEmpty\(processItem->VersionInfo.CompanyName\)\s*\)->Buffer\s*\).*?"
+            r"else\s+if\s*\(processItem->VerifyResult\s*!=\s*VrUnknown\).*?"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_COMPANYNAME\s*,\s*"
+            r"PhaFormatString\(\s*PhGetApplicationUiString\(IDS_PH_UNVERIFIED_COMPANY_FORMAT\)\s*,\s*"
+            r"PhGetStringOrEmpty\(processItem->VersionInfo.CompanyName\)\s*\)->Buffer\s*\)\s*;\s*"
+            r"\}\s*else\s*\{\s*"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_COMPANYNAME\s*,\s*"
+            r"PhpGetStringOrNa\(processItem->VersionInfo.CompanyName\)\s*\)\s*;\s*\}",
+        )
+
+    def test_parent_process_formats_stay_bound_to_nonexistent_and_unknown_states(self) -> None:
+        general = function_body(self.sources["prpggen.c"], "PhpProcessGeneralDlgProc", self.audit)
+        record = function_body(self.sources["procrec.c"], "PhpProcessRecordDlgProc", self.audit)
+        self.assertRegex(
+            general,
+            r"(?s)if\s*\(parentProcess\s*=\s*PhReferenceProcessItemForParent\(processItem\)\).*?"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENTPROCESS\s*,\s*"
+            r"PH_AUTO_T\(PH_STRING\s*,\s*PhGetClientIdNameEx\(&clientId\s*,\s*parentProcess->ProcessName\)\)->Buffer\s*\)\s*;.*?"
+            r"else.*?if\s*\(processItem->ProcessId\s*==\s*SYSTEM_IDLE_PROCESS_ID\).*?"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENTPROCESS\s*,\s*L\"N/A\"\s*\)\s*;\s*"
+            r"\}\s*else\s*\{\s*PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENTPROCESS\s*,\s*"
+            r"PhaFormatString\(\s*"
+            r"PhGetApplicationUiString\(IDS_PH_NON_EXISTENT_PROCESS_FORMAT\)\s*,\s*"
+            r"HandleToUlong\(processItem->ParentProcessId\)\)->Buffer\s*\)\s*;\s*\}\s*"
+            r"EnableWindow\(GetDlgItem\(hwndDlg\s*,\s*IDC_VIEWPARENTPROCESS\)\s*,\s*FALSE\s*\)",
+        )
+        self.assertRegex(
+            record,
+            r"(?s)if\s*\(processItem\s*=\s*PhReferenceProcessItemForRecord\(context->Record\)\).*?"
+            r"if\s*\(parentProcess\s*=\s*PhReferenceProcessItemForParent\(processItem\)\).*?"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENT\s*,\s*"
+            r"PH_AUTO_T\(PH_STRING\s*,\s*PhGetClientIdNameEx\(&clientId\s*,\s*parentProcess->ProcessName\)\)->Buffer\s*\)\s*;.*?"
+            r"else.*?PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENT\s*,\s*"
+            r"PhaFormatString\(\s*PhGetApplicationUiString\(IDS_PH_NON_EXISTENT_PROCESS_FORMAT\)\s*,\s*"
+            r"HandleToUlong\(context->Record->ParentProcessId\)\)->Buffer\s*\)\s*;.*?"
+            r"PhDereferenceObject\(processItem\)\s*;\s*\}\s*else\s*\{\s*"
+            r"PhSetDialogItemText\(hwndDlg\s*,\s*IDC_PARENT\s*,\s*"
+            r"PhaFormatString\(\s*PhGetApplicationUiString\(IDS_PH_UNKNOWN_PROCESS_FORMAT\)\s*,\s*"
+            r"HandleToUlong\(context->Record->ParentProcessId\)\)->Buffer\s*\)\s*;.*?"
+            r"EnableWindow\(GetDlgItem\(hwndDlg\s*,\s*IDC_PROPERTIES\)\s*,\s*FALSE\s*\)",
+        )
 
     def test_memory_string_thread_count_labels_use_exact_resource_formats(self) -> None:
         body = function_body(self.sources["memsrcht.c"], "PhpMemoryStringsDlgProc", self.audit)
@@ -279,6 +364,9 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
             with self.subTest(english=english):
                 self.assertNotIn(f'L"{english}"', all_source)
         for fragment in ('L" installed"', 'L" total"', 'L" Strings"'):
+            with self.subTest(fragment=fragment):
+                self.assertNotIn(fragment, all_source)
+        for fragment in ('L"(Verified) "', 'L"(UNVERIFIED) "'):
             with self.subTest(fragment=fragment):
                 self.assertNotIn(fragment, all_source)
 

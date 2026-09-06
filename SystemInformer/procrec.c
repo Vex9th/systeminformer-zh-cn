@@ -139,7 +139,7 @@ INT_PTR CALLBACK PhpProcessRecordDlgProc(
                 }
                 else
                 {
-                    PhSetDialogItemText(hwndDlg, IDC_PARENT, PhaFormatString(L"Non-existent process (%u)",
+                    PhSetDialogItemText(hwndDlg, IDC_PARENT, PhaFormatString(PhGetApplicationUiString(IDS_PH_NON_EXISTENT_PROCESS_FORMAT),
                         HandleToUlong(context->Record->ParentProcessId))->Buffer);
                 }
 
@@ -147,7 +147,7 @@ INT_PTR CALLBACK PhpProcessRecordDlgProc(
             }
             else
             {
-                PhSetDialogItemText(hwndDlg, IDC_PARENT, PhaFormatString(L"Unknown process (%u)",
+                PhSetDialogItemText(hwndDlg, IDC_PARENT, PhaFormatString(PhGetApplicationUiString(IDS_PH_UNKNOWN_PROCESS_FORMAT),
                     HandleToUlong(context->Record->ParentProcessId))->Buffer);
 
                 EnableWindow(GetDlgItem(hwndDlg, IDC_PROPERTIES), FALSE);
