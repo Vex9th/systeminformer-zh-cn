@@ -734,8 +734,11 @@ HRESULT PhpShowToastNotification(
     static PPH_STRING iconFileName = NULL;
     PH_STRINGREF iconAppId = PH_STRINGREF_INIT(L"");
     PPH_STRING processAppId = NULL;
+    PPH_STRING escapedIconFileName = NULL;
+    PPH_STRING escapedTitle = NULL;
+    PPH_STRING escapedText = NULL;
+    PPH_STRING toastXml = NULL;
     HRESULT result;
-    PPH_STRING toastXml;
     PH_FORMAT format[7];
 
     if (!Force && !PhGetIntegerSetting(SETTING_TOAST_NOTIFY_ENABLED))
@@ -769,7 +772,11 @@ HRESULT PhpShowToastNotification(
 
     result = PhInitializeToastRuntime();
     if (HR_FAILED(result))
-        return result;
+        goto CleanupExit;
+
+    escapedIconFileName = PhEscapeStringForXml(PhGetString(iconFileName));
+    escapedTitle = PhEscapeStringForXml(PhGetString(Title));
+    escapedText = PhEscapeStringForXml(PhGetString(Text));
 
     //toastXml = PhFormatString(
     //    L"<toast>\r\n"
@@ -787,11 +794,11 @@ HRESULT PhpShowToastNotification(
     //    );
 
     PhInitFormatS(&format[0], L"<toast><visual><binding template=\"ToastImageAndText02\"><image id=\"1\" src=\"");
-    PhInitFormatSR(&format[1], iconFileName->sr);
+    PhInitFormatSR(&format[1], escapedIconFileName->sr);
     PhInitFormatS(&format[2], L"\" alt=\"red graphic\"/><text id=\"1\">");
-    PhInitFormatSR(&format[3], Title->sr);
+    PhInitFormatSR(&format[3], escapedTitle->sr);
     PhInitFormatS(&format[4], L"</text><text id=\"2\">");
-    PhInitFormatSR(&format[5], Text->sr);
+    PhInitFormatSR(&format[5], escapedText->sr);
     PhInitFormatS(&format[6], L"</text></binding></visual></toast>");
     toastXml = PhFormat(format, RTL_NUMBER_OF(format), 0);
 
@@ -803,7 +810,11 @@ HRESULT PhpShowToastNotification(
         Context
         );
 
+CleanupExit:
     PhClearReference(&toastXml);
+    PhClearReference(&escapedIconFileName);
+    PhClearReference(&escapedTitle);
+    PhClearReference(&escapedText);
     PhClearReference(&processAppId);
 
     return result;
@@ -917,11 +928,12 @@ HRESULT PhNfShowBalloonTipEx(
 {
     PPH_STRING BalloonTitle;
     PPH_STRING BalloonText;
+    HRESULT result;
 
-    BalloonTitle = Title ? PhCreateString(Title) : NULL;
-    BalloonText = Text ? PhCreateString(Text) : NULL;
+    BalloonTitle = PhCreateString(Title);
+    BalloonText = PhCreateString(Text);
 
-    return PhpShowToastNotification(
+    result = PhpShowToastNotification(
         BalloonTitle,
         BalloonText,
         Timeout,
@@ -929,6 +941,11 @@ HRESULT PhNfShowBalloonTipEx(
         Context,
         TRUE
         );
+
+    PhClearReference(&BalloonTitle);
+    PhClearReference(&BalloonText);
+
+    return result;
 }
 
 HICON PhNfBitmapToIcon(

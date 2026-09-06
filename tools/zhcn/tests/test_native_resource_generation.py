@@ -1075,11 +1075,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertNotIn('L"', tray_array)
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_UNMAP_SECTION_WARNING$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_NOTIFY_UNKNOWN_PROCESS$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2527$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2542$",
         )
 
     def test_audit_scans_tool_resources_and_stringtables(self) -> None:
@@ -1602,7 +1602,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1589 strings", result.stdout)
+        self.assertIn("1606 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -2051,7 +2051,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         resource_script = SOURCE_RC.read_text(encoding="utf-8-sig")
 
-        self.assertEqual(len(stringtable_ids(resource_script)), 527)
+        self.assertEqual(len(stringtable_ids(resource_script)), 542)
         self.assertIn(
             "static PPH_STRING PhApplicationUiStrings[IDS_PH_LAST - IDS_PH_FIRST + 1]",
             main,
@@ -2090,7 +2090,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 re.MULTILINE,
             )
         ]
-        self.assertEqual(sorted(numeric_ids), list(range(2000, 2527)))
+        self.assertEqual(sorted(numeric_ids), list(range(2000, 2542)))
         self.assertNotRegex(options, r"\bmessage\s*=\s*L\"")
         self.assertNotRegex(
             options,
@@ -2583,11 +2583,11 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_CONFIRM_UNMAP_SECTION_WARNING$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_NOTIFY_UNKNOWN_PROCESS$",
         )
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2527$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2542$",
         )
 
     def test_early_crash_prompt_does_not_depend_on_ui_string_cache(self) -> None:
@@ -3564,7 +3564,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         expected_aps = {
             "WindowExplorer": 12096,
             "OnlineChecks": 12005,
-            "Updater": 12007,
+            "Updater": 12009,
         }
 
         for plugin, resources in expected_resources.items():
@@ -6266,7 +6266,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             Counter(
                 {
-                    (r"bin\Release64\sys_info.exe", 527): 2,
+                    (r"bin\Release64\sys_info.exe", 542): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
                     (r"bin\Release64\plugins\ExtendedTools.dll", 200): 2,
@@ -6275,7 +6275,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\plugins\WindowExplorer.dll", 96): 2,
                     (r"bin\Release64\plugins\OnlineChecks.dll", 5): 2,
                     (r"bin\Release64\plugins\ToolStatus.dll", 103): 2,
-                    (r"bin\Release64\plugins\Updater.dll", 7): 2,
+                    (r"bin\Release64\plugins\Updater.dll", 9): 2,
                     (r"bin\Release64\plugins\UserNotes.dll", 15): 2,
                     (r"bin\Release64\peview.exe", 287): 2,
                     (r"build\output\systeminformer-build-release-setup.exe", 74): 1,

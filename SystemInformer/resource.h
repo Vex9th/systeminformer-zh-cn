@@ -1518,8 +1518,23 @@
 #define IDS_PH_CONFIRM_UNLOAD_MODULE_WARNING                2524
 #define IDS_PH_CONFIRM_UNLOAD_MODULE_COMPAT_WARNING         2525
 #define IDS_PH_CONFIRM_UNMAP_SECTION_WARNING                2526
+#define IDS_PH_NOTIFY_PROCESS_CREATED_TITLE                 2527
+#define IDS_PH_NOTIFY_PROCESS_TERMINATED_TITLE              2528
+#define IDS_PH_NOTIFY_SERVICE_CREATED_TITLE                 2529
+#define IDS_PH_NOTIFY_SERVICE_STARTED_TITLE                 2530
+#define IDS_PH_NOTIFY_SERVICE_STOPPED_TITLE                 2531
+#define IDS_PH_NOTIFY_SERVICE_MODIFIED_TITLE                2532
+#define IDS_PH_NOTIFY_SERVICE_DELETED_TITLE                 2533
+#define IDS_PH_NOTIFY_PROCESS_CREATED_FORMAT                2534
+#define IDS_PH_NOTIFY_PROCESS_TERMINATED_FORMAT             2535
+#define IDS_PH_NOTIFY_SERVICE_CREATED_FORMAT                2536
+#define IDS_PH_NOTIFY_SERVICE_STARTED_FORMAT                2537
+#define IDS_PH_NOTIFY_SERVICE_STOPPED_FORMAT                2538
+#define IDS_PH_NOTIFY_SERVICE_MODIFIED_FORMAT               2539
+#define IDS_PH_NOTIFY_SERVICE_DELETED_FORMAT                2540
+#define IDS_PH_NOTIFY_UNKNOWN_PROCESS                       2541
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_CONFIRM_UNMAP_SECTION_WARNING
+#define IDS_PH_LAST                                  IDS_PH_NOTIFY_UNKNOWN_PROCESS
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1531,6 +1546,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2527
+#define _APS_NEXT_SYMED_VALUE           2542
 #endif
 #endif

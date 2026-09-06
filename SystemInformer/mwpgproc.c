@@ -1129,33 +1129,24 @@ VOID PhMwpOnProcessAdded(
         {
             if (!PhPluginsEnabled || !PhMwpPluginNotifyEvent(PH_NOTIFY_PROCESS_CREATE, ProcessItem))
             {
-                PH_FORMAT format[9];
-                WCHAR formatBuffer[260];
+                PPH_STRING notificationText;
 
                 PhMwpClearLastNotificationDetails();
                 PhMwpLastNotificationType = PH_NOTIFY_PROCESS_CREATE;
                 PhMwpLastNotificationDetails.ProcessId = ProcessItem->ProcessId;
 
-                // The process %s (%lu) was created by %s (%lu)
-                PhInitFormatS(&format[0], L"The process ");
-                PhInitFormatSR(&format[1], ProcessItem->ProcessName->sr);
-                PhInitFormatS(&format[2], L" (");
-                PhInitFormatU(&format[3], HandleToUlong(ProcessItem->ProcessId));
-                PhInitFormatS(&format[4], L") was created by ");
-                PhInitFormatS(&format[5], PhGetStringOrDefault(parentName, L"Unknown process")); // todo: SR type (dmex)
-                PhInitFormatS(&format[6], L" (");
-                PhInitFormatU(&format[7], HandleToUlong(ProcessItem->ParentProcessId));
-                PhInitFormatC(&format[8], L')');
-
-                if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
-                {
-                    PhShowIconNotificationRaw(L"Process Created", formatBuffer);
-                }
-                else
-                {
-                    PhShowIconNotificationRaw(L"Process Created",
-                        PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
-                }
+                notificationText = PhFormatString(
+                    PhGetApplicationUiString(IDS_PH_NOTIFY_PROCESS_CREATED_FORMAT),
+                    PhGetString(ProcessItem->ProcessName),
+                    HandleToUlong(ProcessItem->ProcessId),
+                    PhGetStringOrDefault(parentName, PhGetApplicationUiString(IDS_PH_NOTIFY_UNKNOWN_PROCESS)),
+                    HandleToUlong(ProcessItem->ParentProcessId)
+                    );
+                PhShowIconNotificationRaw(
+                    PhGetApplicationUiString(IDS_PH_NOTIFY_PROCESS_CREATED_TITLE),
+                    PhGetString(notificationText)
+                    );
+                PhDereferenceObject(notificationText);
             }
         }
 
@@ -1212,30 +1203,23 @@ VOID PhMwpOnProcessRemoved(
     {
         if (!PhPluginsEnabled || !PhMwpPluginNotifyEvent(PH_NOTIFY_PROCESS_DELETE, ProcessItem))
         {
-            PH_FORMAT format[6];
-            WCHAR formatBuffer[260];
+            PPH_STRING notificationText;
 
             PhMwpClearLastNotificationDetails();
             PhMwpLastNotificationType = PH_NOTIFY_PROCESS_DELETE;
             PhMwpLastNotificationDetails.ProcessId = ProcessItem->ProcessId;
 
-            // The process %s (%lu) was terminated with status 0x%x
-            PhInitFormatS(&format[0], L"The process ");
-            PhInitFormatSR(&format[1], ProcessItem->ProcessName->sr);
-            PhInitFormatS(&format[2], L" (");
-            PhInitFormatU(&format[3], HandleToUlong(ProcessItem->ProcessId));
-            PhInitFormatS(&format[4], L") was terminated with status 0x");
-            PhInitFormatX(&format[5], exitStatus);
-
-            if (PhFormatToBuffer(format, RTL_NUMBER_OF(format), formatBuffer, sizeof(formatBuffer), NULL))
-            {
-                PhShowIconNotificationRaw(L"Process Terminated", formatBuffer);
-            }
-            else
-            {
-                PhShowIconNotificationRaw(L"Process Terminated",
-                    PH_AUTO_T(PH_STRING, PhFormat(format, RTL_NUMBER_OF(format), 0))->Buffer);
-            }
+            notificationText = PhFormatString(
+                PhGetApplicationUiString(IDS_PH_NOTIFY_PROCESS_TERMINATED_FORMAT),
+                PhGetString(ProcessItem->ProcessName),
+                HandleToUlong(ProcessItem->ProcessId),
+                exitStatus
+                );
+            PhShowIconNotificationRaw(
+                PhGetApplicationUiString(IDS_PH_NOTIFY_PROCESS_TERMINATED_TITLE),
+                PhGetString(notificationText)
+                );
+            PhDereferenceObject(notificationText);
         }
     }
 

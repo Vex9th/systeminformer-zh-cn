@@ -27,6 +27,43 @@ PH_EVENT InitializedEvent = PH_EVENT_INIT;
 PPH_OBJECT_TYPE UpdateContextType = NULL;
 PH_INITONCE UpdateContextTypeInitOnce = PH_INITONCE_INIT;
 
+static HRESULT UpdaterShowAvailableNotification(
+    VOID
+    )
+{
+    PPH_STRING title;
+    PPH_STRING text;
+    HRESULT result = E_FAIL;
+
+    title = PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_UP_NEW_VERSION_AVAILABLE,
+        NULL
+        );
+    text = PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_UP_CHECK_FOR_UPDATES,
+        NULL
+        );
+
+    if (!title || !text)
+        goto CleanupExit;
+
+    result = PhShowIconNotificationEx(
+        PhGetString(title),
+        PhGetString(text),
+        5000,
+        NULL,
+        NULL
+        );
+
+CleanupExit:
+    PhClearReference(&title);
+    PhClearReference(&text);
+
+    return result;
+}
+
 /**
  * Deletes the updater context object.
  *
@@ -774,13 +811,7 @@ NTSTATUS UpdateCheckSilentThread(
         {
             if (PhGetIntegerSetting(SETTING_NAME_SHOW_NOTIFICATION))
             {
-                if (!HR_SUCCESS(PhShowIconNotificationEx(
-                    L"New version of System Informer available",
-                    L"Help menu > Check for updates",
-                    5000,
-                    NULL,
-                    NULL
-                    )))
+                if (!HR_SUCCESS(UpdaterShowAvailableNotification()))
                 {
                     // Keep the update data alive for the notification or dialog path.
                     context->HaveData = TRUE;
@@ -1574,13 +1605,7 @@ VOID ShowStartupUpdateDialog(
 
     if (PhGetIntegerSetting(SETTING_NAME_SHOW_NOTIFICATION))
     {
-        if (HR_SUCCESS(PhShowIconNotificationEx(
-            L"New version of System Informer available",
-            L"Help menu > Check for updates",
-            5000,
-            NULL,
-            NULL
-            )))
+        if (HR_SUCCESS(UpdaterShowAvailableNotification()))
         {
             goto CleanupExit;
         }

@@ -126,8 +126,8 @@ class NotificationRuntimeTranslationTests(unittest.TestCase):
 
     def test_process_service_and_device_notifications_use_only_raw_route(self) -> None:
         expected_counts = {
-            "mwpgproc.c": 4,
-            "mwpgsrv.c": 10,
+            "mwpgproc.c": 2,
+            "mwpgsrv.c": 5,
             "mwpgdev.c": 1,
         }
 
@@ -225,15 +225,6 @@ class NotificationRuntimeTranslationTests(unittest.TestCase):
             fixed_candidates,
             Counter(
                 {
-                    "Process Created": 2,
-                    "Process Terminated": 2,
-                    "Service Created": 2,
-                    "Service Started": 2,
-                    "Service Stopped": 2,
-                    "Service Modified": 2,
-                    "Service Deleted": 2,
-                    "New version of System Informer available": 2,
-                    "Help menu > Check for updates": 2,
                 }
             ),
         )
