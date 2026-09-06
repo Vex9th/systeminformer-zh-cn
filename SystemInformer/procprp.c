@@ -1114,6 +1114,62 @@ VOID PhpInitializePropSheetLayoutStage2(
 }
 
 #ifdef PH_PROPSHEET_NEW
+static BOOLEAN PhpParseDialogTemplateSzOrOrd(
+    _Inout_ PBYTE *Cursor,
+    _In_ PBYTE ResourceEnd,
+    _Out_opt_ PCWSTR *String,
+    _Out_opt_ PSIZE_T StringLength
+    )
+{
+    PBYTE cursor;
+    PBYTE stringStart;
+
+    if (String)
+        *String = NULL;
+    if (StringLength)
+        *StringLength = 0;
+
+    cursor = *Cursor;
+
+    if (cursor > ResourceEnd || (SIZE_T)(ResourceEnd - cursor) < sizeof(USHORT))
+        return FALSE;
+
+    if (*(PUSHORT)cursor == 0)
+    {
+        *Cursor = cursor + sizeof(USHORT);
+        return TRUE;
+    }
+
+    if (*(PUSHORT)cursor == 0xFFFF)
+    {
+        if ((SIZE_T)(ResourceEnd - cursor) < 2 * sizeof(USHORT))
+            return FALSE;
+
+        *Cursor = cursor + 2 * sizeof(USHORT);
+        return TRUE;
+    }
+
+    stringStart = cursor;
+
+    while ((SIZE_T)(ResourceEnd - cursor) >= sizeof(WCHAR))
+    {
+        if (*(PWSTR)cursor == UNICODE_NULL)
+        {
+            if (String)
+                *String = (PCWSTR)stringStart;
+            if (StringLength)
+                *StringLength = (SIZE_T)(cursor - stringStart);
+
+            *Cursor = cursor + sizeof(WCHAR);
+            return TRUE;
+        }
+
+        cursor += sizeof(WCHAR);
+    }
+
+    return FALSE;
+}
+
 // Parse the title field out of a DLGTEMPLATE / DLGTEMPLATEEX resource so the
 // new propsheet host can label the tab before the page dialog is created.
 // Returns a heap PH_STRING (caller must dereference) or NULL.
@@ -1124,52 +1180,58 @@ PPH_STRING PhpReadDialogTemplateTitle(
 {
     PVOID resource;
     ULONG resourceLength;
-    PWSTR cursor;
-    PWSTR title;
+    PBYTE cursor;
+    PBYTE resourceEnd;
+    PCWSTR title;
+    SIZE_T titleLength;
     BOOLEAN isExtended;
 
     if (!DllBase)
         DllBase = PhInstanceHandle;
 
-    if (!NT_SUCCESS(PhLoadResource(DllBase, Template, RT_DIALOG, &resourceLength, &resource)))
+    if (!NT_SUCCESS(PhLoadUiResource(
+        DllBase,
+        Template,
+        RT_DIALOG,
+        &resourceLength,
+        &resource,
+        NULL
+        )))
         return NULL;
-    if (resourceLength < sizeof(DLGTEMPLATEEX))
+    if (resourceLength < sizeof(DLGTEMPLATE))
         return NULL;
 
     isExtended = ((PDLGTEMPLATEEX)resource)->signature == 0xFFFF &&
                  ((PDLGTEMPLATEEX)resource)->dlgVer == 1;
 
     if (isExtended)
-        cursor = (PWSTR)PTR_ADD_OFFSET(resource, sizeof(DLGTEMPLATEEX));
+    {
+        if (resourceLength < sizeof(DLGTEMPLATEEX))
+            return NULL;
+
+        cursor = PTR_ADD_OFFSET(resource, sizeof(DLGTEMPLATEEX));
+    }
     else
-        cursor = (PWSTR)PTR_ADD_OFFSET(resource, sizeof(DLGTEMPLATE));
+    {
+        cursor = PTR_ADD_OFFSET(resource, sizeof(DLGTEMPLATE));
+    }
+
+    resourceEnd = PTR_ADD_OFFSET(resource, resourceLength);
 
     // The menu, windowClass, title sz_Or_Ord fields are WORD-aligned in both
     // layouts. resource is at least WORD-aligned, and our fixed-size headers
     // are multiples of WORD, so cursor is already WORD-aligned here.
 
-    // Skip menu: 0x0000 (none), 0xFFFF + ordinal, or zero-terminated string.
-    if (*cursor == 0x0000)
-        cursor++;
-    else if (*cursor == 0xFFFF)
-        cursor += 2;
-    else
-        cursor += PhCountStringZ(cursor) + 1;
-
-    // Skip windowClass: same format as menu.
-    if (*cursor == 0x0000)
-        cursor++;
-    else if (*cursor == 0xFFFF)
-        cursor += 2;
-    else
-        cursor += PhCountStringZ(cursor) + 1;
-
-    // Title: zero-terminated UTF-16 string.
-    title = cursor;
-    if (!*title)
+    if (!PhpParseDialogTemplateSzOrOrd(&cursor, resourceEnd, NULL, NULL))
+        return NULL;
+    if (!PhpParseDialogTemplateSzOrOrd(&cursor, resourceEnd, NULL, NULL))
+        return NULL;
+    if (!PhpParseDialogTemplateSzOrOrd(&cursor, resourceEnd, &title, &titleLength))
+        return NULL;
+    if (!title || titleLength == 0)
         return NULL;
 
-    return PhCreateString(title);
+    return PhCreateStringEx(title, titleLength);
 }
 #endif
 
@@ -1190,18 +1252,6 @@ BOOLEAN PhAddProcessPropPage(
             return FALSE;
 
         titles[idx] = PhpReadDialogTemplateTitle(psp->hInstance, psp->pszTemplate);
-
-        if (titles[idx])
-        {
-            PCWSTR translatedTitle = PhTranslateString(titles[idx]->Buffer);
-
-            if (translatedTitle != titles[idx]->Buffer)
-            {
-                PPH_STRING originalTitle = titles[idx];
-                titles[idx] = PhCreateString(translatedTitle);
-                PhDereferenceObject(originalTitle);
-            }
-        }
 
         pages[idx].Name = PhGetStringOrEmpty(titles[idx]);
         pages[idx].Instance = psp->hInstance;

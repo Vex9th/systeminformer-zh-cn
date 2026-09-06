@@ -12,6 +12,23 @@ def read_source(relative_path: str) -> str:
     return (REPO_ROOT / relative_path).read_text(encoding="utf-8-sig")
 
 
+def function_body(source: str, function_name: str) -> str:
+    match = re.search(rf"\b{re.escape(function_name)}\s*\([^;]*?\)\s*\{{", source, re.S)
+    if not match:
+        raise AssertionError(f"function not found: {function_name}")
+
+    start = match.end() - 1
+    depth = 0
+    for offset in range(start, len(source)):
+        if source[offset] == "{":
+            depth += 1
+        elif source[offset] == "}":
+            depth -= 1
+            if depth == 0:
+                return source[start + 1:offset]
+    raise AssertionError(f"unterminated function: {function_name}")
+
+
 class UiResourceLoaderContractTests(unittest.TestCase):
     def test_public_api_exposes_explicit_ui_language_loading(self) -> None:
         header = read_source("phlib/include/mapldr.h")
@@ -92,22 +109,23 @@ class UiResourceLoaderContractTests(unittest.TestCase):
         self.assertIn("stringBuffer->Length * sizeof(WCHAR)", body)
         self.assertNotIn("- sizeof(UNICODE_NULL)", body)
 
-    def test_translated_dialog_preserves_template_font(self) -> None:
-        source = read_source("phlib/phtranslation.c")
-        start = source.index("PVOID PhTranslateDialogTemplateCopy(")
-        end = source.index("PVOID PhTranslateDialogTemplateCached(", start)
-        body = source[start:end]
-
-        self.assertIn("PhTlpWrite(&writer, (PVOID)cursor, 6);", body)
-        self.assertIn("PhTlpWrite(&writer, (PVOID)cursor, 2);", body)
-        self.assertIn("PhTlpCopyTemplateString(&writer, &cursor); // typeface", body)
-        self.assertNotIn("Microsoft YaHei UI", body)
-
-    def test_legacy_template_font_check_uses_setfont_bit(self) -> None:
+    def test_dialog_template_rewriter_and_process_cache_are_removed(self) -> None:
+        header = read_source("phlib/include/phtranslation.h")
         source = read_source("phlib/phtranslation.c")
 
-        self.assertIn("& DS_SETFONT)", source)
-        self.assertNotIn("& (DS_SETFONT | DS_SHELLFONT)", source)
+        for symbol in (
+            "PH_TL_WRITER",
+            "PhTlp",
+            "PhTlTemplateCache",
+            "PhTranslateDialogTemplateCopy",
+            "PhTranslateDialogTemplateCached",
+        ):
+            self.assertNotIn(symbol, header)
+            self.assertNotIn(symbol, source)
+
+        self.assertIn("PhTranslationEnabled", header)
+        self.assertIn("PhTranslateString", header)
+        self.assertIn("PhTranslationTableZhCn", source)
 
     def test_missing_string_slot_falls_back_to_english(self) -> None:
         source = read_source("phlib/mapldr.c")
@@ -145,6 +163,73 @@ class UiResourceLoaderContractTests(unittest.TestCase):
         )
         self.assertIn("nativeLocalized", source)
 
+    def test_dialog_entrypoints_use_native_templates_and_exact_english_retry(self) -> None:
+        source = read_source("phlib/guisup.c")
+
+        create = function_body(source, "PhCreateDialog")
+        self.assertRegex(
+            create,
+            r"PhLoadUiResource\(\s*Instance\s*,\s*Template\s*,\s*RT_DIALOG\s*,\s*"
+            r"NULL\s*,\s*&dialogTemplate\s*,\s*&fallbackToEnglish\s*\)",
+        )
+        self.assertRegex(create, r"if\s*\(\s*!dialogHandle\s*&&\s*nativeLocalized\s*\)")
+        self.assertIn("PhLoadResourceForLanguage(", create)
+        self.assertIn("MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)", create)
+        self.assertNotIn("PhTranslate", create)
+
+        dialog_box = function_body(source, "PhDialogBox")
+        self.assertIn("PhLoadUiResource(", dialog_box)
+        self.assertRegex(
+            dialog_box,
+            r"if\s*\(\s*dialogResult\s*==\s*INT_ERROR\s*&&\s*nativeLocalized\s*\)",
+        )
+        self.assertIn("PhLoadResourceForLanguage(", dialog_box)
+        self.assertNotIn("PhTranslate", dialog_box)
+
+        property_page = function_body(source, "PhCreatePropertySheetPage")
+        self.assertRegex(
+            property_page,
+            r"if\s*\(\s*Page->dwFlags\s*&\s*PSP_DLGINDIRECT\s*\)\s*"
+            r"return\s+CreatePropertySheetPage\(Page\)\s*;",
+        )
+        self.assertIn("PhLoadUiResource(", property_page)
+        self.assertIn("page.dwFlags |= PSP_DLGINDIRECT", property_page)
+        self.assertIn("page.pResource = dialogTemplate", property_page)
+        self.assertRegex(
+            property_page,
+            r"if\s*\(\s*!propSheetPageHandle\s*&&\s*nativeLocalized\s*\)",
+        )
+        self.assertIn("PhLoadResourceForLanguage(", property_page)
+        self.assertNotIn("PhTranslate", property_page)
+
+    def test_from_template_styles_each_owned_copy_and_frees_it_once(self) -> None:
+        source = read_source("phlib/guisup.c")
+        body = function_body(source, "PhCreateDialogFromTemplate")
+
+        self.assertIn("PhLoadUiResourceCopy(", body)
+        self.assertIn("PhLoadResourceCopyForLanguage(", body)
+        self.assertEqual(body.count("dialogTemplate->style = Style"), 2)
+        self.assertEqual(body.count("((DLGTEMPLATE *)dialogTemplate)->style = Style"), 2)
+        self.assertEqual(body.count("PhFree(dialogTemplate)"), 2)
+        self.assertNotIn("PhTranslate", body)
+
+    def test_process_property_page_title_parser_is_bounded_and_not_retranslated(self) -> None:
+        source = read_source("SystemInformer/procprp.c")
+        parser = function_body(source, "PhpParseDialogTemplateSzOrOrd")
+        reader = function_body(source, "PhpReadDialogTemplateTitle")
+        add_page = function_body(source, "PhAddProcessPropPage")
+
+        self.assertIn("ResourceEnd", parser)
+        self.assertIn("sizeof(USHORT)", parser)
+        self.assertIn("0xFFFF", parser)
+        self.assertRegex(parser, r"return\s+FALSE\s*;")
+        self.assertIn("PhLoadUiResource(", reader)
+        self.assertIn("&resourceLength", reader)
+        self.assertIn("PhpParseDialogTemplateSzOrOrd", reader)
+        self.assertIn("PhCreateStringEx(title, titleLength)", reader)
+        self.assertNotIn("PhCountStringZ", reader)
+        self.assertNotIn("PhTranslateString(titles", add_page)
+
     def test_windows_loader_probe_is_built_and_run_by_ci(self) -> None:
         project = read_source("tools/tests/phlib-test/phlib-test.vcxproj")
         main = read_source("tools/tests/phlib-test/main.c")
@@ -171,6 +256,8 @@ class UiResourceLoaderContractTests(unittest.TestCase):
         self.assertIn("PhLoadMenu(", probe)
         self.assertIn("PropertySheet(&header)", probe)
         self.assertIn("PhTranslationEnabled = TRUE", probe)
+        self.assertIn("PhCreateDialogFromTemplate(", probe)
+        self.assertIn("WS_SYSMENU", probe)
 
     def test_unsafe_window_rewrite_and_modal_hook_are_removed(self) -> None:
         header = read_source("phlib/include/phtranslation.h")

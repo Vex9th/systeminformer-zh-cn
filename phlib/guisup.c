@@ -2469,7 +2469,6 @@ HWND PhCreateDialogFromTemplate(
     )
 {
     PDLGTEMPLATEEX dialogTemplate;
-    PVOID translatedTemplate;
     HWND dialogHandle;
     BOOLEAN fallbackToEnglish;
     BOOLEAN nativeLocalized;
@@ -2488,43 +2487,10 @@ HWND PhCreateDialogFromTemplate(
         !fallbackToEnglish &&
         PhGetApplicationUiLanguage() != MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 
-    if (!nativeLocalized && (translatedTemplate = PhTranslateDialogTemplateCopy(dialogTemplate)))
-    {
-        PVOID originalTemplate = dialogTemplate;
-
-        if (dialogTemplate->signature == USHRT_MAX)
-            ((PDLGTEMPLATEEX)translatedTemplate)->style = Style;
-        else
-            ((DLGTEMPLATE *)translatedTemplate)->style = Style;
-
-        dialogHandle = CreateDialogIndirectParam(
-            Instance,
-            (DLGTEMPLATE *)translatedTemplate,
-            Parent,
-            DialogProc,
-            (LPARAM)Parameter
-            );
-
-        PhFree(translatedTemplate);
-
-        if (dialogHandle)
-        {
-            PhFree(originalTemplate);
-            return dialogHandle;
-        }
-
-        // The translated copy was rejected; fall back to the original template.
-        dialogTemplate = (PDLGTEMPLATEEX)originalTemplate;
-    }
-
     if (dialogTemplate->signature == USHRT_MAX)
-    {
         dialogTemplate->style = Style;
-    }
     else
-    {
         ((DLGTEMPLATE *)dialogTemplate)->style = Style;
-    }
 
     dialogHandle = CreateDialogIndirectParam(
         Instance,
@@ -2534,11 +2500,10 @@ HWND PhCreateDialogFromTemplate(
         (LPARAM)Parameter
         );
 
+    PhFree(dialogTemplate);
+
     if (!dialogHandle && nativeLocalized)
     {
-        PhFree(dialogTemplate);
-        dialogTemplate = NULL;
-
         if (NT_SUCCESS(PhLoadResourceCopyForLanguage(
             Instance,
             Template,
@@ -2560,10 +2525,10 @@ HWND PhCreateDialogFromTemplate(
                 DialogProc,
                 (LPARAM)Parameter
                 );
+
+            PhFree(dialogTemplate);
         }
     }
-
-    PhFree(dialogTemplate);
 
     return dialogHandle;
 }
@@ -2588,17 +2553,22 @@ HWND PhCreateDialog(
 {
     PDLGTEMPLATEEX dialogTemplate;
     HWND dialogHandle;
-
-    BOOLEAN translated;
+    BOOLEAN fallbackToEnglish;
     BOOLEAN nativeLocalized;
 
-    if (!(dialogTemplate = PhTranslateDialogTemplateCached(
+    if (!NT_SUCCESS(PhLoadUiResource(
         Instance,
         Template,
-        &translated,
-        &nativeLocalized
+        RT_DIALOG,
+        NULL,
+        &dialogTemplate,
+        &fallbackToEnglish
         )))
         return NULL;
+
+    nativeLocalized =
+        !fallbackToEnglish &&
+        PhGetApplicationUiLanguage() != MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 
     dialogHandle = CreateDialogIndirectParam(
         Instance,
@@ -2608,7 +2578,7 @@ HWND PhCreateDialog(
         (LPARAM)Parameter
         );
 
-    if (!dialogHandle && (translated || nativeLocalized))
+    if (!dialogHandle && nativeLocalized)
     {
         // Retry with the exact en-US template instead of allowing the loader
         // to select the rejected localized resource again.
@@ -2732,17 +2702,22 @@ INT_PTR PhDialogBox(
 {
     PDLGTEMPLATEEX dialogTemplate;
     INT_PTR dialogResult;
-
-    BOOLEAN translated;
+    BOOLEAN fallbackToEnglish;
     BOOLEAN nativeLocalized;
 
-    if (!(dialogTemplate = PhTranslateDialogTemplateCached(
+    if (!NT_SUCCESS(PhLoadUiResource(
         Instance,
         Template,
-        &translated,
-        &nativeLocalized
+        RT_DIALOG,
+        NULL,
+        &dialogTemplate,
+        &fallbackToEnglish
         )))
         return INT_ERROR;
+
+    nativeLocalized =
+        !fallbackToEnglish &&
+        PhGetApplicationUiLanguage() != MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 
     dialogResult = DialogBoxIndirectParam(
         Instance,
@@ -2752,7 +2727,7 @@ INT_PTR PhDialogBox(
         (LPARAM)Parameter
         );
 
-    if (dialogResult == INT_ERROR && (translated || nativeLocalized))
+    if (dialogResult == INT_ERROR && nativeLocalized)
     {
         // Retry with the exact en-US template instead of allowing the loader
         // to select the rejected localized resource again.
@@ -2963,13 +2938,7 @@ INT CALLBACK PhModalPropSheetWindowProcedure(
 }
 
 /**
- * Creates a property sheet page with translated tab title and dialog text.
- *
- * The page is switched to PSP_DLGINDIRECT with a cached translated copy of
- * its dialog template, which translates both the tab title (taken from the
- * template caption) and the static control texts. Callers should use this
- * instead of CreatePropertySheetPage to keep community-edition localization
- * working; the page structure, procedures and parameters are untouched.
+ * Creates a property sheet page from the selected native dialog resource.
  *
  * \param Page A PROPSHEETPAGE structure describing the page.
  * \return A handle to the new page, or NULL on failure.
@@ -2980,49 +2949,52 @@ HPROPSHEETPAGE PhCreatePropertySheetPage(
 {
     PROPSHEETPAGE page;
     PVOID dialogTemplate;
-    BOOLEAN translated;
+    BOOLEAN fallbackToEnglish;
     BOOLEAN nativeLocalized;
     HPROPSHEETPAGE propSheetPageHandle;
 
     if (Page->dwFlags & PSP_DLGINDIRECT)
         return CreatePropertySheetPage(Page);
 
-    dialogTemplate = PhTranslateDialogTemplateCached(
+    if (!NT_SUCCESS(PhLoadUiResource(
         Page->hInstance,
         Page->pszTemplate,
-        &translated,
-        &nativeLocalized
-        );
-
-    if (!dialogTemplate)
+        RT_DIALOG,
+        NULL,
+        &dialogTemplate,
+        &fallbackToEnglish
+        )))
         return NULL;
+
+    nativeLocalized =
+        !fallbackToEnglish &&
+        PhGetApplicationUiLanguage() != MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 
     page = *Page;
     page.dwFlags |= PSP_DLGINDIRECT;
     page.pResource = dialogTemplate;
 
-    if (propSheetPageHandle = CreatePropertySheetPage(&page))
-        return propSheetPageHandle;
+    propSheetPageHandle = CreatePropertySheetPage(&page);
 
     // Retry through PSP_DLGINDIRECT with the exact en-US resource. Calling the
     // resource-based API here could select the rejected localized template.
-    if (
-        (translated || nativeLocalized) &&
-        NT_SUCCESS(PhLoadResourceForLanguage(
+    if (!propSheetPageHandle && nativeLocalized)
+    {
+        if (NT_SUCCESS(PhLoadResourceForLanguage(
             Page->hInstance,
             Page->pszTemplate,
             RT_DIALOG,
             MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
             NULL,
             &dialogTemplate
-            ))
-        )
-    {
-        page.pResource = dialogTemplate;
-        return CreatePropertySheetPage(&page);
+            )))
+        {
+            page.pResource = dialogTemplate;
+            propSheetPageHandle = CreatePropertySheetPage(&page);
+        }
     }
 
-    return NULL;
+    return propSheetPageHandle;
 }
 
 /**

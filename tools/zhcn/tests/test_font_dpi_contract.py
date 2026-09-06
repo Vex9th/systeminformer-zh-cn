@@ -74,22 +74,17 @@ class FontDpiContractTests(unittest.TestCase):
         self.assertNotIn('font[-1] != "Microsoft YaHei UI"', validator_source)
         self.assertNotIn("font[0] < 9", validator_source)
 
-    def test_runtime_fallback_preserves_template_font_bytes(self) -> None:
-        source = (REPO_ROOT / "phlib" / "phtranslation.c").read_text(
+    def test_runtime_dialog_template_rewriter_is_removed(self) -> None:
+        translation = (REPO_ROOT / "phlib" / "phtranslation.c").read_text(
             encoding="utf-8-sig"
         )
-        start = source.index("PVOID PhTranslateDialogTemplateCopy(")
-        end = source.index("PVOID PhTranslateDialogTemplateCached(", start)
-        body = source[start:end]
+        guisup = (REPO_ROOT / "phlib" / "guisup.c").read_text(encoding="utf-8-sig")
 
-        self.assertIn("PhTlpWrite(&writer, (PVOID)cursor, 6);", body)
-        self.assertIn("PhTlpWrite(&writer, (PVOID)cursor, 2);", body)
-        self.assertIn(
-            "PhTlpCopyTemplateString(&writer, &cursor); // typeface",
-            body,
-        )
-        self.assertNotIn("pointSize < 9", body)
-        self.assertNotIn("Microsoft YaHei UI", body)
+        self.assertNotIn("PhTranslateDialogTemplate", translation)
+        self.assertNotIn("PH_TL_WRITER", translation)
+        self.assertNotIn("PhTranslateDialogTemplate", guisup)
+        self.assertIn("PhLoadUiResource(", guisup)
+        self.assertIn("PhLoadUiResourceCopy(", guisup)
 
     def test_standalone_gui_manifests_keep_per_monitor_legacy_fallback(self) -> None:
         for relative_path in (

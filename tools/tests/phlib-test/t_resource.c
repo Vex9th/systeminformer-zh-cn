@@ -13,6 +13,7 @@ typedef struct _PH_UI_RESOURCE_TEST_CONTEXT
 {
     PCWSTR Caption;
     PCWSTR Label;
+    ULONG RequiredStyle;
     BOOLEAN EndModal;
     BOOLEAN Verified;
 } PH_UI_RESOURCE_TEST_CONTEXT, *PPH_UI_RESOURCE_TEST_CONTEXT;
@@ -47,7 +48,9 @@ static INT_PTR CALLBACK TestResourceDialogProc(
 
     context->Verified =
         wcscmp(caption, context->Caption) == 0 &&
-        wcscmp(label, context->Label) == 0;
+        wcscmp(label, context->Label) == 0 &&
+        (!context->RequiredStyle ||
+            ((ULONG)GetWindowLongPtr(WindowHandle, GWL_STYLE) & context->RequiredStyle) == context->RequiredStyle);
 
     if (context->EndModal)
         EndDialog(WindowHandle, IDOK);
@@ -182,7 +185,7 @@ static VOID TestMenuResource(
     DestroyMenu(menuHandle);
 }
 
-static VOID TestLegacyTranslatedDialog(
+static VOID TestEnglishOnlyDialogIsNotDictionaryTranslated(
     _In_ PVOID ImageBase
     )
 {
@@ -190,8 +193,8 @@ static VOID TestLegacyTranslatedDialog(
     HWND dialogHandle;
 
     memset(&context, 0, sizeof(context));
-    context.Caption = L"\x5E38\x89C4";
-    context.Label = L"\x8BBE\x7F6E";
+    context.Caption = L"General";
+    context.Label = L"Options";
 
     PhSetApplicationUiLanguage(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
@@ -201,6 +204,38 @@ static VOID TestLegacyTranslatedDialog(
         ImageBase,
         MAKEINTRESOURCE(IDD_UI_RESOURCE_LEGACY_TEST),
         NULL,
+        TestResourceDialogProc,
+        &context
+        );
+    PhTranslationEnabled = FALSE;
+
+    TestRequire(dialogHandle && context.Verified);
+    DestroyWindow(dialogHandle);
+}
+
+static VOID TestDialogFromTemplateStyle(
+    _In_ PVOID ImageBase
+    )
+{
+    PH_UI_RESOURCE_TEST_CONTEXT context;
+    HWND dialogHandle;
+    ULONG style;
+
+    memset(&context, 0, sizeof(context));
+    context.Caption = L"General";
+    context.Label = L"Options";
+    context.RequiredStyle = WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_SETFONT;
+    style = context.RequiredStyle;
+
+    PhSetApplicationUiLanguage(
+        MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
+        );
+    PhTranslationEnabled = TRUE;
+    dialogHandle = PhCreateDialogFromTemplate(
+        NULL,
+        style,
+        ImageBase,
+        MAKEINTRESOURCE(IDD_UI_RESOURCE_LEGACY_TEST),
         TestResourceDialogProc,
         &context
         );
@@ -246,7 +281,8 @@ VOID Test_resource(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED),
         L"\x4E2D\x6587\x83DC\x5355"
         );
-    TestLegacyTranslatedDialog(imageBase);
+    TestEnglishOnlyDialogIsNotDictionaryTranslated(imageBase);
+    TestDialogFromTemplateStyle(imageBase);
 
     PhSetApplicationUiLanguage(
         MAKELANGID(LANG_JAPANESE, SUBLANG_DEFAULT)
