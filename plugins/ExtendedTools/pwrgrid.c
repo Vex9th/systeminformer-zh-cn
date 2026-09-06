@@ -14,6 +14,11 @@
 #include <roapi.h>
 #include <windows.devices.power.h>
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 #define ET_WM_POWERGRID_UPDATE (WM_APP + 1)
 
 DEFINE_GUID(IID_IPowerGridData, 0xc360fb17, 0xfc92, 0x5f6e, 0x99, 0x9d, 0x16, 0xa4, 0xcf, 0x9d, 0x6c, 0x40);
@@ -175,7 +180,7 @@ VOID EtAddSummaryWindowText(
 
     if (!Summary || Summary->TotalBlocks == 0)
     {
-        SetWindowText(SummaryHandle, L"No forecast data available.");
+        SetWindowText(SummaryHandle, EtGetUiString(IDS_ET_POWER_GRID_NO_FORECAST, L"No forecast data available."));
         return;
     }
 
@@ -648,7 +653,12 @@ INT_PTR CALLBACK EtPowerGridDlgProc(
 
                             if (param->ActiveFlag)
                             {
-                                PhSetListViewSubItem(context->ListViewHandle, index, 4, L"Active");
+                                PhSetListViewSubItem(
+                                    context->ListViewHandle,
+                                    index,
+                                    4,
+                                    EtGetUiString(IDS_ET_STATE_ACTIVE, L"Active")
+                                    );
                             }
                             else
                             {

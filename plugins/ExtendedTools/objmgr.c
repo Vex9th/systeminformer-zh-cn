@@ -11,6 +11,11 @@
  */
 
 #include "exttools.h"
+
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
 #include <secedit.h>
 #include <hndlinfo.h>
 #include <commoncontrols.h>
@@ -1418,7 +1423,13 @@ NTSTATUS EtEnumCurrentDirectoryObjects(
     Edit_SetSel(Context->PathControlEdit, -2, -1);
 
     PhPrintUInt32(string, ListView_GetItemCount(Context->ListViewHandle));
-    PhSetWindowText(Context->StatusBarHandle, PH_AUTO_T(PH_STRING, PhFormatString(L"Objects in current directory: %s", string))->Buffer);
+    PhSetWindowText(
+        Context->StatusBarHandle,
+        PH_AUTO_T(PH_STRING, PhFormatString(
+            EtGetUiString(IDS_ET_OBJECTS_CURRENT_DIRECTORY_FORMAT, L"Objects in current directory: %s"),
+            string
+            ))->Buffer
+        );
 
     // Apply current filter and sort
     PPH_STRING curentFilter = PH_AUTO(PhGetWindowText(Context->SearchBoxHandle));
@@ -2653,7 +2664,13 @@ VOID NTAPI EtpObjectManagerSearchControlCallback(
 
     WCHAR string[PH_INT32_STR_LEN_1];
     PhPrintUInt32(string, ListView_GetItemCount(context->ListViewHandle));
-    PhSetWindowText(context->StatusBarHandle, PH_AUTO_T(PH_STRING, PhFormatString(L"Objects in current directory: %s", string))->Buffer);
+    PhSetWindowText(
+        context->StatusBarHandle,
+        PH_AUTO_T(PH_STRING, PhFormatString(
+            EtGetUiString(IDS_ET_OBJECTS_CURRENT_DIRECTORY_FORMAT, L"Objects in current directory: %s"),
+            string
+            ))->Buffer
+        );
 }
 
 VOID NTAPI EtpObjectManagerSortAndSelectOld(

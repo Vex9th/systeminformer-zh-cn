@@ -10,6 +10,11 @@
  */
 
 #include "exttools.h"
+
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
 #include <hndlinfo.h>
 #include <sddl.h>
 
@@ -993,7 +998,7 @@ INT_PTR CALLBACK EtFindSecurityIdsDlgProc(
         {
             context->ListViewHandle = GetDlgItem(WindowHandle, IDC_REPARSE_LIST);
 
-            PhSetWindowText(WindowHandle, L"NTFS SecurityID");
+            PhSetWindowText(WindowHandle, EtGetUiString(IDS_ET_NTFS_SECURITY_ID, L"NTFS SecurityID"));
             PhSetApplicationWindowIcon(WindowHandle);
 
             ShowWindow(GetDlgItem(WindowHandle, IDRETRY), SW_HIDE);
@@ -1158,13 +1163,13 @@ INT_PTR CALLBACK EtReparseDlgProc(
             switch (context->MenuItemIndex)
             {
             case ID_REPARSE_POINTS:
-                PhSetWindowText(WindowHandle, L"NTFS Reparse Points");
+                PhSetWindowText(WindowHandle, EtGetUiString(IDS_ET_NTFS_REPARSE_POINTS, L"NTFS Reparse Points"));
                 break;
             case ID_REPARSE_OBJID:
-                PhSetWindowText(WindowHandle, L"NTFS Object Identifiers");
+                PhSetWindowText(WindowHandle, EtGetUiString(IDS_ET_NTFS_OBJECT_IDENTIFIERS, L"NTFS Object Identifiers"));
                 break;
             case ID_REPARSE_SDDL:
-                PhSetWindowText(WindowHandle, L"NTFS Security Descriptors");
+                PhSetWindowText(WindowHandle, EtGetUiString(IDS_ET_NTFS_SECURITY_DESCRIPTORS, L"NTFS Security Descriptors"));
                 break;
             }
 

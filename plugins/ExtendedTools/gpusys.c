@@ -11,6 +11,11 @@
  */
 
 #include "exttools.h"
+
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
 #include "gpusys.h"
 
 static PPH_SYSINFO_SECTION GpuSection;
@@ -227,7 +232,7 @@ BOOLEAN EtpGpuSysInfoSectionCallback(
             if (!drawPanel)
                 break;
 
-            drawPanel->Title = PhCreateString(L"GPU");
+            drawPanel->Title = PhCreateString(EtGetUiString(IDS_ET_GROUP_GPU, L"GPU"));
 
             // Note: Intel IGP devices don't have dedicated usage/limit values. (dmex)
             if (EtGpuDedicatedUsage && EtGpuDedicatedLimit)

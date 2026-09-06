@@ -10,6 +10,11 @@
  */
 
 #include "exttools.h"
+
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
 #include "secedit.h"
 
 const TPM_RH TpmRHOwner = TPM_RH_OWNER;
@@ -648,31 +653,31 @@ NTSTATUS EtEnumerateTpmEntries(
         PhDereferenceObject(string);
 
         if ((attributes & (TPMA_NV_OWNERREAD | TPMA_NV_OWNERWRITE)) == (TPMA_NV_OWNERREAD | TPMA_NV_OWNERWRITE))
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, L"Read/Write");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, EtGetUiString(IDS_ET_TPM_READ_WRITE, L"Read/Write"));
         else if ((attributes & TPMA_NV_OWNERREAD) == TPMA_NV_OWNERREAD)
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, L"Read");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, EtGetUiString(IDS_ET_TPM_READ, L"Read"));
         else if ((attributes & TPMA_NV_OWNERWRITE) == TPMA_NV_OWNERWRITE)
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, L"Write");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, EtGetUiString(IDS_ET_TPM_WRITE, L"Write"));
         else
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, L"None");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 2, EtGetUiString(IDS_ET_TPM_NONE, L"None"));
 
         if ((attributes & (TPMA_NV_AUTHREAD | TPMA_NV_AUTHWRITE)) == (TPMA_NV_AUTHREAD | TPMA_NV_AUTHWRITE))
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, L"Read/Write");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, EtGetUiString(IDS_ET_TPM_READ_WRITE, L"Read/Write"));
         else if ((attributes & TPMA_NV_AUTHREAD) == TPMA_NV_AUTHREAD)
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, L"Read");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, EtGetUiString(IDS_ET_TPM_READ, L"Read"));
         else if ((attributes & TPMA_NV_AUTHWRITE) == TPMA_NV_AUTHWRITE)
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, L"Write");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, EtGetUiString(IDS_ET_TPM_WRITE, L"Write"));
         else
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, L"None");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 3, EtGetUiString(IDS_ET_TPM_NONE, L"None"));
 
         if ((attributes & (TPMA_NV_PPREAD | TPMA_NV_PPWRITE)) == (TPMA_NV_PPREAD | TPMA_NV_PPWRITE))
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, L"Read/Write");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, EtGetUiString(IDS_ET_TPM_READ_WRITE, L"Read/Write"));
         else if ((attributes & TPMA_NV_PPREAD) == TPMA_NV_PPREAD)
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, L"Read");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, EtGetUiString(IDS_ET_TPM_READ, L"Read"));
         else if ((attributes & TPMA_NV_PPWRITE) == TPMA_NV_PPWRITE)
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, L"Write");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, EtGetUiString(IDS_ET_TPM_WRITE, L"Write"));
         else
-            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, L"None");
+            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 4, EtGetUiString(IDS_ET_TPM_NONE, L"None"));
 
         // clear the bits we've broken out into their own columns
         attributes &= ~(

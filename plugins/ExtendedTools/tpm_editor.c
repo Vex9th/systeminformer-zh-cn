@@ -111,7 +111,13 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
             context->BytesPerRowHandle = GetDlgItem(WindowHandle, IDC_TPM_BYTESPERROW);
 
             PhSetApplicationWindowIcon(WindowHandle);
-            PhSetWindowText(WindowHandle, PhaFormatString(L"TPM index 0x%08lx", context->Index.Value)->Buffer);
+            PhSetWindowText(
+                WindowHandle,
+                PhaFormatString(
+                    EtGetUiString(IDS_ET_TPM_INDEX_TITLE_FORMAT, L"TPM index 0x%08lx"),
+                    context->Index.Value
+                    )->Buffer
+                );
 
             PhInitializeLayoutManager(&context->LayoutManager, WindowHandle);
             PhAddLayoutItem(&context->LayoutManager, GetDlgItem(WindowHandle, IDC_TPM_HEXEDIT), NULL, PH_ANCHOR_ALL);

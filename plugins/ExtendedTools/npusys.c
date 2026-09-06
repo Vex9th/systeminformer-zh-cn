@@ -12,6 +12,11 @@
  */
 
 #include "exttools.h"
+
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
 #include "npusys.h"
 
 static PPH_SYSINFO_SECTION NpuSection;
@@ -226,7 +231,7 @@ BOOLEAN EtpNpuSysInfoSectionCallback(
             if (!drawPanel)
                 break;
 
-            drawPanel->Title = PhCreateString(L"NPU");
+            drawPanel->Title = PhCreateString(EtGetUiString(IDS_ET_GROUP_NPU, L"NPU"));
 
             // Note: Intel IGP devices don't have dedicated usage/limit values. (dmex)
             if (EtNpuDedicatedUsage && EtNpuDedicatedLimit)

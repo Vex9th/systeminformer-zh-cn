@@ -626,7 +626,14 @@ VOID EtHandlePropertiesWindowInitialized(
                     NULL
                     ))
                 {
-                    PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_WINSTAVISIBLE, 1, userFlags.dwFlags & WSF_VISIBLE ? L"True" : L"False");
+                    PhSetListViewSubItem(
+                        context->ListViewHandle,
+                        OBJECT_GENERAL_INDEX_WINSTAVISIBLE,
+                        1,
+                        userFlags.dwFlags & WSF_VISIBLE
+                            ? EtGetUiString(IDS_ET_STATUS_TRUE, L"True")
+                            : EtGetUiString(IDS_ET_STATUS_FALSE, L"False")
+                        );
                 }
 
                 CloseWindowStation(hWinStation);
@@ -663,7 +670,14 @@ VOID EtHandlePropertiesWindowInitialized(
 
                 if (GetUserObjectInformation(hDesktop, UOI_IO, &vInfo, sizeof(vInfo), NULL))
                 {
-                    PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_DESKTOPIO, 1, !!vInfo ? L"True" : L"False");
+                    PhSetListViewSubItem(
+                        context->ListViewHandle,
+                        OBJECT_GENERAL_INDEX_DESKTOPIO,
+                        1,
+                        !!vInfo
+                            ? EtGetUiString(IDS_ET_STATUS_TRUE, L"True")
+                            : EtGetUiString(IDS_ET_STATUS_FALSE, L"False")
+                        );
                 }
 
                 if (GetUserObjectInformation(hDesktop, UOI_USER_SID, UserSid, SECURITY_MAX_SID_SIZE, &length))
@@ -738,13 +752,13 @@ VOID EtHandlePropertiesWindowInitialized(
                             PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_TYPEPEAKHANDLES, 1, string);
                             PhPrintUInt32(string, objectType->DefaultPagedPoolCharge);
 
-                            PWSTR poolTypeString = L"";
+                            PCWSTR poolTypeString = L"";
                             switch (objectType->PoolType)
                             {
-                                case NonPagedPool: poolTypeString = L"Non Paged"; break;
-                                case PagedPool: poolTypeString = L"Paged"; break;
-                                case NonPagedPoolNx: poolTypeString = L"Non Paged NX"; break;
-                                case PagedPoolSessionNx: poolTypeString = L"Paged Session NX"; break;
+                                case NonPagedPool: poolTypeString = EtGetUiString(IDS_ET_POOL_NON_PAGED, L"Non Paged"); break;
+                                case PagedPool: poolTypeString = EtGetUiString(IDS_ET_POOL_PAGED, L"Paged"); break;
+                                case NonPagedPoolNx: poolTypeString = EtGetUiString(IDS_ET_POOL_NON_PAGED_NX, L"Non Paged NX"); break;
+                                case PagedPoolSessionNx: poolTypeString = EtGetUiString(IDS_ET_POOL_PAGED_SESSION_NX, L"Paged Session NX"); break;
                             }
 
                             PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_TYPEPOOLTYPE, 1, poolTypeString);
@@ -1099,7 +1113,10 @@ INT_PTR CALLBACK EtpTpWorkerFactoryPageDlgProc(
                         PhSetDialogItemText(
                             hwndDlg,
                             IDC_WORKERTHREADSTART,
-                            PhaFormatString(L"Worker Thread Start: %s", symbol->Buffer)->Buffer
+                            PhaFormatString(
+                                EtGetUiString(IDS_ET_WORKER_THREAD_START_FORMAT, L"Worker Thread Start: %s"),
+                                symbol->Buffer
+                                )->Buffer
                             );
                         PhDereferenceObject(symbol);
                     }
@@ -1109,7 +1126,10 @@ INT_PTR CALLBACK EtpTpWorkerFactoryPageDlgProc(
                         PhSetDialogItemText(
                             hwndDlg,
                             IDC_WORKERTHREADSTART,
-                            PhaFormatString(L"Worker Thread Start: %s", value)->Buffer
+                            PhaFormatString(
+                                EtGetUiString(IDS_ET_WORKER_THREAD_START_FORMAT, L"Worker Thread Start: %s"),
+                                value
+                                )->Buffer
                             );
                     }
 
@@ -1117,7 +1137,10 @@ INT_PTR CALLBACK EtpTpWorkerFactoryPageDlgProc(
                     PhSetDialogItemText(
                         hwndDlg,
                         IDC_WORKERTHREADCONTEXT,
-                        PhaFormatString(L"Worker Thread Context: %s", value)->Buffer
+                        PhaFormatString(
+                            EtGetUiString(IDS_ET_WORKER_THREAD_CONTEXT_FORMAT, L"Worker Thread Context: %s"),
+                            value
+                            )->Buffer
                         );
                 }
 
@@ -1453,15 +1476,15 @@ VOID EtpEnumObjectHandles(
             switch (handleInfo->HandleAttributes & (OBJ_PROTECT_CLOSE | OBJ_INHERIT))
             {
                 case OBJ_PROTECT_CLOSE:
-                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, L"Protected");
+                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, EtGetUiString(IDS_ET_HANDLE_PROTECTED, L"Protected"));
                     entry->Color = colorProtected, entry->UseCustomColor = TRUE;
                     break;
                 case OBJ_INHERIT:
-                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, L"Inherit");
+                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, EtGetUiString(IDS_ET_HANDLE_INHERIT, L"Inherit"));
                     entry->Color = colorInherit, entry->UseCustomColor = TRUE;
                     break;
                 case OBJ_PROTECT_CLOSE | OBJ_INHERIT:
-                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, L"Protected, Inherit");
+                    PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, EtGetUiString(IDS_ET_HANDLE_PROTECTED_INHERIT, L"Protected, Inherit"));
                     entry->Color = colorProtectedInherit, entry->UseCustomColor = TRUE;
                     break;
             }
@@ -1510,7 +1533,7 @@ VOID EtpEnumObjectHandles(
     }
 
     if (isTypeObject)
-        PhSetDialogItemText(Context->WindowHandle, IDC_OBJ_HANDLESBYNAME_L, L"By type:");
+        PhSetDialogItemText(Context->WindowHandle, IDC_OBJ_HANDLESBYNAME_L, EtGetUiString(IDS_ET_HANDLES_BY_TYPE, L"By type:"));
 
     PhPrintUInt32(string, Context->TotalHandlesCount);
     PhSetDialogItemText(Context->WindowHandle, IDC_OBJ_HANDLESTOTAL, string);
@@ -2008,15 +2031,15 @@ INT_PTR CALLBACK EtpObjHandlesPageDlgProc(
                                 switch (listviewItems[0]->HandleItem->Attributes & (OBJ_PROTECT_CLOSE | OBJ_INHERIT))
                                 {
                                 case OBJ_PROTECT_CLOSE:
-                                    PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, L"Protected");
+                                    PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, EtGetUiString(IDS_ET_HANDLE_PROTECTED, L"Protected"));
                                     listviewItems[0]->Color = PhGetIntegerSetting(SETTING_COLOR_PROTECTED_HANDLES), listviewItems[0]->UseCustomColor = TRUE;
                                     break;
                                 case OBJ_INHERIT:
-                                    PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, L"Inherit");
+                                    PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, EtGetUiString(IDS_ET_HANDLE_INHERIT, L"Inherit"));
                                     listviewItems[0]->Color = PhGetIntegerSetting(SETTING_COLOR_INHERIT_HANDLES), listviewItems[0]->UseCustomColor = TRUE;
                                     break;
                                 case OBJ_PROTECT_CLOSE | OBJ_INHERIT:
-                                    PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, L"Protected, Inherit");
+                                    PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETHNLVC_ATTRIBUTES, EtGetUiString(IDS_ET_HANDLE_PROTECTED_INHERIT, L"Protected, Inherit"));
                                     listviewItems[0]->Color = PhGetIntegerSetting(SETTING_COLOR_PARTIALLY_SUSPENDED), listviewItems[0]->UseCustomColor = TRUE;
                                     break;
                                 default:
@@ -2150,7 +2173,14 @@ static BOOL CALLBACK EtpEnumDesktopsCallback(
 
         if (GetUserObjectInformation(hDesktop, UOI_IO, &vInfo, sizeof(vInfo), NULL))
         {
-            PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETDTLVC_IO, !!vInfo ? L"True" : L"False");
+            PhSetListViewSubItem(
+                context->ListViewHandle,
+                lvItemIndex,
+                ETDTLVC_IO,
+                !!vInfo
+                    ? EtGetUiString(IDS_ET_STATUS_TRUE, L"True")
+                    : EtGetUiString(IDS_ET_STATUS_FALSE, L"False")
+                );
         }
 
         CloseDesktop(hDesktop);

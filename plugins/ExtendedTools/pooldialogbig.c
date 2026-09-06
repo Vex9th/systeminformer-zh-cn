@@ -10,6 +10,11 @@
  */
 
 #include "exttools.h"
+
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
 #include "poolmon.h"
 
 VOID EtUpdateBigPoolTable(
@@ -54,7 +59,7 @@ VOID EtUpdateBigPoolTable(
                 Context->ListViewHandle,
                 itemIndex,
                 2,
-                L"Yes"
+                EtGetUiString(IDS_ET_STATUS_YES, L"Yes")
                 );
         }
         else
@@ -63,7 +68,7 @@ VOID EtUpdateBigPoolTable(
                 Context->ListViewHandle,
                 itemIndex,
                 2,
-                L"No"
+                EtGetUiString(IDS_ET_STATUS_NO, L"No")
                 );
         }
     }
@@ -105,7 +110,13 @@ INT_PTR CALLBACK EtBigPoolMonDlgProc(
 
             PhSetApplicationWindowIcon(WindowHandle);
 
-            PhSetWindowText(WindowHandle, PhaFormatString(L"Large Allocations (%s)", context->TagString)->Buffer);
+            PhSetWindowText(
+                WindowHandle,
+                PhaFormatString(
+                    EtGetUiString(IDS_ET_LARGE_ALLOCATIONS_TITLE_FORMAT, L"Large Allocations (%s)"),
+                    context->TagString
+                    )->Buffer
+                );
 
             PhSetListViewStyle(context->ListViewHandle, FALSE, TRUE);
             PhSetControlTheme(context->ListViewHandle, L"explorer");

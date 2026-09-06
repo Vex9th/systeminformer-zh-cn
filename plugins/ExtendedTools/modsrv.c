@@ -11,6 +11,11 @@
  */
 
 #include "exttools.h"
+
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
 #include <subprocesstag.h>
 
 typedef struct _MODULE_SERVICES_CONTEXT
@@ -228,7 +233,7 @@ INT_PTR CALLBACK EtpModuleServicesDlgProc(
                 if (processItem = PhReferenceProcessItem(context->ProcessId))
                 {
                     message = PhFormatString(
-                        L"Services referencing %s in %s (%lu):",
+                        EtGetUiString(IDS_ET_MODULE_SERVICES_PROCESS_FORMAT, L"Services referencing %s in %s (%lu):"),
                         PhGetString(context->ModuleName),
                         PhGetStringOrEmpty(processItem->ProcessName),
                         HandleToUlong(processItem->ProcessId)
@@ -238,7 +243,7 @@ INT_PTR CALLBACK EtpModuleServicesDlgProc(
                 else
                 {
                     message = PhFormatString(
-                        L"Services referencing %s:",
+                        EtGetUiString(IDS_ET_MODULE_SERVICES_FORMAT, L"Services referencing %s:"),
                         PhGetString(context->ModuleName)
                         );
                 }
