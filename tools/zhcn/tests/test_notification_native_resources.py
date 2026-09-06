@@ -154,16 +154,16 @@ class NotificationNativeResourceTests(unittest.TestCase):
                     self.assertNotIn(en, translations["strings"])
 
         self.assertFalse(translations["strings"].keys() & translations["native_strings"].keys())
-        self.assertEqual(len(system_en), 668)
-        self.assertEqual(len(system_zh), 668)
+        self.assertEqual(len(system_en), 704)
+        self.assertEqual(len(system_zh), 704)
         self.assertEqual(len(updater_en), 9)
         self.assertEqual(len(updater_zh), 9)
-        self.assertRegex(system_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT$")
-        self.assertRegex(system_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2668$")
+        self.assertRegex(system_header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_ALPC_UNCONNECTED$")
+        self.assertRegex(system_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2704$")
         self.assertRegex(updater_header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+12009$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("sys_info.exe=668"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=704"), 2)
         self.assertEqual(workflow.count(r"plugins\Updater.dll=9"), 2)
 
     def test_process_notifications_format_resources_in_exact_argument_order(self) -> None:

@@ -282,7 +282,7 @@ class WindowExplorerRemainingSemanticResourceTests(unittest.TestCase):
 
     def test_native_generator_total_is_synchronized(self) -> None:
         generator_test = (REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py").read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("1820 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("1856 strings", result.stdout)', generator_test)
         self.assertNotIn('self.assertIn("1726 strings", result.stdout)', generator_test)
 
 

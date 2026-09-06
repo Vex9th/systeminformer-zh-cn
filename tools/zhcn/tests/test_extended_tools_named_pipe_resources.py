@@ -271,7 +271,7 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
         generator_test = (
             REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py"
         ).read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("1820 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("1856 strings", result.stdout)', generator_test)
 
     def test_migrated_enum_literals_leave_the_fresh_audit(self):
         audit = load_audit_module()

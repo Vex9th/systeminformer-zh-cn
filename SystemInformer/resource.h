@@ -1645,8 +1645,44 @@
 #define IDS_PH_ACTION_CHANGE_EXECUTION_REQUIRED              2665
 #define IDS_PH_EXECUTION_REQUIRED_ACTION_FORMAT              2666
 #define IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT            2667
+#define IDS_PH_HANDLE_PRINCIPAL_USER_SUFFIX                   2668
+#define IDS_PH_HANDLE_PRINCIPAL_GROUP_SUFFIX                  2669
+#define IDS_PH_HANDLE_PRINCIPAL_COMPUTER_SUFFIX               2670
+#define IDS_PH_HANDLE_FILE_MODE_ASYNCHRONOUS                  2671
+#define IDS_PH_HANDLE_FILE_MODE_WRITE_THROUGH                 2672
+#define IDS_PH_HANDLE_FILE_MODE_SEQUENTIAL                    2673
+#define IDS_PH_HANDLE_FILE_MODE_NO_BUFFERING                  2674
+#define IDS_PH_HANDLE_FILE_MODE_SYNCHRONOUS_ALERT             2675
+#define IDS_PH_HANDLE_FILE_MODE_SYNCHRONOUS_NONALERT          2676
+#define IDS_PH_HANDLE_ALPC_LPC_MODE                           2677
+#define IDS_PH_HANDLE_ALPC_ALLOW_IMPERSONATION                2678
+#define IDS_PH_HANDLE_ALPC_ALLOW_LPC_REQUESTS                 2679
+#define IDS_PH_HANDLE_ALPC_WAITABLE                           2680
+#define IDS_PH_HANDLE_ALPC_ALLOW_OBJECT_DUPLICATION           2681
+#define IDS_PH_HANDLE_ALPC_SYSTEM_PROCESS_ONLY                2682
+#define IDS_PH_HANDLE_ALPC_WAKE_POLICY_1                      2683
+#define IDS_PH_HANDLE_ALPC_WAKE_POLICY_2                      2684
+#define IDS_PH_HANDLE_ALPC_WAKE_POLICY_3                      2685
+#define IDS_PH_HANDLE_ALPC_NO_SHARED_SECTION_DIRECT           2686
+#define IDS_PH_HANDLE_ALPC_ALLOW_MULTI_HANDLE_ATTRIBUTES      2687
+#define IDS_PH_HANDLE_ALPC_INITIALIZED                        2688
+#define IDS_PH_HANDLE_ALPC_CONNECTION_PENDING                 2689
+#define IDS_PH_HANDLE_ALPC_CONNECTION_REFUSED                 2690
+#define IDS_PH_HANDLE_ALPC_DISCONNECTED                       2691
+#define IDS_PH_HANDLE_ALPC_CLOSED                             2692
+#define IDS_PH_HANDLE_ALPC_NO_FLUSH_ON_CLOSE                  2693
+#define IDS_PH_HANDLE_ALPC_RETURN_EXTENDED_INFO               2694
+#define IDS_PH_HANDLE_ALPC_DYNAMIC_SECURITY                   2695
+#define IDS_PH_HANDLE_ALPC_WOW64_COMPLETION_LIST              2696
+#define IDS_PH_HANDLE_ALPC_HAS_COMPLETION_LIST                2697
+#define IDS_PH_HANDLE_ALPC_HAD_COMPLETION_LIST                2698
+#define IDS_PH_HANDLE_ALPC_ENABLE_COMPLETION_LIST             2699
+#define IDS_PH_HANDLE_ALPC_SERVER_CONNECTION                  2700
+#define IDS_PH_HANDLE_ALPC_CLIENT_COMMUNICATION               2701
+#define IDS_PH_HANDLE_ALPC_SERVER_COMMUNICATION               2702
+#define IDS_PH_HANDLE_ALPC_UNCONNECTED                        2703
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT
+#define IDS_PH_LAST                                  IDS_PH_HANDLE_ALPC_UNCONNECTED
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1658,6 +1694,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2668
+#define _APS_NEXT_SYMED_VALUE           2704
 #endif
 #endif

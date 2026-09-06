@@ -127,49 +127,82 @@ typedef struct _HANDLE_PERMISSIONS_CONTEXT
 #define PhFileModeUpdAsyncFlag(mode) \
     ((mode) & (FILE_SYNCHRONOUS_IO_ALERT | FILE_SYNCHRONOUS_IO_NONALERT) ? (mode) &~ PH_FILEMODE_ASYNC: (mode) | PH_FILEMODE_ASYNC)
 
-CONST PH_ACCESS_ENTRY FileModeAccessEntries[] =
+static PPH_STRING PhpGetFileModeAccessString(
+    _In_ ULONG Mode
+    )
 {
-    { L"FILE_FLAG_OVERLAPPED", PH_FILEMODE_ASYNC, FALSE, FALSE, L"Asynchronous" },
-    { L"FILE_FLAG_WRITE_THROUGH", FILE_WRITE_THROUGH, FALSE, FALSE, L"Write through" },
-    { L"FILE_FLAG_SEQUENTIAL_SCAN", FILE_SEQUENTIAL_ONLY, FALSE, FALSE, L"Sequential" },
-    { L"FILE_FLAG_NO_BUFFERING", FILE_NO_INTERMEDIATE_BUFFERING, FALSE, FALSE, L"No buffering" },
-    { L"FILE_SYNCHRONOUS_IO_ALERT", FILE_SYNCHRONOUS_IO_ALERT, FALSE, FALSE, L"Synchronous alert" },
-    { L"FILE_SYNCHRONOUS_IO_NONALERT", FILE_SYNCHRONOUS_IO_NONALERT, FALSE, FALSE, L"Synchronous non-alert" },
-};
+    PH_ACCESS_ENTRY accessEntries[] =
+    {
+        { L"FILE_FLAG_OVERLAPPED", PH_FILEMODE_ASYNC, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_FILE_MODE_ASYNCHRONOUS) },
+        { L"FILE_FLAG_WRITE_THROUGH", FILE_WRITE_THROUGH, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_FILE_MODE_WRITE_THROUGH) },
+        { L"FILE_FLAG_SEQUENTIAL_SCAN", FILE_SEQUENTIAL_ONLY, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_FILE_MODE_SEQUENTIAL) },
+        { L"FILE_FLAG_NO_BUFFERING", FILE_NO_INTERMEDIATE_BUFFERING, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_FILE_MODE_NO_BUFFERING) },
+        { L"FILE_SYNCHRONOUS_IO_ALERT", FILE_SYNCHRONOUS_IO_ALERT, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_FILE_MODE_SYNCHRONOUS_ALERT) },
+        { L"FILE_SYNCHRONOUS_IO_NONALERT", FILE_SYNCHRONOUS_IO_NONALERT, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_FILE_MODE_SYNCHRONOUS_NONALERT) },
+    };
 
-CONST PH_ACCESS_ENTRY AlpcFlags[] =
-{
-    { L"ALPC_PORFLG_LPC_MODE", ALPC_PORFLG_LPC_MODE, FALSE, FALSE, L"LPC mode"},
-    { L"ALPC_PORFLG_ALLOW_IMPERSONATION", ALPC_PORFLG_ALLOW_IMPERSONATION, FALSE, FALSE, L"Allow impersonation"},
-    { L"ALPC_PORFLG_ALLOW_LPC_REQUESTS", ALPC_PORFLG_ALLOW_LPC_REQUESTS, FALSE, FALSE, L"Allow LPC requests"},
-    { L"ALPC_PORFLG_WAITABLE_PORT", ALPC_PORFLG_WAITABLE_PORT, FALSE, FALSE, L"Waitable"},
-    { L"ALPC_PORFLG_ALLOW_DUP_OBJECT", ALPC_PORFLG_ALLOW_DUP_OBJECT, FALSE, FALSE, L"Allow object duplication"},
-    { L"ALPC_PORFLG_SYSTEM_PROCESS", ALPC_PORFLG_SYSTEM_PROCESS, FALSE, FALSE, L"System process only"},
-    { L"ALPC_PORFLG_WAKE_POLICY1", ALPC_PORFLG_WAKE_POLICY1, FALSE, FALSE, L"Wake policy (1)"},
-    { L"ALPC_PORFLG_WAKE_POLICY2", ALPC_PORFLG_WAKE_POLICY2, FALSE, FALSE, L"Wake policy (2)"},
-    { L"ALPC_PORFLG_WAKE_POLICY3", ALPC_PORFLG_WAKE_POLICY3, FALSE, FALSE, L"Wake policy (3)"},
-    { L"ALPC_PORFLG_DIRECT_MESSAGE", ALPC_PORFLG_DIRECT_MESSAGE, FALSE, FALSE, L"No shared section (direct)"},
-    { L"ALPC_PORFLG_ALLOW_MULTIHANDLE_ATTRIBUTE", ALPC_PORFLG_ALLOW_MULTIHANDLE_ATTRIBUTE, FALSE, FALSE, L"Allow multi-handle attributes"},
-};
+    return PhGetAccessString(
+        PhFileModeUpdAsyncFlag(Mode),
+        accessEntries,
+        RTL_NUMBER_OF(accessEntries)
+        );
+}
 
-CONST PH_ACCESS_ENTRY AlpcStateFlags[] =
+static PPH_STRING PhpGetAlpcFlagsString(
+    _In_ ULONG Flags
+    )
 {
-    { L"Initialized", 0x0001UL, FALSE, FALSE, L"Initialized" },
-    { L"ConnectionPending", 0x0008UL, FALSE, FALSE, L"Connection pending" },
-    { L"ConnectionRefused", 0x0010UL, FALSE, FALSE, L"Connection refused" },
-    { L"Disconnected", 0x0020UL, FALSE, FALSE, L"Disconnected" },
-    { L"Closed", 0x0040UL, FALSE, FALSE, L"Closed" },
-    { L"NoFlushOnClose", 0x0080UL, FALSE, FALSE, L"No flush on close" },
-    { L"ReturnExtendedInfo", 0x0100UL, FALSE, FALSE, L"Return extended info" },
-    { L"Waitable", 0x0200UL, FALSE, FALSE, L"Waitable" },
-    { L"DynamicSecurity", 0x0400UL, FALSE, FALSE, L"Dynamic security" },
-    { L"Wow64CompletionList", 0x0800UL, FALSE, FALSE, L"WOW64 completion list" },
-    { L"Lpc", 0x1000UL, FALSE, FALSE, L"LPC" },
-    { L"LpcToLpc", 0x2000UL, FALSE, FALSE, L"LPC-to-LPC" },
-    { L"HasCompletionList", 0x4000UL, FALSE, FALSE, L"Has completion list" },
-    { L"HadCompletionList", 0x8000UL, FALSE, FALSE, L"Had completion list" },
-    { L"EnableCompletionList", 0x10000UL, FALSE, FALSE, L"Enable completion list" },
-};
+    PH_ACCESS_ENTRY accessEntries[] =
+    {
+        { L"ALPC_PORFLG_LPC_MODE", ALPC_PORFLG_LPC_MODE, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_LPC_MODE) },
+        { L"ALPC_PORFLG_ALLOW_IMPERSONATION", ALPC_PORFLG_ALLOW_IMPERSONATION, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_ALLOW_IMPERSONATION) },
+        { L"ALPC_PORFLG_ALLOW_LPC_REQUESTS", ALPC_PORFLG_ALLOW_LPC_REQUESTS, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_ALLOW_LPC_REQUESTS) },
+        { L"ALPC_PORFLG_WAITABLE_PORT", ALPC_PORFLG_WAITABLE_PORT, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_WAITABLE) },
+        { L"ALPC_PORFLG_ALLOW_DUP_OBJECT", ALPC_PORFLG_ALLOW_DUP_OBJECT, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_ALLOW_OBJECT_DUPLICATION) },
+        { L"ALPC_PORFLG_SYSTEM_PROCESS", ALPC_PORFLG_SYSTEM_PROCESS, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_SYSTEM_PROCESS_ONLY) },
+        { L"ALPC_PORFLG_WAKE_POLICY1", ALPC_PORFLG_WAKE_POLICY1, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_WAKE_POLICY_1) },
+        { L"ALPC_PORFLG_WAKE_POLICY2", ALPC_PORFLG_WAKE_POLICY2, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_WAKE_POLICY_2) },
+        { L"ALPC_PORFLG_WAKE_POLICY3", ALPC_PORFLG_WAKE_POLICY3, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_WAKE_POLICY_3) },
+        { L"ALPC_PORFLG_DIRECT_MESSAGE", ALPC_PORFLG_DIRECT_MESSAGE, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_NO_SHARED_SECTION_DIRECT) },
+        { L"ALPC_PORFLG_ALLOW_MULTIHANDLE_ATTRIBUTE", ALPC_PORFLG_ALLOW_MULTIHANDLE_ATTRIBUTE, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_ALLOW_MULTI_HANDLE_ATTRIBUTES) },
+    };
+
+    return PhGetAccessString(
+        Flags,
+        accessEntries,
+        RTL_NUMBER_OF(accessEntries)
+        );
+}
+
+static PPH_STRING PhpGetAlpcStateFlagsString(
+    _In_ ULONG State
+    )
+{
+    PH_ACCESS_ENTRY accessEntries[] =
+    {
+        { L"Initialized", 0x0001UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_INITIALIZED) },
+        { L"ConnectionPending", 0x0008UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_CONNECTION_PENDING) },
+        { L"ConnectionRefused", 0x0010UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_CONNECTION_REFUSED) },
+        { L"Disconnected", 0x0020UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_DISCONNECTED) },
+        { L"Closed", 0x0040UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_CLOSED) },
+        { L"NoFlushOnClose", 0x0080UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_NO_FLUSH_ON_CLOSE) },
+        { L"ReturnExtendedInfo", 0x0100UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_RETURN_EXTENDED_INFO) },
+        { L"Waitable", 0x0200UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_WAITABLE) },
+        { L"DynamicSecurity", 0x0400UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_DYNAMIC_SECURITY) },
+        { L"Wow64CompletionList", 0x0800UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_WOW64_COMPLETION_LIST) },
+        { L"Lpc", 0x1000UL, FALSE, FALSE, L"LPC" },
+        { L"LpcToLpc", 0x2000UL, FALSE, FALSE, L"LPC-to-LPC" },
+        { L"HasCompletionList", 0x4000UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_HAS_COMPLETION_LIST) },
+        { L"HadCompletionList", 0x8000UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_HAD_COMPLETION_LIST) },
+        { L"EnableCompletionList", 0x10000UL, FALSE, FALSE, PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_ENABLE_COMPLETION_LIST) },
+    };
+
+    return PhGetAccessString(
+        State & ~0x6UL,
+        accessEntries,
+        RTL_NUMBER_OF(accessEntries)
+        );
+}
 
 INT_PTR CALLBACK PhpHandleGeneralDlgProc(
     _In_ HWND hwndDlg,
@@ -915,11 +948,7 @@ VOID PhpUpdateHandleGeneral(
                 PPH_STRING alpcFlagsString;
                 WCHAR string[PH_INT64_STR_LEN_1];
 
-                alpcFlagsString = PhGetAccessString(
-                    basicInfo.Flags,
-                    (PPH_ACCESS_ENTRY)AlpcFlags,
-                    RTL_NUMBER_OF(AlpcFlags)
-                    );
+                alpcFlagsString = PhpGetAlpcFlagsString(basicInfo.Flags);
 
                 PhInitFormatS(&format[0], L"0x");
                 PhInitFormatX(&format[1], basicInfo.Flags);
@@ -944,17 +973,13 @@ VOID PhpUpdateHandleGeneral(
 
                     switch ((basicInfo.State >> 1) & 0x3)
                     {
-                    case 1: portTypeString = L"Server connection"; break;
-                    case 2: portTypeString = L"Client communication"; break;
-                    case 3: portTypeString = L"Server communication"; break;
-                    default: portTypeString = L"Unconnected"; break;
+                    case 1: portTypeString = PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_SERVER_CONNECTION); break;
+                    case 2: portTypeString = PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_CLIENT_COMMUNICATION); break;
+                    case 3: portTypeString = PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_SERVER_COMMUNICATION); break;
+                    default: portTypeString = PhGetApplicationUiString(IDS_PH_HANDLE_ALPC_UNCONNECTED); break;
                     }
 
-                    stateFlagsString = PhGetAccessString(
-                        basicInfo.State & ~0x6UL,
-                        (PPH_ACCESS_ENTRY)AlpcStateFlags,
-                        RTL_NUMBER_OF(AlpcStateFlags)
-                        );
+                    stateFlagsString = PhpGetAlpcStateFlagsString(basicInfo.State);
 
                     if (stateFlagsString->Length > 0)
                     {
@@ -1118,11 +1143,7 @@ VOID PhpUpdateHandleGeneral(
                         PPH_STRING alpcFlagsString;
                         WCHAR string[PH_INT64_STR_LEN_1];
 
-                        alpcFlagsString = PhGetAccessString(
-                            alpcBasicInfo.Flags,
-                            (PPH_ACCESS_ENTRY)AlpcFlags,
-                            RTL_NUMBER_OF(AlpcFlags)
-                            );
+                        alpcFlagsString = PhpGetAlpcFlagsString(alpcBasicInfo.Flags);
 
                         PhInitFormatS(&format[0], L"0x");
                         PhInitFormatX(&format[1], alpcBasicInfo.Flags);
@@ -1256,11 +1277,7 @@ VOID PhpUpdateHandleGeneral(
 
                 // Since FILE_MODE_INFORMATION has no flag for asynchronous I/O we should use our own flag and set
                 // it only if none of synchronous flags are present. That's why we need PhFileModeUpdAsyncFlag.
-                fileModeAccessStr = PhGetAccessString(
-                    PhFileModeUpdAsyncFlag(fileModeInfo.Mode),
-                    (PPH_ACCESS_ENTRY)FileModeAccessEntries,
-                    RTL_NUMBER_OF(FileModeAccessEntries)
-                    );
+                fileModeAccessStr = PhpGetFileModeAccessString(fileModeInfo.Mode);
 
                 PhInitFormatS(&format[0], L"0x");
                 PhInitFormatX(&format[1], fileModeInfo.Mode);
@@ -1559,11 +1576,7 @@ VOID PhpUpdateHandleGeneral(
 
                     // Since FILE_MODE_INFORMATION has no flag for asynchronous I/O we should use our own flag and set
                     // it only if none of synchronous flags are present. That's why we need PhFileModeUpdAsyncFlag.
-                    fileModeAccessStr = PhGetAccessString(
-                        PhFileModeUpdAsyncFlag(fileModeInfo.Mode),
-                        (PPH_ACCESS_ENTRY)FileModeAccessEntries,
-                        RTL_NUMBER_OF(FileModeAccessEntries)
-                        );
+                    fileModeAccessStr = PhpGetFileModeAccessString(fileModeInfo.Mode);
 
                     PhInitFormatS(&format[0], L"0x");
                     PhInitFormatX(&format[1], fileModeInfo.Mode);
@@ -2408,16 +2421,16 @@ VOID PhAddHandlePermissionsTrustee(
         case SidTypeUser:
         case SidTypeLogonSession:
         case SidTypeDeletedAccount:
-            PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (User)"));
+            PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_USER_SUFFIX)));
             break;
         case SidTypeAlias:
         case SidTypeGroup:
         case SidTypeWellKnownGroup:
-            PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (Group)"));
+            PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_GROUP_SUFFIX)));
             break;
         case SidTypeDomain:
         case SidTypeComputer:
-            PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (Computer)"));
+            PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_COMPUTER_SUFFIX)));
             break;
         }
     }
@@ -2444,7 +2457,7 @@ VOID PhAddHandlePermissionsTrustee(
         index = PhAddListViewItem(
             ListViewHandle,
             MAXINT,
-            PhGetStringOrDefault(string, L"N/A"),
+            PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE)),
             NULL
             );
         PhSetListViewSubItem(ListViewHandle, index, 1, PhGetApplicationUiString(IDS_PH_PERMISSION_ALLOW));
@@ -2514,16 +2527,16 @@ VOID PhUpdateHandlePermissionsOwnerSecurity(
                     case SidTypeUser:
                     case SidTypeLogonSession:
                     case SidTypeDeletedAccount:
-                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (User)"));
+                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_USER_SUFFIX)));
                         break;
                     case SidTypeAlias:
                     case SidTypeGroup:
                     case SidTypeWellKnownGroup:
-                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (Group)"));
+                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_GROUP_SUFFIX)));
                         break;
                     case SidTypeDomain:
                     case SidTypeComputer:
-                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (Computer)"));
+                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_COMPUTER_SUFFIX)));
                         break;
                     }
                 }
@@ -2609,16 +2622,16 @@ VOID PhUpdateHandlePermissionsGroupSecurity(
                     case SidTypeUser:
                     case SidTypeLogonSession:
                     case SidTypeDeletedAccount:
-                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (User)"));
+                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_USER_SUFFIX)));
                         break;
                     case SidTypeAlias:
                     case SidTypeGroup:
                     case SidTypeWellKnownGroup:
-                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (Group)"));
+                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_GROUP_SUFFIX)));
                         break;
                     case SidTypeDomain:
                     case SidTypeComputer:
-                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, L" (Computer)"));
+                        PhMoveReference(&string, PhConcatStringRefZ(&string->sr, PhGetApplicationUiString(IDS_PH_HANDLE_PRINCIPAL_COMPUTER_SUFFIX)));
                         break;
                     }
                 }

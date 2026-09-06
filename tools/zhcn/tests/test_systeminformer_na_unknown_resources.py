@@ -30,7 +30,7 @@ SOURCE_FILES = (
 
 RESOURCE_SOURCE_COUNTS = {
     "IDS_PH_NOT_AVAILABLE": {
-        "hndlprp.c": 20,
+        "hndlprp.c": 21,
         "memlists.c": 1,
         "procrec.c": 7,
         "prpggen.c": 8,
@@ -132,16 +132,16 @@ class SystemInformerNaUnknownResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2668)))
-        self.assertEqual(len(english), 668)
-        self.assertEqual(len(chinese), 668)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_ENVIRONMENT_VARIABLE_OBJECT_FORMAT$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2668$")
+        self.assertEqual(numeric_ids, list(range(2000, 2704)))
+        self.assertEqual(len(english), 704)
+        self.assertEqual(len(chinese), 704)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_HANDLE_ALPC_UNCONNECTED$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2704$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=668"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=704"), 2)
         self.assertNotIn("sys_info.exe=560", workflow)
 
     def test_every_resource_source_expression_is_accounted_for_by_file(self) -> None:
@@ -330,7 +330,11 @@ class SystemInformerNaUnknownResourceTests(unittest.TestCase):
         prpggen = self.sources["prpggen.c"]
         tokprp = self.sources["tokprp.c"]
 
-        self.assertIn('PhAddListViewItem(\n            ListViewHandle,\n            MAXINT,\n            PhGetStringOrDefault(string, L"N/A")', hndlprp)
+        self.assertNotIn('PhGetStringOrDefault(string, L"N/A")', hndlprp)
+        self.assertIn(
+            "PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))",
+            hndlprp,
+        )
         self.assertIn('PhFormatString(L"0x%x: %s",', hndlprp)
         self.assertIn('return PhCreateString(L"N/A");', prpggen)
         self.assertIn('SIP(SREF(L"Unknown"), 0)', tokprp)
