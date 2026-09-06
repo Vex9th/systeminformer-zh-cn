@@ -2356,7 +2356,7 @@ VOID PhAddStatusPermissionsTrustee(
         string = PhGetNtMessage(status);
         PhMoveReference(&string, PhFormatString(L"0x%x: %s",
             status,
-            PhGetStringOrDefault(string, L"N/A")
+            PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
             ));
 
         PhSetListViewSubItem(ListViewHandle, 1, 1, PhGetString(string));
@@ -2426,7 +2426,7 @@ VOID PhAddHandlePermissionsTrustee(
             PhGetStringOrDefault(string, L"N/A"),
             NULL
             );
-        PhSetListViewSubItem(ListViewHandle, index, 1, L"Allow");
+        PhSetListViewSubItem(ListViewHandle, index, 1, PhGetApplicationUiString(IDS_PH_PERMISSION_ALLOW));
     }
 
 
@@ -2948,7 +2948,7 @@ VOID PhUpdateHandlePermissionSecurity(
         {
             PhMoveReference(&string, PhFormatString(L"0x%x: %s",
                 status,
-                PhGetStringOrDefault(string, L"N/A")
+                PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
                 ));
         }
         else
@@ -2956,7 +2956,7 @@ VOID PhUpdateHandlePermissionSecurity(
             string = PhGetNtMessage(status);
             PhMoveReference(&string, PhFormatString(L"0x%x: %s",
                 status,
-                PhGetStringOrDefault(string, L"N/A")
+                PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
                 ));
         }
 
@@ -3056,7 +3056,7 @@ VOID PhUpdateHandleAuditingSecurity(
         {
             PhMoveReference(&string, PhFormatString(L"0x%x: %s",
                 status,
-                PhGetStringOrDefault(string, L"N/A")
+                PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
                 ));
         }
         else
@@ -3064,7 +3064,7 @@ VOID PhUpdateHandleAuditingSecurity(
             string = PhGetNtMessage(status);
             PhMoveReference(&string, PhFormatString(L"0x%x: %s",
                 status,
-                PhGetStringOrDefault(string, L"N/A")
+                PhGetStringOrDefault(string, PhGetApplicationUiString(IDS_PH_NOT_AVAILABLE))
                 ));
         }
 

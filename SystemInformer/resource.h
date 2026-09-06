@@ -1552,8 +1552,44 @@
 #define IDS_PH_UNKNOWN_PROCESS_FORMAT                       2559
 #define IDS_PH_NOT_AVAILABLE                                2560
 #define IDS_PH_UNKNOWN                                      2561
+#define IDS_PH_PERMISSION_ALLOW                             2562
+#define IDS_PH_APP_CONTAINER_CHILD                         2563
+#define IDS_PH_LOCK_TYPE_CRITICAL_SECTION                  2564
+#define IDS_PH_LINKED_TOKEN_TITLE                           2565
+#define IDS_PH_EVENT_TYPE_NOTIFICATION                     2566
+#define IDS_PH_HEAP_TYPE_NT                                 2567
+#define IDS_PH_HEAP_TYPE_NT_LFH                             2568
+#define IDS_PH_HEAP_TYPE_NT_LOOKASIDE                       2569
+#define IDS_PH_LOCK_TYPE_RESOURCE                           2570
+#define IDS_PH_HEAP_TYPE_SEGMENT                            2571
+#define IDS_PH_HEAP_TYPE_SEGMENT_LFH                        2572
+#define IDS_PH_HEAP_TYPE_SEGMENT_LOOKASIDE                  2573
+#define IDS_PH_EVENT_TYPE_SYNCHRONIZATION                   2574
+#define IDS_PH_MEMORY_PROTECTION_VALUES                     2575
+#define IDS_PH_DEFAULT_TASK_MANAGER_STATUS                  2576
+#define IDS_PH_NOT_DEFAULT_TASK_MANAGER_STATUS              2577
+#define IDS_PH_ABOUT_CREDITS                                2578
+#define IDS_PH_THREAD_COUNT_VALUE_TITLE                     2579
+#define IDS_PH_DEVICE_UNCLASSIFIED                          2580
+#define IDS_PH_DEVICE_UNNAMED                               2581
+#define IDS_PH_DEVICE_ARRIVED_TITLE_FORMAT                  2582
+#define IDS_PH_DEVICE_REMOVED_TITLE_FORMAT                  2583
+#define IDS_PH_NATIVE_RESTART_WARNING                       2584
+#define IDS_PH_CRITICAL_RESTART_WARNING                     2585
+#define IDS_PH_NATIVE_SHUTDOWN_WARNING                      2586
+#define IDS_PH_CRITICAL_SHUTDOWN_WARNING                    2587
+#define IDS_PH_SYSTEM_PROCESS_ACTION_WARNING_FORMAT         2588
+#define IDS_PH_CRITICAL_PROCESS_ACTION_WARNING_FORMAT       2589
+#define IDS_PH_CRITICAL_PROCESS_TERMINATE_WARNING_FORMAT    2590
+#define IDS_PH_UNKNOWN_OBJECT_TYPE_FORMAT                   2591
+#define IDS_PH_ACTION_START                                 2592
+#define IDS_PH_ACTION_CONTINUE                              2593
+#define IDS_PH_ACTION_PAUSE                                 2594
+#define IDS_PH_ACTION_STOP                                  2595
+#define IDS_PH_ACTION_DELETE                                2596
+#define IDS_PH_UNABLE_SERVICE_ACTION_FORMAT                 2597
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_UNKNOWN
+#define IDS_PH_LAST                                  IDS_PH_UNABLE_SERVICE_ACTION_FORMAT
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1565,6 +1601,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2562
+#define _APS_NEXT_SYMED_VALUE           2598
 #endif
 #endif

@@ -227,7 +227,10 @@ INT_PTR CALLBACK PhpHandleStatisticsDlgProc(
 
                 if (PhIsNullOrEmptyString(entry->Name))
                 {
-                    unknownType = PhFormatString(L"(unknown: %lu)", (ULONG)i);
+                    unknownType = PhFormatString(
+                        PhGetApplicationUiString(IDS_PH_UNKNOWN_OBJECT_TYPE_FORMAT),
+                        (ULONG)i
+                        );
                     lvItemIndex = PhAddListViewItem(
                         context->ListViewHandle,
                         MAXINT,

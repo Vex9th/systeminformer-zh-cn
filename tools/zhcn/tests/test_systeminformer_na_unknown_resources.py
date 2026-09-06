@@ -30,7 +30,7 @@ SOURCE_FILES = (
 
 RESOURCE_SOURCE_COUNTS = {
     "IDS_PH_NOT_AVAILABLE": {
-        "hndlprp.c": 10,
+        "hndlprp.c": 15,
         "memlists.c": 1,
         "procrec.c": 7,
         "prpggen.c": 8,
@@ -131,16 +131,16 @@ class SystemInformerNaUnknownResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2562)))
-        self.assertEqual(len(english), 562)
-        self.assertEqual(len(chinese), 562)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_UNKNOWN$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2562$")
+        self.assertEqual(numeric_ids, list(range(2000, 2598)))
+        self.assertEqual(len(english), 598)
+        self.assertEqual(len(chinese), 598)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_UNABLE_SERVICE_ACTION_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2598$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=562"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=598"), 2)
         self.assertNotIn("sys_info.exe=560", workflow)
 
     def test_every_resource_source_expression_is_accounted_for_by_file(self) -> None:

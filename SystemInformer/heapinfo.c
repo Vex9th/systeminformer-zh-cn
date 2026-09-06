@@ -516,13 +516,13 @@ VOID PhpEnumerateProcessHeaps(
                         switch (entry->HeapFrontEndType)
                         {
                         case 1:
-                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"NT Heap (Lookaside)");
+                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_NT_LOOKASIDE));
                             break;
                         case 2:
-                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"NT Heap (LFH)");
+                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_NT_LFH));
                             break;
                         default:
-                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"NT Heap");
+                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_NT));
                             break;
                         }
                     }
@@ -532,13 +532,13 @@ VOID PhpEnumerateProcessHeaps(
                         switch (entry->HeapFrontEndType)
                         {
                         case 1:
-                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"Segment Heap (Lookaside)");
+                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_SEGMENT_LOOKASIDE));
                             break;
                         case 2:
-                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"Segment Heap (LFH)");
+                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_SEGMENT_LFH));
                             break;
                         default:
-                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"Segment Heap");
+                            PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_SEGMENT));
                             break;
                         }
                     }
@@ -601,13 +601,13 @@ VOID PhpEnumerateProcessHeaps(
                     switch (entry->HeapFrontEndType)
                     {
                     case 1:
-                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"NT Heap (Lookaside)");
+                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_NT_LOOKASIDE));
                         break;
                     case 2:
-                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"NT Heap (LFH)");
+                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_NT_LFH));
                         break;
                     default:
-                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"NT Heap");
+                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_NT));
                         break;
                     }
                 }
@@ -617,13 +617,13 @@ VOID PhpEnumerateProcessHeaps(
                     switch (entry->HeapFrontEndType)
                     {
                     case 1:
-                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"Segment Heap (Lookaside)");
+                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_SEGMENT_LOOKASIDE));
                         break;
                     case 2:
-                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"Segment Heap (LFH)");
+                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_SEGMENT_LFH));
                         break;
                     default:
-                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, L"Segment Heap");
+                        PhSetListViewSubItem(Context->ListViewHandle, lvItemIndex, 7, PhGetApplicationUiString(IDS_PH_HEAP_TYPE_SEGMENT));
                         break;
                     }
                 }
@@ -1408,10 +1408,10 @@ NTSTATUS NTAPI PhEnumProcessLocksCallback(
         switch (entry->Type)
         {
         case RTL_CRITSECT_TYPE:
-            PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 1, L"Critical section");
+            PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 1, PhGetApplicationUiString(IDS_PH_LOCK_TYPE_CRITICAL_SECTION));
             break;
         case RTL_RESOURCE_TYPE:
-            PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 1, L"Resource");
+            PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, 1, PhGetApplicationUiString(IDS_PH_LOCK_TYPE_RESOURCE));
             break;
         }
 

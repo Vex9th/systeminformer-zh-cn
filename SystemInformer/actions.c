@@ -650,19 +650,16 @@ BOOLEAN PhUiRestartComputer(
         break;
     case PH_POWERACTION_TYPE_NATIVE:
         {
-            PPH_STRING messageText;
+            PCWSTR messageText;
 
-            messageText = PhaFormatString(
-                L"This option %s %s in a disorderly manner and may cause file corruption or system instability.",
-                L"performs a hard",
-                L"restart");
+            messageText = PhGetApplicationUiString(IDS_PH_NATIVE_RESTART_WARNING);
 
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
                 L"restart",
                 L"the computer",
-                messageText->Buffer,
+                messageText,
                 TRUE
                 ))
             {
@@ -679,19 +676,16 @@ BOOLEAN PhUiRestartComputer(
         break;
     case PH_POWERACTION_TYPE_CRITICAL:
         {
-            PPH_STRING messageText;
+            PCWSTR messageText;
 
-            messageText = PhaFormatString(
-                L"This option %s %s in an disorderly manner and may cause corrupted files or instability in the system.",
-                L"forces a critical",
-                L"restart");
+            messageText = PhGetApplicationUiString(IDS_PH_CRITICAL_RESTART_WARNING);
 
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
                 L"restart",
                 L"the computer",
-                messageText->Buffer,
+                messageText,
                 TRUE
                 ))
             {
@@ -908,19 +902,16 @@ BOOLEAN PhUiShutdownComputer(
         break;
     case PH_POWERACTION_TYPE_NATIVE:
         {
-            PPH_STRING messageText;
+            PCWSTR messageText;
 
-            messageText = PhaFormatString(
-                L"This option %s %s in an disorderly manner and may cause corrupted files or instability in the system.",
-                L"performs a hard",
-                L"shut down");
+            messageText = PhGetApplicationUiString(IDS_PH_NATIVE_SHUTDOWN_WARNING);
 
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
                 L"shut down",
                 L"the computer",
-                messageText->Buffer,
+                messageText,
                 TRUE
                 ))
             {
@@ -937,19 +928,16 @@ BOOLEAN PhUiShutdownComputer(
         break;
     case PH_POWERACTION_TYPE_CRITICAL:
         {
-            PPH_STRING messageText;
+            PCWSTR messageText;
 
-            messageText = PhaFormatString(
-                L"This option %s %s in an disorderly manner and may cause corrupted files or instability in the system.",
-                L"forces a critical",
-                L"shut down");
+            messageText = PhGetApplicationUiString(IDS_PH_CRITICAL_SHUTDOWN_WARNING);
 
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
                 L"shut down",
                 L"the computer",
-                messageText->Buffer,
+                messageText,
                 TRUE
                 ))
             {
@@ -1723,11 +1711,9 @@ static BOOLEAN PhpShowContinueMessageProcesses(
                 WindowHandle,
                 Verb,
                 object,
-                PhaConcatStrings(
-                3,
-                L"You are about to ",
-                Verb,
-                L" one or more system processes."
+                PhaFormatString(
+                PhGetApplicationUiString(IDS_PH_SYSTEM_PROCESS_ACTION_WARNING_FORMAT),
+                PhTranslateString(Verb)
                 )->Buffer,
                 TRUE,
                 rawObject
@@ -1739,20 +1725,16 @@ static BOOLEAN PhpShowContinueMessageProcesses(
 
             if (PhEqualStringZ(Verb, L"terminate", FALSE))
             {
-                message = PhaConcatStrings(
-                    3,
-                    L"You are about to ",
-                    Verb,
-                    L" one or more critical processes. This will shut down the operating system immediately."
+                message = PhaFormatString(
+                    PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_TERMINATE_WARNING_FORMAT),
+                    PhTranslateString(Verb)
                     );
             }
             else
             {
-                message = PhaConcatStrings(
-                    3,
-                    L"You are about to ",
-                    Verb,
-                    L" one or more critical processes."
+                message = PhaFormatString(
+                    PhGetApplicationUiString(IDS_PH_CRITICAL_PROCESS_ACTION_WARNING_FORMAT),
+                    PhTranslateString(Verb)
                     );
             }
 
@@ -5125,7 +5107,7 @@ static BOOLEAN PhpShowContinueMessageServices(
  * Shows an error message for service actions.
  *
  * \param WindowHandle Parent window handle.
- * \param Verb Action verb.
+ * \param VerbId Action verb resource identifier.
  * \param Service Service item.
  * \param Status NT status code.
  * \param Win32Result Win32 error code.
@@ -5133,7 +5115,7 @@ static BOOLEAN PhpShowContinueMessageServices(
  */
 static BOOLEAN PhpShowErrorService(
     _In_ HWND WindowHandle,
-    _In_ PWSTR Verb,
+    _In_ ULONG VerbId,
     _In_ PPH_SERVICE_ITEM Service,
     _In_ NTSTATUS Status,
     _In_opt_ ULONG Win32Result
@@ -5142,10 +5124,10 @@ static BOOLEAN PhpShowErrorService(
     return PhShowContinueStatus(
         WindowHandle,
         PhaFormatString(
-        L"Unable to %s %s.",
-        Verb,
-        Service->Name->Buffer
-        )->Buffer,
+            PhGetApplicationUiString(IDS_PH_UNABLE_SERVICE_ACTION_FORMAT),
+            PhGetApplicationUiString(VerbId),
+            Service->Name->Buffer
+            )->Buffer,
         Status,
         Win32Result
         );
@@ -5253,7 +5235,7 @@ BOOLEAN PhUiStartServices(
                     if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Services[i]->Name), PhSvcControlServiceStart)))
                         success = TRUE;
                     else
-                        PhpShowErrorService(WindowHandle, L"start", Services[i], status, 0);
+                        PhpShowErrorService(WindowHandle, IDS_PH_ACTION_START, Services[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -5267,7 +5249,7 @@ BOOLEAN PhUiStartServices(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorService(WindowHandle, L"start", Services[i], status, 0))
+                if (!PhpShowErrorService(WindowHandle, IDS_PH_ACTION_START, Services[i], status, 0))
                     break;
             }
         }
@@ -5346,7 +5328,7 @@ BOOLEAN PhUiStartService(
                 if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Service->Name), PhSvcControlServiceStart)))
                     success = TRUE;
                 else
-                    PhpShowErrorService(WindowHandle, L"start", Service, status, 0);
+                    PhpShowErrorService(WindowHandle, IDS_PH_ACTION_START, Service, status, 0);
 
                 PhUiDisconnectFromPhSvc();
             }
@@ -5355,7 +5337,7 @@ BOOLEAN PhUiStartService(
         {
             if (!cancelled)
             {
-                PhpShowErrorService(WindowHandle, L"start", Service, status, 0);
+                PhpShowErrorService(WindowHandle, IDS_PH_ACTION_START, Service, status, 0);
             }
         }
     }
@@ -5459,7 +5441,7 @@ BOOLEAN PhUiContinueServices(
                     if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Services[i]->Name), PhSvcControlServiceContinue)))
                         success = TRUE;
                     else
-                        PhpShowErrorService(WindowHandle, L"continue", Services[i], status, 0);
+                        PhpShowErrorService(WindowHandle, IDS_PH_ACTION_CONTINUE, Services[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -5473,7 +5455,7 @@ BOOLEAN PhUiContinueServices(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorService(WindowHandle, L"continue", Services[i], status, 0))
+                if (!PhpShowErrorService(WindowHandle, IDS_PH_ACTION_CONTINUE, Services[i], status, 0))
                     break;
             }
         }
@@ -5561,7 +5543,7 @@ BOOLEAN PhUiContinueService(
                 if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Service->Name), PhSvcControlServiceContinue)))
                     success = TRUE;
                 else
-                    PhpShowErrorService(WindowHandle, L"continue", Service, status, 0);
+                    PhpShowErrorService(WindowHandle, IDS_PH_ACTION_CONTINUE, Service, status, 0);
 
                 PhUiDisconnectFromPhSvc();
             }
@@ -5570,7 +5552,7 @@ BOOLEAN PhUiContinueService(
         {
             if (!cancelled)
             {
-                PhpShowErrorService(WindowHandle, L"continue", Service, status, 0);
+                PhpShowErrorService(WindowHandle, IDS_PH_ACTION_CONTINUE, Service, status, 0);
             }
         }
     }
@@ -5688,7 +5670,7 @@ BOOLEAN PhUiPauseServices(
                     if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Services[i]->Name), PhSvcControlServicePause)))
                         success = TRUE;
                     else
-                        PhpShowErrorService(WindowHandle, L"pause", Services[i], status, 0);
+                        PhpShowErrorService(WindowHandle, IDS_PH_ACTION_PAUSE, Services[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -5702,7 +5684,7 @@ BOOLEAN PhUiPauseServices(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorService(WindowHandle, L"pause", Services[i], status, 0))
+                if (!PhpShowErrorService(WindowHandle, IDS_PH_ACTION_PAUSE, Services[i], status, 0))
                     break;
             }
         }
@@ -5790,7 +5772,7 @@ BOOLEAN PhUiPauseService(
                 if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Service->Name), PhSvcControlServicePause)))
                     success = TRUE;
                 else
-                    PhpShowErrorService(WindowHandle, L"pause", Service, status, 0);
+                    PhpShowErrorService(WindowHandle, IDS_PH_ACTION_PAUSE, Service, status, 0);
 
                 PhUiDisconnectFromPhSvc();
             }
@@ -5799,7 +5781,7 @@ BOOLEAN PhUiPauseService(
         {
             if (!cancelled)
             {
-                PhpShowErrorService(WindowHandle, L"pause", Service, status, 0);
+                PhpShowErrorService(WindowHandle, IDS_PH_ACTION_PAUSE, Service, status, 0);
             }
         }
     }
@@ -5917,7 +5899,7 @@ BOOLEAN PhUiStopServices(
                     if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Services[i]->Name), PhSvcControlServiceStop)))
                         success = TRUE;
                     else
-                        PhpShowErrorService(WindowHandle, L"stop", Services[i], status, 0);
+                        PhpShowErrorService(WindowHandle, IDS_PH_ACTION_STOP, Services[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -5931,7 +5913,7 @@ BOOLEAN PhUiStopServices(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorService(WindowHandle, L"stop", Services[i], status, 0))
+                if (!PhpShowErrorService(WindowHandle, IDS_PH_ACTION_STOP, Services[i], status, 0))
                     break;
             }
         }
@@ -6019,7 +6001,7 @@ BOOLEAN PhUiStopService(
                 if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Service->Name), PhSvcControlServiceStop)))
                     success = TRUE;
                 else
-                    PhpShowErrorService(WindowHandle, L"stop", Service, status, 0);
+                    PhpShowErrorService(WindowHandle, IDS_PH_ACTION_STOP, Service, status, 0);
 
                 PhUiDisconnectFromPhSvc();
             }
@@ -6028,7 +6010,7 @@ BOOLEAN PhUiStopService(
         {
             if (!cancelled)
             {
-                PhpShowErrorService(WindowHandle, L"stop", Service, status, 0);
+                PhpShowErrorService(WindowHandle, IDS_PH_ACTION_STOP, Service, status, 0);
             }
         }
     }
@@ -6092,7 +6074,7 @@ BOOLEAN PhUiDeleteService(
                 if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Service->Name), PhSvcControlServiceDelete)))
                     success = TRUE;
                 else
-                    PhpShowErrorService(WindowHandle, L"delete", Service, status, 0);
+                    PhpShowErrorService(WindowHandle, IDS_PH_ACTION_DELETE, Service, status, 0);
 
                 PhUiDisconnectFromPhSvc();
             }
@@ -6101,7 +6083,7 @@ BOOLEAN PhUiDeleteService(
         {
             if (!cancelled)
             {
-                PhpShowErrorService(WindowHandle, L"delete", Service, status, 0);
+                PhpShowErrorService(WindowHandle, IDS_PH_ACTION_DELETE, Service, status, 0);
             }
         }
     }
@@ -6271,7 +6253,7 @@ BOOLEAN PhUiRestartServices(
                     if (NT_SUCCESS(status = PhSvcCallControlService(PhGetString(Services[i]->Name), PhSvcControlServiceRestart)))
                         success = TRUE;
                     else
-                        PhpShowErrorService(WindowHandle, L"restart", Services[i], status, 0);
+                        PhpShowErrorService(WindowHandle, IDS_PH_ACTION_RESTART, Services[i], status, 0);
 
                     PhUiDisconnectFromPhSvc();
                 }
@@ -6285,7 +6267,7 @@ BOOLEAN PhUiRestartServices(
                 if (cancelled)
                     break;
 
-                if (!PhpShowErrorService(WindowHandle, L"restart", Services[i], status, 0))
+                if (!PhpShowErrorService(WindowHandle, IDS_PH_ACTION_RESTART, Services[i], status, 0))
                     break;
             }
         }

@@ -127,16 +127,16 @@ class SystemInformerRuntimeFormatResourceTests(unittest.TestCase):
                 header + "\n" + app_header,
             )
         )
-        self.assertEqual(numeric_ids, list(range(2000, 2562)))
-        self.assertEqual(len(english), 562)
-        self.assertEqual(len(chinese), 562)
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_UNKNOWN$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2562$")
+        self.assertEqual(numeric_ids, list(range(2000, 2598)))
+        self.assertEqual(len(english), 598)
+        self.assertEqual(len(chinese), 598)
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_UNABLE_SERVICE_ACTION_FORMAT$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2598$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=562"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=598"), 2)
         self.assertNotIn("sys_info.exe=555", workflow)
 
     def test_each_resource_is_bound_to_the_exact_runtime_arguments(self) -> None:

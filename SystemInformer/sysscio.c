@@ -197,7 +197,7 @@ BOOLEAN PhSipIoSectionCallback(
             PPH_SYSINFO_DRAW_PANEL drawPanel = Parameter1;
             PH_FORMAT format[4];
 
-            drawPanel->Title = PhCreateString(L"I/O");
+            drawPanel->Title = PhCreateString(PhGetApplicationUiString(IDS_PH_GROUP_IO));
 
             // R+O: %s\nW: %s
             PhInitFormatS(&format[0], L"R+O: ");

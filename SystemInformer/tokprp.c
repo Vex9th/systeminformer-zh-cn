@@ -1431,7 +1431,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                     {
                         PPHP_TOKEN_USER_RESOLVE_CONTEXT tokenUserResolve;
 
-                        PhSetDialogItemText(hwndDlg, IDC_USER, L"Resolving...");
+                        PhSetDialogItemText(hwndDlg, IDC_USER, PhGetApplicationUiString(IDS_PH_TOKEN_RESOLVING));
 
                         tokenUserResolve = PhAllocateZero(sizeof(PHP_TOKEN_USER_RESOLVE_CONTEXT));
                         tokenUserResolve->WindowHandle = GetDlgItem(hwndDlg, IDC_USER);
@@ -1537,7 +1537,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                 if (page) PhFree(page);
 
                 PhSetApplicationWindowIcon(hwndDlg);
-                PhSetWindowText(hwndDlg, L"Linked Token");
+                PhSetWindowText(hwndDlg, PhGetApplicationUiString(IDS_PH_LINKED_TOKEN_TITLE));
 
                 PhInitializeLayoutManager(&tokenPageContext->LayoutManager, hwndDlg);
                 PhAddLayoutItem(&tokenPageContext->LayoutManager, tokenPageContext->ListViewHandle, NULL, PH_ANCHOR_ALL);
@@ -4618,10 +4618,10 @@ INT_PTR CALLBACK PhpTokenContainerPageProc(
                 switch (appContainerSidType)
                 {
                 case ChildAppContainerSidType:
-                    PhSetListViewSubItem(context->ListViewHandle, 1, 1, L"Child");
+                    PhSetListViewSubItem(context->ListViewHandle, 1, 1, PhGetApplicationUiString(IDS_PH_APP_CONTAINER_CHILD));
                     break;
                 case ParentAppContainerSidType:
-                    PhSetListViewSubItem(context->ListViewHandle, 1, 1, L"Parent");
+                    PhSetListViewSubItem(context->ListViewHandle, 1, 1, PhGetApplicationUiString(IDS_PH_GROUP_PARENT));
                     break;
                 }
 

@@ -393,7 +393,7 @@ BOOLEAN PhSipMemorySectionCallback(
                 usedPages = totalPages - PhPerfInformation.AvailablePages;
             }
 
-            drawPanel->Title = PhCreateString(L"Memory");
+            drawPanel->Title = PhCreateString(PhGetApplicationUiString(IDS_PH_GROUP_MEMORY));
 
             // %.0f%%\n%s / %s
             PhInitFormatF(&format[0], ((FLOAT)usedPages / (FLOAT)totalPages) * 100, 0);

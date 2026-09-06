@@ -1532,7 +1532,7 @@ VOID PhpRefreshTaskManagerState(
 
     if (PhpIsDefaultTaskManager())
     {
-        PhSetWindowText(GetDlgItem(WindowHandle, IDC_DEFSTATE), L"System Informer is the default Task Manager:");
+        PhSetWindowText(GetDlgItem(WindowHandle, IDC_DEFSTATE), PhGetApplicationUiString(IDS_PH_DEFAULT_TASK_MANAGER_STATUS));
         PhSetWindowText(
             GetDlgItem(WindowHandle, IDC_REPLACETASKMANAGER),
             PhGetApplicationUiString(IDS_PH_RESTORE_DEFAULT)
@@ -1540,7 +1540,7 @@ VOID PhpRefreshTaskManagerState(
     }
     else
     {
-        PhSetWindowText(GetDlgItem(WindowHandle, IDC_DEFSTATE), L"System Informer is not the default Task Manager:");
+        PhSetWindowText(GetDlgItem(WindowHandle, IDC_DEFSTATE), PhGetApplicationUiString(IDS_PH_NOT_DEFAULT_TASK_MANAGER_STATUS));
         PhSetWindowText(
             GetDlgItem(WindowHandle, IDC_REPLACETASKMANAGER),
             PhGetApplicationUiString(IDS_PH_MAKE_DEFAULT)

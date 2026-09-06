@@ -234,8 +234,27 @@ class NotificationRuntimeTranslationTests(unittest.TestCase):
                 for entry in entries
                 if entry["category"] == "c_runtime_composed"
             ),
-            Counter({" Device Removed": 1, " Device Arrived": 1}),
+            Counter(),
         )
+
+        device_source = self.audit.mask_c_comments(
+            (APP_ROOT / "mwpgdev.c").read_text(encoding="utf-8-sig")
+        )
+        device_body = re.sub(
+            r"\s+",
+            "",
+            function_body(device_source, "PhpNotifyForDevice", self.audit),
+        )
+        for resource_id in (
+            "IDS_PH_DEVICE_REMOVED_TITLE_FORMAT",
+            "IDS_PH_DEVICE_ARRIVED_TITLE_FORMAT",
+        ):
+            self.assertIn(
+                f"PhFormatString(PhGetApplicationUiString({resource_id}),PhGetString(classification))",
+                device_body,
+            )
+        self.assertNotIn('L"DeviceRemoved"', device_body)
+        self.assertNotIn('L"DeviceArrived"', device_body)
 
 
 if __name__ == "__main__":

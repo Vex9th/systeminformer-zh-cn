@@ -250,7 +250,7 @@ VOID PhpUpdateProcessMitigationPolicies(
             }
             else
             {
-                PhSetDialogItemText(hwndDlg, IDC_MITIGATION, L"None");
+                PhSetDialogItemText(hwndDlg, IDC_MITIGATION, PhGetApplicationUiString(IDS_PH_MESSAGE_ICON_NONE));
             }
 
             PhDeleteStringBuilder(&sb);

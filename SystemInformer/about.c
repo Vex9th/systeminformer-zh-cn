@@ -50,22 +50,10 @@ static INT_PTR CALLBACK PhpAboutDlgProc(
             PhSetDialogItemText(hwndDlg, IDC_ABOUT_NAME, versionString->Buffer);
             PhDereferenceObject(versionString);
 
-            PhSetDialogItemText(hwndDlg, IDC_CREDITS,
-                L"Thanks to:\n"
-                L"    <a href=\"https://github.com/wj32\">wj32</a> - Wen Jia Liu\n"
-                L"    <a href=\"https://github.com/dmex\">dmex</a> - Steven G\n"
-                L"    <a href=\"https://github.com/jxy-s\">jxy-s</a> - Johnny Shaw\n"
-                L"    <a href=\"https://github.com/ionescu007\">ionescu007</a> - Alex Ionescu\n"
-                L"    <a href=\"https://github.com/yardenshafir\">yardenshafir</a> - Yarden Shafir\n"
-                L"    <a href=\"https://github.com/winsiderss/systeminformer/graphs/contributors\">Contributors</a> - thank you for your additions!\n"
-                L"    Donors - thank you for your support!\n\n"
-                L"System Informer uses the following components:\n"
-                L"    <a href=\"https://github.com/GameTechDev/PresentMon\">PresentMon</a> by Intel Corporation\n"
-                L"    <a href=\"https://github.com/michaelrsweet/mxml\">Mini-XML</a> by Michael Sweet\n"
-                L"    <a href=\"https://github.com/PCRE2Project/pcre2\">PCRE2</a> by Philip Hazel\n"
-                L"    <a href=\"https://github.com/json-c/json-c\">json-c</a> by Michael Clark\n"
-                L"    MD5 code by Jouni Malinen\n"
-                L"    SHA1 code by Filip Navara, based on code by Steve Reid\n"
+            PhSetDialogItemText(
+                hwndDlg,
+                IDC_CREDITS,
+                PhGetApplicationUiString(IDS_PH_ABOUT_CREDITS)
                 );
 
             PhSetDialogFocus(hwndDlg, GetDlgItem(hwndDlg, IDOK));

@@ -225,7 +225,7 @@ BOOLEAN PhSipCpuSectionCallback(
             PhInitFormatF(&format[0], (PhCpuKernelUsage + PhCpuUserUsage) * 100, PhMaxPrecisionUnit);
             PhInitFormatC(&format[1], L'%');
 
-            drawPanel->Title = PhCreateString(L"CPU");
+            drawPanel->Title = PhCreateString(PhGetApplicationUiString(IDS_PH_STAT_CPU));
             drawPanel->SubTitle = PhFormat(format, RTL_NUMBER_OF(format), 16);
         }
         return TRUE;

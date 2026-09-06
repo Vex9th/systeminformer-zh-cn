@@ -61,21 +61,10 @@ INT_PTR CALLBACK PhpMemoryProtectDlgProc(
 
             PhCenterWindow(hwndDlg, GetParent(hwndDlg));
 
-            PhSetDialogItemText(hwndDlg, IDC_INTRO,
-                L"Possible values:\r\n"
-                L"\r\n"
-                L"0x01 - PAGE_NOACCESS\r\n"
-                L"0x02 - PAGE_READONLY\r\n"
-                L"0x04 - PAGE_READWRITE\r\n"
-                L"0x08 - PAGE_WRITECOPY\r\n"
-                L"0x10 - PAGE_EXECUTE\r\n"
-                L"0x20 - PAGE_EXECUTE_READ\r\n"
-                L"0x40 - PAGE_EXECUTE_READWRITE\r\n"
-                L"0x80 - PAGE_EXECUTE_WRITECOPY\r\n"
-                L"Modifiers:\r\n"
-                L"0x100 - PAGE_GUARD\r\n"
-                L"0x200 - PAGE_NOCACHE\r\n"
-                L"0x400 - PAGE_WRITECOMBINE\r\n"
+            PhSetDialogItemText(
+                hwndDlg,
+                IDC_INTRO,
+                PhGetApplicationUiString(IDS_PH_MEMORY_PROTECTION_VALUES)
                 );
 
             PhSetDialogFocus(hwndDlg, GetDlgItem(hwndDlg, IDC_VALUE));

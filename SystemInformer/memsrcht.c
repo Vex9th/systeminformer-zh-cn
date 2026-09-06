@@ -1385,7 +1385,7 @@ INT_PTR CALLBACK PhpMemoryStringsThreadCountDlgProc(
         {
             WCHAR countString[PH_INT32_STR_LEN_1];
             PhCenterWindow(hwndDlg, GetParent(hwndDlg));
-            SetWindowText(hwndDlg, L"Value (0 = auto / unlimited)");
+            SetWindowText(hwndDlg, PhGetApplicationUiString(IDS_PH_THREAD_COUNT_VALUE_TITLE));
             PhPrintUInt32(countString, *threadCount);
             PhSetDialogItemText(hwndDlg, IDC_MINIMUMLENGTH, countString);
             PhInitializeWindowTheme(hwndDlg, PhEnableThemeSupport);

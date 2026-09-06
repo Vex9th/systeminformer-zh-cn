@@ -180,10 +180,10 @@ static VOID PhpRefreshEventPageInfo(
             switch (basicInfo.EventType)
             {
             case NotificationEvent:
-                eventType = L"Notification";
+                eventType = PhGetApplicationUiString(IDS_PH_EVENT_TYPE_NOTIFICATION);
                 break;
             case SynchronizationEvent:
-                eventType = L"Synchronization";
+                eventType = PhGetApplicationUiString(IDS_PH_EVENT_TYPE_SYNCHRONIZATION);
                 break;
             }
 

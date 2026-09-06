@@ -152,15 +152,53 @@ class ConfirmRawObjectTests(unittest.TestCase):
             {1: "c_confirm", 3: "c_confirm"},
         )
 
-        entries = []
-        self.audit.scan_c_file(str(REPO_ROOT / "SystemInformer" / "actions.c"), entries)
-        self.assertTrue(
-            any(
-                entry["file"] == "SystemInformer/actions.c"
-                and 1700 <= entry["line"] <= 1770
-                for entry in entries
+        action_entries = []
+        self.audit.scan_c_file(
+            str(REPO_ROOT / "SystemInformer" / "actions.c"), action_entries
+        )
+        dangerous_formats = {
+            "You are about to %s one or more system processes.",
+            "You are about to %s one or more critical processes.",
+            "You are about to %s one or more critical processes. This will shut down the operating system immediately.",
+        }
+        self.assertFalse(
+            dangerous_formats
+            & {
+                entry["english"]
+                for entry in action_entries
+                if entry["category"] == "c_confirm"
+            }
+        )
+
+        resource_entries = []
+        self.audit.scan_rc_file(
+            str(REPO_ROOT / "SystemInformer" / "SystemInformer.rc"),
+            resource_entries,
+        )
+        self.assertLessEqual(
+            dangerous_formats,
+            {
+                entry["english"]
+                for entry in resource_entries
+                if entry["category"] == "rc_stringtable"
+            },
+        )
+
+        helper = compact(
+            function_body(
+                self.actions, "PhpShowContinueMessageProcesses", self.audit
             )
         )
+        for resource_id in (
+            "IDS_PH_SYSTEM_PROCESS_ACTION_WARNING_FORMAT",
+            "IDS_PH_CRITICAL_PROCESS_ACTION_WARNING_FORMAT",
+            "IDS_PH_CRITICAL_PROCESS_TERMINATE_WARNING_FORMAT",
+        ):
+            self.assertIn(
+                f"PhGetApplicationUiString({resource_id}),PhTranslateString(Verb)",
+                helper,
+            )
+        self.assertEqual(helper.count("rawObject"), 7)
 
     def test_two_process_connector_has_a_real_runtime_translation(self) -> None:
         translations = json.loads(
