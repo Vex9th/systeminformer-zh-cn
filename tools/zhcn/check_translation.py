@@ -59,6 +59,43 @@ KEEP_ENGLISH_RULES = [
     r"^(Hybrid-Analysis|VirusTotal|Worker Factory|PingGraphLayout)$",
 ]
 
+# Reviewed source formats whose punctuation, units and identifiers are the
+# complete UI value. Keep this exact and category-scoped so prose containing a
+# format specifier cannot disappear from the untranslated report.
+REVIEWED_TECHNICAL_ENTRIES = {
+    ("c_runtime_composed", "SystemInformer", " (APP_CONTAINER)"): 1,
+    ("c_runtime_composed", "plugins/WindowExplorer", "#%hu"): 1,
+    ("c_runtime_composed", "plugins/ExtendedTools", "%.1f°F (%lu°C)"): 2,
+    ("c_runtime_composed", "plugins/ExtendedTools", "%I64u (0x%I64x)"): 2,
+    ("c_runtime_composed", "plugins/ExtendedTools", "%I64u MHz"): 2,
+    ("c_runtime_composed", "plugins/WindowExplorer", "%lu (0x%x)"): 1,
+    ("c_runtime_composed", "plugins/ExtendedTools", "%lu MB"): 1,
+    ("c_runtime_composed", "plugins/ExtendedTools", "%lu%%"): 2,
+    ("c_runtime_composed", "tools/peview", "%lu.%lu"): 8,
+    ("c_runtime_composed", "SystemInformer", "%lu: %s\\%s"): 1,
+    ("c_runtime_composed", "plugins/ExtendedTools", "%lu°C"): 2,
+    ("c_runtime_composed", "plugins/WindowExplorer", "%s (%s)"): 1,
+    ("c_runtime_composed", "tools/peview", "%s (%s)"): 23,
+    ("c_runtime_composed", "SystemInformer", "%s (%u)"): 1,
+    ("c_runtime_composed", "SystemInformer", "%s (%u) (0x%Ix - 0x%Ix)"): 1,
+    ("c_runtime_composed", "tools/peview", "%s - %s"): 1,
+    ("c_runtime_composed", "plugins/ExtendedTools", "%s%s%s"): 1,
+    ("c_runtime_composed", "tools/peview", "%s+0x%llx"): 4,
+    ("c_runtime_composed", "tools/peview", "%u.%u"): 1,
+    ("c_runtime_composed", "SystemInformer", "%ux%u@%u"): 1,
+    ("c_runtime_composed", "plugins/ExtendedTools", "0x%08lx"): 2,
+    ("c_runtime_composed", "tools/peview", "0x%I32x"): 3,
+    ("c_runtime_composed", "plugins/WindowExplorer", "0x%Ix"): 15,
+    ("c_runtime_composed", "plugins/WindowExplorer", "0x%Ix (%s)"): 6,
+    ("c_runtime_composed", "tools/peview", "0x%llx"): 3,
+    ("c_runtime_composed", "tools/peview", "0x%lx"): 2,
+    ("c_runtime_composed", "plugins/WindowExplorer", "0x%x"): 1,
+    ("c_runtime_composed", "SystemInformer", "0x%x: %s"): 6,
+    ("c_runtime_composed", "tools/peview", "C/C++ (%lu), GS (%lu), sdl (%lu), guardN (%lu), Pre-VC++ 11.00 (%lu)"): 1,
+    ("c_runtime_composed", "plugins/ExtendedTools", "WDDM %lu.%lu"): 2,
+    ("rc_stringtable", "plugins/HardwareDevices", "%lu°C"): 1,
+}
+
 NATIVE_RESOURCE_CATEGORIES = {
     "rc_dialog",
     "rc_menu",
@@ -86,6 +123,32 @@ RUNTIME_DICTIONARY_CATEGORIES = {
 
 def is_keep_english(s: str) -> bool:
     return any(re.fullmatch(k, s) for k in KEEP_ENGLISH_RULES)
+
+
+def is_reviewed_technical_entry(entry) -> bool:
+    category = entry["category"]
+    english = entry["english"]
+    locations = entry["locations"]
+    modules = (
+        {entry["module"]}
+        if entry.get("module") is not None
+        else {module_for_path(location["file"]) for location in locations}
+    )
+    if len(modules) != 1:
+        return False
+
+    expected_locations = REVIEWED_TECHNICAL_ENTRIES.get(
+        (category, next(iter(modules)), english)
+    )
+    return expected_locations == len(locations)
+
+
+def kept_english_manifest_key(entry):
+    return canonical_manifest_key(
+        entry["category"],
+        entry["english"],
+        entry.get("module"),
+    )
 
 
 def translation_is_effective(category: str, translated_value) -> bool:
@@ -299,9 +362,10 @@ def main():
         )
         if not translated and (
             is_keep_english(en)
+            or is_reviewed_technical_entry(entry)
             or is_reviewed_native_identity(table, category, en)
         ):
-            keep_english.setdefault((category, en), entry)
+            keep_english.setdefault(kept_english_manifest_key(entry), entry)
             continue
 
         if category in CALLSITE_MIGRATION_CATEGORIES:
