@@ -1502,8 +1502,24 @@
 #define IDS_PH_GROUP_SYSTEM_ID                              2508
 #define IDS_PH_GROUP_PARENT                                 2509
 #define IDS_PH_GROUP_PACKAGE                                2510
+#define IDS_PH_CONFIRM_SELECTED_SERVICE                     2511
+#define IDS_PH_CONFIRM_SELECTED_SERVICES                    2512
+#define IDS_PH_CONFIRM_SELECTED_THREAD                      2513
+#define IDS_PH_CONFIRM_SELECTED_THREADS                     2514
+#define IDS_PH_ACTION_FREE                                  2515
+#define IDS_PH_CONFIRM_FREE_MEMORY_WARNING                  2516
+#define IDS_PH_ACTION_DECOMMIT                              2517
+#define IDS_PH_CONFIRM_DECOMMIT_MEMORY_WARNING              2518
+#define IDS_PH_ACTION_UNMAP                                 2519
+#define IDS_PH_CONFIRM_UNMAP_MEMORY_WARNING                 2520
+#define IDS_PH_CONFIRM_SELECTED_HANDLES                     2521
+#define IDS_PH_ACTION_UNLOAD                                2522
+#define IDS_PH_CONFIRM_UNLOAD_DRIVER_WARNING                2523
+#define IDS_PH_CONFIRM_UNLOAD_MODULE_WARNING                2524
+#define IDS_PH_CONFIRM_UNLOAD_MODULE_COMPAT_WARNING         2525
+#define IDS_PH_CONFIRM_UNMAP_SECTION_WARNING                2526
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_GROUP_PACKAGE
+#define IDS_PH_LAST                                  IDS_PH_CONFIRM_UNMAP_SECTION_WARNING
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1515,6 +1531,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2511
+#define _APS_NEXT_SYMED_VALUE           2527
 #endif
 #endif

@@ -1485,7 +1485,7 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
                     if (numberOfHandleObjectNodes != 0 && PhShowConfirmMessage(
                         hwndDlg,
                         L"close",
-                        numberOfHandleObjectNodes == 1 ? L"the selected handle" : L"the selected handles",
+                        numberOfHandleObjectNodes == 1 ? L"the selected handle" : PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES),
                         L"Closing handles may cause system instability and data corruption.",
                         FALSE
                         ))

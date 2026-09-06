@@ -3109,6 +3109,22 @@ BEGIN
     IDS_PH_GROUP_SYSTEM_ID                               "System ID"
     IDS_PH_GROUP_PARENT                                  "Parent"
     IDS_PH_GROUP_PACKAGE                                 "Package"
+    IDS_PH_CONFIRM_SELECTED_SERVICE                      "the selected service"
+    IDS_PH_CONFIRM_SELECTED_SERVICES                     "the selected services"
+    IDS_PH_CONFIRM_SELECTED_THREAD                       "the selected thread"
+    IDS_PH_CONFIRM_SELECTED_THREADS                      "the selected threads"
+    IDS_PH_ACTION_FREE                                   "free"
+    IDS_PH_CONFIRM_FREE_MEMORY_WARNING                   "Freeing memory regions may cause the process to crash.\r\n\r\nSome programs may also restrict access or ban your account when freeing the memory of the process."
+    IDS_PH_ACTION_DECOMMIT                               "decommit"
+    IDS_PH_CONFIRM_DECOMMIT_MEMORY_WARNING               "Decommitting memory regions may cause the process to crash.\r\n\r\nSome programs may also restrict access or ban your account when decommitting the memory of the process."
+    IDS_PH_ACTION_UNMAP                                  "unmap"
+    IDS_PH_CONFIRM_UNMAP_MEMORY_WARNING                  "Unmapping a section view may cause the process to crash.\r\n\r\nSome programs may also restrict access or ban your account when unmapping the memory of the process."
+    IDS_PH_CONFIRM_SELECTED_HANDLES                      "the selected handles"
+    IDS_PH_ACTION_UNLOAD                                 "unload"
+    IDS_PH_CONFIRM_UNLOAD_DRIVER_WARNING                 "Unloading a driver may cause system instability."
+    IDS_PH_CONFIRM_UNLOAD_MODULE_WARNING                 "Unloading a module may cause the process to crash."
+    IDS_PH_CONFIRM_UNLOAD_MODULE_COMPAT_WARNING          "Unloading a module may cause the process to crash. NOTE: This feature may not work correctly on your version of Windows and some programs may restrict access or ban your account."
+    IDS_PH_CONFIRM_UNMAP_SECTION_WARNING                 "Unmapping a section view may cause the process to crash."
 END
 
 /////////////////////////////////////////////////////////////////////////////

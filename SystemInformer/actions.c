@@ -5100,11 +5100,11 @@ static BOOLEAN PhpShowContinueMessageServices(
 
         if (NumberOfServices == 1)
         {
-            object = L"the selected service";
+            object = PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_SERVICE);
         }
         else
         {
-            object = L"the selected services";
+            object = PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_SERVICES);
         }
 
         return PhShowConfirmMessage(
@@ -6407,7 +6407,7 @@ static BOOLEAN PhpShowContinueMessageThreads(
     _In_ ULONG NumberOfThreads
     )
 {
-    PWSTR object;
+    PCWSTR object;
     BOOLEAN cont = FALSE;
 
     if (NumberOfThreads == 0)
@@ -6417,11 +6417,11 @@ static BOOLEAN PhpShowContinueMessageThreads(
     {
         if (NumberOfThreads == 1)
         {
-            object = L"the selected thread";
+            object = PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_THREAD);
         }
         else
         {
-            object = L"the selected threads";
+            object = PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_THREADS);
         }
 
         cont = PhShowConfirmMessage(
@@ -7000,28 +7000,28 @@ BOOLEAN PhUiUnloadModule(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        PWSTR verb;
-        PWSTR message;
+        PCWSTR verb;
+        PCWSTR message;
 
         switch (Module->Type)
         {
         case PH_MODULE_TYPE_MODULE:
         case PH_MODULE_TYPE_WOW64_MODULE:
-            verb = L"unload";
-            message = L"Unloading a module may cause the process to crash.";
+            verb = PhGetApplicationUiString(IDS_PH_ACTION_UNLOAD);
+            message = PhGetApplicationUiString(IDS_PH_CONFIRM_UNLOAD_MODULE_WARNING);
 
             if (WindowsVersion >= WINDOWS_8)
-                message = L"Unloading a module may cause the process to crash. NOTE: This feature may not work correctly on your version of Windows and some programs may restrict access or ban your account.";
+                message = PhGetApplicationUiString(IDS_PH_CONFIRM_UNLOAD_MODULE_COMPAT_WARNING);
 
             break;
         case PH_MODULE_TYPE_KERNEL_MODULE:
-            verb = L"unload";
-            message = L"Unloading a driver may cause system instability.";
+            verb = PhGetApplicationUiString(IDS_PH_ACTION_UNLOAD);
+            message = PhGetApplicationUiString(IDS_PH_CONFIRM_UNLOAD_DRIVER_WARNING);
             break;
         case PH_MODULE_TYPE_MAPPED_FILE:
         case PH_MODULE_TYPE_MAPPED_IMAGE:
-            verb = L"unmap";
-            message = L"Unmapping a section view may cause the process to crash.";
+            verb = PhGetApplicationUiString(IDS_PH_ACTION_UNMAP);
+            message = PhGetApplicationUiString(IDS_PH_CONFIRM_UNMAP_SECTION_WARNING);
             break;
         default:
             return FALSE;
@@ -7208,26 +7208,26 @@ BOOLEAN PhUiFreeMemory(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS))
     {
-        PWSTR verb;
-        PWSTR message;
+        PCWSTR verb;
+        PCWSTR message;
 
         if (!(MemoryItem->Type & (MEM_MAPPED | MEM_IMAGE)))
         {
             if (Free)
             {
-                verb = L"free";
-                message = L"Freeing memory regions may cause the process to crash.\r\n\r\nSome programs may also restrict access or ban your account when freeing the memory of the process.";
+                verb = PhGetApplicationUiString(IDS_PH_ACTION_FREE);
+                message = PhGetApplicationUiString(IDS_PH_CONFIRM_FREE_MEMORY_WARNING);
             }
             else
             {
-                verb = L"decommit";
-                message = L"Decommitting memory regions may cause the process to crash.\r\n\r\nSome programs may also restrict access or ban your account when decommitting the memory of the process.";
+                verb = PhGetApplicationUiString(IDS_PH_ACTION_DECOMMIT);
+                message = PhGetApplicationUiString(IDS_PH_CONFIRM_DECOMMIT_MEMORY_WARNING);
             }
         }
         else
         {
-            verb = L"unmap";
-            message = L"Unmapping a section view may cause the process to crash.\r\n\r\nSome programs may also restrict access or ban your account when unmapping the memory of the process.";
+            verb = PhGetApplicationUiString(IDS_PH_ACTION_UNMAP);
+            message = PhGetApplicationUiString(IDS_PH_CONFIRM_UNMAP_MEMORY_WARNING);
         }
 
         cont = PhShowConfirmMessage(
@@ -7406,7 +7406,7 @@ BOOLEAN PhUiCloseHandles(
         result = PhShowConfirmMessage(
             WindowHandle,
             L"close",
-            NumberOfHandles == 1 ? L"the selected handle" : L"the selected handles",
+            NumberOfHandles == 1 ? L"the selected handle" : PhGetApplicationUiString(IDS_PH_CONFIRM_SELECTED_HANDLES),
             L"Closing handles may cause system instability and data corruption.",
             FALSE
             );
