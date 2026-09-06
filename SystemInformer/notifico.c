@@ -11,7 +11,6 @@
  */
 
 #include <phapp.h>
-#include <phtranslation.h>
 #include <phsettings.h>
 
 #include <shellapi.h>
@@ -51,7 +50,6 @@ static HANDLE PhpTrayIconThreadHandle = NULL;
 static HANDLE PhpTrayIconEventHandle = NULL;
 #ifdef PH_NF_ENABLE_WORKQUEUE
 static SLIST_HEADER PhpTrayIconWorkQueueListHead;
-#define PH_NF_WORKQUEUE_DATA_BALLOON_RAW 0x00000010ul
 #endif
 static ULONG PopupIconIndex = ULONG_MAX; // Win11 workaround (dmex)
 static PPH_NF_ICON PopupRegisteredIcon = NULL; // Win11 workaround (dmex)
@@ -823,8 +821,7 @@ CleanupExit:
 static BOOLEAN PhNfpShowBalloonTip(
     _In_ PCWSTR Title,
     _In_ PCWSTR Text,
-    _In_ ULONG Timeout,
-    _In_ BOOLEAN Translate
+    _In_ ULONG Timeout
     )
 {
     NOTIFYICONDATA notifyIcon;
@@ -856,8 +853,8 @@ static BOOLEAN PhNfpShowBalloonTip(
         notifyIcon.guidItem = registeredIcon->IconGuid;
     }
 
-    wcsncpy_s(notifyIcon.szInfoTitle, RTL_NUMBER_OF(notifyIcon.szInfoTitle), Translate ? PhTranslateString(Title) : Title, _TRUNCATE);
-    wcsncpy_s(notifyIcon.szInfo, RTL_NUMBER_OF(notifyIcon.szInfo), Translate ? PhTranslateString(Text) : Text, _TRUNCATE);
+    wcsncpy_s(notifyIcon.szInfoTitle, RTL_NUMBER_OF(notifyIcon.szInfoTitle), Title, _TRUNCATE);
+    wcsncpy_s(notifyIcon.szInfo, RTL_NUMBER_OF(notifyIcon.szInfo), Text, _TRUNCATE);
     notifyIcon.uTimeout = Timeout;
 
     if (PhGetIntegerSetting(SETTING_ICON_BALLOON_SHOW_ICON) || WindowsVersion < WINDOWS_11)
@@ -873,8 +870,7 @@ static BOOLEAN PhNfpShowBalloonTip(
 static BOOLEAN PhNfpShowBalloonTipInternal(
     _In_ PCWSTR Title,
     _In_ PCWSTR Text,
-    _In_ ULONG Timeout,
-    _In_ BOOLEAN Translate
+    _In_ ULONG Timeout
     )
 {
     if (!PhNfIconsEnabled())
@@ -883,7 +879,7 @@ static BOOLEAN PhNfpShowBalloonTipInternal(
     }
 
 #ifndef PH_NF_ENABLE_WORKQUEUE
-    return PhNfpShowBalloonTip(Title, Text, Timeout, Translate);
+    return PhNfpShowBalloonTip(Title, Text, Timeout);
 #else
     PPH_NF_WORKQUEUE_DATA data;
 
@@ -892,8 +888,6 @@ static BOOLEAN PhNfpShowBalloonTipInternal(
     data->BalloonTitle = Title ? PhCreateString(Title) : NULL;
     data->BalloonText = Text ? PhCreateString(Text) : NULL;
     data->BalloonTimeout = Timeout;
-    if (!Translate)
-        SetFlag(data->Flags, PH_NF_WORKQUEUE_DATA_BALLOON_RAW);
 
     RtlInterlockedPushEntrySList(&PhpTrayIconWorkQueueListHead, &data->ListEntry);
 #endif
@@ -906,7 +900,7 @@ BOOLEAN PhNfShowBalloonTip(
     _In_ ULONG Timeout
     )
 {
-    return PhNfpShowBalloonTipInternal(Title, Text, Timeout, TRUE);
+    return PhNfpShowBalloonTipInternal(Title, Text, Timeout);
 }
 
 BOOLEAN PhNfShowBalloonTipRaw(
@@ -915,7 +909,7 @@ BOOLEAN PhNfShowBalloonTipRaw(
     _In_ ULONG Timeout
     )
 {
-    return PhNfpShowBalloonTipInternal(Title, Text, Timeout, FALSE);
+    return PhNfpShowBalloonTipInternal(Title, Text, Timeout);
 }
 
 HRESULT PhNfShowBalloonTipEx(
@@ -1398,42 +1392,40 @@ VOID PhNfTrayIconFlushWorkQueueData(
         data = CONTAINING_RECORD(entry, PH_NF_WORKQUEUE_DATA, ListEntry);
         entry = entry->Next;
 
-        if (PhMainWndExiting)
-            break;
-
-        if (data->Add)
+        if (!PhMainWndExiting)
         {
-            PhNfpAddNotifyIcon(data->Icon);
-        }
-
-        if (data->Delete)
-        {
-            PhNfpRemoveNotifyIcon(data->Icon);
-        }
-
-        if (data->ShowBalloon)
-        {
-            if (!HR_SUCCESS(PhpShowToastNotification(
-                data->BalloonTitle,
-                data->BalloonText,
-                data->BalloonTimeout,
-                PhpToastCallback,
-                NULL,
-                FALSE
-                )))
+            if (data->Add)
             {
-                PhNfpShowBalloonTip(
-                    PhGetString(data->BalloonTitle),
-                    PhGetString(data->BalloonText),
-                    data->BalloonTimeout,
-                    !FlagOn(data->Flags, PH_NF_WORKQUEUE_DATA_BALLOON_RAW)
-                    );
+                PhNfpAddNotifyIcon(data->Icon);
             }
 
-            PhClearReference(&data->BalloonTitle);
-            PhClearReference(&data->BalloonText);
+            if (data->Delete)
+            {
+                PhNfpRemoveNotifyIcon(data->Icon);
+            }
+
+            if (data->ShowBalloon)
+            {
+                if (!HR_SUCCESS(PhpShowToastNotification(
+                    data->BalloonTitle,
+                    data->BalloonText,
+                    data->BalloonTimeout,
+                    PhpToastCallback,
+                    NULL,
+                    FALSE
+                    )))
+                {
+                    PhNfpShowBalloonTip(
+                        PhGetString(data->BalloonTitle),
+                        PhGetString(data->BalloonText),
+                        data->BalloonTimeout
+                        );
+                }
+            }
         }
 
+        PhClearReference(&data->BalloonTitle);
+        PhClearReference(&data->BalloonText);
         PhFree(data);
     }
 }

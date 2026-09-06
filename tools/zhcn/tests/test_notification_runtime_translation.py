@@ -43,14 +43,49 @@ def function_body(source: str, name: str, audit) -> str:
     raise AssertionError(f"unterminated function: {name}")
 
 
+def statement_block(source: str, pattern: str) -> str:
+    match = re.search(pattern, source, re.DOTALL)
+    if match is None:
+        raise AssertionError(f"statement not found: {pattern}")
+
+    opening_brace = source.find("{", match.end())
+    if opening_brace == -1:
+        raise AssertionError(f"statement block not found: {pattern}")
+
+    depth = 0
+    for index in range(opening_brace, len(source)):
+        if source[index] == "{":
+            depth += 1
+        elif source[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return source[opening_brace + 1:index]
+
+    raise AssertionError(f"unterminated statement block: {pattern}")
+
+
 class NotificationRuntimeTranslationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.audit = load_audit_module()
 
-    def test_public_and_raw_routes_keep_distinct_translation_contracts(self) -> None:
+    def assert_only_raw_route(
+        self,
+        source: str,
+        expected_count: int,
+        label: str,
+    ) -> None:
+        self.assertEqual(
+            len(re.findall(r"\bPhShowIconNotificationRaw\s*\(", source)),
+            expected_count,
+            label,
+        )
+        self.assertNotRegex(source, r"\bPhShowIconNotification\s*\(")
+
+    def test_public_and_raw_routes_share_retired_raw_contract(self) -> None:
         notifico = (APP_ROOT / "notifico.c").read_text(encoding="utf-8-sig")
         mainwnd = (APP_ROOT / "mainwnd.c").read_text(encoding="utf-8-sig")
+        exports = (APP_ROOT / "SystemInformer.def").read_text(encoding="utf-8-sig")
         notifico_header = (APP_ROOT / "include" / "notifico.h").read_text(
             encoding="utf-8-sig"
         )
@@ -67,9 +102,6 @@ class NotificationRuntimeTranslationTests(unittest.TestCase):
         extended_route = function_body(
             notifico, "PhNfShowBalloonTipEx", self.audit
         )
-        flush_route = function_body(
-            notifico, "PhNfTrayIconFlushWorkQueueData", self.audit
-        )
         public_app_route = function_body(
             mainwnd, "PhShowIconNotification", self.audit
         )
@@ -77,31 +109,25 @@ class NotificationRuntimeTranslationTests(unittest.TestCase):
             mainwnd, "PhShowIconNotificationRaw", self.audit
         )
 
-        self.assertEqual(sink.count("PhTranslateString("), 2)
+        self.assertNotIn("PhTranslateString(", notifico)
+        self.assertNotIn("PH_NF_WORKQUEUE_DATA_BALLOON_RAW", notifico)
         self.assertRegex(
             sink,
-            r"Translate\s*\?\s*PhTranslateString\(Title\)\s*:\s*Title",
+            r"wcsncpy_s\(\s*notifyIcon\.szInfoTitle\s*,[^;]*,\s*Title\s*,\s*_TRUNCATE\s*\)",
         )
         self.assertRegex(
             sink,
-            r"Translate\s*\?\s*PhTranslateString\(Text\)\s*:\s*Text",
+            r"wcsncpy_s\(\s*notifyIcon\.szInfo\s*,[^;]*,\s*Text\s*,\s*_TRUNCATE\s*\)",
         )
-        self.assertRegex(
-            dispatcher,
-            r"if\s*\(\s*!Translate\s*\)\s*SetFlag\(\s*data->Flags\s*,\s*PH_NF_WORKQUEUE_DATA_BALLOON_RAW\s*\)",
-        )
-        self.assertRegex(
-            flush_route,
-            r"PhNfpShowBalloonTip\s*\([^;]*!FlagOn\(\s*data->Flags\s*,\s*PH_NF_WORKQUEUE_DATA_BALLOON_RAW\s*\)",
-        )
+        self.assertNotIn("Translate", dispatcher)
         self.assertRegex(
             public_route,
-            r"PhNfpShowBalloonTipInternal\s*\(\s*Title\s*,\s*Text\s*,\s*Timeout\s*,\s*TRUE\s*\)",
+            r"PhNfpShowBalloonTipInternal\s*\(\s*Title\s*,\s*Text\s*,\s*Timeout\s*\)",
         )
         self.assertNotIn("PhTranslateString", raw_route)
         self.assertRegex(
             raw_route,
-            r"PhNfpShowBalloonTipInternal\s*\(\s*Title\s*,\s*Text\s*,\s*Timeout\s*,\s*FALSE\s*\)",
+            r"PhNfpShowBalloonTipInternal\s*\(\s*Title\s*,\s*Text\s*,\s*Timeout\s*\)",
         )
         self.assertNotIn("PhTranslateString", extended_route)
         self.assertRegex(
@@ -119,9 +145,87 @@ class NotificationRuntimeTranslationTests(unittest.TestCase):
         )
         self.assertIn("PhNfShowBalloonTipRaw", notifico_header)
         self.assertIn("PhShowIconNotificationRaw", mainwnd_header)
+        self.assertRegex(
+            mainwnd_header,
+            r"PHAPPAPI\s+VOID\s+NTAPI\s+PhShowIconNotification\s*\(\s*"
+            r"_In_\s+PCWSTR\s+Title\s*,\s*_In_\s+PCWSTR\s+Text\s*\)\s*;",
+        )
         self.assertGreater(
             mainwnd_header.index("PhShowIconNotificationRaw"),
             mainwnd_header.index("// end_phapppub"),
+        )
+        self.assertEqual(
+            len(re.findall(r"(?m)^\s*PhShowIconNotification\s*$", exports)),
+            1,
+        )
+        self.assertEqual(
+            len(re.findall(r"(?m)^\s*PhShowIconNotificationEx\s*$", exports)),
+            1,
+        )
+        self.assertRegex(
+            exports,
+            r"(?m)^\s*PhShowIconNotification\s*\n\s*PhShowIconNotificationEx\s*$",
+        )
+        self.assertNotRegex(exports, r"(?m)^\s*PhShowIconNotificationRaw\s*$")
+        export_names = [
+            line.strip()
+            for line in exports.splitlines()
+            if line.strip() and not line.lstrip().startswith(";")
+        ]
+        self.assertEqual(export_names[166:169], [
+            "PhShowHandleObjectProperties2",
+            "PhShowIconNotification",
+            "PhShowIconNotificationEx",
+        ])
+
+    def test_work_queue_owns_payload_and_drains_every_node_during_exit(self) -> None:
+        notifico = self.audit.mask_c_comments(
+            (APP_ROOT / "notifico.c").read_text(encoding="utf-8-sig")
+        )
+        dispatcher = function_body(
+            notifico, "PhNfpShowBalloonTipInternal", self.audit
+        )
+        flush_route = function_body(
+            notifico, "PhNfTrayIconFlushWorkQueueData", self.audit
+        )
+
+        title_copy = "data->BalloonTitle = Title ? PhCreateString(Title) : NULL;"
+        text_copy = "data->BalloonText = Text ? PhCreateString(Text) : NULL;"
+        push = "RtlInterlockedPushEntrySList(&PhpTrayIconWorkQueueListHead, &data->ListEntry);"
+        self.assertEqual(dispatcher.count(title_copy), 1)
+        self.assertEqual(dispatcher.count(text_copy), 1)
+        self.assertEqual(dispatcher.count(push), 1)
+        self.assertLess(dispatcher.index(title_copy), dispatcher.index(push))
+        self.assertLess(dispatcher.index(text_copy), dispatcher.index(push))
+        self.assertNotRegex(dispatcher, r"Balloon(?:Title|Text)\s*=\s*(?:Title|Text)\s*;")
+
+        self.assertNotIn("break;", flush_route)
+        active_route = statement_block(
+            flush_route,
+            r"if\s*\(\s*!PhMainWndExiting\s*\)",
+        )
+        for expected in (
+            "PhNfpAddNotifyIcon(data->Icon);",
+            "PhNfpRemoveNotifyIcon(data->Icon);",
+            "PhpShowToastNotification(",
+            "PhNfpShowBalloonTip(",
+        ):
+            self.assertIn(expected, active_route)
+
+        for reference in ("BalloonTitle", "BalloonText"):
+            cleanup = f"PhClearReference(&data->{reference});"
+            self.assertEqual(flush_route.count(cleanup), 1)
+            self.assertNotIn(cleanup, active_route)
+            self.assertLess(
+                flush_route.index("PhNfpShowBalloonTip("),
+                flush_route.index(cleanup),
+            )
+
+        self.assertEqual(flush_route.count("PhFree(data);"), 1)
+        self.assertNotIn("PhFree(data);", active_route)
+        self.assertLess(
+            flush_route.index("PhClearReference(&data->BalloonText);"),
+            flush_route.index("PhFree(data);"),
         )
 
     def test_process_service_and_device_notifications_use_only_raw_route(self) -> None:
@@ -135,12 +239,31 @@ class NotificationRuntimeTranslationTests(unittest.TestCase):
             source = self.audit.mask_c_comments(
                 (APP_ROOT / filename).read_text(encoding="utf-8-sig")
             )
-            self.assertEqual(
-                len(re.findall(r"\bPhShowIconNotificationRaw\s*\(", source)),
-                expected_count,
-                filename,
+            self.assert_only_raw_route(source, expected_count, filename)
+
+        updater = self.audit.mask_c_comments(
+            (REPO_ROOT / "plugins" / "Updater" / "updater.c").read_text(
+                encoding="utf-8-sig"
             )
-            self.assertNotRegex(source, r"\bPhShowIconNotification\s*\(")
+        )
+        self.assertEqual(
+            len(re.findall(r"\bPhShowIconNotificationEx\s*\(", updater)),
+            1,
+        )
+        self.assertNotRegex(updater, r"\bPhShowIconNotification(?:Raw)?\s*\(")
+
+    def test_internal_notification_route_contract_rejects_public_mutation(self) -> None:
+        source = self.audit.mask_c_comments(
+            (APP_ROOT / "mwpgdev.c").read_text(encoding="utf-8-sig")
+        )
+        mutated = source.replace(
+            "PhShowIconNotificationRaw(",
+            "PhShowIconNotification(",
+            1,
+        )
+
+        with self.assertRaises(AssertionError):
+            self.assert_only_raw_route(mutated, 1, "mwpgdev.c mutation")
 
     def test_audit_finds_direct_one_hop_and_composed_notification_text(self) -> None:
         audit = self.audit
