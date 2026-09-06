@@ -881,9 +881,9 @@ VOID EtHandlePropertiesWindowInitialized(
                     PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_SESSIONID, 1, string);
 
                     PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_SESSIONUSERNAME, 1, PhaFormatString(
-                            L"%s%c%s",
+                            L"%s%s%s",
                             winStationInfo.Domain,
-                            winStationInfo.Domain[0] != UNICODE_NULL ? OBJ_NAME_PATH_SEPARATOR : UNICODE_NULL,
+                            winStationInfo.Domain[0] != UNICODE_NULL ? L"\\" : L"",
                             winStationInfo.UserName)->Buffer);
 
                     PhSetListViewSubItem(context->ListViewHandle, OBJECT_GENERAL_INDEX_SESSIONSTATE, 1, EtMapSessionConnectState(winStationInfo.ConnectState));
@@ -2167,7 +2167,7 @@ static BOOL CALLBACK EtpEnumDesktopsCallback(
 
         if (GetUserObjectInformation(hDesktop, UOI_HEAPSIZE, &vInfo, sizeof(vInfo), NULL))
         {
-            PPH_STRING size = PH_AUTO(PhFormatString(L"%d MB", vInfo / 1024));
+            PPH_STRING size = PH_AUTO(PhFormatString(L"%lu MB", vInfo / 1024));
             PhSetListViewSubItem(context->ListViewHandle, lvItemIndex, ETDTLVC_HEAP, PhGetString(size));
         }
 

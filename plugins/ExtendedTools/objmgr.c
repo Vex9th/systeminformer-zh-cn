@@ -1228,7 +1228,7 @@ NTSTATUS EtpTargetResolverWorkThreadStart(
                     if (NT_SUCCESS(PhGetSemaphoreBasicInformation(objectHandle, &basicInfo)))
                     {
                         entry->TargetIsInfoOnly = TRUE;
-                        entry->Target = PhFormatString(L"Current count: %d/%d", basicInfo.CurrentCount, basicInfo.MaximumCount);
+                        entry->Target = PhFormatString(L"Current count: %ld/%ld", basicInfo.CurrentCount, basicInfo.MaximumCount);
                     }
                 }
             }
@@ -1253,7 +1253,7 @@ NTSTATUS EtpTargetResolverWorkThreadStart(
                             entry->TypeTypeIndex = typeIndex;
                             entry->TargetIsInfoOnly = TRUE;
                             entry->Target = PhFormatString(
-                                L"Index: %d, Objects: %d, Handles: %d",
+                                L"Index: %d, Objects: %lu, Handles: %lu",
                                 objectType->TypeIndex,
                                 objectType->TotalNumberOfObjects,
                                 objectType->TotalNumberOfHandles);
@@ -1295,7 +1295,7 @@ NTSTATUS EtpTargetResolverWorkThreadStart(
                             entry->Target = PhFormatString(
                                 L"%s%c%s (%s)",
                                 winStationInfo.Domain,
-                                winStationInfo.Domain[0] != UNICODE_NULL ? OBJ_NAME_PATH_SEPARATOR : UNICODE_NULL,
+                                OBJ_NAME_PATH_SEPARATOR,
                                 winStationInfo.UserName,
                                 EtMapSessionConnectState(winStationInfo.ConnectState));
                         }
