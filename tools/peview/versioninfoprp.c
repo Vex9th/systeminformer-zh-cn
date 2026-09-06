@@ -563,10 +563,10 @@ INT_PTR CALLBACK PvpPeVersionInfoDlgProc(
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, 0, L"FixedFileInfo");
-            PhAddListViewGroup(context->ListViewHandle, 1, L"StringFileInfo");
-            PhAddListViewGroup(context->ListViewHandle, 2, L"VarFileInfo");
-            PhAddListViewGroup(context->ListViewHandle, 3, L"AppxManifest");
+            PhAddListViewGroup(context->ListViewHandle, 0, PvpLoadUiString(IDS_PV_GROUP_FIXED_FILE_INFO));
+            PhAddListViewGroup(context->ListViewHandle, 1, PvpLoadUiString(IDS_PV_GROUP_STRING_FILE_INFO));
+            PhAddListViewGroup(context->ListViewHandle, 2, PvpLoadUiString(IDS_PV_GROUP_VAR_FILE_INFO));
+            PhAddListViewGroup(context->ListViewHandle, 3, PvpLoadUiString(IDS_PV_GROUP_APPX_MANIFEST));
 
             PvEnumVersionInfo(context->ListViewHandle);
 

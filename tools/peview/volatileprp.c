@@ -191,8 +191,8 @@ INT_PTR CALLBACK PvpPeVolatileDlgProc(
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);
 
             ListView_EnableGroupView(context->ListViewHandle, TRUE);
-            PhAddListViewGroup(context->ListViewHandle, 2, L"Volatile Range Table");
-            PhAddListViewGroup(context->ListViewHandle, 1, L"Volatile RVA Table");
+            PhAddListViewGroup(context->ListViewHandle, 2, PvpLoadUiString(IDS_PV_GROUP_VOLATILE_RANGE_TABLE));
+            PhAddListViewGroup(context->ListViewHandle, 1, PvpLoadUiString(IDS_PV_GROUP_VOLATILE_RVA_TABLE));
             PvEnumerateVolatileEntries(context->ListViewHandle);
 
             PhInitializeWindowTheme(hwndDlg, PhEnableThemeSupport);

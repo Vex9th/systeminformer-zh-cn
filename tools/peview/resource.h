@@ -336,8 +336,29 @@
 #define IDS_PV_FIELD_FILE_IDENTIFIER                  3215
 #define IDS_PV_FIELD_FILE_OBJECT_IDENTIFIER           3216
 #define IDS_PV_FIELD_FILE_LAST_USN                    3217
+#define IDS_PV_GROUP_MUI                              3218
+#define IDS_PV_GROUP_CHECKSUMS                        3219
+#define IDS_PV_GROUP_MAIN_NAME_TYPES                  3220
+#define IDS_PV_GROUP_MAIN_TYPE_IDS                    3221
+#define IDS_PV_GROUP_TYPE_NAMES                       3222
+#define IDS_PV_GROUP_TYPE_IDS                         3223
+#define IDS_PV_GROUP_FIXED_FILE_INFO                  3224
+#define IDS_PV_GROUP_STRING_FILE_INFO                 3225
+#define IDS_PV_GROUP_VAR_FILE_INFO                    3226
+#define IDS_PV_GROUP_APPX_MANIFEST                    3227
+#define IDS_PV_GROUP_VOLATILE_RANGE_TABLE             3228
+#define IDS_PV_GROUP_VOLATILE_RVA_TABLE               3229
+#define IDS_PV_GROUP_DOS_HEADER                       3230
+#define IDS_PV_GROUP_DOS_STUB                         3231
+#define IDS_PV_GROUP_FILE_HEADER                      3232
+#define IDS_PV_GROUP_OPTIONAL_HEADER                  3233
+#define IDS_PV_GROUP_OVERLAY_STUB                     3234
+#define IDS_PV_GROUP_IMAGE_INFORMATION                3235
+#define IDS_PV_GROUP_FILE_INFORMATION                 3236
+#define IDS_PV_GROUP_DEBUG_INFORMATION                3237
+#define IDS_PV_GROUP_INTERNAL_INFORMATION             3238
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_FIELD_FILE_LAST_USN
+#define IDS_PV_LAST                                IDS_PV_GROUP_INTERNAL_INFORMATION
 
 // Next default values for new objects
 //
@@ -346,6 +367,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3218
+#define _APS_NEXT_SYMED_VALUE           3239
 #endif
 #endif

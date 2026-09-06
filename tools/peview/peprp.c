@@ -2051,10 +2051,26 @@ VOID PvPeAddImagePropertiesGroups(
     ExtendedListView_SetRedraw(Context->ListViewHandle, FALSE);
 
     ListView_EnableGroupView(Context->ListViewHandle, TRUE);
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_BASICINFO, L"Image information");
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_FILEINFO, L"File information");
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO, L"Debug information");
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO, L"Internal information");
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_BASICINFO,
+        PvpLoadUiString(IDS_PV_GROUP_IMAGE_INFORMATION)
+        );
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_FILEINFO,
+        PvpLoadUiString(IDS_PV_GROUP_FILE_INFORMATION)
+        );
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_DEBUGINFO,
+        PvpLoadUiString(IDS_PV_GROUP_DEBUG_INFORMATION)
+        );
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_GENERAL_CATEGORY_EXTRAINFO,
+        PvpLoadUiString(IDS_PV_GROUP_INTERNAL_INFORMATION)
+        );
 
     ExtendedListView_SetRedraw(Context->ListViewHandle, TRUE);
 }

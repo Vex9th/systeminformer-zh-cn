@@ -1186,11 +1186,31 @@ VOID PvPeAddImageHeaderGroups(
     ExtendedListView_SetRedraw(Context->ListViewHandle, FALSE);
 
     ListView_EnableGroupView(Context->ListViewHandle, TRUE);
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSHDR, L"DOS Header");
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_DOSSTUB, L"DOS Stub");
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_FILEHDR, L"File Header");
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OPTHDR, L"Optional Header");
-    PhAddListViewGroup(Context->ListViewHandle, PVP_IMAGE_HEADER_CATEGORY_OVERLAY, L"Overlay Stub");
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSHDR,
+        PvpLoadUiString(IDS_PV_GROUP_DOS_HEADER)
+        );
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_DOSSTUB,
+        PvpLoadUiString(IDS_PV_GROUP_DOS_STUB)
+        );
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_FILEHDR,
+        PvpLoadUiString(IDS_PV_GROUP_FILE_HEADER)
+        );
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OPTHDR,
+        PvpLoadUiString(IDS_PV_GROUP_OPTIONAL_HEADER)
+        );
+    PhAddListViewGroup(
+        Context->ListViewHandle,
+        PVP_IMAGE_HEADER_CATEGORY_OVERLAY,
+        PvpLoadUiString(IDS_PV_GROUP_OVERLAY_STUB)
+        );
 
     ExtendedListView_SetRedraw(Context->ListViewHandle, TRUE);
 }

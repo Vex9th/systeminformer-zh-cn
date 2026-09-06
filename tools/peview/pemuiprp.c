@@ -163,12 +163,12 @@ VOID PvPeGetMuiInfo(
     ExtendedListView_SetRedraw(ListViewHandle, FALSE);
     ListView_DeleteAllItems(ListViewHandle);
     ListView_EnableGroupView(ListViewHandle, TRUE);
-    PhAddListViewGroup(ListViewHandle, 0, L"MUI");
-    PhAddListViewGroup(ListViewHandle, 1, L"Checksums");
-    PhAddListViewGroup(ListViewHandle, 2, L"MainNameTypes");
-    PhAddListViewGroup(ListViewHandle, 3, L"MainTypeIDs");
-    PhAddListViewGroup(ListViewHandle, 4, L"TypeNames");
-    PhAddListViewGroup(ListViewHandle, 5, L"TypeIDs");
+    PhAddListViewGroup(ListViewHandle, 0, PvpLoadUiString(IDS_PV_GROUP_MUI));
+    PhAddListViewGroup(ListViewHandle, 1, PvpLoadUiString(IDS_PV_GROUP_CHECKSUMS));
+    PhAddListViewGroup(ListViewHandle, 2, PvpLoadUiString(IDS_PV_GROUP_MAIN_NAME_TYPES));
+    PhAddListViewGroup(ListViewHandle, 3, PvpLoadUiString(IDS_PV_GROUP_MAIN_TYPE_IDS));
+    PhAddListViewGroup(ListViewHandle, 4, PvpLoadUiString(IDS_PV_GROUP_TYPE_NAMES));
+    PhAddListViewGroup(ListViewHandle, 5, PvpLoadUiString(IDS_PV_GROUP_TYPE_IDS));
 
     if (NT_SUCCESS(PhLoadResource(
         PvMappedImage.ViewBase,
