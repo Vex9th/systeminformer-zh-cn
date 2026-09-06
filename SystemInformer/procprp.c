@@ -11,7 +11,6 @@
  */
 
 #include <phapp.h>
-#include <phtranslation.h>
 #include <procprp.h>
 #include <procprpp.h>
 #include <proctree.h>

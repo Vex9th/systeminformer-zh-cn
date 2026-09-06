@@ -61,15 +61,24 @@ jobs:
       run: |
         python3 tools/zhcn/audit.py
         # no-op without the LLM_API_KEY secret; new strings stay English
-        python3 tools/zhcn/auto_translate.py || true
-        python3 tools/zhcn/check_translation.py || true
+        python3 tools/zhcn/auto_translate.py
+        python3 tools/zhcn/check_translation.py --manifest tools/zhcn/manifest.json --translation tools/zhcn/zh-CN.json --fail-on-placeholder-error
         python3 tools/zhcn/generate_translation.py
 
     - name: Translation summary
       if: steps.changes.outputs.count != '0'
       id: zhcn-summary
       run: |
-        if grep -q "^## 未翻译字符串" tools/zhcn/coverage-report.md; then
+        untranslated_count="$(
+          awk '
+            /^## 未翻译字符串/ { in_section = 1; next }
+            /^## / { in_section = 0 }
+            in_section && /^- `/ { count++ }
+            END { print count + 0 }
+          ' tools/zhcn/coverage-report.md
+        )"
+        echo "untranslated_count=$untranslated_count" >> "$GITHUB_OUTPUT"
+        if [ "$untranslated_count" -gt 0 ]; then
           echo "has_untranslated=true" >> "$GITHUB_OUTPUT"
         else
           echo "has_untranslated=false" >> "$GITHUB_OUTPUT"

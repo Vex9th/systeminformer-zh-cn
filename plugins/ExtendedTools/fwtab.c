@@ -10,7 +10,6 @@
  */
 
 #include "exttools.h"
-#include <phtranslation.h>
 #include <toolstatusintf.h>
 #include <fwpmu.h>
 #include <fwpsu.h>
