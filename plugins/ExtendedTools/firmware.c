@@ -112,7 +112,7 @@ NTSTATUS EtEnumerateFirmwareEntries(
             entry->Name = PhCreateString(i->Name);
             entry->GuidString = PhFormatGuid(&i->VendorGuid);
 
-            index = PhAddListViewItem(
+            index = PhAddListViewItemRaw(
                 Context->ListViewHandle,
                 MAXINT,
                 PhGetStringOrEmpty(entry->Name),
@@ -478,4 +478,3 @@ VOID EtShowFirmwareDialog(
 
     EtFirmwareEnablePrivilege(ParentWindowHandle, FALSE);
 }
-

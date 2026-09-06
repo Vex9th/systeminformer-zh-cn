@@ -26,6 +26,16 @@ typedef struct _ET_TPM_EDITOR_CONTEXT
     USHORT DataSize;
 } ET_TPM_EDITOR_CONTEXT, *PET_TPM_EDITOR_CONTEXT;
 
+VOID EtTpmEditorContextDestroy(
+    _In_ PET_TPM_EDITOR_CONTEXT Context
+    )
+{
+    if (Context->Data)
+        PhFree(Context->Data);
+
+    PhFree(Context);
+}
+
 NTSTATUS EtTpmEditorRead(
     _In_ PET_TPM_EDITOR_CONTEXT Context
     )
@@ -96,7 +106,7 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
             context->BytesPerRowHandle = GetDlgItem(WindowHandle, IDC_TPM_BYTESPERROW);
 
             PhSetApplicationWindowIcon(WindowHandle);
-            PhSetWindowText(WindowHandle, PhaFormatString(L"TPM index 0x%08x", context->Index.Value)->Buffer);
+            PhSetWindowText(WindowHandle, PhaFormatString(L"TPM index 0x%08lx", context->Index.Value)->Buffer);
 
             PhInitializeLayoutManager(&context->LayoutManager, WindowHandle);
             PhAddLayoutItem(&context->LayoutManager, GetDlgItem(WindowHandle, IDC_TPM_HEXEDIT), NULL, PH_ANCHOR_ALL);
@@ -191,11 +201,6 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
 
             PhDeleteLayoutManager(&context->LayoutManager);
 
-            if (context->Data)
-                PhFree(context->Data);
-
-            PhFree(context);
-
             PostQuitMessage(0);
         }
         break;
@@ -219,7 +224,7 @@ INT_PTR CALLBACK EtTpmEditorDlgProc(
                     fileDialog = PhCreateSaveFileDialog();
                     PhSetFileDialogFilter(fileDialog, filters, ARRAYSIZE(filters));
                     PhSetFileDialogFileName(fileDialog, PhaFormatString(
-                        L"TPM-%08x.bin",
+                        L"TPM-%08lx.bin",
                         context->Index.Value
                         )->Buffer);
 
@@ -332,6 +337,13 @@ NTSTATUS EtTpmEditorDialogThreadStart(
         context
         );
 
+    if (!windowHandle)
+    {
+        PhDeleteAutoPool(&autoPool);
+        EtTpmEditorContextDestroy(context);
+        return STATUS_UNSUCCESSFUL;
+    }
+
     ShowWindow(windowHandle, SW_SHOW);
     SetForegroundWindow(windowHandle);
 
@@ -349,7 +361,11 @@ NTSTATUS EtTpmEditorDialogThreadStart(
         PhDrainAutoPool(&autoPool);
     }
 
+    if (IsWindow(windowHandle))
+        DestroyWindow(windowHandle);
+
     PhDeleteAutoPool(&autoPool);
+    EtTpmEditorContextDestroy(context);
 
     return STATUS_SUCCESS;
 }
@@ -365,5 +381,6 @@ VOID EtShowTpmEditDialog(
     context->ParentWindowHandle = ParentWindowHandle;
     context->Index.Value = Index.Value;
 
-    PhCreateThread2(EtTpmEditorDialogThreadStart, context);
+    if (!NT_SUCCESS(PhCreateThread2(EtTpmEditorDialogThreadStart, context)))
+        EtTpmEditorContextDestroy(context);
 }

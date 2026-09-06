@@ -29,6 +29,20 @@ typedef struct _ET_FIRMWARE_EDITOR_CONTEXT
     ULONG VariableValueLength;
 } ET_FIRMWARE_EDITOR_CONTEXT, *PET_FIRMWARE_EDITOR_CONTEXT;
 
+VOID EtFirmwareEditorContextDestroy(
+    _In_ PET_FIRMWARE_EDITOR_CONTEXT Context
+    )
+{
+    PhClearReference(&Context->Title);
+    PhClearReference(&Context->Name);
+    PhClearReference(&Context->GuidString);
+
+    if (Context->VariableValue)
+        PhFree(Context->VariableValue);
+
+    PhFree(Context);
+}
+
 NTSTATUS EtFirmwareQueryVariable(
     _Inout_ PET_FIRMWARE_EDITOR_CONTEXT Context,
     _In_ PPH_STRING Name,
@@ -199,15 +213,6 @@ INT_PTR CALLBACK EtFirmwareEditorDlgProc(
 
             PhDeleteLayoutManager(&context->LayoutManager);
 
-            PhClearReference(&context->Title);
-            PhClearReference(&context->Name);
-            PhClearReference(&context->GuidString);
-
-            if (context->VariableValue)
-                PhFree(context->VariableValue);
-
-            PhFree(context);
-
             PostQuitMessage(0);
         }
         break;
@@ -376,6 +381,13 @@ NTSTATUS EtFirmwareEditorDialogThreadStart(
         context
         );
 
+    if (!windowHandle)
+    {
+        PhDeleteAutoPool(&autoPool);
+        EtFirmwareEditorContextDestroy(context);
+        return STATUS_UNSUCCESSFUL;
+    }
+
     ShowWindow(windowHandle, SW_SHOW);
     SetForegroundWindow(windowHandle);
 
@@ -393,7 +405,11 @@ NTSTATUS EtFirmwareEditorDialogThreadStart(
         PhDrainAutoPool(&autoPool);
     }
 
+    if (IsWindow(windowHandle))
+        DestroyWindow(windowHandle);
+
     PhDeleteAutoPool(&autoPool);
+    EtFirmwareEditorContextDestroy(context);
 
     return STATUS_SUCCESS;
 }
@@ -410,5 +426,6 @@ VOID EtShowFirmwareEditDialog(
     context->Name = PhDuplicateString(Entry->Name);
     context->GuidString = PhDuplicateString(Entry->GuidString);
 
-    PhCreateThread2(EtFirmwareEditorDialogThreadStart, context);
+    if (!NT_SUCCESS(PhCreateThread2(EtFirmwareEditorDialogThreadStart, context)))
+        EtFirmwareEditorContextDestroy(context);
 }

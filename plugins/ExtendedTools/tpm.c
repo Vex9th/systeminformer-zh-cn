@@ -27,7 +27,7 @@ CONST PH_ACCESS_ENTRY TpmAttributeEntries[31] =
     { L"TPMA_NV_EXTEND", TPMA_NV_EXTEND, FALSE, FALSE, L"Extend" },
     { L"TPMA_NV_RESERVED_TYPE_1", TPMA_NV_RESERVED_TYPE_1, FALSE, FALSE, L"Reserved type 1" },
     { L"TPMA_NV_RESERVED_TYPE_2", TPMA_NV_RESERVED_TYPE_2, FALSE, FALSE, L"Reserved type 2" },
-    { L"TPMA_NV_RESERVED_TYPE_3", TPMA_NV_RESERVED_TYPE_3, FALSE, FALSE, L"Reserved type 4" },
+    { L"TPMA_NV_RESERVED_TYPE_3", TPMA_NV_RESERVED_TYPE_3, FALSE, FALSE, L"Reserved type 3" },
     { L"TPMA_NV_POLICY_DELETE", TPMA_NV_POLICY_DELETE, FALSE, FALSE, L"Policy delete" },
     { L"TPMA_NV_WRITELOCKED", TPMA_NV_WRITELOCKED, FALSE, FALSE, L"Write locked" },
     { L"TPMA_NV_WRITEALL", TPMA_NV_WRITEALL, FALSE, FALSE, L"Write all" },
@@ -632,7 +632,7 @@ NTSTATUS EtEnumerateTpmEntries(
         TPMA_NV attributes;
 
         string = PhFormatString(L"0x%08lx", indices[i].Value);
-        lvItemIndex = PhAddListViewItem(Context->ListViewHandle, MAXINT, string->Buffer, ULongToPtr(indices[i].Value));
+        lvItemIndex = PhAddListViewItemRaw(Context->ListViewHandle, MAXINT, string->Buffer, ULongToPtr(indices[i].Value));
         PhDereferenceObject(string);
 
         if (!NT_SUCCESS(EtTpmReadPublic(
@@ -935,4 +935,3 @@ VOID EtShowTpmDialog(
         ParentWindowHandle
         );
 }
-
