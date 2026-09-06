@@ -127,6 +127,27 @@ ROUTES = [
 ]
 
 NATIVE_KEYS = {
+    "CPU (average)",
+    "GDI handles",
+    "I/O priority",
+    "Kernel time",
+    "Page faults",
+    "Page faults delta",
+    "Peak private bytes",
+    "Peak virtual size",
+    "Peak working set",
+    "Priority",
+    "Private bytes delta",
+    "Shared commit",
+    "USER handles",
+    "User time",
+    "Virtual size",
+    "I/O other",
+    "I/O other bytes",
+    "I/O read bytes",
+    "I/O reads",
+    "I/O write bytes",
+    "I/O writes",
     "CPU (user)",
     "CPU (kernel)",
     "CPU (relative)",
@@ -332,7 +353,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             self.assertEqual(chinese.get(symbol), zh, symbol)
 
         self.assertEqual(aliases.get("IDS_PH_FIRST"), "IDS_PH_RESET_ALL_SETTINGS")
-        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_TIMELINE")
+        self.assertEqual(aliases.get("IDS_PH_LAST"), "IDS_PH_CONFIRM_USER_OBJECT")
         first_id = numeric[aliases["IDS_PH_FIRST"]]
         last_id = numeric[aliases["IDS_PH_LAST"]]
         expected_ids = set(range(first_id, last_id + 1))
@@ -345,7 +366,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         self.assertEqual({numeric[symbol] for symbol in chinese}, expected_ids)
         self.assertEqual(len(english), len(expected_ids))
         self.assertEqual(len(chinese), len(expected_ids))
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2944$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+2957$")
 
     def test_json_uses_existing_and_native_strings_without_overlap(self):
         data = json.loads(
@@ -354,7 +375,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
         strings = data["strings"]
         native_strings = data["native_strings"]
 
-        self.assertEqual(len(NATIVE_KEYS), 70)
+        self.assertEqual(len(NATIVE_KEYS), 91)
         self.assertFalse(strings.keys() & native_strings.keys())
         for _symbol, _resource_id, english, chinese, *_ in ROUTES:
             table = native_strings if english in NATIVE_KEYS else strings
@@ -367,7 +388,7 @@ class SystemInformerStatisticsGroupItemResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("sys_info.exe=944"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=957"), 2)
         self.assertNotIn("sys_info.exe=475", workflow)
 
     def test_audit_removes_batch_and_preserves_expected_remainder(self):

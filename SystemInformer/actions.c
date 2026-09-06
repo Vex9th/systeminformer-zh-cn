@@ -627,8 +627,8 @@ BOOLEAN PhUiRestartComputer(
         {
             if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"restart",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 NULL,
                 FALSE
                 ))
@@ -656,8 +656,8 @@ BOOLEAN PhUiRestartComputer(
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
-                L"restart",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 messageText,
                 TRUE
                 ))
@@ -682,8 +682,8 @@ BOOLEAN PhUiRestartComputer(
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
-                L"restart",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 messageText,
                 TRUE
                 ))
@@ -713,8 +713,8 @@ BOOLEAN PhUiRestartComputer(
         {
             if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"restart",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 NULL,
                 FALSE
                 ))
@@ -781,8 +781,8 @@ BOOLEAN PhUiRestartComputer(
 
             if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"restart",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 NULL,
                 FALSE
                 ))
@@ -811,8 +811,8 @@ BOOLEAN PhUiRestartComputer(
         {
             if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"update and restart",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_UPDATE_AND_RESTART),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 NULL,
                 FALSE
                 ))
@@ -830,8 +830,8 @@ BOOLEAN PhUiRestartComputer(
         {
             if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"restart",
-                L"the computer for Windows Defender Offline Scan",
+                PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_DEFENDER_OFFLINE_COMPUTER_OBJECT),
                 NULL,
                 FALSE
                 ))
@@ -877,8 +877,8 @@ BOOLEAN PhUiShutdownComputer(
         {
             if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"shut down",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_SHUT_DOWN),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 NULL,
                 FALSE
                 ))
@@ -908,8 +908,8 @@ BOOLEAN PhUiShutdownComputer(
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
-                L"shut down",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_SHUT_DOWN),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 messageText,
                 TRUE
                 ))
@@ -934,8 +934,8 @@ BOOLEAN PhUiShutdownComputer(
             // Ignore the EnableWarnings preference and always show the warning prompt. (dmex)
             if (PhShowConfirmMessage(
                 WindowHandle,
-                L"shut down",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_SHUT_DOWN),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 messageText,
                 TRUE
                 ))
@@ -965,8 +965,8 @@ BOOLEAN PhUiShutdownComputer(
         {
             if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
                 WindowHandle,
-                L"update and shutdown",
-                L"the computer",
+                PhGetApplicationUiString(IDS_PH_ACTION_UPDATE_AND_SHUTDOWN),
+                PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
                 NULL,
                 FALSE
                 ))
@@ -1104,8 +1104,8 @@ VOID PhUiHandleComputerBootApplicationMenu(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
         WindowHandle,
-        L"restart",
-        L"the computer",
+        PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+        PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
         NULL,
         FALSE
         ))
@@ -1160,8 +1160,8 @@ VOID PhUiHandleComputerFirmwareApplicationMenu(
 
     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
         WindowHandle,
-        L"restart",
-        L"the computer",
+        PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
+        PhGetApplicationUiString(IDS_PH_CONFIRM_COMPUTER_OBJECT),
         NULL,
         FALSE
         ))
@@ -1427,8 +1427,8 @@ BOOLEAN PhUiLogoffSession(
 {
     if (!PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) || PhShowConfirmMessage(
         WindowHandle,
-        L"logoff",
-        L"the user",
+        PhGetApplicationUiString(IDS_PH_ACTION_LOGOFF),
+        PhGetApplicationUiString(IDS_PH_CONFIRM_USER_OBJECT),
         NULL,
         FALSE
         ))
@@ -2608,7 +2608,7 @@ BOOLEAN PhUiRestartProcess(
     {
         result = PhShowConfirmMessageRawObject(
             WindowHandle,
-            L"restart",
+            PhGetApplicationUiString(IDS_PH_ACTION_RESTART),
             Process->ProcessName->Buffer,
             PhGetApplicationUiString(IDS_PH_PROCESS_RESTART_NOTICE),
             FALSE

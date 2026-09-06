@@ -3542,6 +3542,19 @@ BEGIN
     IDS_PH_MENU_MEDIUM                                             "&Medium"
     IDS_PH_FILE_NAME                                               "File name"
     IDS_PH_TIMELINE                                                "Timeline"
+    IDS_PH_STAT_IOOTHER                                            "I/O other"
+    IDS_PH_STAT_IOOTHERBYTES                                       "I/O other bytes"
+    IDS_PH_STAT_IOREADBYTES                                        "I/O read bytes"
+    IDS_PH_STAT_IOREADS                                            "I/O reads"
+    IDS_PH_STAT_IOWRITEBYTES                                       "I/O write bytes"
+    IDS_PH_STAT_IOWRITES                                           "I/O writes"
+    IDS_PH_CONFIRM_COMPUTER_OBJECT                                 "the computer"
+    IDS_PH_ACTION_UPDATE_AND_RESTART                               "update and restart"
+    IDS_PH_CONFIRM_DEFENDER_OFFLINE_COMPUTER_OBJECT                "the computer for Windows Defender Offline Scan"
+    IDS_PH_ACTION_SHUT_DOWN                                        "shut down"
+    IDS_PH_ACTION_UPDATE_AND_SHUTDOWN                              "update and shutdown"
+    IDS_PH_ACTION_LOGOFF                                           "logoff"
+    IDS_PH_CONFIRM_USER_OBJECT                                     "the user"
 END
 
 /////////////////////////////////////////////////////////////////////////////

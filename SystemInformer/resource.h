@@ -1921,8 +1921,21 @@
 #define IDS_PH_MENU_MEDIUM                                             2941
 #define IDS_PH_FILE_NAME                                               2942
 #define IDS_PH_TIMELINE                                                2943
+#define IDS_PH_STAT_IOOTHER                                            2944
+#define IDS_PH_STAT_IOOTHERBYTES                                       2945
+#define IDS_PH_STAT_IOREADBYTES                                        2946
+#define IDS_PH_STAT_IOREADS                                            2947
+#define IDS_PH_STAT_IOWRITEBYTES                                       2948
+#define IDS_PH_STAT_IOWRITES                                           2949
+#define IDS_PH_CONFIRM_COMPUTER_OBJECT                                 2950
+#define IDS_PH_ACTION_UPDATE_AND_RESTART                               2951
+#define IDS_PH_CONFIRM_DEFENDER_OFFLINE_COMPUTER_OBJECT                2952
+#define IDS_PH_ACTION_SHUT_DOWN                                        2953
+#define IDS_PH_ACTION_UPDATE_AND_SHUTDOWN                              2954
+#define IDS_PH_ACTION_LOGOFF                                           2955
+#define IDS_PH_CONFIRM_USER_OBJECT                                     2956
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_TIMELINE
+#define IDS_PH_LAST                                  IDS_PH_CONFIRM_USER_OBJECT
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1934,6 +1947,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2944
+#define _APS_NEXT_SYMED_VALUE           2957
 #endif
 #endif
