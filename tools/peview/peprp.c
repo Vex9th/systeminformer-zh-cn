@@ -925,19 +925,19 @@ VOID PvpSetPeImageMachineType(
     switch (machine)
     {
     case IMAGE_FILE_MACHINE_I386:
-        type = PhGetMappedImageCHPEVersion(&PvMappedImage) ? L"i386 (CHPE)" : L"i386";
+        type = PhGetMappedImageCHPEVersion(&PvMappedImage) ? PvpLoadUiString(IDS_PV_MACHINE_I386_CHPE) : PvpLoadUiString(IDS_PV_MACHINE_I386);
         break;
     case IMAGE_FILE_MACHINE_AMD64:
-        type = PhGetMappedImageCHPEVersion(&PvMappedImage) ? L"AMD64 (ARM64X)" : L"AMD64";
+        type = PhGetMappedImageCHPEVersion(&PvMappedImage) ? PvpLoadUiString(IDS_PV_MACHINE_AMD64_ARM64X) : PvpLoadUiString(IDS_PV_MACHINE_AMD64);
         break;
     case IMAGE_FILE_MACHINE_IA64:
-        type = L"IA64";
+        type = PvpLoadUiString(IDS_PV_MACHINE_IA64);
         break;
     case IMAGE_FILE_MACHINE_ARMNT:
-        type = L"ARM Thumb-2";
+        type = PvpLoadUiString(IDS_PV_MACHINE_ARM_THUMB2);
         break;
     case IMAGE_FILE_MACHINE_ARM64:
-        type = PhGetMappedImageCHPEVersion(&PvMappedImage) ? L"ARM64 (ARM64X)" : L"ARM64";
+        type = PhGetMappedImageCHPEVersion(&PvMappedImage) ? PvpLoadUiString(IDS_PV_MACHINE_ARM64_ARM64X) : PvpLoadUiString(IDS_PV_MACHINE_ARM64);
         break;
     default:
         type = PvpLoadUiString(IDS_PV_MAPPING_UNKNOWN);

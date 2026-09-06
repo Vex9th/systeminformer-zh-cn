@@ -65,6 +65,8 @@ SWITCH_ROUTES = {
         ("default", "IDS_PV_ERROR"),
     ),
     ("peprp.c", "PvpSetPeImageMachineType", "machine"): (
+        ("IMAGE_FILE_MACHINE_IA64", "IDS_PV_MACHINE_IA64"),
+        ("IMAGE_FILE_MACHINE_ARMNT", "IDS_PV_MACHINE_ARM_THUMB2"),
         ("default", "IDS_PV_MAPPING_UNKNOWN"),
     ),
     ("peprp.c", "PvpSetPeImageSubsystem", "subsystem"): (
@@ -219,7 +221,7 @@ def parse_stringtable(path):
 
 
 class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
-    def test_all_26_switch_routes_keep_exact_case_order_and_resources(self):
+    def test_all_28_switch_routes_keep_exact_case_order_and_resources(self):
         actual = {
             key: parse_switch_routes(*key)
             for key in SWITCH_ROUTES
@@ -231,7 +233,7 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
                 for routes in actual.values()
                 for _case_name, symbol in routes
             ),
-            26,
+            28,
         )
 
         lib_source = function_body(source_text("libprp.c"), "PvpLibExportsDlgProc")
@@ -273,18 +275,18 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual(sorted(defines.values()), list(range(3000, 3270)))
+        self.assertEqual(sorted(defines.values()), list(range(3000, 3278)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 270)
-        self.assertEqual(len(chinese), 270)
+        self.assertEqual(len(english), 278)
+        self.assertEqual(len(chinese), 278)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION$",
+            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_MACHINE_ARM64_ARM64X$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3270$",
+            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3278$",
         )
 
     def test_json_uses_exact_existing_owners_without_layer_overlap(self):
@@ -308,7 +310,7 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
         workflow = (
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("peview.exe=270"), 2)
+        self.assertEqual(workflow.count("peview.exe=278"), 2)
         self.assertNotIn("peview.exe=258", workflow)
         self.assertNotIn("peview.exe=247", workflow)
 
@@ -322,8 +324,8 @@ class PeViewEnumWindowTextResourcesTests(unittest.TestCase):
             if entry["category"] == "c_window_text"
             and entry["file"].startswith("tools/peview/")
         ]
-        self.assertEqual(len({entry["english"] for entry in remaining}), 17)
-        self.assertEqual(len(remaining), 19)
+        self.assertEqual(len({entry["english"] for entry in remaining}), 9)
+        self.assertEqual(len(remaining), 9)
 
 
 if __name__ == "__main__":

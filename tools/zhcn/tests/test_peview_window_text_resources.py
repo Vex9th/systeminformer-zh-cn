@@ -251,18 +251,18 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual(sorted(defines.values()), list(range(3000, 3270)))
+        self.assertEqual(sorted(defines.values()), list(range(3000, 3278)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 270)
-        self.assertEqual(len(chinese), 270)
+        self.assertEqual(len(english), 278)
+        self.assertEqual(len(chinese), 278)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION$",
+            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_MACHINE_ARM64_ARM64X$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3270$",
+            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3278$",
         )
 
     def test_json_uses_existing_owner_and_has_no_layer_overlap(self):
@@ -287,7 +287,7 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("peview.exe=270"), 2)
+        self.assertEqual(workflow.count("peview.exe=278"), 2)
         self.assertNotIn("peview.exe=258", workflow)
         self.assertNotIn("peview.exe=247", workflow)
         self.assertNotIn("peview.exe=246", workflow)
@@ -305,8 +305,8 @@ class PeViewWindowTextResourcesTests(unittest.TestCase):
             if entry["category"] == "c_window_text"
             and entry["file"].startswith("tools/peview/")
         ]
-        self.assertEqual(len({entry["english"] for entry in remaining}), 17)
-        self.assertEqual(len(remaining), 19)
+        self.assertEqual(len({entry["english"] for entry in remaining}), 9)
+        self.assertEqual(len(remaining), 9)
         self.assertFalse(
             {entry["english"] for entry in remaining}
             & {resource[2] for resource in RESOURCES}

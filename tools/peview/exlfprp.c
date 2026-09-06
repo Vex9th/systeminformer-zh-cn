@@ -243,10 +243,10 @@ VOID PvpSetWslImageMachineType(
     switch (PvMappedImage.Header->e_machine)
     {
     case EM_386:
-        type = L"i386";
+        type = PvpLoadUiString(IDS_PV_MACHINE_I386);
         break;
     case EM_X86_64:
-        type = L"AMD64";
+        type = PvpLoadUiString(IDS_PV_MACHINE_AMD64);
         break;
     default:
         type = PvpLoadUiString(IDS_PV_ERROR);

@@ -225,13 +225,13 @@ class PeViewGroupItemResourcesTests(unittest.TestCase):
         self.assertEqual(new_ids, list(range(3134, 3218)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(set(defines.values())), 270)
-        self.assertEqual(sorted(defines.values()), list(range(3000, 3270)))
+        self.assertEqual(len(set(defines.values())), 278)
+        self.assertEqual(sorted(defines.values()), list(range(3000, 3278)))
         self.assertRegex(header, r"(?m)^#define IDS_PV_FIRST\s+IDS_PV_MENU_ANSI$")
-        self.assertRegex(header, r"(?m)^#define IDS_PV_LAST\s+IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3270$")
-        self.assertEqual(len(english), 270)
-        self.assertEqual(len(chinese), 270)
+        self.assertRegex(header, r"(?m)^#define IDS_PV_LAST\s+IDS_PV_MACHINE_ARM64_ARM64X$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3278$")
+        self.assertEqual(len(english), 278)
+        self.assertEqual(len(chinese), 278)
 
     def test_source_routes_match_table(self):
         actual = (
@@ -258,7 +258,7 @@ class PeViewGroupItemResourcesTests(unittest.TestCase):
 
     def test_ci_requires_exact_peview_resource_count_twice(self):
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")
-        self.assertEqual(workflow.count("peview.exe=270"), 2)
+        self.assertEqual(workflow.count("peview.exe=278"), 2)
         self.assertNotIn("peview.exe=258", workflow)
         self.assertNotIn("peview.exe=247", workflow)
         self.assertNotIn("peview.exe=246", workflow)

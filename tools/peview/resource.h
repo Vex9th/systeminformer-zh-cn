@@ -388,8 +388,16 @@
 #define IDS_PV_SUBSYSTEM_EFI_ROM                      3267
 #define IDS_PV_SUBSYSTEM_XBOX                         3268
 #define IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION     3269
+#define IDS_PV_MACHINE_I386                           3270
+#define IDS_PV_MACHINE_I386_CHPE                      3271
+#define IDS_PV_MACHINE_AMD64                          3272
+#define IDS_PV_MACHINE_AMD64_ARM64X                   3273
+#define IDS_PV_MACHINE_IA64                           3274
+#define IDS_PV_MACHINE_ARM_THUMB2                     3275
+#define IDS_PV_MACHINE_ARM64                          3276
+#define IDS_PV_MACHINE_ARM64_ARM64X                   3277
 #define IDS_PV_FIRST                               IDS_PV_MENU_ANSI
-#define IDS_PV_LAST                                IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION
+#define IDS_PV_LAST                                IDS_PV_MACHINE_ARM64_ARM64X
 
 // Next default values for new objects
 //
@@ -398,6 +406,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        179
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1038
-#define _APS_NEXT_SYMED_VALUE           3270
+#define _APS_NEXT_SYMED_VALUE           3278
 #endif
 #endif

@@ -157,22 +157,22 @@ class PeViewListViewGroupResourcesTests(unittest.TestCase):
             [resource_id for _symbol, resource_id, *_rest in ROUTES],
             list(range(3218, 3239)),
         )
-        self.assertEqual(sorted(defines.values()), list(range(3000, 3270)))
+        self.assertEqual(sorted(defines.values()), list(range(3000, 3278)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 270)
-        self.assertEqual(len(chinese), 270)
+        self.assertEqual(len(english), 278)
+        self.assertEqual(len(chinese), 278)
         self.assertRegex(
             header,
             r"(?m)^#define IDS_PV_FIRST\s+IDS_PV_MENU_ANSI$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION$",
+            r"(?m)^#define IDS_PV_LAST\s+IDS_PV_MACHINE_ARM64_ARM64X$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3270$",
+            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3278$",
         )
 
     def test_json_owns_all_group_names_as_native_strings(self):
@@ -195,7 +195,7 @@ class PeViewListViewGroupResourcesTests(unittest.TestCase):
             REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(workflow.count("peview.exe=270"), 2)
+        self.assertEqual(workflow.count("peview.exe=278"), 2)
         self.assertNotIn("peview.exe=258", workflow)
         self.assertNotIn("peview.exe=247", workflow)
         self.assertNotIn("peview.exe=246", workflow)

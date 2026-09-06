@@ -1181,6 +1181,14 @@ BEGIN
     IDS_PV_SUBSYSTEM_EFI_ROM                    "EFI ROM"
     IDS_PV_SUBSYSTEM_XBOX                       "Xbox"
     IDS_PV_SUBSYSTEM_WINDOWS_BOOT_APPLICATION   "Windows Boot Application"
+    IDS_PV_MACHINE_I386                         "i386"
+    IDS_PV_MACHINE_I386_CHPE                    "i386 (CHPE)"
+    IDS_PV_MACHINE_AMD64                        "AMD64"
+    IDS_PV_MACHINE_AMD64_ARM64X                 "AMD64 (ARM64X)"
+    IDS_PV_MACHINE_IA64                         "IA64"
+    IDS_PV_MACHINE_ARM_THUMB2                   "ARM Thumb-2"
+    IDS_PV_MACHINE_ARM64                        "ARM64"
+    IDS_PV_MACHINE_ARM64_ARM64X                 "ARM64 (ARM64X)"
 END
 
 
