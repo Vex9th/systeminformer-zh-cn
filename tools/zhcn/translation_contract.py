@@ -21,6 +21,7 @@ ALL_CATEGORIES = {
     "c_statusbar",
     "c_tab",
     "c_taskdialog",
+    "c_taskdialog_raw",
     "c_toolbar",
     "c_tree_item",
     "c_treenew_col",
@@ -39,6 +40,7 @@ CALLSITE_MIGRATION_CATEGORIES = {
     "c_listview_item_raw",
     "c_msgbox_vararg",
     "c_runtime_composed",
+    "c_taskdialog_raw",
     "c_window_text",
 }
 

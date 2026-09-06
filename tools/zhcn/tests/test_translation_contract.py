@@ -44,6 +44,7 @@ class TranslationManifestContractTests(unittest.TestCase):
                 "c_statusbar",
                 "c_tab",
                 "c_taskdialog",
+                "c_taskdialog_raw",
                 "c_toolbar",
                 "c_tree_item",
                 "c_treenew_col",
@@ -58,6 +59,10 @@ class TranslationManifestContractTests(unittest.TestCase):
 
         self.assertIn(
             "c_runtime_composed",
+            contract.CALLSITE_MIGRATION_CATEGORIES,
+        )
+        self.assertIn(
+            "c_taskdialog_raw",
             contract.CALLSITE_MIGRATION_CATEGORIES,
         )
         self.assertIn(

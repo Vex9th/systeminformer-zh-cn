@@ -28,6 +28,7 @@ migration even when the legacy dictionary contains the same English key.
   c_confirm        PhShowConfirmMessage verb/object/message arguments
   c_runtime_composed source templates/fragments composed before runtime hooks
   c_taskdialog     TASKDIALOGCONFIG literal fields (title/content/buttons/...)
+  c_taskdialog_raw TaskDialog button text passed through a raw navigation sink
   c_balloon        PhNfShowBalloonTip title/text
   c_search         PhCreateSearchControl* banner text
   c_tab            PhTabNew_InsertItem tab labels
@@ -83,6 +84,19 @@ def c_unescape(body: str) -> str:
                 out.append(C_ESCAPES[nxt])
                 i += 2
                 continue
+            if nxt in {"u", "U"}:
+                digit_count = 4 if nxt == "u" else 8
+                hexs = body[i + 2:i + 2 + digit_count]
+                if len(hexs) == digit_count and all(
+                    character in "0123456789abcdefABCDEF"
+                    for character in hexs
+                ):
+                    try:
+                        out.append(chr(int(hexs, 16)))
+                        i += 2 + digit_count
+                        continue
+                    except ValueError:
+                        pass
             if nxt == "x" or nxt == "X":
                 j = i + 2
                 hexs = ""
@@ -137,6 +151,16 @@ def is_noise(s: str) -> bool:
 # ---------------------------------------------------------------------------
 
 IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+
+
+def is_c_integer_zero(expression: str) -> bool:
+    """Return true for the simple integer-zero forms used by C count fields."""
+    normalized = re.sub(r"\s+", "", expression)
+    return re.fullmatch(
+        r"(?:\([A-Za-z_][A-Za-z0-9_]*\))*"
+        r"\(*(?:NULL|FALSE|0[xX]0+|0[bB]0+|0+)[uUlL]*\)*",
+        normalized,
+    ) is not None
 
 
 def find_calls(text: str, func_names):
@@ -436,6 +460,14 @@ TASKDIALOG_CONFIG_DECLARATION_RE = re.compile(
     re.DOTALL,
 )
 
+TASKDIALOG_BUTTON_DECLARATION_RE = re.compile(
+    r"\b(?:(?:static|extern|const|CONST|volatile)\s+)*"
+    r"TASKDIALOG_BUTTON\s+"
+    r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*"
+    r"\[[^\]]*\]\s*(?P<assignment>=)?",
+    re.DOTALL,
+)
+
 # Literals inside the phlib funnel implementations themselves. These are
 # covered by dedicated translation hooks; keep in sync with phlib/util.c.
 PHLIB_INTERNAL = {
@@ -669,8 +701,6 @@ def has_closer_local_shadow(
 ) -> bool:
     """Return true when a nearer local of any supported C type hides a name."""
     binding_scope = innermost_c_scope(scopes, declaration.start())
-    if binding_scope is None:
-        return False
 
     declaration_re = re.compile(
         r"(?:^|(?<=[;{}]))\s*"
@@ -726,7 +756,10 @@ def has_closer_local_shadow(
                     shadow_scope = innermost_c_scope(scopes, name_offset)
                     if (
                         shadow_scope is not None
-                        and binding_scope[0] < shadow_scope[0]
+                        and (
+                            binding_scope is None
+                            or binding_scope[0] < shadow_scope[0]
+                        )
                         and shadow_scope[0] < offset < shadow_scope[1]
                     ):
                         return True
@@ -1344,6 +1377,683 @@ def scan_taskdialog_fields(text: str, scan_text: str, rel: str, entries):
                 "line": line_of_offset(text, source_offset),
                 "english": visible_text,
             })
+
+
+def taskdialog_button_declarations(syntax_text: str, scopes):
+    """Return type-confirmed button arrays and their balanced initializers."""
+    scope_ends = {start: end for start, end in scopes}
+    declarations = []
+
+    for match in TASKDIALOG_BUTTON_DECLARATION_RE.finditer(syntax_text):
+        cursor = match.end()
+        while cursor < len(syntax_text) and syntax_text[cursor].isspace():
+            cursor += 1
+
+        initializer_start = None
+        initializer_end = None
+        if match.group("assignment") is not None:
+            if cursor >= len(syntax_text) or syntax_text[cursor] != "{":
+                continue
+            closing = scope_ends.get(cursor)
+            if closing is None:
+                continue
+            initializer_start = cursor + 1
+            initializer_end = closing
+            cursor = closing + 1
+
+        while cursor < len(syntax_text) and syntax_text[cursor].isspace():
+            cursor += 1
+        if cursor >= len(syntax_text) or syntax_text[cursor] != ";":
+            continue
+
+        declarations.append({
+            "match": match,
+            "name": match.group("name"),
+            "start": match.start(),
+            "end": cursor + 1,
+            "initializer_start": initializer_start,
+            "initializer_end": initializer_end,
+        })
+
+    return declarations
+
+
+def visible_taskdialog_button_declaration(
+    syntax_text: str,
+    declarations,
+    identifier: str,
+    offset: int,
+    scopes,
+):
+    """Resolve a visible typed button array without crossing a local shadow."""
+    visible = []
+    for declaration in declarations:
+        if declaration["name"] != identifier or declaration["start"] >= offset:
+            continue
+        scope = innermost_c_scope(scopes, declaration["start"])
+        if scope is None or scope[0] < offset < scope[1]:
+            visible.append((scope, declaration))
+
+    if not visible:
+        return None
+
+    declaration = max(
+        visible,
+        key=lambda item: (
+            item[0][0] if item[0] is not None else -1,
+            item[1]["start"],
+        ),
+    )[1]
+    declaration_match = declaration["match"]
+    declaration_scope = innermost_c_scope(scopes, declaration["start"])
+    if declaration_scope is None:
+        local_shadow_re = re.compile(
+            r"(?:^|(?<=[;{}]))\s*"
+            r"(?:(?:static|const|CONST|volatile|register|extern)\s+)*"
+            r"[A-Za-z_][A-Za-z0-9_]*\s+(?:\*+\s*)?"
+            rf"(?P<name>{re.escape(identifier)})\b(?=\s*(?:\[|=|,|;))",
+            re.DOTALL,
+        )
+        for shadow in local_shadow_re.finditer(
+            syntax_text, declaration["end"], offset
+        ):
+            shadow_scope = innermost_c_scope(scopes, shadow.start("name"))
+            if (
+                shadow_scope is not None
+                and shadow_scope[0] < offset < shadow_scope[1]
+            ):
+                return None
+    if has_closer_local_shadow(
+        syntax_text,
+        declaration_match,
+        identifier,
+        offset,
+        scopes,
+    ):
+        return None
+    return declaration
+
+
+def split_c_initializer_field_spans(initializer: str):
+    """Split one initializer and preserve field spans in the input string."""
+    wrapper_prefix = "AuditInitializer("
+    wrapped = f"{wrapper_prefix}{initializer})"
+    call = next(find_calls(wrapped, {"AuditInitializer"}), None)
+    if call is None:
+        return []
+    _, arguments, spans, _ = call
+    return [
+        (argument, start - len(wrapper_prefix), end - len(wrapper_prefix))
+        for argument, (start, end) in zip(arguments, spans)
+    ]
+
+
+def taskdialog_button_expression_sources(
+    scan_text: str,
+    expression_start: int,
+    expression_end: int,
+):
+    return taskdialog_expression_sources(
+        scan_text,
+        scan_text[expression_start:expression_end],
+        expression_start,
+        expression_start,
+    )
+
+
+def taskdialog_button_text_expression_span(initializer: str):
+    """Return the pszButtonText expression span from one button initializer."""
+    fields = split_c_initializer_field_spans(initializer)
+    for field, field_start, _ in fields:
+        designated = re.fullmatch(
+            r"\s*\.\s*pszButtonText\s*=(?!=)\s*(?P<value>.*)",
+            field,
+            re.DOTALL,
+        )
+        if designated is not None:
+            return (
+                field_start + designated.start("value"),
+                field_start + designated.end("value"),
+            )
+    if len(fields) >= 2:
+        return fields[1][1], fields[1][2]
+    return None
+
+
+def taskdialog_button_initializer_state(
+    scan_text: str,
+    syntax_text: str,
+    declaration,
+    scopes,
+):
+    initializer_start = declaration["initializer_start"]
+    initializer_end = declaration["initializer_end"]
+    if initializer_start is None:
+        return {}
+
+    outer_start = initializer_start - 1
+    element_scopes = sorted(
+        scope
+        for scope in scopes
+        if outer_start < scope[0] < scope[1] < initializer_end
+        and not any(
+            outer_start < parent[0] < scope[0]
+            and scope[1] < parent[1] < initializer_end
+            for parent in scopes
+        )
+    )
+    state = {}
+    for slot, (opening, closing) in enumerate(element_scopes):
+        expression_span = taskdialog_button_text_expression_span(
+            syntax_text[opening + 1:closing]
+        )
+        if expression_span is None:
+            continue
+        field_start, field_end = expression_span
+        expression_start = opening + 1 + field_start
+        expression_end = opening + 1 + field_end
+        state[str(slot)] = taskdialog_button_expression_sources(
+            scan_text,
+            expression_start,
+            expression_end,
+        )
+    return state
+
+
+def taskdialog_button_slot_key(index: str, offset: int):
+    normalized = re.sub(r"\s+", "", index)
+    if "++" in normalized or "--" in normalized:
+        return f"dynamic@{offset}"
+    return normalized
+
+
+def reaching_taskdialog_button_sources(
+    scan_text: str,
+    syntax_text: str,
+    declaration,
+    sink_offset: int,
+    declarations,
+    scopes,
+):
+    """Resolve button text definitions that may reach one concrete sink."""
+    identifier = declaration["name"]
+    binding_scope = innermost_c_scope(scopes, declaration["start"])
+    state = taskdialog_button_initializer_state(
+        scan_text,
+        syntax_text,
+        declaration,
+        scopes,
+    )
+    events = []
+    covered_ranges = []
+
+    compound_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*"
+        r"\[(?P<index>[^\]]+)\]\s*=(?!=)\s*"
+        r"(?:\(\s*TASKDIALOG_BUTTON\s*\)\s*)?"
+        r"\{(?P<body>[^{}]*)\}\s*;",
+        re.DOTALL,
+    )
+    for assignment in compound_re.finditer(
+        syntax_text, declaration["end"], sink_offset
+    ):
+        if visible_taskdialog_button_declaration(
+            syntax_text,
+            declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is not declaration:
+            continue
+        expression_span = taskdialog_button_text_expression_span(
+            assignment.group("body")
+        )
+        if expression_span is None:
+            continue
+        field_start, field_end = expression_span
+        expression_start = assignment.start("body") + field_start
+        expression_end = assignment.start("body") + field_end
+        events.append((
+            assignment.start(),
+            "definition",
+            taskdialog_button_slot_key(
+                assignment.group("index"), assignment.start()
+            ),
+            taskdialog_button_expression_sources(
+                scan_text,
+                expression_start,
+                expression_end,
+            ),
+        ))
+        covered_ranges.append((assignment.start(), assignment.end()))
+
+    member_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*"
+        r"\[(?P<index>[^\]]+)\]\s*\.\s*pszButtonText\s*"
+        r"=(?!=)\s*(?P<value>.*?);",
+        re.DOTALL,
+    )
+    for assignment in member_re.finditer(
+        syntax_text, declaration["end"], sink_offset
+    ):
+        if visible_taskdialog_button_declaration(
+            syntax_text,
+            declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is not declaration:
+            continue
+        value_start = assignment.start("value")
+        events.append((
+            assignment.start(),
+            "definition",
+            taskdialog_button_slot_key(
+                assignment.group("index"), assignment.start()
+            ),
+            taskdialog_button_expression_sources(
+                scan_text,
+                value_start,
+                assignment.end("value"),
+            ),
+        ))
+        covered_ranges.append((assignment.start(), assignment.end()))
+
+    element_assignment_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*"
+        r"\[(?P<index>[^\]]+)\]\s*=(?!=)\s*.*?;",
+        re.DOTALL,
+    )
+    for assignment in element_assignment_re.finditer(
+        syntax_text, declaration["end"], sink_offset
+    ):
+        if any(start <= assignment.start() < end for start, end in covered_ranges):
+            continue
+        if visible_taskdialog_button_declaration(
+            syntax_text,
+            declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is not declaration:
+            continue
+        events.append((
+            assignment.start(),
+            "definition",
+            taskdialog_button_slot_key(
+                assignment.group("index"), assignment.start()
+            ),
+            [],
+        ))
+        covered_ranges.append((assignment.start(), assignment.end()))
+
+    call_names = {
+        match.group(0)
+        for match in IDENT_RE.finditer(
+            syntax_text[declaration["end"]:sink_offset]
+        )
+    } - {
+        "ARRAYSIZE",
+        "RTL_NUMBER_OF",
+        "_Alignof",
+        "_Generic",
+        "_Static_assert",
+        "alignof",
+        "for",
+        "if",
+        "sizeof",
+        "switch",
+        "while",
+    }
+    for _, arguments, _, call_start in find_calls(syntax_text, call_names):
+        if call_start < declaration["end"] or call_start >= sink_offset:
+            continue
+        if any(start <= call_start < end for start, end in covered_ranges):
+            continue
+        if visible_taskdialog_button_declaration(
+            syntax_text,
+            declarations,
+            identifier,
+            call_start,
+            scopes,
+        ) is not declaration:
+            continue
+        mutation_arguments = [
+            match
+            for argument in arguments
+            if (
+                match := re.fullmatch(
+                    rf"\s*&?\s*{re.escape(identifier)}"
+                    r"(?:\s*\[(?P<index>[^\]]+)\])?\s*",
+                    argument,
+                )
+            )
+        ]
+        for mutation_argument in mutation_arguments:
+            index = mutation_argument.group("index")
+            if index is None:
+                events.append((call_start, "mutation", None, []))
+            else:
+                events.append((
+                    call_start,
+                    "slot_mutation",
+                    taskdialog_button_slot_key(index, call_start),
+                    [],
+                ))
+
+    for offset, event_kind, slot, sources in sorted(events):
+        conditional = (
+            binding_scope is not None
+            and is_conditionally_guarded(scan_text, offset, binding_scope, scopes)
+        )
+        if event_kind == "mutation":
+            if not conditional:
+                state.clear()
+        elif event_kind == "slot_mutation":
+            if not conditional:
+                state.pop(slot, None)
+        elif conditional:
+            state.setdefault(slot, []).extend(sources)
+        else:
+            state[slot] = sources
+
+    return [source for sources in state.values() for source in sources]
+
+
+def reaching_taskdialog_button_bindings(
+    scan_text: str,
+    syntax_text: str,
+    declaration,
+    sink_offset: int,
+    config_declarations,
+    button_declarations,
+    scopes,
+):
+    """Resolve live pButtons/pRadioButtons bindings and nonzero counts."""
+    identifier = declaration.group("name")
+    binding_scope = innermost_c_scope(scopes, declaration.start())
+    pointer_states = {"Buttons": [], "RadioButtons": []}
+    count_states = {"Buttons": False, "RadioButtons": False}
+    events = []
+    covered_ranges = []
+
+    initializer = declaration.group("initializer")
+    if initializer is not None:
+        initializer_start = declaration.start("initializer")
+        initializer_syntax = syntax_text[
+            initializer_start:declaration.end("initializer")
+        ]
+        initializer_match = re.fullmatch(
+            r"\s*\{(?P<body>.*)\}\s*",
+            initializer_syntax,
+            re.DOTALL,
+        )
+        if initializer_match is not None:
+            body = initializer_match.group("body")
+            body_offset = initializer_start + initializer_match.start("body")
+            for field, field_start, _ in split_c_initializer_field_spans(body):
+                pointer = re.fullmatch(
+                    r"\s*\.\s*p(?P<kind>Buttons|RadioButtons)\s*"
+                    r"=(?!=)\s*(?P<value>[A-Za-z_][A-Za-z0-9_]*)\s*",
+                    field,
+                    re.DOTALL,
+                )
+                if pointer is not None:
+                    button_declaration = visible_taskdialog_button_declaration(
+                        syntax_text,
+                        button_declarations,
+                        pointer.group("value"),
+                        body_offset + field_start,
+                        scopes,
+                    )
+                    if button_declaration is not None:
+                        pointer_states[pointer.group("kind")].append(
+                            button_declaration
+                        )
+                    continue
+
+                count = re.fullmatch(
+                    r"\s*\.\s*c(?P<kind>Buttons|RadioButtons)\s*"
+                    r"=(?!=)\s*(?P<value>.*)",
+                    field,
+                    re.DOTALL,
+                )
+                if count is not None:
+                    count_states[count.group("kind")] = not is_c_integer_zero(
+                        count.group("value")
+                    )
+
+    pointer_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*\.\s*"
+        r"p(?P<kind>Buttons|RadioButtons)\s*=(?!=)\s*"
+        r"(?P<value>.*?);",
+        re.DOTALL,
+    )
+    for assignment in pointer_re.finditer(
+        syntax_text, declaration.end(), sink_offset
+    ):
+        if visible_taskdialog_config_declaration(
+            syntax_text,
+            config_declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is not declaration:
+            continue
+        value = re.fullmatch(
+            r"\s*([A-Za-z_][A-Za-z0-9_]*)\s*",
+            assignment.group("value"),
+        )
+        button_declaration = None
+        if value is not None:
+            button_declaration = visible_taskdialog_button_declaration(
+                syntax_text,
+                button_declarations,
+                value.group(1),
+                assignment.start(),
+                scopes,
+            )
+        events.append((
+            assignment.start(),
+            "pointer",
+            assignment.group("kind"),
+            button_declaration,
+        ))
+        covered_ranges.append((assignment.start(), assignment.end()))
+
+    count_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*\.\s*"
+        r"c(?P<kind>Buttons|RadioButtons)\s*=(?!=)\s*"
+        r"(?P<value>.*?);",
+        re.DOTALL,
+    )
+    for assignment in count_re.finditer(
+        syntax_text, declaration.end(), sink_offset
+    ):
+        if visible_taskdialog_config_declaration(
+            syntax_text,
+            config_declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is not declaration:
+            continue
+        events.append((
+            assignment.start(),
+            "count",
+            assignment.group("kind"),
+            not is_c_integer_zero(assignment.group("value")),
+        ))
+        covered_ranges.append((assignment.start(), assignment.end()))
+
+    whole_assignment_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*=(?!=)\s*.*?;",
+        re.DOTALL,
+    )
+    for assignment in whole_assignment_re.finditer(
+        syntax_text, declaration.end(), sink_offset
+    ):
+        if visible_taskdialog_config_declaration(
+            syntax_text,
+            config_declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is declaration:
+            events.append((assignment.start(), "mutation", None, None))
+            covered_ranges.append((assignment.start(), assignment.end()))
+
+    call_names = {
+        match.group(0)
+        for match in IDENT_RE.finditer(
+            syntax_text[declaration.end():sink_offset]
+        )
+    } - {
+        "ARRAYSIZE",
+        "RTL_NUMBER_OF",
+        "_Alignof",
+        "_Generic",
+        "_Static_assert",
+        "alignof",
+        "for",
+        "if",
+        "sizeof",
+        "switch",
+        "while",
+    }
+    read_only_sinks = {
+        "PhShowTaskDialog",
+        "TaskDialogIndirect",
+        "PhTaskDialogNavigatePage",
+    }
+    for call_name, arguments, _, call_start in find_calls(syntax_text, call_names):
+        if call_start < declaration.end() or call_start >= sink_offset:
+            continue
+        if call_name in read_only_sinks:
+            continue
+        if any(start <= call_start < end for start, end in covered_ranges):
+            continue
+        if visible_taskdialog_config_declaration(
+            syntax_text,
+            config_declarations,
+            identifier,
+            call_start,
+            scopes,
+        ) is not declaration:
+            continue
+        if any(
+            re.fullmatch(rf"\s*&\s*{re.escape(identifier)}\s*", argument)
+            for argument in arguments
+        ):
+            events.append((call_start, "mutation", None, None))
+
+    for offset, event_kind, kind, value in sorted(events):
+        conditional = is_conditionally_guarded(
+            scan_text, offset, binding_scope, scopes
+        )
+        if event_kind == "mutation":
+            if not conditional:
+                pointer_states = {"Buttons": [], "RadioButtons": []}
+                count_states = {"Buttons": False, "RadioButtons": False}
+        elif event_kind == "pointer":
+            if conditional:
+                if value is not None:
+                    pointer_states[kind].append(value)
+            else:
+                pointer_states[kind] = [value] if value is not None else []
+        elif conditional:
+            count_states[kind] = count_states[kind] or value
+        else:
+            count_states[kind] = value
+
+    return [
+        button_declaration
+        for kind in ("Buttons", "RadioButtons")
+        if count_states[kind]
+        for button_declaration in pointer_states[kind]
+    ]
+
+
+def scan_taskdialog_buttons(text: str, scan_text: str, rel: str, entries):
+    """Scan text reaching type-confirmed TaskDialog button arrays."""
+    if (
+        "TASKDIALOG_BUTTON" not in scan_text
+        or "TASKDIALOGCONFIG" not in scan_text
+        or not any(
+            sink_name in scan_text
+            for sink_name in (
+                "PhShowTaskDialog",
+                "TaskDialogIndirect",
+                "PhTaskDialogNavigatePage",
+            )
+        )
+    ):
+        return
+
+    scopes = c_brace_scopes(scan_text)
+    syntax_text = mask_c_literals(scan_text)
+    config_declarations = list(
+        TASKDIALOG_CONFIG_DECLARATION_RE.finditer(syntax_text)
+    )
+    button_declarations = taskdialog_button_declarations(syntax_text, scopes)
+    sink_specs = {
+        "PhShowTaskDialog": (0, False),
+        "TaskDialogIndirect": (0, True),
+        "PhTaskDialogNavigatePage": (1, True),
+    }
+    seen = set()
+
+    for name, arguments, _, sink_offset in find_calls(scan_text, sink_specs):
+        argument_index, raw_sink = sink_specs[name]
+        if argument_index >= len(arguments):
+            continue
+        config_argument = re.fullmatch(
+            r"\s*&\s*([A-Za-z_][A-Za-z0-9_]*)\s*",
+            arguments[argument_index],
+        )
+        if config_argument is None:
+            continue
+        config_declaration = visible_taskdialog_config_declaration(
+            syntax_text,
+            config_declarations,
+            config_argument.group(1),
+            sink_offset,
+            scopes,
+        )
+        if config_declaration is None:
+            continue
+
+        bindings = reaching_taskdialog_button_bindings(
+            scan_text,
+            syntax_text,
+            config_declaration,
+            sink_offset,
+            config_declarations,
+            button_declarations,
+            scopes,
+        )
+        for button_declaration in bindings:
+            sources = reaching_taskdialog_button_sources(
+                scan_text,
+                syntax_text,
+                button_declaration,
+                sink_offset,
+                button_declarations,
+                scopes,
+            )
+            for category, visible_text, source_offset in sources:
+                if raw_sink and category == "c_taskdialog":
+                    category = "c_taskdialog_raw"
+                source_key = (category, source_offset, visible_text)
+                if source_key in seen:
+                    continue
+                seen.add(source_key)
+                entries.append({
+                    "category": category,
+                    "file": rel,
+                    "line": line_of_offset(text, source_offset),
+                    "english": visible_text,
+                })
 
 
 def visible_array_declaration(declarations, offset: int, scopes):
@@ -1981,6 +2691,7 @@ def scan_c_file(path: str, entries):
                         })
 
     scan_taskdialog_fields(text, scan_text, rel, entries)
+    scan_taskdialog_buttons(text, scan_text, rel, entries)
 
     if rel in PHLIB_INTERNAL:
         for line, t in PHLIB_INTERNAL[rel]:
