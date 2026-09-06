@@ -1602,7 +1602,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("14 modules", result.stdout)
         self.assertIn("270 dialogs", result.stdout)
-        self.assertIn("1505 strings", result.stdout)
+        self.assertIn("1542 strings", result.stdout)
 
     def test_generated_utf8_resource_does_not_redeclare_code_page(self) -> None:
         localized = ZH_CN_RC.read_text(encoding="utf-8-sig")
@@ -3326,7 +3326,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertRegex(
             resource_header,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61132$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61169$",
         )
 
     def test_module_services_thread_does_not_use_auto_pool_before_initialization(
@@ -6269,7 +6269,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     (r"bin\Release64\sys_info.exe", 511): 2,
                     (r"bin\Release64\plugins\DotNetTools.dll", 89): 2,
                     (r"bin\Release64\plugins\ExtendedServices.dll", 66): 2,
-                    (r"bin\Release64\plugins\ExtendedTools.dll", 132): 2,
+                    (r"bin\Release64\plugins\ExtendedTools.dll", 169): 2,
                     (r"bin\Release64\plugins\HardwareDevices.dll", 98): 2,
                     (r"bin\Release64\plugins\NetworkTools.dll", 22): 2,
                     (r"bin\Release64\plugins\WindowExplorer.dll", 96): 2,

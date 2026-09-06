@@ -237,9 +237,9 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
                 self.assertNotIn(english, translations[other_table])
 
         self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_RESOURCE_VALUE\s+60043$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61132$")
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', english_rc)), 132)
-        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', chinese_rc)), 132)
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61169$")
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', english_rc)), 169)
+        self.assertEqual(len(re.findall(r'(?m)^\s*IDS_ET_[A-Z0-9_]+\s+"', chinese_rc)), 169)
 
     def parse_routes(self, filename: str):
         source = self.audit.mask_c_comments(
@@ -413,12 +413,12 @@ class ExtendedToolsGroupItemResourceTests(unittest.TestCase):
             )
         self.assertEqual(remaining, [])
 
-    def test_ci_requires_all_132_extended_tools_strings(self) -> None:
+    def test_ci_requires_all_169_extended_tools_strings(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
         self.assertEqual(
-            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=132"),
+            workflow.count("bin\\Release64\\plugins\\ExtendedTools.dll=169"),
             2,
         )
         self.assertNotIn("bin\\Release64\\plugins\\ExtendedTools.dll=116", workflow)

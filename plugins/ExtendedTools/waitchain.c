@@ -12,6 +12,11 @@
 #include "exttools.h"
 #include <wct.h>
 
+PCWSTR EtGetUiString(
+    _In_ ULONG ResourceId,
+    _In_ PCWSTR Fallback
+    );
+
 // Wait Chain Traversal Documentation:
 // https://learn.microsoft.com/en-us/windows/win32/debug/wait-chain-traversal
 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms681622.aspx
@@ -197,74 +202,80 @@ PVOID EtWaitChainContextCreate(
     return PhCreateObjectZero(sizeof(WCT_CONTEXT), EtWaitChainContextType);
 }
 
-static PH_STRINGREF WaitChainUnknownString = PH_STRINGREF_INIT(L"Unknown");
-
-static PH_KEY_VALUE_PAIR WaitChainObjectTypePairs[] =
+typedef struct _WCT_TEXT_ENTRY
 {
-    SIP(SREF(L"CriticalSection"), WctCriticalSectionType),
-    SIP(SREF(L"SendMessage"), WctSendMessageType),
-    SIP(SREF(L"Mutex"), WctMutexType),
-    SIP(SREF(L"APLC"), WctAlpcType),
-    SIP(SREF(L"COM"), WctComType),
-    SIP(SREF(L"ThreadWait"), WctThreadWaitType),
-    SIP(SREF(L"ProcessWait"), WctProcessWaitType),
-    SIP(SREF(L"Thread"), WctThreadType),
-    SIP(SREF(L"COM Activation"), WctComActivationType),
-    SIP(SREF(L"Unknown"), WctUnknownType),
-    SIP(SREF(L"Socket I/O"), WctSocketIoType),
-    SIP(SREF(L"SMB I/O"), WctSmbIoType)
+    ULONG Value;
+    ULONG ResourceId;
+    PCWSTR Fallback;
+} WCT_TEXT_ENTRY, *PWCT_TEXT_ENTRY;
+
+static const WCT_TEXT_ENTRY WaitChainObjectTypeEntries[] =
+{
+    { WctCriticalSectionType, IDS_ET_WCT_TYPE_CRITICAL_SECTION, L"CriticalSection" },
+    { WctSendMessageType, IDS_ET_WCT_TYPE_SEND_MESSAGE, L"SendMessage" },
+    { WctMutexType, IDS_ET_WCT_TYPE_MUTEX, L"Mutex" },
+    { WctAlpcType, IDS_ET_WCT_TYPE_ALPC, L"ALPC" },
+    { WctComType, IDS_ET_WCT_TYPE_COM, L"COM" },
+    { WctThreadWaitType, IDS_ET_WCT_TYPE_THREAD_WAIT, L"ThreadWait" },
+    { WctProcessWaitType, IDS_ET_WCT_TYPE_PROCESS_WAIT, L"ProcessWait" },
+    { WctThreadType, IDS_ET_WCT_TYPE_THREAD, L"Thread" },
+    { WctComActivationType, IDS_ET_WCT_TYPE_COM_ACTIVATION, L"COM Activation" },
+    { WctUnknownType, IDS_ET_WCT_UNKNOWN, L"Unknown" },
+    { WctSocketIoType, IDS_ET_WCT_TYPE_SOCKET_IO, L"Socket I/O" },
+    { WctSmbIoType, IDS_ET_WCT_TYPE_SMB_IO, L"SMB I/O" }
 };
 
-static PH_KEY_VALUE_PAIR WaitChainObjectStatusPairs[] =
+static const WCT_TEXT_ENTRY WaitChainObjectStatusEntries[] =
 {
-    SIP(SREF(L"No Access"), WctStatusNoAccess),
-    SIP(SREF(L"Running"), WctStatusRunning),
-    SIP(SREF(L"Blocked"), WctStatusBlocked),
-    SIP(SREF(L"Pid Only"), WctStatusPidOnly),
-    SIP(SREF(L"Pid Only (RPCSS)"), WctStatusPidOnlyRpcss),
-    SIP(SREF(L"Owned"), WctStatusOwned),
-    SIP(SREF(L"Not Owned"), WctStatusNotOwned),
-    SIP(SREF(L"Abandoned"), WctStatusAbandoned),
-    SIP(SREF(L"Unknown"), WctStatusUnknown),
-    SIP(SREF(L"Error"), WctStatusError),
+    { WctStatusNoAccess, IDS_ET_WCT_STATUS_NO_ACCESS, L"No Access" },
+    { WctStatusRunning, IDS_ET_WCT_STATUS_RUNNING, L"Running" },
+    { WctStatusBlocked, IDS_ET_WCT_STATUS_BLOCKED, L"Blocked" },
+    { WctStatusPidOnly, IDS_ET_WCT_STATUS_PID_ONLY, L"Pid Only" },
+    { WctStatusPidOnlyRpcss, IDS_ET_WCT_STATUS_PID_ONLY_RPCSS, L"Pid Only (RPCSS)" },
+    { WctStatusOwned, IDS_ET_WCT_STATUS_OWNED, L"Owned" },
+    { WctStatusNotOwned, IDS_ET_WCT_STATUS_NOT_OWNED, L"Not Owned" },
+    { WctStatusAbandoned, IDS_ET_WCT_STATUS_ABANDONED, L"Abandoned" },
+    { WctStatusUnknown, IDS_ET_WCT_UNKNOWN, L"Unknown" },
+    { WctStatusError, IDS_ET_WCT_STATUS_ERROR, L"Error" },
 };
 
-PPH_STRINGREF WaitChainObjectTypeToString(
+static PCWSTR WaitChainTextEntryToString(
+    _In_reads_(NumberOfEntries) const WCT_TEXT_ENTRY* Entries,
+    _In_ ULONG NumberOfEntries,
+    _In_ ULONG Value
+    )
+{
+    for (ULONG i = 0; i < NumberOfEntries; i++)
+    {
+        const WCT_TEXT_ENTRY* entry = &Entries[i];
+
+        if (entry->Value == Value)
+            return EtGetUiString(entry->ResourceId, entry->Fallback);
+    }
+
+    return EtGetUiString(IDS_ET_WCT_UNKNOWN, L"Unknown");
+}
+
+PCWSTR WaitChainObjectTypeToString(
     _In_ ULONG ObjectType
     )
 {
-    PPH_STRINGREF string;
-
-    if (PhFindStringSiKeyValuePairs(
-        WaitChainObjectTypePairs,
-        sizeof(WaitChainObjectTypePairs),
-        ObjectType,
-        (PWSTR*)&string
-        ))
-    {
-        return string;
-    }
-
-    return &WaitChainUnknownString;
+    return WaitChainTextEntryToString(
+        WaitChainObjectTypeEntries,
+        RTL_NUMBER_OF(WaitChainObjectTypeEntries),
+        ObjectType
+        );
 }
 
-PPH_STRINGREF WaitChainObjectStatusToString(
+PCWSTR WaitChainObjectStatusToString(
     _In_ ULONG ObjectStatus
     )
 {
-    PPH_STRINGREF string;
-
-    if (PhFindStringSiKeyValuePairs(
-        WaitChainObjectStatusPairs,
-        sizeof(WaitChainObjectStatusPairs),
-        ObjectStatus,
-        (PWSTR*)&string
-        ))
-    {
-        return string;
-    }
-
-    return &WaitChainUnknownString;
+    return WaitChainTextEntryToString(
+        WaitChainObjectStatusEntries,
+        RTL_NUMBER_OF(WaitChainObjectStatusEntries),
+        ObjectStatus
+        );
 }
 
 VOID WaitChainCheckThread(
@@ -465,8 +476,28 @@ INT_PTR CALLBACK WaitChainDlgProc(
                     if (selectedNode = WtcGetSelectedWaitNode(&context->TreeContext))
                     {
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_WCT_MENU_GOTOPROCESS, L"Go to Process...", NULL, NULL), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_WCT_MENU_GOTOTHREAD, L"Go to Thread...", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(
+                            menu,
+                            PhCreateEMenuItem(
+                                0,
+                                ID_WCT_MENU_GOTOPROCESS,
+                                EtGetUiString(IDS_ET_WCT_GO_TO_PROCESS, L"Go to Process..."),
+                                NULL,
+                                NULL
+                                ),
+                            ULONG_MAX
+                            );
+                        PhInsertEMenuItem(
+                            menu,
+                            PhCreateEMenuItem(
+                                0,
+                                ID_WCT_MENU_GOTOTHREAD,
+                                EtGetUiString(IDS_ET_WCT_GO_TO_THREAD, L"Go to Thread..."),
+                                NULL,
+                                NULL
+                                ),
+                            ULONG_MAX
+                            );
                         PhSetFlagsEMenuItem(menu, ID_WCT_MENU_PROPERTIES, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
 
                         if (selectedNode->ThreadId > 0)
@@ -526,7 +557,12 @@ INT_PTR CALLBACK WaitChainDlgProc(
                         }
                         else
                         {
-                            PhShowError2(WindowHandle, L"The process does not exist.", L"%s", L"");
+                            PhShowError2(
+                                WindowHandle,
+                                EtGetUiString(IDS_ET_WCT_PROCESS_NOT_FOUND, L"The process does not exist."),
+                                L"%s",
+                                L""
+                                );
                         }
                     }
                 }
@@ -585,13 +621,21 @@ INT_PTR CALLBACK WaitChainDlgProc(
 
 BEGIN_SORT_FUNCTION(Type)
 {
-    sortResult = PhCompareStringRef(WaitChainObjectTypeToString(node1->ObjectType), WaitChainObjectTypeToString(node2->ObjectType), TRUE);
+    sortResult = PhCompareStringZ(
+        WaitChainObjectTypeToString(node1->ObjectType),
+        WaitChainObjectTypeToString(node2->ObjectType),
+        TRUE
+        );
 }
 END_SORT_FUNCTION
 
 BEGIN_SORT_FUNCTION(Status)
 {
-    sortResult = PhCompareStringRef(WaitChainObjectStatusToString(node1->ObjectStatus), WaitChainObjectStatusToString(node2->ObjectStatus), TRUE);
+    sortResult = PhCompareStringZ(
+        WaitChainObjectStatusToString(node1->ObjectStatus),
+        WaitChainObjectStatusToString(node2->ObjectStatus),
+        TRUE
+        );
 }
 END_SORT_FUNCTION
 
@@ -725,12 +769,11 @@ BOOLEAN NTAPI WtcWaitTreeNewCallback(
             {
             case TREE_COLUMN_ITEM_TYPE:
                 {
-                    PPH_STRINGREF text;
+                    PCWSTR text;
 
                     if (text = WaitChainObjectTypeToString(node->ObjectType))
                     {
-                        getCellText->Text.Buffer = text->Buffer;
-                        getCellText->Text.Length = text->Length;
+                        PhInitializeStringRef(&getCellText->Text, text);
                     }
                     else
                     {
@@ -740,12 +783,11 @@ BOOLEAN NTAPI WtcWaitTreeNewCallback(
                 break;
             case TREE_COLUMN_ITEM_STATUS:
                 {
-                    PPH_STRINGREF text;
+                    PCWSTR text;
 
                     if (text = WaitChainObjectStatusToString(node->ObjectStatus))
                     {
-                        getCellText->Text.Buffer = text->Buffer;
-                        getCellText->Text.Length = text->Length;
+                        PhInitializeStringRef(&getCellText->Text, text);
                     }
                     else
                     {
@@ -763,7 +805,7 @@ BOOLEAN NTAPI WtcWaitTreeNewCallback(
                 {
                     if (node->Alertable)
                     {
-                        PhInitializeStringRef(&getCellText->Text, L"true");
+                        PhInitializeStringRef(&getCellText->Text, EtGetUiString(IDS_ET_WCT_TRUE, L"true"));
                     }
                     else
                     {
@@ -913,15 +955,96 @@ VOID WtcInitializeWaitTree(
     TreeNew_SetRedraw(WindowHandle, FALSE);
     TreeNew_SetCallback(WindowHandle, WtcWaitTreeNewCallback, Context);
 
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_TYPE, TRUE, L"Type", 80, PH_ALIGN_LEFT, 0, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_THREADID, TRUE, L"ThreadId", 50, PH_ALIGN_LEFT, 1, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_PROCESSID, TRUE, L"ProcessId", 50, PH_ALIGN_LEFT, 2, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_STATUS, TRUE, L"Status", 80, PH_ALIGN_LEFT, 3, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_CONTEXTSWITCH, TRUE, L"Context Switches", 70, PH_ALIGN_LEFT, 4, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_WAITTIME, TRUE, L"WaitTime", 60, PH_ALIGN_LEFT, 5, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_TIMEOUT, TRUE, L"Timeout", 60, PH_ALIGN_LEFT, 6, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_ALERTABLE, TRUE, L"Alertable", 50, PH_ALIGN_LEFT, 7, 0);
-    PhAddTreeNewColumn(WindowHandle, TREE_COLUMN_ITEM_NAME, TRUE, L"Name", 100, PH_ALIGN_LEFT, 8, 0);
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_TYPE,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_TYPE, L"Type"),
+        80,
+        PH_ALIGN_LEFT,
+        0,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_THREADID,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_THREAD_ID, L"ThreadId"),
+        50,
+        PH_ALIGN_LEFT,
+        1,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_PROCESSID,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_PROCESS_ID, L"ProcessId"),
+        50,
+        PH_ALIGN_LEFT,
+        2,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_STATUS,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_STATUS, L"Status"),
+        80,
+        PH_ALIGN_LEFT,
+        3,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_CONTEXTSWITCH,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_CONTEXT_SWITCHES, L"Context Switches"),
+        70,
+        PH_ALIGN_LEFT,
+        4,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_WAITTIME,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_WAIT_TIME, L"WaitTime"),
+        60,
+        PH_ALIGN_LEFT,
+        5,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_TIMEOUT,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_TIMEOUT, L"Timeout"),
+        60,
+        PH_ALIGN_LEFT,
+        6,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_ALERTABLE,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_ALERTABLE, L"Alertable"),
+        50,
+        PH_ALIGN_LEFT,
+        7,
+        0
+        );
+    PhAddTreeNewColumn(
+        WindowHandle,
+        TREE_COLUMN_ITEM_NAME,
+        TRUE,
+        EtGetUiString(IDS_ET_WCT_COLUMN_NAME, L"Name"),
+        100,
+        PH_ALIGN_LEFT,
+        8,
+        0
+        );
 
     TreeNew_SetRedraw(WindowHandle, TRUE);
     TreeNew_SetTriState(WindowHandle, TRUE);
@@ -1037,7 +1160,7 @@ VOID WctAddChildWaitNode(
         timeString = PhFormatTime(&systemTime, NULL);
 
         childNode->TimeoutString = PhFormatString(
-            L"%s %s",
+            EtGetUiString(IDS_ET_WCT_DATE_TIME_FORMAT, L"%s %s"),
             dateString->Buffer,
             timeString->Buffer
             );
@@ -1071,12 +1194,18 @@ VOID EtWaitChainSetTreeStatusMessage(
 {
     if (ShowEmpty)
     {
-        PhMoveReference(&Context->StatusMessage, PhCreateString(L"There are no threads to display."));
+        PhMoveReference(
+            &Context->StatusMessage,
+            PhCreateString(EtGetUiString(IDS_ET_WCT_NO_THREADS, L"There are no threads to display."))
+            );
         TreeNew_SetEmptyText(Context->TreeNewHandle, &Context->StatusMessage->sr, 0);
     }
     else
     {
-        PhMoveReference(&Context->StatusMessage, PhCreateString(L"Querying thread wait chain sessions..."));
+        PhMoveReference(
+            &Context->StatusMessage,
+            PhCreateString(EtGetUiString(IDS_ET_WCT_QUERYING, L"Querying thread wait chain sessions..."))
+            );
         TreeNew_SetEmptyText(Context->TreeNewHandle, &Context->StatusMessage->sr, 0);
     }
 }
@@ -1119,7 +1248,7 @@ VOID EtWaitChainUpdateResults(
                 timeString = PhFormatTime(&systemTime, NULL);
 
                 rootNode->TimeoutString = PhFormatString(
-                    L"%s %s",
+                    EtGetUiString(IDS_ET_WCT_DATE_TIME_FORMAT, L"%s %s"),
                     dateString->Buffer,
                     timeString->Buffer
                     );
