@@ -1895,8 +1895,21 @@
 #define IDS_PH_MENU_GO_TO_PROCESS_SHORTCUT                             2915
 #define IDS_PH_MENU_GO_TO_SERVICE                                      2916
 #define IDS_PH_MENU_CLOSE                                              2917
+#define IDS_PH_ENV_MENU_EDIT                                           2918
+#define IDS_PH_ENV_MENU_HIDE_PROCESS                                   2919
+#define IDS_PH_ENV_MENU_HIDE_USER                                      2920
+#define IDS_PH_ENV_MENU_HIDE_SYSTEM                                    2921
+#define IDS_PH_ENV_MENU_HIDE_CMD                                       2922
+#define IDS_PH_ENV_MENU_HIGHLIGHT_PROCESS                              2923
+#define IDS_PH_ENV_MENU_HIGHLIGHT_USER                                 2924
+#define IDS_PH_ENV_MENU_HIGHLIGHT_SYSTEM                               2925
+#define IDS_PH_ENV_MENU_HIGHLIGHT_CMD                                  2926
+#define IDS_PH_ENV_MENU_NEW_VARIABLE                                   2927
+#define IDS_PH_ACTION_EDIT                                             2928
+#define IDS_PH_ENV_SELECTED_VARIABLE_OBJECT                            2929
+#define IDS_PH_ENV_EDIT_WARNING                                        2930
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_MENU_CLOSE
+#define IDS_PH_LAST                                  IDS_PH_ENV_EDIT_WARNING
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -1908,6 +1921,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           2918
+#define _APS_NEXT_SYMED_VALUE           2931
 #endif
 #endif

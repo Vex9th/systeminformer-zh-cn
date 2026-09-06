@@ -763,9 +763,9 @@ INT_PTR CALLBACK PhpEditEnvDlgProc(
 
                     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                         hwndDlg,
-                        L"edit",
-                        L"the selected environment variable",
-                        L"Some programs may restrict access or ban your account when editing the environment variable(s) of the process.",
+                        PhGetApplicationUiString(IDS_PH_ACTION_EDIT),
+                        PhGetApplicationUiString(IDS_PH_ENV_SELECTED_VARIABLE_OBJECT),
+                        PhGetApplicationUiString(IDS_PH_ENV_EDIT_WARNING),
                         FALSE
                         ))
                     {
@@ -926,9 +926,9 @@ BOOLEAN PhpEditEnvironmentNode(
 
                 if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                     Context->WindowHandle,
-                    L"edit",
-                    L"the selected environment variable",
-                    L"Some programs may restrict access or ban your account when editing the environment variable(s) of the process.",
+                    PhGetApplicationUiString(IDS_PH_ACTION_EDIT),
+                    PhGetApplicationUiString(IDS_PH_ENV_SELECTED_VARIABLE_OBJECT),
+                    PhGetApplicationUiString(IDS_PH_ENV_EDIT_WARNING),
                     FALSE
                     ))
                 {
@@ -999,9 +999,9 @@ VOID PhpShowEnvironmentNodeContextMenu(
     menu = PhCreateEMenu();
     if (!PhpHasSelectedEnvironmentGroupNode(nodes, numberOfNodes))
     {
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ENV_EDIT, L"Edit", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ENV_EDIT, PhGetApplicationUiString(IDS_PH_ENV_MENU_EDIT), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ENV_DELETE, L"Delete", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ENV_DELETE, PhGetApplicationUiString(IDS_PH_SEARCH_DELETE), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     }
     PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_ENV_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY), NULL, NULL), ULONG_MAX);
@@ -1817,15 +1817,15 @@ INT_PTR CALLBACK PhpProcessEnvironmentDlgProc(
                     if (!PhGetWindowRect(GetDlgItem(hwndDlg, IDC_OPTIONS), &rect))
                         break;
 
-                    processMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_PROCESS_TYPE, L"Hide process", NULL, NULL);
-                    userMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_USER_TYPE, L"Hide user", NULL, NULL);
-                    systemMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_SYSTEM_TYPE, L"Hide system", NULL, NULL);
-                    cmdMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_CMD_TYPE, L"Hide cmd", NULL, NULL);
-                    highlightProcessMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_PROCESS_TYPE, L"Highlight process", NULL, NULL);
-                    highlightUserMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_USER_TYPE, L"Highlight user", NULL, NULL);
-                    highlightSystemMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_SYSTEM_TYPE, L"Highlight system", NULL, NULL);
-                    highlightCmdMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_CMD_TYPE, L"Highlight cmd", NULL, NULL);
-                    newProcessMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_NEW_ENVIRONMENT_VARIABLE, L"New variable...", NULL, NULL);
+                    processMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_PROCESS_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIDE_PROCESS), NULL, NULL);
+                    userMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_USER_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIDE_USER), NULL, NULL);
+                    systemMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_SYSTEM_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIDE_SYSTEM), NULL, NULL);
+                    cmdMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIDE_CMD_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIDE_CMD), NULL, NULL);
+                    highlightProcessMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_PROCESS_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIGHLIGHT_PROCESS), NULL, NULL);
+                    highlightUserMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_USER_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIGHLIGHT_USER), NULL, NULL);
+                    highlightSystemMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_SYSTEM_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIGHLIGHT_SYSTEM), NULL, NULL);
+                    highlightCmdMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_HIGHLIGHT_CMD_TYPE, PhGetApplicationUiString(IDS_PH_ENV_MENU_HIGHLIGHT_CMD), NULL, NULL);
+                    newProcessMenuItem = PhCreateEMenuItem(0, ENVIRONMENT_TREE_MENU_ITEM_NEW_ENVIRONMENT_VARIABLE, PhGetApplicationUiString(IDS_PH_ENV_MENU_NEW_VARIABLE), NULL, NULL);
 
                     menu = PhCreateEMenu();
                     PhInsertEMenuItem(menu, processMenuItem, ULONG_MAX);
@@ -1959,9 +1959,9 @@ INT_PTR CALLBACK PhpProcessEnvironmentDlgProc(
 
                     if (PhGetIntegerSetting(SETTING_ENABLE_WARNINGS) && !PhShowConfirmMessage(
                         context->WindowHandle,
-                        L"delete",
-                        L"the selected environment variable",
-                        L"Some programs may restrict access or ban your account when editing the environment variable(s) of the process.",
+                        PhGetApplicationUiString(IDS_PH_ACTION_DELETE),
+                        PhGetApplicationUiString(IDS_PH_ENV_SELECTED_VARIABLE_OBJECT),
+                        PhGetApplicationUiString(IDS_PH_ENV_EDIT_WARNING),
                         FALSE
                         ))
                     {

@@ -159,11 +159,11 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
             if symbol in resource_ids:
                 self.assertEqual(resource_ids[symbol], value)
             resource_ids[symbol] = value
-        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2918)))
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MENU_CLOSE$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2918$")
-        self.assertEqual(len(english), 918)
-        self.assertEqual(len(chinese), 918)
+        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 2931)))
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_ENV_EDIT_WARNING$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+2931$")
+        self.assertEqual(len(english), 931)
+        self.assertEqual(len(chinese), 931)
 
     def test_json_and_ci_have_exact_native_ownership(self) -> None:
         translations = json.loads(
@@ -179,7 +179,7 @@ class SystemInformerConfirmResourceTests(unittest.TestCase):
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=918"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=931"), 2)
         self.assertNotIn("sys_info.exe=511", workflow)
 
     def test_exact_confirm_routes_preserve_dynamic_object_boundary(self) -> None:

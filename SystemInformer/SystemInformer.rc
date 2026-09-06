@@ -3516,6 +3516,19 @@ BEGIN
     IDS_PH_MENU_GO_TO_PROCESS_SHORTCUT                             "&Go to process\bEnter"
     IDS_PH_MENU_GO_TO_SERVICE                                      "Go to service"
     IDS_PH_MENU_CLOSE                                              "C&lose"
+    IDS_PH_ENV_MENU_EDIT                                           "Edit"
+    IDS_PH_ENV_MENU_HIDE_PROCESS                                   "Hide process"
+    IDS_PH_ENV_MENU_HIDE_USER                                      "Hide user"
+    IDS_PH_ENV_MENU_HIDE_SYSTEM                                    "Hide system"
+    IDS_PH_ENV_MENU_HIDE_CMD                                       "Hide cmd"
+    IDS_PH_ENV_MENU_HIGHLIGHT_PROCESS                              "Highlight process"
+    IDS_PH_ENV_MENU_HIGHLIGHT_USER                                 "Highlight user"
+    IDS_PH_ENV_MENU_HIGHLIGHT_SYSTEM                               "Highlight system"
+    IDS_PH_ENV_MENU_HIGHLIGHT_CMD                                  "Highlight cmd"
+    IDS_PH_ENV_MENU_NEW_VARIABLE                                   "New variable..."
+    IDS_PH_ACTION_EDIT                                             "edit"
+    IDS_PH_ENV_SELECTED_VARIABLE_OBJECT                            "the selected environment variable"
+    IDS_PH_ENV_EDIT_WARNING                                        "Some programs may restrict access or ban your account when editing the environment variable(s) of the process."
 END
 
 /////////////////////////////////////////////////////////////////////////////
