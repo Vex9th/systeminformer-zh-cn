@@ -269,6 +269,7 @@ BEGIN
     IDS_WE_FAILED_TO_QUERY          "Failed to query"
     IDS_WE_NO_AUTOMATION_ELEMENT    "Error: No automation element"
     IDS_WE_UIA_COM_CREATION_FAILED  "Error: UIA COM creation failed"
+    IDS_WE_CLOSE                    "Close"
 END
 
 #endif    // English (United States) resources

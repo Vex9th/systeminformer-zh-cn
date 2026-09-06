@@ -1323,7 +1323,6 @@
 #define IDS_PH_SETTING_EDITOR                               2329
 #define IDS_PH_FIND                                         2330
 #define IDS_PH_CANCEL                                       2331
-#define IDS_PH_CLOSE                                        2332
 #define IDS_PH_MAKE_DEFAULT                                 2333
 #define IDS_PH_RESTORE_DEFAULT                              2334
 #define IDS_PH_NO_SCHEMA_DESCRIPTION                        2335

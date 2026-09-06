@@ -4367,12 +4367,12 @@ VOID PhUiNavigateServiceErrorDialogPage(
     _In_opt_ PPH_STRING MainContent
     )
 {
-    static CONST TASKDIALOG_BUTTON buttons[2] =
+    CONST TASKDIALOG_BUTTON buttons[2] =
     {
         { IDRETRY, L"Retry" },
-        { IDNO, L"Close" }
+        { IDNO, PhGetApplicationUiString(IDS_PH_CLOSE) }
     };
-    static CONST TASKDIALOG_BUTTON buttonsElevation[2] =
+    CONST TASKDIALOG_BUTTON buttonsElevation[2] =
     {
         { IDYES, L"Continue" },
         { IDNO, L"Cancel" },

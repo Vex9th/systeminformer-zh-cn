@@ -181,4 +181,5 @@ BEGIN
     IDS_WE_FAILED_TO_QUERY          "查询失败"
     IDS_WE_NO_AUTOMATION_ELEMENT    "错误：没有自动化元素"
     IDS_WE_UIA_COM_CREATION_FAILED  "错误：UIA COM 创建失败"
+    IDS_WE_CLOSE                    "关闭"
 END

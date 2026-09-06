@@ -171,6 +171,7 @@
 #define IDS_WE_FAILED_TO_QUERY          12107
 #define IDS_WE_NO_AUTOMATION_ELEMENT    12108
 #define IDS_WE_UIA_COM_CREATION_FAILED  12109
+#define IDS_WE_CLOSE                    12110
 
 // Next default values for new objects
 //
@@ -179,6 +180,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40039
 #define _APS_NEXT_CONTROL_VALUE         1037
-#define _APS_NEXT_SYMED_VALUE           12110
+#define _APS_NEXT_SYMED_VALUE           12111
 #endif
 #endif

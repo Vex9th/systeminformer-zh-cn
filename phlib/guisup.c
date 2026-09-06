@@ -2923,13 +2923,27 @@ INT CALLBACK PhModalPropSheetWindowProcedure(
     {
     case PSCB_INITIALIZED:
         {
+            PPH_STRING closeText;
+
             PhSetWindowContext(hwndDlg, 0xF, (PVOID)PhGetWindowProcedure(hwndDlg));
             PhSetWindowProcedure(hwndDlg, PhDefaultPropSheetWindowProcedure);
 
             // Hide the OK button.
             ShowWindow(GetDlgItem(hwndDlg, IDOK), SW_HIDE);
             // Set the Cancel button's text to "Close".
-            PhSetDialogItemText(hwndDlg, IDCANCEL, L"Close");
+            closeText = PhApplicationUiResourceInstance
+                ? PhLoadUiString(
+                    PhApplicationUiResourceInstance,
+                    IDS_PH_CLOSE,
+                    NULL
+                    )
+                : NULL;
+            PhSetDialogItemText(
+                hwndDlg,
+                IDCANCEL,
+                PhGetStringOrDefault(closeText, L"Close")
+                );
+            PhClearReference(&closeText);
         }
         break;
     }

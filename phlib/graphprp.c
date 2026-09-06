@@ -9,6 +9,7 @@
  */
 
 #include <ph.h>
+#include <phappresourceid.h>
 #include <guisup.h>
 #include <guisupp.h>
 #include <tabnew.h>
@@ -967,9 +968,18 @@ LRESULT CALLBACK PhPropSheetNewWndProc(
             // Optional Close button (anchored bottom-right in PhPropSheetNewLayout).
             if (FlagOn(context->Sheet.Flags, PH_PROPSHEETNEW_CLOSE_BUTTON))
             {
+                PPH_STRING closeText;
+
+                closeText = PhApplicationUiResourceInstance
+                    ? PhLoadUiString(
+                        PhApplicationUiResourceInstance,
+                        IDS_PH_CLOSE,
+                        NULL
+                        )
+                    : NULL;
                 context->CloseButton = PhCreateWindow(
                     WC_BUTTON,
-                    L"Close",
+                    PhGetStringOrDefault(closeText, L"Close"),
                     WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
                     0, 0, 0, 0,
                     WindowHandle,
@@ -977,6 +987,7 @@ LRESULT CALLBACK PhPropSheetNewWndProc(
                     NtCurrentImageBase(),
                     NULL
                     );
+                PhClearReference(&closeText);
 
                 PhPropSheetNewUpdateFont(context);
             }

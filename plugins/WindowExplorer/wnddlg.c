@@ -633,12 +633,34 @@ PPH_EMENU WepCreateWindowMenu(
     )
 {
     PPH_EMENU_ITEM menuItem;
+    PPH_STRING closeText;
+    PWSTR closeMenuText;
+
+    closeText = PhLoadUiString(
+        PluginInstance->DllBase,
+        IDS_WE_CLOSE,
+        NULL
+        );
+    closeMenuText = PhDuplicateStringZ(
+        PhGetStringOrDefault(closeText, L"Close")
+        );
+    PhClearReference(&closeText);
 
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_BRINGTOFRONT, L"Bring to front", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_RESTORE, L"Restore", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_MINIMIZE, L"Minimize", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_MAXIMIZE, L"Maximize", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_CLOSE, L"Close", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(
+        WindowMenu,
+        PhCreateEMenuItem(
+            PH_EMENU_TEXT_OWNED,
+            ID_WINDOW_CLOSE,
+            closeMenuText,
+            NULL,
+            NULL
+            ),
+        ULONG_MAX
+        );
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuItem(0, ID_WINDOW_DESTROY, L"Destroy", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(WindowMenu, PhCreateEMenuSeparator(), ULONG_MAX);
 

@@ -102,6 +102,9 @@ class SystemInformerLowRiskResourceTests(unittest.TestCase):
 
     def test_resources_have_exact_ids_translations_and_boundaries(self) -> None:
         header = (APP_ROOT / "resource.h").read_text(encoding="utf-8-sig")
+        shared_header = (
+            REPO_ROOT / "phlib" / "include" / "phappresourceid.h"
+        ).read_text(encoding="utf-8-sig")
         english_rc = (APP_ROOT / "SystemInformer.rc").read_text(encoding="utf-8-sig")
         chinese_rc = (APP_ROOT / "SystemInformer.zh-cn.rc").read_text(encoding="utf-8-sig")
         translations = json.loads(
@@ -110,7 +113,11 @@ class SystemInformerLowRiskResourceTests(unittest.TestCase):
 
         for resource_id, (numeric_id, english, chinese) in RESOURCE_TEXT.items():
             with self.subTest(resource_id=resource_id):
-                self.assertRegex(header, rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$")
+                resource_header = shared_header if resource_id == "IDS_PH_CLOSE" else header
+                self.assertRegex(
+                    resource_header,
+                    rf"(?m)^#define\s+{resource_id}\s+{numeric_id}$",
+                )
                 self.assertRegex(english_rc, rf'(?m)^\s*{resource_id}\s+"{re.escape(english)}"$')
                 self.assertRegex(chinese_rc, rf'(?m)^\s*{resource_id}\s+"{re.escape(chinese)}"$')
                 table = "strings" if english in RUNTIME_DICTIONARY_OWNED else "native_strings"
