@@ -412,9 +412,23 @@ ANY_LITERAL_SPECS = {
     "PhCreateSearchControlEx": "c_search",
 }
 
-TASKDIALOG_FIELDS_RE = re.compile(
-    r"\bpsz(MainInstruction|Content|VerificationText|ButtonText|Footer|"
-    r"CollapsedControlText|ExpandedControlText|WindowTitle)\s*=\s*(L\"(?:[^\"\\]|\\.)*\")"
+TASKDIALOG_TEXT_FIELDS = {
+    "pszMainInstruction",
+    "pszContent",
+    "pszVerificationText",
+    "pszFooter",
+    "pszCollapsedControlText",
+    "pszExpandedControlText",
+    "pszExpandedInformation",
+    "pszWindowTitle",
+}
+
+TASKDIALOG_CONFIG_DECLARATION_RE = re.compile(
+    r"\b(?:(?:static|const|CONST|volatile)\s+)*"
+    r"(?P<type>TASKDIALOGCONFIG(?:EX)?)\s+"
+    r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*"
+    r"(?:=\s*(?P<initializer>.*?))?;",
+    re.DOTALL,
 )
 
 # Literals inside the phlib funnel implementations themselves. These are
@@ -435,8 +449,11 @@ def line_of_offset(text: str, offset: int) -> int:
     return text.count("\n", 0, offset) + 1
 
 
-def literal_sequences_outside_ui_string_getters(expression: str):
-    """Return maximal adjacent literal sequences and offsets outside UI getters."""
+def literal_sequences_outside_ui_string_getters(
+    expression: str,
+    mask_explicit_translation: bool = False,
+):
+    """Return adjacent literals outside native getters and translation calls."""
     getter_names = {
         match.group(0)
         for match in IDENT_RE.finditer(expression)
@@ -447,6 +464,10 @@ def literal_sequences_outside_ui_string_getters(expression: str):
             "PhGetStringSetting",
             "PhaGetStringSetting",
         }
+        or (
+            mask_explicit_translation
+            and match.group(0) == "PhTranslateString"
+        )
     }
     masked = list(expression)
 
@@ -526,12 +547,16 @@ def one_hop_expression_source_literals(
     expression: str,
     default_category: str,
     allow_string_fallback: bool = False,
+    mask_explicit_translation: bool = False,
 ):
     """Accept only literal expressions or explicitly supported composers."""
     calls = expression_call_ranges(expression)
     sources = []
 
-    for text, offset in literal_sequences_outside_ui_string_getters(expression):
+    for text, offset in literal_sequences_outside_ui_string_getters(
+        expression,
+        mask_explicit_translation=mask_explicit_translation,
+    ):
         if is_noise(text):
             continue
         enclosing_calls = [
@@ -630,6 +655,98 @@ def visible_local_text_declaration(declarations, identifier, offset, scopes):
     )[1]
 
 
+def has_closer_local_shadow(
+    syntax_text: str,
+    declaration,
+    identifier: str,
+    offset: int,
+    scopes,
+) -> bool:
+    """Return true when a nearer local of any supported C type hides a name."""
+    binding_scope = innermost_c_scope(scopes, declaration.start())
+    if binding_scope is None:
+        return False
+
+    declaration_re = re.compile(
+        r"(?:^|(?<=[;{}]))\s*"
+        r"(?:(?:static|const|CONST|volatile|register|extern)\s+)*"
+        r"(?:"
+        r"(?:struct|union|enum)\s+[A-Za-z_][A-Za-z0-9_]*"
+        r"|(?:unsigned|signed)(?:\s+(?:char|short|int|long)){0,2}"
+        r"|(?:void|char|short|int|long|float|double)"
+        r"|(?P<type_name>[A-Za-z_][A-Za-z0-9_]*)"
+        r")(?=\s|\*)\s*(?P<body>[^;]*);",
+        re.DOTALL,
+    )
+
+    for statement in declaration_re.finditer(
+        syntax_text, declaration.end(), offset
+    ):
+        if statement.group("type_name") in {
+            "break",
+            "case",
+            "continue",
+            "default",
+            "do",
+            "else",
+            "goto",
+            "return",
+            "sizeof",
+            "switch",
+            "throw",
+            "typedef",
+        }:
+            continue
+        body = statement.group("body")
+        body_offset = statement.start("body")
+        segment_start = 0
+        depth = 0
+
+        for index in range(len(body) + 1):
+            char = body[index] if index < len(body) else ","
+            if char in "([{":
+                depth += 1
+            elif char in ")]}" and depth:
+                depth -= 1
+            elif char == "," and depth == 0:
+                segment = body[segment_start:index]
+                name_match = re.match(
+                    r"\s*(?:\*+\s*)*(?P<name>[A-Za-z_][A-Za-z0-9_]*)",
+                    segment,
+                )
+                if name_match and name_match.group("name") == identifier:
+                    name_offset = (
+                        body_offset + segment_start + name_match.start("name")
+                    )
+                    shadow_scope = innermost_c_scope(scopes, name_offset)
+                    if (
+                        shadow_scope is not None
+                        and binding_scope[0] < shadow_scope[0]
+                        and shadow_scope[0] < offset < shadow_scope[1]
+                    ):
+                        return True
+                segment_start = index + 1
+
+    return False
+
+
+def visible_taskdialog_config_declaration(
+    syntax_text: str,
+    declarations,
+    identifier: str,
+    offset: int,
+    scopes,
+):
+    declaration = visible_local_text_declaration(
+        declarations, identifier, offset, scopes
+    )
+    if declaration is None or has_closer_local_shadow(
+        syntax_text, declaration, identifier, offset, scopes
+    ):
+        return None
+    return declaration
+
+
 def is_conditionally_guarded(
     scan_text: str, offset: int, binding_scope, scopes
 ) -> bool:
@@ -709,6 +826,9 @@ def one_hop_runtime_sources(
     sink_offset: int,
     default_category: str,
     simple_only: bool = False,
+    fail_closed_writes: bool = False,
+    mask_explicit_translation: bool = False,
+    allow_string_fallback: bool = False,
 ):
     """Resolve conservative reaching definitions for one local UI binding."""
     scopes = c_brace_scopes(scan_text)
@@ -736,7 +856,10 @@ def one_hop_runtime_sources(
             for category, text, offset in one_hop_expression_source_literals(
                 initializer,
                 default_category,
-                allow_string_fallback=simple_only,
+                allow_string_fallback=(
+                    simple_only or allow_string_fallback
+                ),
+                mask_explicit_translation=mask_explicit_translation,
             )
         ]
         simple_definition_count = 1
@@ -765,7 +888,10 @@ def one_hop_runtime_sources(
             for category, text, offset in one_hop_expression_source_literals(
                 value,
                 default_category,
-                allow_string_fallback=simple_only,
+                allow_string_fallback=(
+                    simple_only or allow_string_fallback
+                ),
+                mask_explicit_translation=mask_explicit_translation,
             )
         ]
         events.append((assignment.start(), "definition", sources))
@@ -844,7 +970,7 @@ def one_hop_runtime_sources(
         ) is declaration:
             events.append((assignment.start(), "mutation", []))
 
-    if simple_only:
+    if simple_only or fail_closed_writes:
         binding_mutation_re = re.compile(
             rf"(?:\+\+|--)\s*\b{re.escape(identifier)}\b"
             rf"|(?<![.>])\b{re.escape(identifier)}\b\s*"
@@ -896,6 +1022,323 @@ def one_hop_runtime_sources(
             state = sources
 
     return state
+
+
+def is_taskdialog_technical_format(text: str) -> bool:
+    """Return true for formats whose rendered value contains no prose."""
+    if not PRINTF_SPEC_RE.search(text):
+        return False
+
+    remainder = PRINTF_SPEC_RE.sub("", text)
+    remainder = re.sub(r"0[xX]", "", remainder)
+    return re.fullmatch(r"[\d\s\W_]*", remainder) is not None
+
+
+def taskdialog_expression_sources(
+    scan_text: str,
+    expression: str,
+    expression_offset: int,
+    assignment_offset: int,
+):
+    """Resolve supported untranslated sources for one TaskDialog field."""
+    identifier = runtime_target_identifier(expression)
+
+    if identifier is not None:
+        sources = one_hop_runtime_sources(
+            scan_text,
+            identifier,
+            assignment_offset,
+            "c_taskdialog",
+            fail_closed_writes=True,
+            mask_explicit_translation=True,
+            allow_string_fallback=True,
+        )
+        if sources is not None:
+            return [
+                source for source in sources
+                if not is_taskdialog_technical_format(source[1])
+            ]
+
+    sources = one_hop_expression_source_literals(
+        expression,
+        "c_taskdialog",
+        allow_string_fallback=True,
+        mask_explicit_translation=True,
+    )
+    return [
+        (category, visible_text, expression_offset + relative_offset)
+        for category, visible_text, relative_offset in sources
+        if not is_taskdialog_technical_format(visible_text)
+    ]
+
+
+def taskdialog_designated_initializer_events(
+    scan_text: str,
+    syntax_text: str,
+    declaration,
+):
+    """Return supported text-field definitions from one config initializer."""
+    if declaration.group("initializer") is None:
+        return []
+
+    initializer_start = declaration.start("initializer")
+    initializer_end = declaration.end("initializer")
+    initializer_syntax = syntax_text[initializer_start:initializer_end]
+    initializer_match = re.fullmatch(
+        r"\s*\{(?P<body>.*)\}\s*",
+        initializer_syntax,
+        re.DOTALL,
+    )
+    if initializer_match is None:
+        return []
+
+    body_syntax = initializer_match.group("body")
+    body_offset = initializer_start + initializer_match.start("body")
+    wrapper_prefix = "AuditInitializer("
+    wrapped_syntax = f"{wrapper_prefix}{body_syntax})"
+    initializer_call = next(
+        find_calls(wrapped_syntax, {"AuditInitializer"}),
+        None,
+    )
+    if initializer_call is None:
+        return []
+
+    field_names = "|".join(
+        sorted(map(re.escape, TASKDIALOG_TEXT_FIELDS), key=len, reverse=True)
+    )
+    events = []
+    _, arguments, spans, _ = initializer_call
+
+    for argument, (argument_start, _) in zip(arguments, spans):
+        field_match = re.fullmatch(
+            rf"\s*\.\s*(?P<field>{field_names})\s*=(?!=)\s*"
+            rf"(?P<value>.*)",
+            argument,
+            re.DOTALL,
+        )
+        if field_match is None:
+            continue
+
+        value_start = (
+            body_offset
+            + argument_start
+            - len(wrapper_prefix)
+            + field_match.start("value")
+        )
+        value_end = (
+            body_offset
+            + argument_start
+            - len(wrapper_prefix)
+            + field_match.end("value")
+        )
+        sources = taskdialog_expression_sources(
+            scan_text,
+            scan_text[value_start:value_end],
+            value_start,
+            value_start,
+        )
+        events.append((value_start, "field", field_match.group("field"), sources))
+
+    return events
+
+
+def reaching_taskdialog_field_sources(
+    scan_text: str,
+    syntax_text: str,
+    declaration,
+    sink_offset: int,
+    declarations,
+    scopes,
+):
+    """Resolve TaskDialog text fields that can reach one concrete sink."""
+    identifier = declaration.group("name")
+    binding_scope = innermost_c_scope(scopes, declaration.start())
+    if binding_scope is None:
+        return []
+
+    field_names = "|".join(
+        sorted(map(re.escape, TASKDIALOG_TEXT_FIELDS), key=len, reverse=True)
+    )
+    assignment_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*\.\s*"
+        rf"(?P<field>{field_names})\s*=(?!=)\s*(?P<value>.*?);",
+        re.DOTALL,
+    )
+    states = defaultdict(list)
+    events = taskdialog_designated_initializer_events(
+        scan_text,
+        syntax_text,
+        declaration,
+    )
+    covered_ranges = []
+
+    for assignment in assignment_re.finditer(
+        syntax_text, declaration.end(), sink_offset
+    ):
+        if visible_taskdialog_config_declaration(
+            syntax_text,
+            declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is not declaration:
+            continue
+
+        value_start = assignment.start("value")
+        sources = taskdialog_expression_sources(
+            scan_text,
+            scan_text[value_start:assignment.end("value")],
+            value_start,
+            assignment.start(),
+        )
+        events.append((
+            assignment.start(),
+            "field",
+            assignment.group("field"),
+            sources,
+        ))
+        covered_ranges.append((assignment.start(), assignment.end()))
+
+    whole_assignment_re = re.compile(
+        rf"(?<![.>])\b{re.escape(identifier)}\s*=(?!=)\s*.*?;",
+        re.DOTALL,
+    )
+    for assignment in whole_assignment_re.finditer(
+        syntax_text, declaration.end(), sink_offset
+    ):
+        if visible_taskdialog_config_declaration(
+            syntax_text,
+            declarations,
+            identifier,
+            assignment.start(),
+            scopes,
+        ) is declaration:
+            events.append((assignment.start(), "mutation", None, []))
+            covered_ranges.append((assignment.start(), assignment.end()))
+
+    call_names = {
+        match.group(0)
+        for match in IDENT_RE.finditer(
+            syntax_text[declaration.end():sink_offset]
+        )
+    } - {
+        "_Alignof",
+        "_Generic",
+        "_Static_assert",
+        "__alignof",
+        "__alignof__",
+        "__typeof",
+        "__typeof__",
+        "alignof",
+        "catch",
+        "decltype",
+        "defined",
+        "for",
+        "if",
+        "noexcept",
+        "return",
+        "sizeof",
+        "static_assert",
+        "switch",
+        "typeid",
+        "typeof",
+        "while",
+    }
+    for _, args, spans, call_start in find_calls(syntax_text, call_names):
+        if call_start < declaration.end() or call_start >= sink_offset:
+            continue
+        if any(start <= call_start < end for start, end in covered_ranges):
+            continue
+        if visible_taskdialog_config_declaration(
+            syntax_text,
+            declarations,
+            identifier,
+            call_start,
+            scopes,
+        ) is not declaration:
+            continue
+        if any(
+            re.fullmatch(rf"\s*&\s*{re.escape(identifier)}\s*", argument)
+            for argument in args
+        ):
+            events.append((call_start, "mutation", None, []))
+
+    for offset, event_kind, field, sources in sorted(events):
+        conditional = is_conditionally_guarded(
+            scan_text, offset, binding_scope, scopes
+        )
+        if event_kind == "mutation":
+            if not conditional:
+                states.clear()
+        elif conditional:
+            states[field].extend(sources)
+        else:
+            states[field] = sources
+
+    return [source for field_sources in states.values() for source in field_sources]
+
+
+def scan_taskdialog_fields(text: str, scan_text: str, rel: str, entries):
+    """Scan text reaching type-confirmed local TaskDialog configurations."""
+    if "TASKDIALOGCONFIG" not in scan_text or not any(
+        sink_name in scan_text
+        for sink_name in (
+            "PhShowTaskDialog",
+            "TaskDialogIndirect",
+            "PhTaskDialogNavigatePage",
+        )
+    ):
+        return
+
+    scopes = c_brace_scopes(scan_text)
+    syntax_text = mask_c_literals(scan_text)
+    declarations = list(TASKDIALOG_CONFIG_DECLARATION_RE.finditer(syntax_text))
+    seen = set()
+    sink_specs = {
+        "PhShowTaskDialog": 0,
+        "TaskDialogIndirect": 0,
+        "PhTaskDialogNavigatePage": 1,
+    }
+
+    for name, args, _, sink_offset in find_calls(scan_text, sink_specs):
+        argument_index = sink_specs[name]
+        if argument_index >= len(args):
+            continue
+
+        argument = re.fullmatch(
+            r"\s*&\s*([A-Za-z_][A-Za-z0-9_]*)\s*",
+            args[argument_index],
+        )
+        if argument is None:
+            continue
+
+        identifier = argument.group(1)
+        declaration = visible_taskdialog_config_declaration(
+            syntax_text, declarations, identifier, sink_offset, scopes
+        )
+        if declaration is None:
+            continue
+
+        sources = reaching_taskdialog_field_sources(
+            scan_text,
+            syntax_text,
+            declaration,
+            sink_offset,
+            declarations,
+            scopes,
+        )
+
+        for category, visible_text, source_offset in sources:
+            source_key = (category, source_offset, visible_text)
+            if source_key in seen:
+                continue
+            seen.add(source_key)
+            entries.append({
+                "category": category,
+                "file": rel,
+                "line": line_of_offset(text, source_offset),
+                "english": visible_text,
+            })
 
 
 def visible_array_declaration(declarations, offset: int, scopes):
@@ -1532,15 +1975,7 @@ def scan_c_file(path: str, entries):
                             "english": t,
                         })
 
-    for m in TASKDIALOG_FIELDS_RE.finditer(scan_text):
-        t = literal_text(m.group(2))
-        if is_noise(t):
-            continue
-        entries.append({
-            "category": "c_taskdialog", "file": rel,
-            "line": line_of_offset(text, m.start()),
-            "english": t,
-        })
+    scan_taskdialog_fields(text, scan_text, rel, entries)
 
     if rel in PHLIB_INTERNAL:
         for line, t in PHLIB_INTERNAL[rel]:
