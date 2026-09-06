@@ -423,19 +423,30 @@ VOID EtAddAcpiRawData(
 VOID EtAcpiDescriptionHeader(
     _In_ PACPI_WINDOW_CONTEXT Context,
     _In_ ULONG Group,
-    _In_ PET_ACPI_HEADER Header
+    _In_ PET_ACPI_HEADER Header,
+    _In_ ULONG Length
     )
 {
     ULONG group = Group;
-    ET_ACPI_SIG(L"Signature", Header->Signature);
-    ET_ACPI_UINT32(L"Length", Header->Length);
-    ET_ACPI_UINT32(L"Revision", Header->Revision);
-    ET_ACPI_UINT32IX(L"Checksum", Header->Checksum);
-    EtAddAcpiAnsiString(Context, group, L"OEM ID", Header->OEMID, sizeof(Header->OEMID));
-    EtAddAcpiAnsiString(Context, group, L"OEM table ID", Header->OEMTableID, sizeof(Header->OEMTableID));
-    ET_ACPI_UINT32(L"OEM revision", Header->OEMRevision);
-    EtAddAcpiAnsiString(Context, group, L"Creator ID", Header->CreatorID, sizeof(Header->CreatorID));
-    ET_ACPI_UINT32(L"Creator revision", Header->CreatorRev);
+
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, Signature))
+        ET_ACPI_SIG(L"Signature", Header->Signature);
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, Length))
+        ET_ACPI_UINT32(L"Length", Header->Length);
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, Revision))
+        ET_ACPI_UINT32(L"Revision", Header->Revision);
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, Checksum))
+        ET_ACPI_UINT32IX(L"Checksum", Header->Checksum);
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, OEMID))
+        EtAddAcpiAnsiString(Context, group, L"OEM ID", Header->OEMID, sizeof(Header->OEMID));
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, OEMTableID))
+        EtAddAcpiAnsiString(Context, group, L"OEM table ID", Header->OEMTableID, sizeof(Header->OEMTableID));
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, OEMRevision))
+        ET_ACPI_UINT32(L"OEM revision", Header->OEMRevision);
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, CreatorID))
+        EtAddAcpiAnsiString(Context, group, L"Creator ID", Header->CreatorID, sizeof(Header->CreatorID));
+    if (ET_ACPI_HAS(Length, ET_ACPI_HEADER, CreatorRev))
+        ET_ACPI_UINT32(L"Creator revision", Header->CreatorRev);
 }
 
 PCWSTR EtAcpiAddressSpaceString(
@@ -490,7 +501,7 @@ VOID EtAcpiFadt(
     )
 {
     ET_ACPI_GROUP(L"Fixed ACPI Description Table (FADT)");
-    EtAcpiDescriptionHeader(Context, group, &Table->Header);
+    EtAcpiDescriptionHeader(Context, group, &Table->Header, Length);
 
     if (ET_ACPI_HAS(Length, ET_ACPI_FADT, Facs))
         ET_ACPI_UINT32IX(L"FACS address", Table->Facs);
@@ -597,7 +608,7 @@ VOID EtAcpiMadt(
 
     {
         ET_ACPI_GROUP(L"Multiple APIC Description Table (APIC)");
-        EtAcpiDescriptionHeader(Context, group, &Table->Header);
+        EtAcpiDescriptionHeader(Context, group, &Table->Header, Length);
 
         if (ET_ACPI_HAS(Length, ET_ACPI_MADT, LocalApicAddress))
             ET_ACPI_UINT32IX(L"Local APIC address", Table->LocalApicAddress);
@@ -692,7 +703,7 @@ VOID EtAcpiHpet(
     )
 {
     ET_ACPI_GROUP(L"High Precision Event Timer (HPET)");
-    EtAcpiDescriptionHeader(Context, group, &Table->Header);
+    EtAcpiDescriptionHeader(Context, group, &Table->Header, Length);
 
     if (ET_ACPI_HAS(Length, ET_ACPI_HPET, EventTimerBlockId))
         ET_ACPI_UINT32IX(L"Event timer block ID", Table->EventTimerBlockId);
@@ -717,7 +728,7 @@ VOID EtAcpiMcfg(
     ULONG number = 0;
 
     ET_ACPI_GROUP(L"PCI Memory-Mapped Configuration (MCFG)");
-    EtAcpiDescriptionHeader(Context, group, &Table->Header);
+    EtAcpiDescriptionHeader(Context, group, &Table->Header, Length);
 
     if (Length < sizeof(ET_ACPI_MCFG))
         return;
@@ -757,7 +768,7 @@ VOID EtAcpiSrat(
     PUCHAR end;
 
     ET_ACPI_GROUP(L"System Resource Affinity Table (SRAT)");
-    EtAcpiDescriptionHeader(Context, group, &Table->Header);
+    EtAcpiDescriptionHeader(Context, group, &Table->Header, Length);
 
     if (ET_ACPI_HAS(Length, ET_ACPI_SRAT, TableRevision))
         ET_ACPI_UINT32(L"Table revision", Table->TableRevision);
@@ -842,7 +853,7 @@ VOID EtAcpiSlit(
     )
 {
     ET_ACPI_GROUP(L"System Locality Information Table (SLIT)");
-    EtAcpiDescriptionHeader(Context, group, &Table->Header);
+    EtAcpiDescriptionHeader(Context, group, &Table->Header, Length);
 
     if (ET_ACPI_HAS(Length, ET_ACPI_SLIT, LocalityCount))
         ET_ACPI_UINT64IX(L"Locality count", Table->LocalityCount);
@@ -855,7 +866,7 @@ VOID EtAcpiBgrt(
     )
 {
     ET_ACPI_GROUP(L"Boot Graphics Resource Table (BGRT)");
-    EtAcpiDescriptionHeader(Context, group, &Table->Header);
+    EtAcpiDescriptionHeader(Context, group, &Table->Header, Length);
 
     if (ET_ACPI_HAS(Length, ET_ACPI_BGRT, Version))
         ET_ACPI_UINT32(L"Version", Table->Version);
@@ -886,7 +897,7 @@ VOID EtAcpiGenericTable(
 
     ULONG group = EtAddAcpiGroup(Context, PhGetString(name));
 
-    EtAcpiDescriptionHeader(Context, group, Header);
+    EtAcpiDescriptionHeader(Context, group, Header, Length);
     EtAddAcpiRawData(Context, group, (PUCHAR)Header, Length);
 
     PhDereferenceObject(name);
