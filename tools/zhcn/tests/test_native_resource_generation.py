@@ -66,22 +66,6 @@ def load_generator_module():
     return module
 
 
-def load_runtime_translation_generator_module():
-    path = REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"
-    spec = importlib.util.spec_from_file_location("generate_translation", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def load_auto_translation_module():
-    path = REPO_ROOT / "tools" / "zhcn" / "auto_translate.py"
-    spec = importlib.util.spec_from_file_location("auto_translate", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def load_audit_module():
     path = REPO_ROOT / "tools" / "zhcn" / "audit.py"
     spec = importlib.util.spec_from_file_location("zhcn_audit", path)
@@ -1147,10 +1131,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
 
         self.assertEqual(localized[2], '    IDS_SETUP_NEXT "下一步(&N) >"')
 
-    def test_native_translation_decisions_are_separate_from_runtime_dictionary(self) -> None:
+    def test_native_translation_decisions_merge_legacy_namespaces(self) -> None:
         generator = load_generator_module()
-        runtime_generator = load_runtime_translation_generator_module()
-        auto_translator = load_auto_translation_module()
         checker = load_translation_checker_module()
         table = {
             "strings": {"Runtime text": "运行时文字"},
@@ -1200,29 +1182,8 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 "R: ",
             )
         )
-        self.assertFalse(
-            auto_translator.needs_automatic_translation(
-                {"native_strings": {"R: ": "R: "}},
-                "R: ",
-            )
-        )
-        self.assertTrue(
-            auto_translator.needs_automatic_translation(
-                {"strings": {"Pending": "Pending"}},
-                "Pending",
-            )
-        )
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".json", encoding="utf-8"
-        ) as translation_file:
-            json.dump(table, translation_file, ensure_ascii=False)
-            translation_file.flush()
-            content, count = runtime_generator.build(translation_file.name)
-
-        self.assertEqual(count, 1)
-        self.assertIn('L"Runtime text", L"运行时文字"', content)
-        self.assertNotIn("Native text", content)
+        self.assertFalse((REPO_ROOT / "tools" / "zhcn" / "generate_translation.py").exists())
+        self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
 
     def test_generator_preserves_stringtable_line_break_escapes(self) -> None:
         generator = load_generator_module()
@@ -1305,12 +1266,15 @@ class NativeResourceGenerationTests(unittest.TestCase):
             ),
             [],
         )
-        self.assertTrue(checker.translation_is_effective("c_msgbox", "已翻译"))
+        self.assertFalse(checker.translation_is_effective("c_msgbox", "已翻译"))
         self.assertFalse(
             checker.translation_is_effective("c_msgbox_vararg", "已翻译")
         )
-        self.assertTrue(
+        self.assertFalse(
             checker.translation_is_effective("c_listview_group", "已翻译")
+        )
+        self.assertTrue(
+            checker.translation_is_effective("rc_stringtable", "已翻译")
         )
         for category in (
             "c_window_text",
@@ -1485,13 +1449,10 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     "原生文字",
                 )
 
-        for category in checker.RUNTIME_DICTIONARY_CATEGORIES:
-            with self.subTest(runtime_dictionary_category=category):
-                self.assertEqual(
-                    checker.translation_for_category(
-                        table, category, "Runtime text"
-                    ),
-                    "运行时文字",
+        for category in checker.UNMIGRATED_UI_CATEGORIES:
+            with self.subTest(unmigrated_ui_category=category):
+                self.assertIsNone(
+                    checker.translation_for_category(table, category, "Runtime text")
                 )
                 self.assertIsNone(
                     checker.translation_for_category(
@@ -1522,7 +1483,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
         )
         category_sets = (
             checker.NATIVE_RESOURCE_CATEGORIES,
-            checker.RUNTIME_DICTIONARY_CATEGORIES,
+            checker.UNMIGRATED_UI_CATEGORIES,
             checker.CALLSITE_MIGRATION_CATEGORIES,
         )
 
@@ -1769,7 +1730,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     r"PhSetApplicationUiLanguage\(\s*"
                     r"MAKELANGID\(LANG_CHINESE,\s*SUBLANG_CHINESE_SIMPLIFIED\)",
                 )
-                self.assertIn("PhTranslationEnabled = TRUE;", source)
+                self.assertNotIn("PhTranslationEnabled", source)
 
     def test_tool_property_pages_use_language_aware_resource_loader(self) -> None:
         peview = (REPO_ROOT / "tools" / "peview" / "prpsh.c").read_text(

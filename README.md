@@ -37,7 +37,8 @@ System Informer 的非官方简体中文、无驱动便携版。程序名为 `sy
 macOS 本地只能检查源码、生成结果和资源契约：
 
 ```bash
-python3 tools/zhcn/generate_translation.py --check
+python3 tools/zhcn/audit.py
+python3 tools/zhcn/check_translation.py --fail-on-untranslated
 python3 tools/zhcn/generate_native_resources.py --check
 python3 -m unittest discover -s tools/zhcn/tests -v
 git diff --check

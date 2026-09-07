@@ -665,11 +665,11 @@ class SystemInformerTreeNewNativeResourceTests(unittest.TestCase):
         self.assertEqual(1423, len(english))
         self.assertEqual(1423, len(chinese))
 
-    def test_shared_runtime_compatibility_set_is_explicit_and_treenew_hooks_remain(self) -> None:
+    def test_legacy_key_inventory_is_explicit_and_treenew_hooks_are_retired(self) -> None:
         source = (REPO_ROOT / "phlib" / "treenew.c").read_text(encoding="utf-8-sig")
-        self.assertEqual(3, source.count("PhTranslateString("))
-        self.assertIn("realColumn->Text = PhTranslateString(Column->Text);", source)
-        self.assertIn("translatedText = PhTranslateString(text->Buffer);", source)
+        self.assertEqual(0, source.count("PhTranslateString("))
+        self.assertIn("realColumn->Text = Column->Text;", source)
+        self.assertIn("Context->EmptyText = *text;", source)
         self.assertEqual(72, len(RUNTIME_COMPATIBILITY_KEYS))
         self.assertLessEqual(
             {"Description", "Display name", "Entry point", "Service",

@@ -22,7 +22,6 @@ ALL_CATEGORIES = {
     "c_tab",
     "c_taskdialog",
     "c_taskdialog_raw",
-    "c_toolbar",
     "c_tree_item",
     "c_treenew_col",
     "c_treenew_empty",

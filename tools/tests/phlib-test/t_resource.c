@@ -199,7 +199,6 @@ static VOID TestEnglishOnlyDialogIsNotDictionaryTranslated(
     PhSetApplicationUiLanguage(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
         );
-    PhTranslationEnabled = TRUE;
     dialogHandle = PhCreateDialog(
         ImageBase,
         MAKEINTRESOURCE(IDD_UI_RESOURCE_LEGACY_TEST),
@@ -207,7 +206,6 @@ static VOID TestEnglishOnlyDialogIsNotDictionaryTranslated(
         TestResourceDialogProc,
         &context
         );
-    PhTranslationEnabled = FALSE;
 
     TestRequire(dialogHandle && context.Verified);
     DestroyWindow(dialogHandle);
@@ -230,7 +228,6 @@ static VOID TestDialogFromTemplateStyle(
     PhSetApplicationUiLanguage(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
         );
-    PhTranslationEnabled = TRUE;
     dialogHandle = PhCreateDialogFromTemplate(
         NULL,
         style,
@@ -239,7 +236,6 @@ static VOID TestDialogFromTemplateStyle(
         TestResourceDialogProc,
         &context
         );
-    PhTranslationEnabled = FALSE;
 
     TestRequire(dialogHandle && context.Verified);
     DestroyWindow(dialogHandle);
@@ -252,7 +248,6 @@ VOID Test_resource(
     PVOID imageBase;
     PPH_STRING string;
     BOOLEAN fallbackToEnglish;
-    BOOLEAN translationEnabled;
 
     imageBase = NtCurrentPeb()->ImageBaseAddress;
 
@@ -283,14 +278,11 @@ VOID Test_resource(
         L"\x4E2D\x6587\x83DC\x5355"
         );
 
-    translationEnabled = PhTranslationEnabled;
-    PhTranslationEnabled = TRUE;
     TestRequire(PhTranslateString(MAKEINTRESOURCE(1)) == MAKEINTRESOURCE(1));
     TestRequire(
         PhTranslateString((PCWSTR)LPSTR_TEXTCALLBACK) ==
         (PCWSTR)LPSTR_TEXTCALLBACK
         );
-    PhTranslationEnabled = translationEnabled;
 
     TestEnglishOnlyDialogIsNotDictionaryTranslated(imageBase);
     TestDialogFromTemplateStyle(imageBase);

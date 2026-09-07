@@ -242,7 +242,7 @@ class SystemInformerListViewNativeResourceTests(unittest.TestCase):
         )
         self.assertRegex(
             emenu,
-            r"PhCreateEMenuItem\([\s\S]*?item->Text\s*=\s*\(PWSTR\)PhTranslateString\(Text\)",
+            r"PhCreateEMenuItem\([\s\S]*?item->Text\s*=\s*\(PWSTR\)Text",
         )
 
     def test_shared_listview_keys_keep_cross_module_runtime_compatibility(self) -> None:
@@ -267,7 +267,7 @@ class SystemInformerListViewNativeResourceTests(unittest.TestCase):
         self.assertIn('PvpLoadUiString(IDS_PV_FIELD_OPTIONAL_IMAGE_BASE)', sources["pe_header"])
         self.assertIn('[PH_CLR_TABLE_LOCALVARIABLE] = { L"Attributes", L"Index", L"Name" }', sources["clr_map"])
         self.assertIn('[PH_CLR_TABLE_INTERFACEIMPL] = { L"Class", L"Interface" }', sources["clr_map"])
-        self.assertIn('realColumn->Text = PhTranslateString(Column->Text);', sources["tree_helper"])
+        self.assertIn('realColumn->Text = Column->Text;', sources["tree_helper"])
 
     def test_systeminformer_has_no_runtime_listview_findings(self) -> None:
         unresolved = []

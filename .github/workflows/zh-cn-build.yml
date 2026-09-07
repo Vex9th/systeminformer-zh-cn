@@ -117,8 +117,7 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         python tools\zhcn\audit.py
-        python tools\zhcn\check_translation.py
-        python tools\zhcn\generate_translation.py --check
+        python tools\zhcn\check_translation.py --fail-on-untranslated
         python tools\zhcn\generate_native_resources.py --check
         python -m unittest discover -s tools\zhcn\tests -v
 
@@ -275,8 +274,7 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         python tools\zhcn\audit.py
-        python tools\zhcn\check_translation.py
-        python tools\zhcn\generate_translation.py --check
+        python tools\zhcn\check_translation.py --fail-on-untranslated
         python tools\zhcn\generate_native_resources.py --check
         python -m unittest discover -s tools\zhcn\tests -v
 
@@ -444,7 +442,8 @@ jobs:
           '- 字符串审计与校验：通过',
           '- 对话框模板校验：通过',
           '- 无驱动断言：通过',
-          '- 运行时冒烟脚本：通过',
+          '- Windows x64 自动冒烟（3 次启动、主窗口响应、10 个插件模块映射、正常退出、无新增崩溃转储）：通过',
+          '- 视觉布局、多 DPI、x86 与 ARM64 真机运行：本工作流未验证',
           '',
           '## 无驱动说明',
           '',

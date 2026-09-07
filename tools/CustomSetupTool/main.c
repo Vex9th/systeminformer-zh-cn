@@ -10,7 +10,6 @@
  */
 
 #include "setup.h"
-#include <phtranslation.h>
 
 #define SETUP_CMD_INSTALL    1
 #define SETUP_CMD_UNINSTALL  2
@@ -620,8 +619,6 @@ INT WINAPI wWinMain(
     PhSetApplicationUiLanguage(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
         );
-    PhTranslationEnabled = TRUE;
-
     if (!SetupInitializeUiStrings())
         return EXIT_FAILURE;
 

@@ -14,7 +14,6 @@
 #include <phappresourceid.h>
 #include <searchbox.h>
 #include <guisup.h>
-#include <phtranslation.h>
 #include <settings.h>
 #include <vssym32.h>
 #include <emenu.h>
@@ -1382,7 +1381,7 @@ VOID PhCreateSearchControlEx(
 
     context = PhAllocateZero(sizeof(PH_SEARCHCONTROL_CONTEXT));
     context->ParentWindowHandle = ParentWindowHandle;
-    context->CueBannerText = BannerText ? PhCreateString(PhTranslateString(BannerText)) : NULL;
+    context->CueBannerText = BannerText ? PhCreateString(BannerText) : NULL;
     context->WindowDpi = PhGetWindowDpi(ParentWindowHandle);
 
     context->RegexSetting = RegexSetting;

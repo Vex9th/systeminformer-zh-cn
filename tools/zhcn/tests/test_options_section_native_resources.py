@@ -154,9 +154,6 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
         cls.translations = json.loads(
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
-        cls.runtime = (REPO_ROOT / "phlib" / "phtranslation_zhcn.c").read_text(
-            encoding="utf-8-sig"
-        )
         cls.audit = load_audit_module()
 
     def test_create_section2_preserves_legacy_abi_and_owns_both_names(self) -> None:
@@ -285,7 +282,6 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
                     self.assertEqual(chinese.get(symbol), zh)
                     self.assertEqual(self.translations["native_strings"].get(en), zh)
                     self.assertNotIn(en, self.translations["strings"])
-                    self.assertNotRegex(self.runtime, rf'\{{ L"{re.escape(en)}", L"')
 
             numeric_ids = [numeric_id for _symbol, numeric_id, _en, _zh in resources]
             self.assertEqual(len(numeric_ids), len(set(numeric_ids)))
@@ -318,14 +314,8 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
         self.assertEqual(native.returncode, 0, native.stdout + native.stderr)
         self.assertIn("3365 strings", native.stdout)
 
-        runtime = subprocess.run(
-            [sys.executable, str(REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"), "--check"],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(runtime.returncode, 0, runtime.stdout + runtime.stderr)
-        self.assertIn("1929 entries", runtime.stdout)
+        self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
+        self.assertFalse((REPO_ROOT / "tools" / "zhcn" / "generate_translation.py").exists())
 
 
 if __name__ == "__main__":

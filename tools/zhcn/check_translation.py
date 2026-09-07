@@ -46,7 +46,7 @@ FORMAT_SPEC_RE = re.compile(
 
 # Strings intentionally kept in English: per-CPU graph labels, key names,
 # technical acronyms, designer placeholders, product/service names and noise
-# fragments. These are excluded from the effective coverage figure and listed
+# fragments. These are excluded from the effective audit inventory and listed
 # separately in the report so the exclusion stays transparent.
 KEEP_ENGLISH_RULES = [
     r"CPU \d+",
@@ -103,7 +103,9 @@ NATIVE_RESOURCE_CATEGORIES = {
     "c_statusbar",
 }
 
-RUNTIME_DICTIONARY_CATEGORIES = {
+# These categories represent bare UI literals found outside native resource
+# getters. A legacy `strings` key must never make such a call site pass.
+UNMIGRATED_UI_CATEGORIES = {
     "c_emenu",
     "c_listview_col",
     "c_listview_group",
@@ -113,12 +115,15 @@ RUNTIME_DICTIONARY_CATEGORIES = {
     "c_taskdialog",
     "c_search",
     "c_tab",
-    "c_toolbar",
     "c_tree_item",
     "c_treenew_col",
     "c_treenew_empty",
     "phlib_internal",
 }
+
+SOURCE_MIGRATION_CATEGORIES = (
+    CALLSITE_MIGRATION_CATEGORIES | UNMIGRATED_UI_CATEGORIES
+)
 
 
 def is_keep_english(s: str) -> bool:
@@ -152,8 +157,8 @@ def kept_english_manifest_key(entry):
 
 
 def translation_is_effective(category: str, translated_value) -> bool:
-    """Call-site migration categories stay uncovered while literals remain."""
-    return bool(translated_value) and category not in CALLSITE_MIGRATION_CATEGORIES
+    """Unmigrated source literals stay uncovered while they remain."""
+    return bool(translated_value) and category not in SOURCE_MIGRATION_CATEGORIES
 
 
 def format_specs(s: str):
@@ -199,9 +204,9 @@ def json_unescape_key(raw: str) -> str:
 
 
 def translation_decisions(table: dict) -> dict[str, str]:
-    runtime_strings = table.get("strings", {})
+    shared_strings = table.get("strings", {})
     native_strings = table.get("native_strings", {})
-    overlap = set(runtime_strings) & set(native_strings)
+    overlap = set(shared_strings) & set(native_strings)
 
     if overlap:
         raise ValueError(
@@ -209,21 +214,21 @@ def translation_decisions(table: dict) -> dict[str, str]:
             + ", ".join(sorted(overlap))
         )
 
-    strings = dict(runtime_strings)
+    strings = dict(shared_strings)
     strings.update(native_strings)
     return strings
 
 
 def translation_for_category(table: dict, category: str, english: str):
-    runtime_strings = table.get("strings", {})
+    shared_strings = table.get("strings", {})
 
     if category in NATIVE_RESOURCE_CATEGORIES:
-        value = runtime_strings.get(english)
+        value = shared_strings.get(english)
         if value is not None:
             return value
         return table.get("native_strings", {}).get(english)
-    if category in RUNTIME_DICTIONARY_CATEGORIES:
-        return runtime_strings.get(english)
+    if category in UNMIGRATED_UI_CATEGORIES:
+        return None
     return None
 
 
@@ -309,8 +314,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--manifest", default=os.path.join(HERE, "manifest.json"))
     ap.add_argument("--translation", default=os.path.join(HERE, "zh-CN.json"))
-    ap.add_argument("--report", default=os.path.join(HERE, "coverage-report.md"))
+    ap.add_argument("--report")
     ap.add_argument("--fail-on-placeholder-error", action="store_true", default=True)
+    ap.add_argument("--fail-on-untranslated", action="store_true")
     args = ap.parse_args()
 
     fail = False
@@ -403,6 +409,8 @@ def main():
     total_t = sum(v[0] for v in per_cat.values())
     total_a = sum(v[1] for v in per_cat.values())
     untranslated = [e for e in untranslated if not is_keep_english(e["english"])]
+    if args.fail_on_untranslated and untranslated:
+        fail = True
 
     report_keep_english = {}
     for entry in keep_english.values():
@@ -420,7 +428,7 @@ def main():
         f"- 约定保留英文（技术缩写/键名/占位符等）："
         f"{len(report_keep_english)} 项"
     )
-    migration_categories = "`, `".join(sorted(CALLSITE_MIGRATION_CATEGORIES))
+    migration_categories = "`, `".join(sorted(SOURCE_MIGRATION_CATEGORIES))
     lines.append(
         f"- `{migration_categories}` 必须迁移调用点；"
         "即使字典存在同名项也不计为已翻译"
@@ -474,13 +482,15 @@ def main():
             lines.append(f"- `{k}`")
         lines.append("")
 
-    with open(args.report, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines) + "\n")
+    if args.report:
+        with open(args.report, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
 
     print(f"translation audit: translated {total_t}/{total_a}, untranslated {total_a - total_t}")
     print(f"untranslated: {len(untranslated)}, unused keys: {len(unused)}, "
           f"placeholder errors: {len(errors)}")
-    print(f"report written to {args.report}")
+    if args.report:
+        print(f"report written to {args.report}")
     return 1 if fail else 0
 
 

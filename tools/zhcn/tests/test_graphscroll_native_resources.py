@@ -197,23 +197,13 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
         ]
         self.assertEqual(unresolved, [])
 
-    def test_runtime_entries_are_retired_and_generated_count_is_exact(self) -> None:
+    def test_runtime_entries_and_dictionary_are_retired(self) -> None:
         translations = json.loads((REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8"))
-        generated = (REPO_ROOT / "phlib" / "phtranslation_zhcn.c").read_text(encoding="utf-8-sig")
 
         for english in RUNTIME_RETIRED:
             with self.subTest(english=english):
                 self.assertNotIn(english, translations["strings"])
-                self.assertNotRegex(generated, rf'\{{ L"{re.escape(english)}",')
-
-        result = subprocess.run(
-            [sys.executable, str(REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"), "--check"],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("1929 entries", result.stdout)
+        self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
 
     def test_ci_and_native_generator_counts_are_exact(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(encoding="utf-8")

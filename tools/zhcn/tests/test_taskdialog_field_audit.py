@@ -438,12 +438,6 @@ class TaskDialogFieldAuditTests(unittest.TestCase):
                     continue
                 if relative_path == "plugins/ToolStatus/statusbar.c":
                     self.audit.scan_statusbar(path, non_taskdialog_entries)
-                if relative_path in (
-                    "plugins/ToolStatus/toolbar.c",
-                    "plugins/ExtendedTools/fwtab.c",
-                    "plugins/ExtendedTools/disktab.c",
-                ):
-                    self.audit.scan_translated_calls(path, non_taskdialog_entries)
                 if relative_path == "plugins/ToolStatus/statusbar.c":
                     self.audit.scan_c_file(path, non_taskdialog_entries)
                     self.audit.scan_tabnew(path, non_taskdialog_entries)

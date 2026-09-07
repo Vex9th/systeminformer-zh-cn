@@ -11,7 +11,6 @@
  */
 
 #include <peview.h>
-#include <phtranslation.h>
 
 PPH_STRING PvFileName = NULL;
 static PPH_STRING PvpUiStrings[IDS_PV_LAST - IDS_PV_FIRST + 1] = { 0 };
@@ -181,8 +180,6 @@ INT WINAPI wWinMain(
     PhSetApplicationUiLanguage(
         MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
         );
-    PhTranslationEnabled = TRUE;
-
     if (!PvpInitializeUiStrings())
         return 1;
 

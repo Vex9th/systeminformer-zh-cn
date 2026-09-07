@@ -155,12 +155,12 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
                 rf"PhpSearchControlCreateTooltip\([^;]*\b{resource_id}\b",
             )
 
-        self.assertIn("PhCreateString(PhTranslateString(BannerText))", source)
+        self.assertIn("PhCreateString(BannerText)", source)
         entries = []
         self.audit.scan_c_file(str(REPO_ROOT / "phlib" / "searchbox.c"), entries)
         self.assertEqual([entry for entry in entries if entry["category"] == "c_emenu"], [])
 
-    def test_util_fixed_ui_uses_resources_while_generic_translation_contract_remains(self) -> None:
+    def test_util_fixed_ui_uses_resources_without_generic_translation(self) -> None:
         source = self.sources["util.c"]
         for literal in (
             "Unable to perform the operation.",
@@ -186,10 +186,8 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
         ):
             self.assertIn(resource_id, source)
 
-        # Generic format/title funnels remain, but confirmation arguments are native
-        # resources or already-formatted dynamic text and must not hit the dictionary.
-        self.assertIn("PhFormatString_V(PhTranslateString(Format), argptr)", source)
-        self.assertIn("Config->pszWindowTitle = PhTranslateString(Config->pszWindowTitle)", source)
+        self.assertIn("PhFormatString_V(Format, argptr)", source)
+        self.assertNotIn("PhTranslateString(", source)
         self.assertNotIn("PhTranslateString(Verb)", source)
         self.assertNotIn("PhTranslateString(Object)", source)
         self.assertNotIn("PhTranslateString(Message)", source)

@@ -11,7 +11,6 @@ from collections import Counter
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 APP_ROOT = REPO_ROOT / "SystemInformer"
-TRANSLATION_SOURCE = REPO_ROOT / "phlib" / "phtranslation_zhcn.c"
 
 NEW_RESOURCES = (
     ("IDS_PH_HANDLE_NOT_AVAILABLE_SNAPSHOT", 2650, "N/A (snapshot)", "不适用（快照）", "native_strings"),
@@ -276,11 +275,10 @@ class HandleListViewFixedValueResourceTests(unittest.TestCase):
         self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MENU_TERMINATE_PLAIN$")
         self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3423$")
 
-    def test_runtime_ownership_ci_and_generator_counts_are_exact(self) -> None:
+    def test_native_ownership_ci_and_generator_counts_are_exact(self) -> None:
         translations = json.loads(
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
-        runtime_source = TRANSLATION_SOURCE.read_text(encoding="utf-8-sig")
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
@@ -288,12 +286,11 @@ class HandleListViewFixedValueResourceTests(unittest.TestCase):
         for english in ("Low", "Normal", "High", "Critical", "Commit", "Image"):
             with self.subTest(runtime_owner=english):
                 self.assertIn(english, translations["strings"])
-                self.assertRegex(runtime_source, rf'\{{ L"{re.escape(english)}", L"')
+                self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
 
         for english in ("N/A (snapshot)", "Pipe", "File or directory", "Console", "Directory", "Very Low", "Reserve"):
             with self.subTest(native_owner=english):
                 self.assertIn(english, translations["native_strings"])
-                self.assertNotRegex(runtime_source, rf'\{{ L"{re.escape(english)}", L"')
 
         self.assertEqual(workflow.count("sys_info.exe=1423"), 2)
         self.assertNotIn("sys_info.exe=650", workflow)

@@ -8,7 +8,7 @@
 
 **技术栈：** C/C++、CMake/VcxProj、Windows 资源系统、Python（现有 `tools/zhcn` 脚本）
 
-**当前状态：** 方案 B 尚未完成。主程序、11 个插件和独立工具的静态对话框以及语言感知加载路径已在源码落地；PE Viewer 的菜单、列表列名、选项和弹窗提示，安装器向导文字，以及主程序选项页提示已迁入原生字符串表。其余动态字符串、旧运行时翻译层移除、Windows CI、x86/ARM64 与多 DPI 验收仍按下列任务推进。
+**当前状态：** 本机可验证的方案 B 迁移已完成：14 个资源宿主包含 270 个双语对话框和 3365 个中文字符串项，动态菜单与文字调用点已迁入原生资源，旧运行时字典、模板重写、自动翻译和默认百分比报告链路已退役。2026-09-06 的源码审计清单含 3958 个条目、5120 个出现位置，其中 3752 个有效翻译单元全部通过，未翻译 0、占位符错误 0；该数字只是扫描器库存，不是 Windows 界面覆盖率。尚未完成的是当前提交的 Windows CI 编译，以及 x86/ARM64、插件加载、崩溃路径和多 DPI 实机验收。
 
 ---
 
@@ -83,6 +83,8 @@ git commit -m "fix: 修正中文字体写入截断与runas临时服务名"
 
 ### 任务 3：建立“禁用运行时翻译后”的主循环可回退路径（阶段一）
 
+> 以下为迁移期间已经完成的历史过渡步骤；任务 9 完成后不再保留运行时字典开关。
+
 - 修改：`phlib/include/phtranslation.h`、`phlib/phtranslation.c`
 - 修改：`SystemInformer/main.c`
 - 修改：`phlib/guisup.c`
@@ -104,11 +106,11 @@ git commit -m "fix: 修正中文字体写入截断与runas临时服务名"
 ```bash
 cd /Users/r2/Developer/Sys_Info/systeminformer-zh-cn
 python3 tools/zhcn/audit.py
-python3 tools/zhcn/check_translation.py
-python3 tools/zhcn/generate_translation.py --check
+python3 tools/zhcn/check_translation.py --fail-on-untranslated
+python3 tools/zhcn/generate_native_resources.py --check
 ```
 
-预期：脚本全部成功（若当前资源与字典不一致仍按回退路径记录，而不是构建中断）。
+预期：脚本全部成功；当前最终流程对未翻译项直接失败。
 
 - [x] **步骤 4：提交**
 
@@ -133,7 +135,7 @@ git commit -m "feat(i18n): 引入语言决策与翻译层回退断点"
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 ```
 
-当前主程序 `.rc` 没有 `MENU` 或 `STRINGTABLE` 块；先复制全部对话框 ID 并逐条替换文案。动态菜单和 C 代码字符串继续走英文回退兼容层，后续迁移到 `IDS_*`。
+当时主程序 `.rc` 没有 `MENU` 或 `STRINGTABLE` 块，先复制全部对话框 ID 并逐条替换文案；动态菜单和 C 代码字符串随后已在任务 8 迁移到 `IDS_*`。
 
 - [x] **步骤 2：构建资源可达性校验**
 
@@ -230,12 +232,12 @@ CI 明确传入 `sys_info.exe` 和 11 个插件 DLL，逐文件比较 en-US 与 
 - 修改：主程序、插件和工具的 `resource.h`、`.rc` 与 UI 调用点
 
 - [x] **步骤 1：扫描并分类所有 UI 输出入口**
-- [ ] **步骤 2：按模块建立稳定的 `IDS_*` 资源 ID**
-- [ ] **步骤 3：将直接英文宽字符串改为模块内 `PhLoadString` 加载**
-- [ ] **步骤 4：校验 en-US/zh-CN 字符串表 ID 和格式占位符一致**
-- [ ] **步骤 5：让新增未迁移 UI 英文字面量在 CI 中失败**
+- [x] **步骤 2：按模块建立稳定的 `IDS_*` 资源 ID**
+- [x] **步骤 3：将直接英文宽字符串改为模块内原生资源加载**
+- [x] **步骤 4：校验 en-US/zh-CN 字符串表 ID 和格式占位符一致**
+- [x] **步骤 5：让新增未迁移 UI 英文字面量在 CI 中失败**
 
-进行中（2026-09-06）：审计范围已覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。当前共 969 条 en-US/zh-CN `STRINGTABLE` 项：PE Viewer 134 条，安装器 74 条，主程序 312 条，DotNetTools 89 条，ExtendedServices 66 条，ExtendedTools 40 条，ToolStatus 103 条，UserNotes 15 条，HardwareDevices、NetworkTools、OnlineChecks、Updater、WindowExplorer 合计 136 条。审计清单 schema v2 按独立模块拆分必须迁移的调用点，并保守追踪同一词法作用域内直接传入或经一层局部变量传入已登记 UI sink 的文字来源。经 `PhaFormatString`、`PhFormatString`、`PhaConcatStrings*`、`PhConcatStrings*`、`PhConcatStringRefZ` 或含格式指令的 `swprintf_s` 预先组成的模板和片段归入 `c_runtime_composed`，必须迁移调用点；API 自身先翻译再格式化的直接 format 字面量仍保留原类别。配置键、原生资源 getter、参数、字段、全局变量、二跳数据流，以及候选来源后可能被未知赋值或缓冲区写入覆盖的旧值均保守跳过。fresh audit 为 2948/3484，剩余 536 个有效翻译单元；清单共 3627 个 schema 条目、5261 个源码出现位置，另有 143 个约定保留英文项。旧字典仍在接管大量既有文字；任务 8 及后续兼容层移除、Windows 编译与真实界面验收仍未完成。
+完成记录（2026-09-06）：审计范围覆盖主程序、插件、`peview`、`CustomSetupTool` 和 `CustomSignTool`。生成器当前覆盖 14 个资源宿主、270 个对话框和 3365 个字符串项。fresh audit 为 3752/3752，未翻译 0、占位符错误 0；清单共 3958 个 schema 条目、5120 个源码出现位置。剩余 30 个 `c_runtime_composed` 均为精确登记的技术格式，47 个 `c_statusbar` 已由原生资源接管。审计器会对新增未迁移调用点失败，但该结果不能替代 Windows 实机视觉检查。
 
 ---
 
@@ -244,10 +246,10 @@ CI 明确传入 `sys_info.exe` 和 11 个插件 DLL，逐文件比较 en-US 与 
 - 删除：英文原文到中文的运行时字典、模板重写及对应生成代码
 - 修改：旧审计、同步、构建和发布流程
 
-- [ ] **步骤 1：确认静态资源和动态字符串已全部接管**
-- [ ] **步骤 2：删除 `phtranslation` 字典查找与模板改写路径**
-- [ ] **步骤 3：删除覆盖率报告、自动翻译和失效的旧校验入口**
-- [ ] **步骤 4：验证环境变量 `Path` 等用户数据不再进入翻译路径**
+- [x] **步骤 1：确认静态资源和动态字符串已全部接管**
+- [x] **步骤 2：删除 `phtranslation` 字典查找与模板改写路径**
+- [x] **步骤 3：删除默认百分比报告、自动翻译和失效的旧校验入口**
+- [x] **步骤 4：验证环境变量 `Path` 等用户数据不再进入翻译路径**
 
 ---
 
@@ -260,7 +262,7 @@ CI 明确传入 `sys_info.exe` 和 11 个插件 DLL，逐文件比较 en-US 与 
 - [ ] **步骤 3：完成 x64 与 x86 的真实运行测试**
 - [ ] **步骤 4：分别记录 ARM64 构建与 ARM64 真机运行状态**
 - [ ] **步骤 5：完成 Windows 10/11、100%/150%/200% DPI 的截图与人工视觉签核**
-- [ ] **步骤 6：确认 README 和发布说明只陈述本次真实证据**
+- [x] **步骤 6：确认 README 和发布说明只陈述本次真实证据**
 
 任务 6 至任务 10 全部完成前，不创建方案 B 正式 Release，也不宣称“整体完成”。
 

@@ -13,7 +13,6 @@
 #include <phapp.h>
 
 #include <mapldr.h>
-#include <phtranslation.h>
 #include <colorbox.h>
 #include <tabnew.h>
 #include <graphscroll.h>
@@ -1636,19 +1635,15 @@ VOID PhInitializeAppSettings(
         }
     }
 
-    // Keep the legacy dictionary active only while zh-CN resources are being
-    // migrated. Unknown values fail closed to the English resource set.
+    // Select the native resource language after settings have been loaded.
     {
         PPH_STRING languageSetting = PhGetStringSetting(SETTING_LANGUAGE);
-
-        PhTranslationEnabled = FALSE;
 
         if (PhEqualStringZ(PhGetString(languageSetting), L"zh-CN", TRUE))
         {
             PhSetApplicationUiLanguage(
                 MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
                 );
-            PhTranslationEnabled = TRUE;
         }
         else if (PhEqualStringZ(PhGetString(languageSetting), L"en", TRUE))
         {
@@ -1665,10 +1660,9 @@ VOID PhInitializeAppSettings(
 
 #ifdef DEBUG
         PhTrace(
-            "UI language setting: %ls, resource LANGID: 0x%04x, legacy translation: %s",
+            "UI language setting: %ls, resource LANGID: 0x%04x",
             PhGetString(languageSetting),
-            PhGetApplicationUiLanguage(),
-            PhTranslationEnabled ? "enabled" : "disabled"
+            PhGetApplicationUiLanguage()
             );
 #endif
 

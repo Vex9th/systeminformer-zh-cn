@@ -29,9 +29,6 @@
     <ClCompile Include="phtranslation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="phtranslation_zhcn.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="emenu.c">
       <Filter>Source Files</Filter>
     </ClCompile>

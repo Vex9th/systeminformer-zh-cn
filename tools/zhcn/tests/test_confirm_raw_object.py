@@ -244,13 +244,9 @@ class ConfirmRawObjectTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        generated = (REPO_ROOT / "phlib" / "phtranslation_zhcn.c").read_text(
-            encoding="utf-8-sig"
-        )
-
         self.assertEqual(translations["native_strings"].get("%s and %s"), "%s 和 %s")
         self.assertNotIn(" and ", translations["strings"])
-        self.assertNotIn('{ L" and ", L" 和 ", },', generated)
+        self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
 
     def test_actions_use_native_formats_without_undeclared_translation_calls(self) -> None:
         masked_actions = self.audit.mask_c_comments(self.actions)

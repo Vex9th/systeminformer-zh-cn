@@ -2,15 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 audit.py - Extract all user-visible strings from the System Informer source
-tree into a machine-readable manifest, classified by where the string comes
-from and which runtime translation funnel covers it.
+tree into a machine-readable manifest, classified by where the string appears.
 
-The manifest is the single source of truth for translation coverage. It is
+The manifest is the single source of truth for the scanner's source inventory. It is
 regenerated on every check; it is derived data and must not be committed.
 
-Categories describe the actual UI sink. Categories without a runtime
-translation hook are marked by check_translation.py as requiring call-site
-migration even when the legacy dictionary contains the same English key.
+Categories describe the actual UI sink. Call-site migration categories must be
+routed through native resources before they count as translated.
   rc_dialog        dialog template controls and captions (.rc DIALOG/DIALOGEX)
   rc_menu          menu resources (.rc MENU/MENUEX)
   rc_stringtable   dynamic UI text stored in .rc STRINGTABLE blocks
@@ -499,11 +497,8 @@ def line_of_offset(text: str, offset: int) -> int:
     return text.count("\n", 0, offset) + 1
 
 
-def literal_sequences_outside_ui_string_getters(
-    expression: str,
-    mask_explicit_translation: bool = False,
-):
-    """Return adjacent literals outside native getters and translation calls."""
+def literal_sequences_outside_ui_string_getters(expression: str):
+    """Return adjacent literals outside native resource getter calls."""
     getter_names = {
         match.group(0)
         for match in IDENT_RE.finditer(expression)
@@ -515,10 +510,6 @@ def literal_sequences_outside_ui_string_getters(
             "PhGetStringSetting",
             "PhaGetStringSetting",
         }
-        or (
-            mask_explicit_translation
-            and match.group(0) == "PhTranslateString"
-        )
     }
     masked = list(expression)
 
@@ -598,16 +589,12 @@ def one_hop_expression_source_literals(
     expression: str,
     default_category: str,
     allow_string_fallback: bool = False,
-    mask_explicit_translation: bool = False,
 ):
     """Accept only literal expressions or explicitly supported composers."""
     calls = expression_call_ranges(expression)
     sources = []
 
-    for text, offset in literal_sequences_outside_ui_string_getters(
-        expression,
-        mask_explicit_translation=mask_explicit_translation,
-    ):
+    for text, offset in literal_sequences_outside_ui_string_getters(expression):
         if is_noise(text):
             continue
         enclosing_calls = [
@@ -879,7 +866,6 @@ def one_hop_runtime_sources(
     default_category: str,
     simple_only: bool = False,
     fail_closed_writes: bool = False,
-    mask_explicit_translation: bool = False,
     allow_string_fallback: bool = False,
 ):
     """Resolve conservative reaching definitions for one local UI binding."""
@@ -911,7 +897,6 @@ def one_hop_runtime_sources(
                 allow_string_fallback=(
                     simple_only or allow_string_fallback
                 ),
-                mask_explicit_translation=mask_explicit_translation,
             )
         ]
         simple_definition_count = 1
@@ -943,7 +928,6 @@ def one_hop_runtime_sources(
                 allow_string_fallback=(
                     simple_only or allow_string_fallback
                 ),
-                mask_explicit_translation=mask_explicit_translation,
             )
         ]
         events.append((assignment.start(), "definition", sources))
@@ -1102,7 +1086,6 @@ def taskdialog_expression_sources(
             assignment_offset,
             "c_taskdialog",
             fail_closed_writes=True,
-            mask_explicit_translation=True,
             allow_string_fallback=True,
         )
         if sources is not None:
@@ -1115,7 +1098,6 @@ def taskdialog_expression_sources(
         expression,
         "c_taskdialog",
         allow_string_fallback=True,
-        mask_explicit_translation=True,
     )
     return [
         (category, visible_text, expression_offset + relative_offset)
@@ -2923,11 +2905,7 @@ def scan_c_file(path: str, entries):
                     idx = format_index + 1 + vararg_index
                     if idx >= len(args):
                         continue
-                    category = (
-                        "c_msgbox"
-                        if direct_content or "PhTranslateString" in args[idx]
-                        else "c_msgbox_vararg"
-                    )
+                    category = "c_msgbox" if direct_content else "c_msgbox_vararg"
                     append_runtime_target_entries(
                         text,
                         scan_text,
@@ -2987,8 +2965,6 @@ TABNEW_INSERT_RE = re.compile(
     r"PhTabNew_InsertItem\s*\([^;]*?\)", re.S)
 TCITEM_TEXT_RE = re.compile(r"pszText\s*=\s*(?:\(PWSTR\)\s*)?(L\"(?:[^\"\\]|\\.)*\")")
 
-
-TRANSLATED_CALL_RE = re.compile(r'PhTranslateString\s*\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
 
 PAGE_NAME_RE = re.compile(r'(\w*PageText\w*)\s*=\s*PH_STRINGREF_INIT\(\s*(L"(?:[^"\\]|\\.)*")\s*\)')
 
@@ -3119,22 +3095,6 @@ def scan_page_names(path: str, entries):
                         ),
                         "english": display_text,
                     })
-
-
-def scan_translated_calls(path: str, entries):
-    """Strings routed through PhTranslateString at hand-patched call sites
-    (e.g. ToolStatus toolbar button text)."""
-    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
-    with open(path, "r", encoding="utf-8", errors="replace") as f:
-        text = mask_c_comments(f.read())
-    for m in TRANSLATED_CALL_RE.finditer(text):
-        t = literal_text(m.group(1))
-        if is_noise(t):
-            continue
-        entries.append({
-            "category": "c_toolbar", "file": rel,
-            "line": line_of_offset(text, m.start()), "english": t,
-        })
 
 
 def scan_tabnew(path: str, entries):
@@ -3404,9 +3364,6 @@ def main():
             continue
         if rel == "plugins/ToolStatus/statusbar.c":
             scan_statusbar(path, entries)
-        if rel in ("plugins/ToolStatus/toolbar.c", "plugins/ExtendedTools/fwtab.c",
-                   "plugins/ExtendedTools/disktab.c"):
-            scan_translated_calls(path, entries)
         if rel == "plugins/ToolStatus/statusbar.c":
             scan_c_file(path, entries)
             scan_tabnew(path, entries)

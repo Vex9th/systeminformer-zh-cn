@@ -123,9 +123,9 @@ class UiResourceLoaderContractTests(unittest.TestCase):
             self.assertNotIn(symbol, header)
             self.assertNotIn(symbol, source)
 
-        self.assertIn("PhTranslationEnabled", header)
         self.assertIn("PhTranslateString", header)
-        self.assertIn("PhTranslationTableZhCn", source)
+        self.assertNotIn("PhTranslationTableZhCn", source)
+        self.assertIn("return English;", source)
 
     def test_missing_string_slot_falls_back_to_english(self) -> None:
         source = read_source("phlib/mapldr.c")
@@ -148,7 +148,7 @@ class UiResourceLoaderContractTests(unittest.TestCase):
             source,
             r"PhEqualStringZ\([^;]+L\"en\"[^;]+PhSetApplicationUiLanguage\(\s*MAKELANGID\(LANG_ENGLISH",
         )
-        self.assertIn("PhTranslationEnabled = FALSE", source)
+        self.assertNotIn("PhTranslationEnabled", source)
 
     def test_dialog_and_menu_helpers_use_ui_resource_loader(self) -> None:
         source = read_source("phlib/guisup.c")
@@ -255,7 +255,7 @@ class UiResourceLoaderContractTests(unittest.TestCase):
         self.assertIn("PhCreatePropertySheetPage(", probe)
         self.assertIn("PhLoadMenu(", probe)
         self.assertIn("PropertySheet(&header)", probe)
-        self.assertIn("PhTranslationEnabled = TRUE", probe)
+        self.assertNotIn("PhTranslationEnabled", probe)
         self.assertIn("PhCreateDialogFromTemplate(", probe)
         self.assertIn("WS_SYSMENU", probe)
 

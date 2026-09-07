@@ -107,7 +107,6 @@ set(SOURCES
     "dspick.c"
     "emenu.c"
     "phtranslation.c"
-    "phtranslation_zhcn.c"
     "error.c"
     "extlv.c"
     "fastlock.c"

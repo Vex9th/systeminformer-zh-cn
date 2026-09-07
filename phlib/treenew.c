@@ -36,7 +36,6 @@
 #include <guisup.h>
 #include <treenew.h>
 #include <treenewp.h>
-#include <phtranslation.h>
 #include <vssym32.h>
 
 /**
@@ -2656,23 +2655,10 @@ LRESULT PhTnpOnUserMessage(
         {
             PPH_STRINGREF text = (PPH_STRINGREF)LParam;
             ULONG flags = (ULONG)WParam;
-            PCWSTR translatedText;
 
             UNREFERENCED_PARAMETER(flags);
 
-            // The empty-list hint is displayed when there is no data; point it
-            // at the static translation when one exists.
-            translatedText = PhTranslateString(text->Buffer);
-
-            if (translatedText != text->Buffer)
-            {
-                Context->EmptyText.Buffer = (PWSTR)translatedText;
-                Context->EmptyText.Length = (ULONG)(wcslen(translatedText) * sizeof(WCHAR));
-            }
-            else
-            {
-                Context->EmptyText = *text;
-            }
+            Context->EmptyText = *text;
         }
         return TRUE;
     case TNM_SETROWHEIGHT:
@@ -3646,7 +3632,7 @@ BOOLEAN PhTnpAddColumn(
         Context->NextId = Column->Id + 1;
 
     realColumn = PhAllocateCopy(Column, sizeof(PH_TREENEW_COLUMN));
-    realColumn->Text = PhTranslateString(Column->Text);
+    realColumn->Text = Column->Text;
 
     if (realColumn->DpiScaleOnAdd)
     {
@@ -4121,7 +4107,7 @@ VOID PhTnpChangeColumnHeader(
     if (Mask & TN_COLUMN_TEXT)
     {
         item.mask |= HDI_TEXT;
-        item.pszText = (PWSTR)PhTranslateString(Column->Text);
+        item.pszText = (PWSTR)Column->Text;
     }
 
     if (Mask & TN_COLUMN_WIDTH)

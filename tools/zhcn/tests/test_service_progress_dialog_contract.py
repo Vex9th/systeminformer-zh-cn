@@ -281,14 +281,9 @@ class ServiceProgressDialogContractTests(unittest.TestCase):
         self.assertIn("PhClearReference(&message);", body)
         self.assertIn("PhClearReference(&content);", body)
 
-    def test_generated_translation_table_remains_current(self) -> None:
-        result = subprocess.run(
-            [sys.executable, str(REPO_ROOT / "tools" / "zhcn" / "generate_translation.py"), "--check"],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    def test_generated_translation_table_is_retired(self) -> None:
+        self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
+        self.assertFalse((REPO_ROOT / "tools" / "zhcn" / "generate_translation.py").exists())
 
 
 if __name__ == "__main__":

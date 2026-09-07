@@ -253,7 +253,7 @@ class ExtendedToolsCompleteNativeResourceTests(unittest.TestCase):
         )
         self.assertRegex(
             emenu,
-            r"item->Text\s*=\s*\(PWSTR\)PhTranslateString\(Text\);",
+            r"item->Text\s*=\s*\(PWSTR\)Text;",
         )
 
     def test_all_57_static_tree_columns_route_enum_to_exact_stable_resource(self):

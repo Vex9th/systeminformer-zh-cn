@@ -52,37 +52,14 @@ jobs:
           exit 1
         }
 
-    - name: Audit, translate and regenerate
+    - name: Audit and validate native resources
       if: steps.changes.outputs.count != '0'
-      env:
-        LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-        LLM_MODEL: ${{ vars.LLM_MODEL }}
-        LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
       run: |
         python3 tools/zhcn/audit.py
-        # no-op without the LLM_API_KEY secret; new strings stay English
-        python3 tools/zhcn/auto_translate.py
-        python3 tools/zhcn/check_translation.py --manifest tools/zhcn/manifest.json --translation tools/zhcn/zh-CN.json --fail-on-placeholder-error
-        python3 tools/zhcn/generate_translation.py
-
-    - name: Translation summary
-      if: steps.changes.outputs.count != '0'
-      id: zhcn-summary
-      run: |
-        untranslated_count="$(
-          awk '
-            /^## 未翻译字符串/ { in_section = 1; next }
-            /^## / { in_section = 0 }
-            in_section && /^- `/ { count++ }
-            END { print count + 0 }
-          ' tools/zhcn/coverage-report.md
-        )"
-        echo "untranslated_count=$untranslated_count" >> "$GITHUB_OUTPUT"
-        if [ "$untranslated_count" -gt 0 ]; then
-          echo "has_untranslated=true" >> "$GITHUB_OUTPUT"
-        else
-          echo "has_untranslated=false" >> "$GITHUB_OUTPUT"
-        fi
+        python3 tools/zhcn/check_translation.py --fail-on-untranslated
+        python3 tools/zhcn/generate_native_resources.py
+        python3 tools/zhcn/generate_native_resources.py --check
+        python3 -m unittest discover -s tools/zhcn/tests -q
 
     - name: Commit and push sync
       if: steps.changes.outputs.count != '0'
@@ -97,21 +74,3 @@ jobs:
         RANGE="$(git rev-parse --short upstream/master~${{ steps.changes.outputs.count }})..$(git rev-parse --short upstream/master)"
         git commit -m "chore(sync): 合并上游 master ($RANGE)"
         git push origin zh-cn
-
-    - name: Open issue for untranslated strings
-      if: steps.changes.outputs.count != '0' && steps.zhcn-summary.outputs.has_untranslated == 'true'
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        {
-          echo "上游合并后发现未翻译字符串，已推送合并但未触发自动发布。"
-          echo
-          echo '```
-          '"$(grep -A 40 '## 未翻译字符串' tools/zhcn/coverage-report.md | head -40)"'
-          ```'
-          echo
-          echo "补翻 tools/zhcn/zh-CN.json 后运行 tools/zhcn 流程并打 tag 即可发布。"
-        } > issue-body.md
-        gh issue create --repo "$GITHUB_REPOSITORY" \
-          --title "上游同步：新增字符串待翻译" \
-          --body-file issue-body.md || true

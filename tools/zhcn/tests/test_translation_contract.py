@@ -45,7 +45,6 @@ class TranslationManifestContractTests(unittest.TestCase):
                 "c_tab",
                 "c_taskdialog",
                 "c_taskdialog_raw",
-                "c_toolbar",
                 "c_tree_item",
                 "c_treenew_col",
                 "c_treenew_empty",
@@ -253,6 +252,91 @@ class TranslationCheckerContractTests(unittest.TestCase):
             )
             return result, report
 
+    def test_checker_can_fail_closed_without_writing_a_report(self) -> None:
+        manifest = {
+            "schema_version": 2,
+            "total_occurrences": 1,
+            "unique_strings": [
+                {
+                    "category": "rc_stringtable",
+                    "english": "Missing native text",
+                    "locations": [{"file": "SystemInformer/test.rc", "line": 1}],
+                }
+            ],
+        }
+        translations = {"strings": {}, "native_strings": {}}
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = pathlib.Path(temp_dir)
+            manifest_path = temp_path / "manifest.json"
+            translation_path = temp_path / "zh-CN.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            translation_path.write_text(json.dumps(translations), encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ZH_CN_TOOLS / "check_translation.py"),
+                    "--manifest",
+                    str(manifest_path),
+                    "--translation",
+                    str(translation_path),
+                    "--fail-on-untranslated",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("untranslated: 1", result.stdout)
+            self.assertEqual(
+                {"manifest.json", "zh-CN.json"},
+                {path.name for path in temp_path.iterdir()},
+            )
+
+    def test_checker_rejects_unmigrated_ui_even_with_a_legacy_string_key(self) -> None:
+        manifest = {
+            "schema_version": 2,
+            "total_occurrences": 1,
+            "unique_strings": [
+                {
+                    "category": "c_emenu",
+                    "english": "Raw menu text",
+                    "locations": [{"file": "SystemInformer/test.c", "line": 1}],
+                }
+            ],
+        }
+        translations = {
+            "strings": {"Raw menu text": "旧字典译文"},
+            "native_strings": {},
+        }
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = pathlib.Path(temp_dir)
+            manifest_path = temp_path / "manifest.json"
+            translation_path = temp_path / "zh-CN.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            translation_path.write_text(json.dumps(translations), encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ZH_CN_TOOLS / "check_translation.py"),
+                    "--manifest",
+                    str(manifest_path),
+                    "--translation",
+                    str(translation_path),
+                    "--fail-on-untranslated",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("untranslated: 1", result.stdout)
+
     def test_checker_counts_callsite_units_and_ordinary_module_occurrences(self) -> None:
         manifest = {
             "schema_version": 2,
@@ -300,21 +384,21 @@ class TranslationCheckerContractTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn(
-            "translation audit: translated 2/4, untranslated 2", result.stdout
+            "translation audit: translated 1/4, untranslated 3", result.stdout
         )
-        self.assertIn("| plugins/A | 1 | 2 | 1 |", report)
-        self.assertIn("| plugins/B | 1 | 2 | 1 |", report)
+        self.assertIn("| plugins/A | 0 | 2 | 2 |", report)
+        self.assertIn("| plugins/B | 0 | 2 | 2 |", report)
         self.assertIn("| tools/peview | 1 | 1 | 0 |", report)
         self.assertIn("| tools/CustomSetupTool | 1 | 1 | 0 |", report)
         self.assertIn("模块表统计各模块中的有效出现量", report)
 
-    def test_checker_validates_cross_module_placeholder_once(self) -> None:
+    def test_checker_validates_native_cross_module_placeholder_once(self) -> None:
         manifest = {
             "schema_version": 2,
             "total_occurrences": 2,
             "unique_strings": [
                 {
-                    "category": "c_emenu",
+                    "category": "rc_stringtable",
                     "english": "Open %s",
                     "locations": [
                         {"file": "plugins/A/a.c", "line": 1},
@@ -323,7 +407,7 @@ class TranslationCheckerContractTests(unittest.TestCase):
                 }
             ],
         }
-        translations = {"strings": {"Open %s": "打开 %lu"}, "native_strings": {}}
+        translations = {"strings": {}, "native_strings": {"Open %s": "打开 %lu"}}
 
         result, _ = self.run_checker(manifest, translations)
 

@@ -171,7 +171,6 @@
     <ClCompile Include="dspick.c" />
     <ClCompile Include="emenu.c" />
     <ClCompile Include="phtranslation.c" />
-    <ClCompile Include="phtranslation_zhcn.c" />
     <ClCompile Include="error.c" />
     <ClCompile Include="extlv.c" />
     <ClCompile Include="fastlock.c" />

@@ -12,7 +12,6 @@ from collections import Counter
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 APP_ROOT = REPO_ROOT / "SystemInformer"
 SOURCE_PATH = APP_ROOT / "hndlprp.c"
-TRANSLATION_SOURCE = REPO_ROOT / "phlib" / "phtranslation_zhcn.c"
 
 NEW_RESOURCES = (
     ("IDS_PH_HANDLE_PRINCIPAL_USER_SUFFIX", 2668, " (User)", "（用户）"),
@@ -247,7 +246,6 @@ class HandleListViewComposedValueResourceTests(unittest.TestCase):
         translations = json.loads(
             (REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8")
         )
-        runtime_source = TRANSLATION_SOURCE.read_text(encoding="utf-8-sig")
 
         for symbol, numeric_id, en, zh in NEW_RESOURCES:
             with self.subTest(symbol=symbol):
@@ -256,7 +254,7 @@ class HandleListViewComposedValueResourceTests(unittest.TestCase):
                 self.assertEqual(chinese.get(symbol), zh)
                 self.assertEqual(translations["native_strings"].get(en), zh)
                 self.assertNotIn(en, translations["strings"])
-                self.assertNotRegex(runtime_source, rf'\{{ L"{re.escape(en)}", L"')
+                self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
 
         self.assertFalse(
             translations["strings"].keys() & translations["native_strings"].keys()
