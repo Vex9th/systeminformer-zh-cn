@@ -52,7 +52,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tools.zhcn.tests.test_process_prop
 
 预期：FAIL，原因是 `PhpUpdateProcessPropTabFont` 尚不存在，而不是测试语法或文件读取错误。
 
-- [ ] **步骤 3：提交红灯测试**
+- [x] **步骤 3：提交红灯测试**
 
 ```bash
 git add tools/zhcn/tests/test_process_properties_tab_font_contract.py docs/superpowers/plans/2026-09-08-process-properties-tab-font.md
@@ -65,7 +65,7 @@ git commit -m "test(ui): 约束进程详情选项卡字体生命周期"
 - 修改：`SystemInformer/procprp.c`
 - 测试：`tools/zhcn/tests/test_process_properties_tab_font_contract.py`
 
-- [ ] **步骤 1：实现最少字体更新函数**
+- [x] **步骤 1：实现最少字体更新函数**
 
 ```c
 static VOID PhpUpdateProcessPropTabFont(
@@ -95,13 +95,13 @@ static VOID PhpUpdateProcessPropTabFont(
 }
 ```
 
-- [ ] **步骤 2：接入初始化、DPI 更新和销毁**
+- [x] **步骤 2：接入初始化、DPI 更新和销毁**
 
 - `PhpProcessPropertiesNewInitialized` 创建宿主上下文后，使用 `PhGetWindowDpi(HostHandle)` 首次绑定字体。
 - `WM_DPICHANGED` 先调用原宿主窗口过程完成 DPI 布局，再调用字体更新函数。
 - `WM_NCDESTROY` 在释放 `propSheetContext` 前删除 `PropSheetWindowFont` 并清空字段。
 
-- [ ] **步骤 3：运行字体契约测试并确认绿灯**
+- [x] **步骤 3：运行字体契约测试并确认绿灯**
 
 运行：
 

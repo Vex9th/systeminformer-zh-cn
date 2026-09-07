@@ -1713,6 +1713,32 @@ VOID PhDoPropPageLayout(
 // border-color, wait-flush timer, refresh hotkeys, and IDOK eating
 // behaviour that today live in PhpPropSheetProc / PhpPropSheetWndProc.
 
+static VOID PhpUpdateProcessPropTabFont(
+    _Inout_ PPH_PROCESS_PROPSHEETCONTEXT PropSheetContext,
+    _In_ HWND HostHandle,
+    _In_ LONG WindowDpi
+    )
+{
+    HWND tabControlHandle;
+    HFONT newFont;
+    HFONT oldFont;
+
+    tabControlHandle = PhPropSheetNewGetTabControl(HostHandle);
+    if (!tabControlHandle)
+        return;
+
+    newFont = PhCreateTreeWindowFont(WindowDpi);
+    if (!newFont)
+        return;
+
+    oldFont = PropSheetContext->PropSheetWindowFont;
+    PropSheetContext->PropSheetWindowFont = newFont;
+    SetWindowFont(tabControlHandle, newFont, TRUE);
+
+    if (oldFont)
+        DeleteFont(oldFont);
+}
+
 static LRESULT CALLBACK PhpProcessPropertiesNewHostWndProc(
     _In_ HWND WindowHandle,
     _In_ UINT uMsg,
@@ -1741,6 +1767,12 @@ static LRESULT CALLBACK PhpProcessPropertiesNewHostWndProc(
 
             if (propSheetContext->PropContext)
                 PhDereferenceObject(propSheetContext->PropContext);
+
+            if (propSheetContext->PropSheetWindowFont)
+            {
+                DeleteFont(propSheetContext->PropSheetWindowFont);
+                propSheetContext->PropSheetWindowFont = NULL;
+            }
 
             PhFree(propSheetContext);
         }
@@ -1779,6 +1811,7 @@ static LRESULT CALLBACK PhpProcessPropertiesNewHostWndProc(
             LRESULT result;
 
             result = CallWindowProc(oldWndProc, WindowHandle, uMsg, wParam, lParam);
+            PhpUpdateProcessPropTabFont(propSheetContext, WindowHandle, LOWORD(wParam));
             PhpUpdateProcessPropButtonsDpi(propSheetContext, WindowHandle, LOWORD(wParam));
 
             return result;
@@ -1815,6 +1848,8 @@ static VOID NTAPI PhpProcessPropertiesNewInitialized(
     propSheetContext = PhAllocateZero(sizeof(PH_PROCESS_PROPSHEETCONTEXT));
     PhReferenceObject(propContext);
     propSheetContext->PropContext = propContext;
+
+    PhpUpdateProcessPropTabFont(propSheetContext, HostHandle, PhGetWindowDpi(HostHandle));
 
     propSheetContext->PropSheetWindowHookProc = PhGetWindowProcedure(HostHandle);
     PhSetWindowContext(HostHandle, 0xF, propSheetContext);
