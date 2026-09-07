@@ -8,6 +8,8 @@ SMOKE_PATH = REPO_ROOT / "tools" / "zhcn" / "smoke_test.ps1"
 WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
 RESOURCE_HEADER_PATH = REPO_ROOT / "SystemInformer" / "resource.h"
 SETTINGS_SOURCE_PATH = REPO_ROOT / "SystemInformer" / "settings.c"
+ONLINE_CHECKS_HEADER_PATH = REPO_ROOT / "plugins" / "OnlineChecks" / "onlnchk.h"
+ONLINE_CHECKS_PARTNER_PATH = REPO_ROOT / "plugins" / "OnlineChecks" / "partner.c"
 
 
 class RuntimeSmokeContractTests(unittest.TestCase):
@@ -17,6 +19,8 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         cls.workflow = WORKFLOW_PATH.read_text(encoding="utf-8-sig")
         cls.resource_header = RESOURCE_HEADER_PATH.read_text(encoding="utf-8-sig")
         cls.settings_source = SETTINGS_SOURCE_PATH.read_text(encoding="utf-8-sig")
+        cls.online_checks_header = ONLINE_CHECKS_HEADER_PATH.read_text(encoding="utf-8-sig")
+        cls.online_checks_partner = ONLINE_CHECKS_PARTNER_PATH.read_text(encoding="utf-8-sig")
 
     def test_default_iterations_and_isolated_launch_arguments_are_locked(self) -> None:
         self.assertRegex(
@@ -35,7 +39,63 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         )
         self.assertRegex(
             self.smoke,
-            r"\$launchArguments\s*=\s*@\(\s*'-nosettings'\s*,\s*'-newinstance'\s*\)",
+            r'\$launchArguments\s*=\s*"-settings\s+`"\$settingsFile`"\s+-newinstance"',
+        )
+        self.assertNotIn("'-nosettings'", self.smoke)
+
+    def test_isolated_settings_suppress_partner_prompt_without_enabling_network_checks(self) -> None:
+        self.assertRegex(
+            self.smoke,
+            r"sys_info-smoke-\{0\}\.settings\.json",
+        )
+        expected_settings = {
+            "Language": "'zh-CN'",
+            "FirstRun": "0",
+            "OnlineChecks.PartnerPromptShown": "1",
+            "OnlineChecks.EnableScanning": "0",
+            "OnlineChecks.HybridAnalysisEnableLookups": "0",
+            "OnlineChecks.HybridAnalysisEnableAutoSubmit": "0",
+            "OnlineChecks.VirusTotalEnableLookups": "0",
+        }
+        for name, value in expected_settings.items():
+            self.assertRegex(
+                self.smoke,
+                rf"'{re.escape(name)}'\s*=\s*{value}",
+            )
+        setting_definitions = {
+            "SETTING_NAME_SCAN_ENABLED": "EnableScanning",
+            "SETTING_NAME_HYBRIDANALYSIS_LOOKUPS_ENABLED": "HybridAnalysisEnableLookups",
+            "SETTING_NAME_HYBRIDANALYSIS_SUBMIT_ENABLED": "HybridAnalysisEnableAutoSubmit",
+            "SETTING_NAME_VIRUSTOTAL_LOOKUPS_ENABLED": "VirusTotalEnableLookups",
+            "SETTING_NAME_PARTNER_PROMPT_SHOWN": "PartnerPromptShown",
+        }
+        for macro, suffix in setting_definitions.items():
+            self.assertRegex(
+                self.online_checks_header,
+                rf"#define\s+{macro}\s+\(PLUGIN_NAME\s+L\"\.{suffix}\"\)",
+            )
+        self.assertRegex(
+            self.online_checks_partner,
+            r"if\s*\(PhGetIntegerSetting\(SETTING_NAME_PARTNER_PROMPT_SHOWN\)\)\s*"
+            r"return\s*;",
+        )
+        self.assertIn("[System.IO.File]::WriteAllText", self.smoke)
+        loop_index = self.smoke.index("for ($iteration = 1")
+        write_index = self.smoke.index("[System.IO.File]::WriteAllText")
+        launch_index = self.smoke.index("Start-Process")
+        cleanup_index = self.smoke.index("Remove-Item -LiteralPath $settingsFile -Force")
+        self.assertLess(loop_index, write_index)
+        self.assertLess(write_index, launch_index)
+        self.assertLess(launch_index, cleanup_index)
+        iteration_block = self.smoke[
+            loop_index : self.smoke.index('Write-Host "PASS:', loop_index)
+        ]
+        self.assertRegex(
+            iteration_block,
+            r"(?s)finally\s*\{.*?"
+            r"if\s*\(\$settingsFile\s+-and\s+"
+            r"\(Test-Path\s+-LiteralPath\s+\$settingsFile\)\)\s*\{\s*"
+            r"Remove-Item\s+-LiteralPath\s+\$settingsFile\s+-Force\s*\}",
         )
 
     def test_expandable_strings_do_not_use_ambiguous_colon_interpolation(self) -> None:

@@ -89,8 +89,18 @@ function Get-NewDumpFiles([string]$Directory, [string[]]$BaselinePaths) {
 
 $ExePath = (Resolve-Path -LiteralPath $ExePath).Path
 $workingDirectory = Split-Path -Parent $ExePath
-$launchArguments = @('-nosettings', '-newinstance')
 $exitCommandId = 10001 # ID_HACKER_EXIT in SystemInformer/resource.h
+$isolatedSettings = [ordered]@{
+    'Language' = 'zh-CN'
+    'FirstRun' = 0
+    'OnlineChecks.PartnerPromptShown' = 1
+    'OnlineChecks.EnableScanning' = 0
+    'OnlineChecks.HybridAnalysisEnableLookups' = 0
+    'OnlineChecks.HybridAnalysisEnableAutoSubmit' = 0
+    'OnlineChecks.VirusTotalEnableLookups' = 0
+}
+$settingsJson = $isolatedSettings | ConvertTo-Json -Compress
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 $expectedModuleMappings = @(
     'ToolStatus.dll',
     'ExtendedTools.dll',
@@ -142,9 +152,16 @@ try {
 
     for ($iteration = 1; $iteration -le $Iterations; $iteration++) {
         $process = $null
+        $settingsFile = $null
         $iterationSucceeded = $false
 
         try {
+            $settingsFile = Join-Path `
+                ([System.IO.Path]::GetTempPath()) `
+                ("sys_info-smoke-{0}.settings.json" -f [Guid]::NewGuid().ToString('N'))
+            [System.IO.File]::WriteAllText($settingsFile, $settingsJson, $utf8NoBom)
+            $launchArguments = "-settings `"$settingsFile`" -newinstance"
+
             Write-Host "iteration $iteration/${Iterations}: launching $ExePath"
             $process = Start-Process `
                 -FilePath $ExePath `
@@ -254,6 +271,10 @@ try {
                 }
 
                 $process.Dispose()
+            }
+
+            if ($settingsFile -and (Test-Path -LiteralPath $settingsFile)) {
+                Remove-Item -LiteralPath $settingsFile -Force
             }
         }
     }
