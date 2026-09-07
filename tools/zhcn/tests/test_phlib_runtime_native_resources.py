@@ -67,6 +67,9 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
             )
             for name in ("main.c", "mainwnd.c", "options.c")
         }
+        cls.build_config = (
+            REPO_ROOT / "tools" / "CustomBuildTool" / "BuildConfig.cs"
+        ).read_text(encoding="utf-8-sig")
 
     def test_phlib_resource_consumers_include_their_public_contracts(self) -> None:
         for name in ("extlv.c", "graphscroll.c", "searchbox.c"):
@@ -80,6 +83,10 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
             with self.subTest(source=name):
                 self.assertIn("PhLoadUiString(", source)
                 self.assertIn("#include <mapldr.h>", source)
+
+    def test_sdk_exports_the_shared_application_resource_ids(self) -> None:
+        phlib_headers = self.build_config.split("Build_Phlib_Headers", 1)[1].split("];", 1)[0]
+        self.assertIn('"phappresourceid.h"', phlib_headers)
 
     def test_resources_are_contiguous_bilingual_and_exported_to_phlib(self) -> None:
         root = REPO_ROOT / "SystemInformer"
