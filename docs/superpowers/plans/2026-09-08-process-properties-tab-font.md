@@ -21,7 +21,7 @@
 **文件：**
 - 创建：`tools/zhcn/tests/test_process_properties_tab_font_contract.py`
 
-- [ ] **步骤 1：编写失败的测试**
+- [x] **步骤 1：编写失败的测试**
 
 测试读取 `SystemInformer/procprp.c`，提取目标函数并断言以下行为：
 
@@ -42,7 +42,7 @@ def test_initialization_dpi_refresh_and_cleanup_are_wired(self) -> None:
     self.assertRegex(host, r"case WM_NCDESTROY:.*DeleteFont\(propSheetContext->PropSheetWindowFont\)")
 ```
 
-- [ ] **步骤 2：运行测试并确认红灯**
+- [x] **步骤 2：运行测试并确认红灯**
 
 运行：
 
