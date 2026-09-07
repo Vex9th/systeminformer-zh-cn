@@ -61,6 +61,12 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
                 "guisup.c",
             )
         }
+        cls.application_sources = {
+            name: cls.audit.mask_c_comments(
+                (REPO_ROOT / "SystemInformer" / name).read_text(encoding="utf-8-sig")
+            )
+            for name in ("main.c", "mainwnd.c", "options.c")
+        }
 
     def test_phlib_resource_consumers_include_their_public_contracts(self) -> None:
         for name in ("extlv.c", "graphscroll.c", "searchbox.c"):
@@ -68,6 +74,12 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
                 source = self.sources[name]
                 self.assertIn("#include <mapldr.h>", source)
                 self.assertIn("#include <phappresourceid.h>", source)
+
+    def test_application_resource_consumers_include_the_loader_contract(self) -> None:
+        for name, source in self.application_sources.items():
+            with self.subTest(source=name):
+                self.assertIn("PhLoadUiString(", source)
+                self.assertIn("#include <mapldr.h>", source)
 
     def test_resources_are_contiguous_bilingual_and_exported_to_phlib(self) -> None:
         root = REPO_ROOT / "SystemInformer"

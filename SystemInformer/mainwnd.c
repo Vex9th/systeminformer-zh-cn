@@ -20,6 +20,7 @@
 #include <hndlinfo.h>
 #include <kphuser.h>
 #include <lsasup.h>
+#include <mapldr.h>
 #include <svcsup.h>
 #include <workqueue.h>
 #include <phsettings.h>
