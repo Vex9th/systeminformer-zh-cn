@@ -148,10 +148,10 @@ class SystemInformerRemainingStatisticsColumnsTests(unittest.TestCase):
             self.assertEqual(en, english.get(symbol))
             self.assertEqual(zh, chinese.get(symbol))
 
-        self.assertEqual(1296, len(english))
-        self.assertEqual(1296, len(chinese))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_TREENEW_WINDOW_TITLE$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3296$")
+        self.assertEqual(1340, len(english))
+        self.assertEqual(1340, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_STRINGS$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3340$")
 
         for en in MIGRATED_KEYS:
             owner = "strings" if en in RUNTIME_COMPATIBILITY_KEYS else "native_strings"

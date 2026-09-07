@@ -2052,15 +2052,15 @@ INT_PTR CALLBACK PhpTokenPageProc(
                         break;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatorySecureProcessRID, L"Protected", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatorySystemRID, L"System", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryHighRID, L"High", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryMediumPlusRID, L"Medium +", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryMediumRID, L"Medium", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryLowRID, L"Low", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryUntrustedRID, L"Untrusted", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatorySecureProcessRID, PhGetApplicationUiString(IDS_PH_MENU_PROTECTED_PLAIN), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatorySystemRID, PhGetApplicationUiString(IDS_PH_GROUP_SYSTEM), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryHighRID, PhGetApplicationUiString(IDS_PH_HANDLE_IO_PRIORITY_HIGH), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryMediumPlusRID, PhGetApplicationUiString(IDS_PH_MENU_MEDIUM_PLUS), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryMediumRID, PhGetApplicationUiString(IDS_PH_MENU_MEDIUM_PLAIN), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryLowRID, PhGetApplicationUiString(IDS_PH_HANDLE_IO_PRIORITY_LOW), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, MandatoryUntrustedRID, PhGetApplicationUiString(IDS_PH_MENU_UNTRUSTED), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, L"Custom...", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, USHRT_MAX, PhGetApplicationUiString(IDS_PH_MENU_CUSTOM), NULL, NULL), ULONG_MAX);
 
                     integrityLevelRID = ULONG_MAX;
 
@@ -2101,7 +2101,7 @@ INT_PTR CALLBACK PhpTokenPageProc(
                             {
                                 PPH_EMENU_ITEM unknownIntegrityItem;
 
-                                unknownIntegrityItem = PhCreateEMenuItem(0, (ULONG)integrityLevelRID, L"Intermediate level", NULL, NULL);
+                                unknownIntegrityItem = PhCreateEMenuItem(0, (ULONG)integrityLevelRID, PhGetApplicationUiString(IDS_PH_MENU_INTERMEDIATE_LEVEL), NULL, NULL);
                                 unknownIntegrityItem->Flags |= PH_EMENU_CHECKED | PH_EMENU_RADIOCHECK;
                                 PhInsertEMenuItem(menu, unknownIntegrityItem, customLevelPosition);
                             }
@@ -2327,10 +2327,10 @@ INT_PTR CALLBACK PhpTokenPageProc(
                         {
                         case PH_PROCESS_TOKEN_CATEGORY_PRIVILEGES:
                             {
-                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_ENABLE, L"&Enable", NULL, NULL), ULONG_MAX);
-                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_DISABLE, L"&Disable", NULL, NULL), ULONG_MAX);
-                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_RESET, L"Re&set", NULL, NULL), ULONG_MAX);
-                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_REMOVE, L"&Remove", NULL, NULL), ULONG_MAX);
+                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_ENABLE, PhGetApplicationUiString(IDS_PH_MENU_ENABLE_SHORTCUT), NULL, NULL), ULONG_MAX);
+                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_DISABLE, PhGetApplicationUiString(IDS_PH_MENU_DISABLE_SHORTCUT), NULL, NULL), ULONG_MAX);
+                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_RESET, PhGetApplicationUiString(IDS_PH_MENU_RESET_SHORTCUT), NULL, NULL), ULONG_MAX);
+                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_PRIVILEGE_REMOVE, PhGetApplicationUiString(IDS_PH_MENU_REMOVE_SHORTCUT), NULL, NULL), ULONG_MAX);
                                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
 
                                 if (hasRemovedItems)
@@ -2343,16 +2343,16 @@ INT_PTR CALLBACK PhpTokenPageProc(
                         case PH_PROCESS_TOKEN_CATEGORY_LOGON:
                         case PH_PROCESS_TOKEN_CATEGORY_INTEGRITY:
                             {
-                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_GROUP_ENABLE, L"&Enable", NULL, NULL), ULONG_MAX);
-                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_GROUP_DISABLE, L"&Disable", NULL, NULL), ULONG_MAX);
-                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_GROUP_RESET, L"Re&set", NULL, NULL), ULONG_MAX);
+                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_GROUP_ENABLE, PhGetApplicationUiString(IDS_PH_MENU_ENABLE_SHORTCUT), NULL, NULL), ULONG_MAX);
+                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_GROUP_DISABLE, PhGetApplicationUiString(IDS_PH_MENU_DISABLE_SHORTCUT), NULL, NULL), ULONG_MAX);
+                                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_GROUP_RESET, PhGetApplicationUiString(IDS_PH_MENU_RESET_SHORTCUT), NULL, NULL), ULONG_MAX);
                                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
                             }
                             break;
                         case PH_PROCESS_TOKEN_CATEGORY_FLAGS:
                             {
                                 if ((numberOfItems == 1) && (listviewItems[0]->ItemFlag == PH_PROCESS_TOKEN_FLAG_UIACCESS))
-                                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_UIACCESS_REMOVE, L"&Remove", NULL, NULL), ULONG_MAX);
+                                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_UIACCESS_REMOVE, PhGetApplicationUiString(IDS_PH_MENU_REMOVE_SHORTCUT), NULL, NULL), ULONG_MAX);
                             }
                             break;
                         }
@@ -3495,7 +3495,7 @@ INT_PTR CALLBACK PhpTokenCapabilitiesPageProc(
             if (numberOfAttributeObjectNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, IDC_COPY, tnHandle, contextMenuEvent->Column);
 
                 selectedItem = PhShowEMenu(
@@ -4038,7 +4038,7 @@ INT_PTR CALLBACK PhpTokenClaimsPageProc(
             if (numberOfAttributeObjectNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, IDC_COPY, tnHandle, contextMenuEvent->Column);
 
                 selectedItem = PhShowEMenu(
@@ -4198,7 +4198,7 @@ INT_PTR CALLBACK PhpTokenAttributesPageProc(
             if (numberOfAttributeObjectNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, IDC_COPY, tnHandle, contextMenuEvent->Column);
 
                 selectedItem = PhShowEMenu(
@@ -6327,7 +6327,7 @@ INT_PTR CALLBACK PhpTokenAppPolicyPageProc(
             if (numberOfAttributeObjectNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, IDC_COPY, tnHandle, contextMenuEvent->Column);
 
                 selectedItem = PhShowEMenu(

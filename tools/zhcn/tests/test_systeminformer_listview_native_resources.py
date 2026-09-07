@@ -222,10 +222,10 @@ class SystemInformerListViewNativeResourceTests(unittest.TestCase):
             self.assertEqual(zh, data[expected_layer].get(en), en)
             self.assertNotIn(en, data[other_layer], en)
 
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_TREENEW_WINDOW_TITLE$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3296$")
-        self.assertEqual(1296, len(english))
-        self.assertEqual(1296, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_STRINGS$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3340$")
+        self.assertEqual(1340, len(english))
+        self.assertEqual(1340, len(chinese))
 
     def test_thread_stays_runtime_owned_for_indirect_informer_menu_consumer(self) -> None:
         informer = self.audit.mask_c_comments((APP_ROOT / "informerwnd.c").read_text(encoding="utf-8-sig"))

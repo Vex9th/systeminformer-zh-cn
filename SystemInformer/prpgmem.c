@@ -147,14 +147,14 @@ VOID PhShowMemoryContextMenu(
         PH_PLUGIN_MENU_INFORMATION menuInfo;
 
         menu = PhCreateEMenu();
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_READWRITEMEMORY, L"&Read/Write memory...", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_CHANGEPROTECTION, L"Change &protection...", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_EMPTYWORKINGSET, L"&Empty working set...", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_READWRITEMEMORY, PhGetApplicationUiString(IDS_PH_MENU_READ_WRITE_MEMORY), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_CHANGEPROTECTION, PhGetApplicationUiString(IDS_PH_MENU_CHANGE_PROTECTION), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_EMPTYWORKINGSET, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_WORKING_SET), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_FREE, L"&Free", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_DECOMMIT, L"&Decommit", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_FREE, PhGetApplicationUiString(IDS_PH_MENU_FREE), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_DECOMMIT, PhGetApplicationUiString(IDS_PH_MENU_DECOMMIT), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_SAVE, L"&Save...", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_SAVE, PhGetApplicationUiString(IDS_PH_MENU_SAVE_SHORTCUT), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY_SHORTCUT), NULL, NULL), ULONG_MAX);
         PhSetFlagsEMenuItem(menu, ID_MEMORY_READWRITEMEMORY, PH_EMENU_DEFAULT, PH_EMENU_DEFAULT);
@@ -907,22 +907,22 @@ INT_PTR CALLBACK PhpProcessMemoryDlgProc(
                     } PH_MEMORY_FILTER_MENU_ITEM;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, freeItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIDE_FREE, L"Hide free pages", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, reservedItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIDE_RESERVED, L"Hide reserved pages", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, guardItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIDE_GUARD, L"Hide guard pages", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, freeItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIDE_FREE, PhGetApplicationUiString(IDS_PH_MENU_HIDE_FREE_PAGES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, reservedItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIDE_RESERVED, PhGetApplicationUiString(IDS_PH_MENU_HIDE_RESERVED_PAGES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, guardItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIDE_GUARD, PhGetApplicationUiString(IDS_PH_MENU_HIDE_GUARD_PAGES), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, privateItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_PRIVATE, L"Highlight private pages", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, systemItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_SYSTEM, L"Highlight system pages", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, cfgItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_CFG, L"Highlight CFG pages", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, typeItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_EXECUTE, L"Highlight executable pages", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, privateItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_PRIVATE, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_PRIVATE_PAGES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, systemItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_SYSTEM, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_SYSTEM_PAGES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, cfgItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_CFG, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_CFG_PAGES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, typeItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HIGHLIGHT_EXECUTE, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_EXECUTABLE_PAGES), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, zeroPadItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_ZERO_PAD_ADDRESSES, L"Zero pad addresses", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, zeroPadItem = PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_ZERO_PAD_ADDRESSES, PhGetApplicationUiString(IDS_PH_MENU_ZERO_PAD_ADDRESSES), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_READ_ADDRESS, L"Read/Write &address...", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HEAPS, L"Heaps...", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_MODIFIED, L"Modified...", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_STRINGS, L"Strings...", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_SAVE, L"Save...", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_READ_ADDRESS, PhGetApplicationUiString(IDS_PH_MENU_READ_WRITE_ADDRESS), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_HEAPS, PhGetApplicationUiString(IDS_PH_MENU_HEAPS), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_MODIFIED, PhGetApplicationUiString(IDS_PH_MENU_MODIFIED), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_STRINGS, PhGetApplicationUiString(IDS_PH_MENU_STRINGS), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_MEMORY_FILTER_MENU_SAVE, PhGetApplicationUiString(IDS_PH_MENU_SAVE), NULL, NULL), ULONG_MAX);
 
                     if (memoryContext->ListContext.HideFreeRegions)
                         freeItem->Flags |= PH_EMENU_CHECKED;
