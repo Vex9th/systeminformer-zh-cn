@@ -99,6 +99,44 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         self.assertIn("module mapping", self.smoke)
         self.assertNotIn("plugins loaded", self.smoke.lower())
 
+    def test_blocking_window_diagnostic_includes_child_control_identity_and_text(self) -> None:
+        self.assertIn("EnumChildWindows", self.smoke)
+        self.assertIn("GetDlgCtrlID", self.smoke)
+        helper_match = re.search(
+            r"(?s)function Get-ChildWindowDescriptions\b.*?"
+            r"(?=\nfunction Get-NewDumpFiles\b)",
+            self.smoke,
+        )
+        self.assertIsNotNone(helper_match)
+        helper = helper_match.group(0)
+        self.assertRegex(
+            helper,
+            r"GetWindowText\(\$windowHandle,\s*\$text,\s*1024\)",
+        )
+        self.assertRegex(
+            helper,
+            r"GetClassName\(\$windowHandle,\s*\$className,\s*256\)",
+        )
+        self.assertRegex(
+            helper,
+            r"ControlId\s*=\s*\[Native\.Win\]::GetDlgCtrlID\(\$windowHandle\)",
+        )
+        self.assertIn('.Replace("`r", \' \').Replace("`n", \' \')', helper)
+        self.assertRegex(
+            helper,
+            r"EnumChildWindows\(\$ParentHandle,\s*\$callback,\s*"
+            r"\[IntPtr\]::Zero\)",
+        )
+        self.assertRegex(
+            self.smoke,
+            r"(?s)Get-ChildWindowDescriptions\s+\$_\.Handle\s*\|\s*"
+            r"ForEach-Object\s*\{.*?ControlId.*?ClassName.*?Text",
+        )
+        self.assertRegex(
+            self.smoke,
+            r"children=\[\$childWindows\]",
+        )
+
     def test_success_path_requests_application_exit_and_requires_clean_exit(self) -> None:
         self.assertIn("PostMessage", self.smoke)
         self.assertIn("$exitCommandId = 10001", self.smoke)

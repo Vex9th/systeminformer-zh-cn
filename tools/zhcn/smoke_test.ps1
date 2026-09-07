@@ -16,10 +16,12 @@ $ErrorActionPreference = 'Stop'
 
 Add-Type -Namespace Native -Name Win -MemberDefinition @'
 [DllImport("user32.dll")] public static extern bool EnumWindows(EnumWindowsProc cb, IntPtr lp);
+[DllImport("user32.dll")] public static extern bool EnumChildWindows(IntPtr parent, EnumWindowsProc cb, IntPtr lp);
 public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lp);
 [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pid);
 [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder sb, int max);
 [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder sb, int max);
+[DllImport("user32.dll")] public static extern int GetDlgCtrlID(IntPtr hWnd);
 [DllImport("user32.dll")] public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp, uint flags, uint timeout, out IntPtr result);
 [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp);
 [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hWnd);
@@ -49,6 +51,28 @@ function Get-ProcessWindows([int]$Id) {
     }
 
     [Native.Win]::EnumWindows($callback, [IntPtr]::Zero) | Out-Null
+    return ,$list
+}
+
+function Get-ChildWindowDescriptions([IntPtr]$ParentHandle) {
+    $list = New-Object System.Collections.ArrayList
+    $callback = {
+        param($windowHandle, $parameter)
+
+        $text = New-Object System.Text.StringBuilder 1024
+        $className = New-Object System.Text.StringBuilder 256
+        [Native.Win]::GetWindowText($windowHandle, $text, 1024) | Out-Null
+        [Native.Win]::GetClassName($windowHandle, $className, 256) | Out-Null
+        [void]$list.Add(@{
+            ControlId = [Native.Win]::GetDlgCtrlID($windowHandle)
+            ClassName = $className.ToString()
+            Text = $text.ToString().Replace("`r", ' ').Replace("`n", ' ')
+        })
+
+        return $true
+    }
+
+    [Native.Win]::EnumChildWindows($ParentHandle, $callback, [IntPtr]::Zero) | Out-Null
     return ,$list
 }
 
@@ -150,7 +174,15 @@ try {
             if (-not $mainWindow) {
                 $observedWindows = @(
                     $windows | ForEach-Object {
-                        "class='$($_.ClassName)' title='$($_.Title)'"
+                        $childWindows = @(
+                            Get-ChildWindowDescriptions $_.Handle | ForEach-Object {
+                                "id=$($_.ControlId) class='$($_.ClassName)' text='$($_.Text)'"
+                            }
+                        ) -join ', '
+                        if (-not $childWindows) {
+                            $childWindows = '<none>'
+                        }
+                        "class='$($_.ClassName)' title='$($_.Title)' children=[$childWindows]"
                     }
                 ) -join '; '
                 if (-not $observedWindows) {
