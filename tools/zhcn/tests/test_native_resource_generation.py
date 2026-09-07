@@ -12,6 +12,13 @@ import unittest
 import xml.etree.ElementTree as ET
 from collections import Counter
 
+try:
+    from tools.zhcn.tests.temp_source import scan_temporary_source
+except ModuleNotFoundError as error:
+    if error.name != "tools":
+        raise
+    from temp_source import scan_temporary_source
+
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 GENERATOR = REPO_ROOT / "tools" / "zhcn" / "generate_native_resources.py"
@@ -216,14 +223,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 L"One-time content"
             );
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             {entry["english"] for entry in entries},
@@ -334,14 +334,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
             }
             // PhSetWindowText(hwnd, L"Commented title");
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             {(entry["category"], entry["english"]) for entry in entries},
@@ -407,14 +400,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 PhShowError(hwnd, L"%s", L"Visible vararg exactly once.");
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             [
@@ -453,14 +439,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 );
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             [(entry["category"], entry["english"]) for entry in entries],
@@ -541,14 +520,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     L"Direct title", L"Direct API content: %s", itemName);
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             [(entry["category"], entry["english"]) for entry in entries],
@@ -588,14 +560,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 PhSetWindowText(secondWindow, second);
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             [entry["english"] for entry in entries],
@@ -670,14 +635,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 PhSetWindowText(hwnd, globalText);
             }
         """.replace("__LONG_CONDITION__", long_condition)
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             [(entry["category"], entry["english"]) for entry in entries],
@@ -752,14 +710,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 );
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             [
@@ -813,14 +764,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 );
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         self.assertEqual(
             [(entry["category"], entry["english"]) for entry in entries],
@@ -869,14 +813,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 }
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         combo_text = {
             entry["english"]
@@ -913,14 +850,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                     list, groupItems[i].Value, i, groupItems[i].Name, NULL);
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         group_item_text = Counter(
             entry["english"]
@@ -6046,14 +5976,7 @@ class NativeResourceGenerationTests(unittest.TestCase):
                 L"Routed status label"
                 );
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_statusbar(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_statusbar, source)
 
         self.assertEqual(
             [entry["english"] for entry in entries],
