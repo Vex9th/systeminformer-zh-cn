@@ -110,7 +110,7 @@
 
 合回前确认主工作树仍只保留用户的 `SystemInformer/SystemInformer.def.h`，不将其暂存或覆盖。
 
-- [ ] **步骤 4：推送 `zh-cn` 并等待 GitHub Windows CI 结束**
+- [x] **步骤 4：推送 `zh-cn` 并等待 GitHub Windows CI 结束**
 
 CI 未通过不得运行 Release；失败时读取真实日志并修复根因。
 
