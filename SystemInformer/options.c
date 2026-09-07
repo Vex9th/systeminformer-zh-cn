@@ -3697,11 +3697,11 @@ INT_PTR CALLBACK PhpOptionsAdvancedDlgProc(
                         break;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, hidemodifiedMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIDE_MODIFIED, L"Hide modified", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, hidedefaultMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIDE_DEFAULT, L"Hide default", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, hidemodifiedMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIDE_MODIFIED, PhGetApplicationUiString(IDS_PH_MENU_HIDE_MODIFIED), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, hidedefaultMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIDE_DEFAULT, PhGetApplicationUiString(IDS_PH_MENU_HIDE_DEFAULT), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, highlightmodifiedMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIGHLIGHT_MODIFIED, L"Highlight modified", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, highlightdefaultMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIGHLIGHT_DEFAULT, L"Highlight default", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, highlightmodifiedMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIGHLIGHT_MODIFIED, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_MODIFIED), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, highlightdefaultMenuItem = PhCreateEMenuItem(0, PH_OPTIONS_ADVANCED_TREE_ITEM_MENU_HIGHLIGHT_DEFAULT, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_DEFAULT), NULL, NULL), ULONG_MAX);
 
                     if (context->HideModified)
                         hidemodifiedMenuItem->Flags |= PH_EMENU_CHECKED;
@@ -3822,7 +3822,7 @@ INT_PTR CALLBACK PhpOptionsAdvancedDlgProc(
                     PPH_EMENU_ITEM item;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, L"&Reset", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, PhGetApplicationUiString(IDS_PH_MENU_RESET_PLAIN), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY_SHORTCUT), NULL, NULL), ULONG_MAX);
                     PhInsertCopyCellEMenuItem(menu, IDC_COPY, context->TreeNewHandle, contextMenuEvent->Column);
@@ -4254,7 +4254,7 @@ INT_PTR CALLBACK PhpOptionsHighlightingDlgProc(
                 if (ColorItem = PhGetSelectedListViewItemParam(HighlightingListViewHandle))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, L"&Reset", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, PhGetApplicationUiString(IDS_PH_MENU_RESET_PLAIN), NULL, NULL), ULONG_MAX);
 
                     item = PhShowEMenu(
                         menu,
@@ -4302,7 +4302,7 @@ INT_PTR CALLBACK PhpOptionsHighlightingDlgProc(
                 point.y = GET_Y_LPARAM(lParam);
 
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, L"&Reset", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, PhGetApplicationUiString(IDS_PH_MENU_RESET_PLAIN), NULL, NULL), ULONG_MAX);
 
                 item = PhShowEMenu(
                     menu,
@@ -4783,7 +4783,7 @@ INT_PTR CALLBACK PhpOptionsGraphsDlgProc(
                 if (ColorItem = PhGetSelectedListViewItemParam(PhpGraphListViewHandle))
                 {
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, L"&Reset", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_RESET, PhGetApplicationUiString(IDS_PH_MENU_RESET_PLAIN), NULL, NULL), ULONG_MAX);
 
                     item = PhShowEMenu(
                         menu,

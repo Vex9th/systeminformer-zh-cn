@@ -1011,7 +1011,7 @@ BOOLEAN NTAPI PhpUserListTreeNewCallback(
             if (numberOfNodes != 0)
             {
                 menu = PhCreateEMenu();
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, IDC_COPY, context->TreeNewHandle, contextMenu->Column);
 
                 selectedItem = PhShowEMenu(

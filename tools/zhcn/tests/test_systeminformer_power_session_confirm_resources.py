@@ -59,10 +59,10 @@ class SystemInformerPowerSessionConfirmResourcesTests(unittest.TestCase):
             self.assertEqual(en, english.get(symbol))
             self.assertEqual(zh, chinese.get(symbol))
 
-        self.assertEqual(1370, len(english))
-        self.assertEqual(1370, len(chinese))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
+        self.assertEqual(1423, len(english))
+        self.assertEqual(1423, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_TERMINATE_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3423$")
 
         for en in MIGRATED_KEYS:
             self.assertIn(en, data["native_strings"])

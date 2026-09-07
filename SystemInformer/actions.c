@@ -999,7 +999,7 @@ PVOID PhUiCreateComputerBootDeviceMenu(
     PPH_EMENU_ITEM menuItem;
     PPH_LIST bootApplicationList;
 
-    menuItem = PhCreateEMenuItem(PH_EMENU_DISABLED, ID_COMPUTER_RESTARTBOOTDEVICE, L"Restart to boot application", NULL, NULL);
+    menuItem = PhCreateEMenuItem(PH_EMENU_DISABLED, ID_COMPUTER_RESTARTBOOTDEVICE, PhGetApplicationUiString(IDS_PH_MENU_RESTART_TO_BOOT_APPLICATION), NULL, NULL);
 
     if (!PhGetOwnTokenAttributes().Elevated)
         return menuItem;
@@ -1050,7 +1050,7 @@ PVOID PhUiCreateComputerFirmwareDeviceMenu(
     PPH_EMENU_ITEM menuItem;
     PPH_LIST firmwareApplicationList;
 
-    menuItem = PhCreateEMenuItem(PH_EMENU_DISABLED, ID_COMPUTER_RESTARTFWDEVICE, L"Restart to firmware application", NULL, NULL);
+    menuItem = PhCreateEMenuItem(PH_EMENU_DISABLED, ID_COMPUTER_RESTARTFWDEVICE, PhGetApplicationUiString(IDS_PH_MENU_RESTART_TO_FIRMWARE_APPLICATION), NULL, NULL);
 
     if (!PhGetOwnTokenAttributes().Elevated)
         return menuItem;
@@ -1316,13 +1316,13 @@ VOID PhUiCreateSessionMenu(
         PhDereferenceObject(escapedMenuText);
         PhDereferenceObject(entry->UserName);
 
-        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_CONNECT, L"&Connect", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_DISCONNECT, L"&Disconnect", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_LOGOFF, L"&Logoff", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_REMOTECONTROL, L"Rem&ote control", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_SENDMESSAGE, L"Send &message...", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_CONNECT, PhGetApplicationUiString(IDS_PH_MENU_CONNECT), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_DISCONNECT, PhGetApplicationUiString(IDS_PH_MENU_DISCONNECT), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_LOGOFF, PhGetApplicationUiString(IDS_PH_MENU_LOGOFF), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_REMOTECONTROL, PhGetApplicationUiString(IDS_PH_MENU_REMOTE_CONTROL), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_SENDMESSAGE, PhGetApplicationUiString(IDS_PH_MENU_SEND_MESSAGE), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(userMenu, PhCreateEMenuSeparator(), ULONG_MAX);
-        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_PROPERTIES, L"P&roperties", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(userMenu, PhCreateEMenuItem(0, ID_USER_PROPERTIES, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_PROPERTIES), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(UsersMenuItem, userMenu, ULONG_MAX);
     }
 

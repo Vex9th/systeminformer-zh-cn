@@ -443,10 +443,10 @@ INT_PTR CALLBACK PhpMemoryResultsDlgProc(
                     ULONG filterType = 0;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_CONTAINS, L"Contains...", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_CONTAINS_CASEINSENSITIVE, L"Contains (case-insensitive)...", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_REGEX, L"Regex...", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_REGEX_CASEINSENSITIVE, L"Regex (case-insensitive)...", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_CONTAINS, PhGetApplicationUiString(IDS_PH_MENU_CONTAINS), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_CONTAINS_CASEINSENSITIVE, PhGetApplicationUiString(IDS_PH_MENU_CONTAINS_CASE_INSENSITIVE), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_REGEX, PhGetApplicationUiString(IDS_PH_MENU_REGEX), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_FILTER_REGEX_CASEINSENSITIVE, PhGetApplicationUiString(IDS_PH_MENU_REGEX_CASE_INSENSITIVE), NULL, NULL), ULONG_MAX);
 
                     if (!PhGetClientRect(GetDlgItem(hwndDlg, IDC_FILTER), &buttonRect))
                         break;
@@ -619,9 +619,9 @@ INT_PTR CALLBACK PhpMemoryResultsDlgProc(
                             break;
 
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_READWRITEMEMORY, L"&Read/Write memory", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MEMORY_READWRITEMEMORY, PhGetApplicationUiString(IDS_PH_MENU_READ_WRITE_MEMORY_SHORTCUT), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                         PhInsertCopyListViewEMenuItem(menu, IDC_COPY, context->ListViewHandle);
 
                         selectedItem = PhShowEMenu(

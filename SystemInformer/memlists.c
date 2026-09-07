@@ -656,16 +656,16 @@ VOID PhShowMemoryListCommand(
     PPH_EMENU_ITEM selectedItem;
 
     menu = PhCreateEMenu();
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 0, L"&Combine memory pages", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"Empty &compression cache", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"Empty system &file cache", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, L"Empty &registry cache", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 4, L"Empty &working sets", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 5, L"Empty &modified page list", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 6, L"Empty &modified file cache", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 7, L"Empty &standby list", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 8, L"Empty &priority 0 standby list", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, RTL_NUMBER_OF(PhMemoryListCommands), L"Empty &all", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 0, PhGetApplicationUiString(IDS_PH_MENU_COMBINE_MEMORY_PAGES), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_COMPRESSION_CACHE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_SYSTEM_FILE_CACHE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_REGISTRY_CACHE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 4, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_WORKING_SETS), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 5, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_MODIFIED_PAGE_LIST), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 6, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_MODIFIED_FILE_CACHE), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 7, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_STANDBY_LIST), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 8, PhGetApplicationUiString(IDS_PH_MENU_EMPTY_PRIORITY_ZERO_STANDBY_LIST), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, RTL_NUMBER_OF(PhMemoryListCommands), PhGetApplicationUiString(IDS_PH_MENU_EMPTY_ALL), NULL, NULL), ULONG_MAX);
 
     if (ShowTopAlign)
     {

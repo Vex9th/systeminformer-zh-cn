@@ -271,20 +271,20 @@ class HandleListViewComposedValueResourceTests(unittest.TestCase):
             if symbol in resource_ids:
                 self.assertEqual(resource_ids[symbol], value)
             resource_ids[symbol] = value
-        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 3370)))
-        self.assertEqual(len(english), 1370)
-        self.assertEqual(len(chinese), 1370)
+        self.assertEqual(sorted(resource_ids.values()), list(range(2000, 3423)))
+        self.assertEqual(len(english), 1423)
+        self.assertEqual(len(chinese), 1423)
         self.assertRegex(
             header,
-            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$",
+            r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MENU_TERMINATE_PLAIN$",
         )
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3370$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3423$")
 
     def test_ci_and_generator_counts_are_exact(self) -> None:
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("sys_info.exe=1370"), 2)
+        self.assertEqual(workflow.count("sys_info.exe=1423"), 2)
         self.assertNotIn("sys_info.exe=668", workflow)
         result = subprocess.run(
             [
@@ -297,7 +297,7 @@ class HandleListViewComposedValueResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("3312 strings", result.stdout)
+        self.assertIn("3365 strings", result.stdout)
 
 
 if __name__ == "__main__":

@@ -108,10 +108,10 @@ class SystemInformerSearchMessageTaskDialogResourceTests(unittest.TestCase):
                 self.assertEqual(zh, chinese.get(symbol))
 
         self.assertEqual(list(range(2872, 2897)), [row[1] for row in RESOURCES])
-        self.assertEqual(1370, len(english))
-        self.assertEqual(1370, len(chinese))
-        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3370$")
+        self.assertEqual(1423, len(english))
+        self.assertEqual(1423, len(chinese))
+        self.assertRegex(header, r"(?m)^#define\s+IDS_PH_LAST\s+IDS_PH_MENU_TERMINATE_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+3423$")
 
     def test_every_runtime_literal_routes_through_the_application_resource_cache(self) -> None:
         for file_name, routes in ROUTES.items():

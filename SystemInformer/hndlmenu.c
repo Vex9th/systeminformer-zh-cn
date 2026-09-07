@@ -41,13 +41,13 @@ VOID PhInsertHandleObjectPropertiesEMenuItems(
     {
         if (PhEqualString2(Info->TypeName, L"File", TRUE))
         {
-            PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES2, L"File propert&ies", NULL, NULL), indexInParent);
-            PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(L"Open &file location", EnableShortcut), NULL, NULL), indexInParent + 1);
+            PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES2, PhGetApplicationUiString(IDS_PH_MENU_FILE_PROPERTIES), NULL, NULL), indexInParent);
+            PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(PhGetApplicationUiString(IDS_PH_MENU_OPEN_FILE_LOCATION_PLAIN), EnableShortcut), NULL, NULL), indexInParent + 1);
             PhInsertEMenuItem(parentItem, PhCreateEMenuSeparator(), indexInParent + 2);
         }
         else
         {
-            PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(L"Open &file location", EnableShortcut), NULL, NULL), indexInParent);
+            PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(PhGetApplicationUiString(IDS_PH_MENU_OPEN_FILE_LOCATION_PLAIN), EnableShortcut), NULL, NULL), indexInParent);
             PhInsertEMenuItem(parentItem, PhCreateEMenuSeparator(), indexInParent + 1);
         }
     }
@@ -58,18 +58,18 @@ VOID PhInsertHandleObjectPropertiesEMenuItems(
     }
     else if (PhEqualString2(Info->TypeName, L"Process", TRUE))
     {
-        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_GOTOOWNINGPROCESS, L"Go to process...", NULL, NULL), indexInParent);
-        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(L"Process propert&ies", EnableShortcut), NULL, NULL), indexInParent + 1);
+        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_GOTOOWNINGPROCESS, PhGetApplicationUiString(IDS_PH_MENU_GO_TO_PROCESS_ELLIPSIS), NULL, NULL), indexInParent);
+        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(PhGetApplicationUiString(IDS_PH_MENU_PROCESS_PROPERTIES), EnableShortcut), NULL, NULL), indexInParent + 1);
         PhInsertEMenuItem(parentItem, PhCreateEMenuSeparator(), indexInParent + 2);
     }
     else if (PhEqualString2(Info->TypeName, L"Section", TRUE))
     {
-        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(L"Read/Write &memory", EnableShortcut), NULL, NULL), indexInParent);
+        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(PhGetApplicationUiString(IDS_PH_MENU_READ_WRITE_MEMORY_ALT), EnableShortcut), NULL, NULL), indexInParent);
         PhInsertEMenuItem(parentItem, PhCreateEMenuSeparator(), indexInParent + 1);
     }
     else if (PhEqualString2(Info->TypeName, L"Thread", TRUE))
     {
-        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(L"Go to t&hread...", EnableShortcut), NULL, NULL), indexInParent);
+        PhInsertEMenuItem(parentItem, PhCreateEMenuItem(0, ID_HANDLE_OBJECTPROPERTIES1, PhaAppendCtrlEnter(PhGetApplicationUiString(IDS_PH_MENU_GO_TO_THREAD_ALT), EnableShortcut), NULL, NULL), indexInParent);
         PhInsertEMenuItem(parentItem, PhCreateEMenuSeparator(), indexInParent + 1);
     }
 }

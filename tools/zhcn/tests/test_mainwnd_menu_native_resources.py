@@ -165,10 +165,10 @@ class MainWindowMenuNativeResourceTests(unittest.TestCase):
                 self.assertEqual(english.get(symbol), en)
                 self.assertEqual(chinese.get(symbol), zh)
 
-        self.assertEqual(len(english), 1370)
-        self.assertEqual(len(chinese), 1370)
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
+        self.assertEqual(len(english), 1423)
+        self.assertEqual(len(chinese), 1423)
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_TERMINATE_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3423$")
 
     def test_resource_menu_helper_transfers_owned_copy_to_menu(self) -> None:
         helper = re.search(

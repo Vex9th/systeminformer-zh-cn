@@ -866,9 +866,9 @@ INT_PTR CALLBACK PhpProcessGeneralDlgProc(
                         break;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"No-Write-Up", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"No-Read-Up", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, L"No-Execute-Up", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PhGetApplicationUiString(IDS_PH_MENU_NO_WRITE_UP), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, PhGetApplicationUiString(IDS_PH_MENU_NO_READ_UP), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, PhGetApplicationUiString(IDS_PH_MENU_NO_EXECUTE_UP), NULL, NULL), ULONG_MAX);
 
                     status = PhOpenProcess(
                         &processHandle,

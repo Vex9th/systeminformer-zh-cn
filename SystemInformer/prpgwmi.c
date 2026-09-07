@@ -1821,17 +1821,17 @@ VOID PhpShowWmiProviderNodeContextMenu(
 
     if (PhGetIntegerSetting(SETTING_WMI_PROVIDER_ENABLE_HIDDEN_MENU))
     {
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, L"&Suspend", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, L"Res&ume", NULL, NULL), ULONG_MAX);
-        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, L"Un&load", NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 1, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_SUSPEND), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 2, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_RESUME), NULL, NULL), ULONG_MAX);
+        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 3, PhGetApplicationUiString(IDS_PH_MENU_UNLOAD_ALT), NULL, NULL), ULONG_MAX);
         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     }
 
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 4, L"&Inspect", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 4, PhGetApplicationUiString(IDS_PH_MENU_INSPECT_PLAIN), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 5, L"S&tatistics", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 5, PhGetApplicationUiString(IDS_PH_MENU_STATISTICS_SHORTCUT), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 6, L"Open &file location", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, 6, PhGetApplicationUiString(IDS_PH_MENU_OPEN_FILE_LOCATION_PLAIN), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_MENU_COPY), NULL, NULL), ULONG_MAX);
     PhInsertCopyCellEMenuItem(menu, IDC_COPY, Context->TreeNewHandle, ContextMenuEvent->Column);
@@ -2727,8 +2727,8 @@ INT_PTR CALLBACK PhpProcessWmiProvidersDlgProc(
                     if (!PhGetWindowRect(GetDlgItem(hwndDlg, IDC_OPTIONS), &rect))
                         break;
 
-                    namespaceMenuItem = PhCreateEMenuItem(0, PROCESS_WMI_TREE_MENU_ITEM_HIDE_DEFAULT_NAMESPACE, L"Hide default namespace", NULL, NULL);
-                    highlightNamespaceMenuItem = PhCreateEMenuItem(0, PROCESS_WMI_TREE_MENU_ITEM_HIGHLIGHT_DEFAULT_NAMESPACE, L"Highlight default namespace", NULL, NULL);
+                    namespaceMenuItem = PhCreateEMenuItem(0, PROCESS_WMI_TREE_MENU_ITEM_HIDE_DEFAULT_NAMESPACE, PhGetApplicationUiString(IDS_PH_MENU_HIDE_DEFAULT_NAMESPACE), NULL, NULL);
+                    highlightNamespaceMenuItem = PhCreateEMenuItem(0, PROCESS_WMI_TREE_MENU_ITEM_HIGHLIGHT_DEFAULT_NAMESPACE, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_DEFAULT_NAMESPACE), NULL, NULL);
 
                     menu = PhCreateEMenu();
                     PhInsertEMenuItem(menu, namespaceMenuItem, ULONG_MAX);

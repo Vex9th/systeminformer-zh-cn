@@ -1312,7 +1312,7 @@ PPH_EMENU PhpMipCreateMenu(
     PPH_EMENU_ITEM menuItem;
 
     menu = PhCreateEMenu();
-    menuItem = PhCreateEMenuItem(0, 0, L"&Opacity", NULL, NULL);
+    menuItem = PhCreateEMenuItem(0, 0, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_OPACITY), NULL, NULL);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_10, L"10%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_20, L"20%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_30, L"30%", NULL, NULL), ULONG_MAX);
@@ -1322,11 +1322,11 @@ PPH_EMENU PhpMipCreateMenu(
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_70, L"70%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_80, L"80%", NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_90, L"90%", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_OPAQUE, L"Opaque", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menuItem, PhCreateEMenuItem(0, ID_OPACITY_OPAQUE, PhGetApplicationUiString(IDS_PH_MENU_OPAQUE), NULL, NULL), ULONG_MAX);
     PhInsertEMenuItem(menu, menuItem, ULONG_MAX);
     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MINIINFO_REFRESH, L"&Refresh\bF5", NULL, NULL), ULONG_MAX);
-    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MINIINFO_REFRESHAUTOMATICALLY, L"Refresh a&utomatically\bF6", NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MINIINFO_REFRESH, PhGetApplicationUiString(IDS_PH_MENU_REFRESH_F5_SHORTCUT), NULL, NULL), ULONG_MAX);
+    PhInsertEMenuItem(menu, PhCreateEMenuItem(0, ID_MINIINFO_REFRESHAUTOMATICALLY, PhGetApplicationUiString(IDS_PH_MAINWND_MENU_REFRESH_AUTOMATICALLY_SHORTCUT), NULL, NULL), ULONG_MAX);
 
     return menu;
 }

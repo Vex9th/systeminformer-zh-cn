@@ -73,8 +73,8 @@ class SystemInformerHandleMenuNativeResourceTests(unittest.TestCase):
             self.assertEqual(1, self.source.count(f"PhGetApplicationUiString({symbol})"))
 
         self.assertEqual(1, self.source.count("PhGetApplicationUiString(IDS_PH_MENU_COPY_SHORTCUT)"))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_TERMINATE_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3423$")
 
         entries = []
         self.audit.scan_c_file(str(APP_ROOT / "prpghndl.c"), entries)

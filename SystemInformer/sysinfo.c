@@ -194,8 +194,8 @@ VOID PhSipShowSectionContextMenu(
         return;
 
     menu = PhCreateEMenu();
-    moveUpItem = PhCreateEMenuItem(0, 1, L"Move Up", NULL, NULL);
-    moveDownItem = PhCreateEMenuItem(0, 2, L"Move Down", NULL, NULL);
+    moveUpItem = PhCreateEMenuItem(0, 1, PhGetApplicationUiString(IDS_PH_MENU_MOVE_UP), NULL, NULL);
+    moveDownItem = PhCreateEMenuItem(0, 2, PhGetApplicationUiString(IDS_PH_MENU_MOVE_DOWN), NULL, NULL);
 
     if (index == 0)
         moveUpItem->Flags |= PH_EMENU_DISABLED;

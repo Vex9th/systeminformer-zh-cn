@@ -1105,11 +1105,11 @@ INT_PTR CALLBACK PhpThreadStackDlgProc(
                     if (selectedNode = GetSelectedThreadStackNode(context))
                     {
                         menu = PhCreateEMenu();
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_DEFAULT, PH_THREAD_STACK_MENUITEM_INSPECT, L"&Inspect", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(PH_EMENU_DEFAULT, PH_THREAD_STACK_MENUITEM_INSPECT, PhGetApplicationUiString(IDS_PH_MENU_INSPECT_PLAIN), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_THREAD_STACK_MENUITEM_OPENFILELOCATION, L"Open &file location", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, PH_THREAD_STACK_MENUITEM_OPENFILELOCATION, PhGetApplicationUiString(IDS_PH_MENU_OPEN_FILE_LOCATION_PLAIN), NULL, NULL), ULONG_MAX);
                         PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                        PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                         PhInsertCopyCellEMenuItem(menu, IDC_COPY, context->TreeNewHandle, contextMenuEvent->Column);
 
                         selectedItem = PhShowEMenu(
@@ -1211,13 +1211,13 @@ INT_PTR CALLBACK PhpThreadStackDlgProc(
                         break;
 
                     menu = PhCreateEMenu();
-                    PhInsertEMenuItem(menu, hideUserItem = PhCreateEMenuItem(0, 1, L"Hide user frames", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, hideSystemItem = PhCreateEMenuItem(0, 2, L"Hide system frames", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, hideInlineItem = PhCreateEMenuItem(0, 3, L"Hide inline frames", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, hideUserItem = PhCreateEMenuItem(0, 1, PhGetApplicationUiString(IDS_PH_MENU_HIDE_USER_FRAMES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, hideSystemItem = PhCreateEMenuItem(0, 2, PhGetApplicationUiString(IDS_PH_MENU_HIDE_SYSTEM_FRAMES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, hideInlineItem = PhCreateEMenuItem(0, 3, PhGetApplicationUiString(IDS_PH_MENU_HIDE_INLINE_FRAMES), NULL, NULL), ULONG_MAX);
                     PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                    PhInsertEMenuItem(menu, userItem = PhCreateEMenuItem(0, 4, L"Highlight user frames", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, systemItem = PhCreateEMenuItem(0, 5, L"Highlight system frames", NULL, NULL), ULONG_MAX);
-                    PhInsertEMenuItem(menu, inlineItem = PhCreateEMenuItem(0, 6, L"Highlight inline frames", NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, userItem = PhCreateEMenuItem(0, 4, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_USER_FRAMES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, systemItem = PhCreateEMenuItem(0, 5, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_SYSTEM_FRAMES), NULL, NULL), ULONG_MAX);
+                    PhInsertEMenuItem(menu, inlineItem = PhCreateEMenuItem(0, 6, PhGetApplicationUiString(IDS_PH_MENU_HIGHLIGHT_INLINE_FRAMES), NULL, NULL), ULONG_MAX);
 
                     if (context->HideUserPages)
                         hideUserItem->Flags |= PH_EMENU_CHECKED;
