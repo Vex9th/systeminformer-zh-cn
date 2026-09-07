@@ -611,6 +611,32 @@ BOOLEAN PhGetSearchTextToBuffer(
     return TRUE;
 }
 
+static BOOLEAN PhpSearchSyncOptions(
+    _In_ PPH_SEARCHCONTROL_CONTEXT Context
+    )
+{
+    BOOLEAN changed = FALSE;
+    BOOLEAN regexActive;
+    BOOLEAN caseActive;
+
+    regexActive = !!PhGetIntegerSetting(Context->RegexSetting);
+    caseActive = !!PhGetIntegerSetting(Context->CaseSetting);
+
+    if (Context->RegexButton.Active != regexActive)
+    {
+        Context->RegexButton.Active = regexActive;
+        changed = TRUE;
+    }
+
+    if (Context->CaseButton.Active != caseActive)
+    {
+        Context->CaseButton.Active = caseActive;
+        changed = TRUE;
+    }
+
+    return changed;
+}
+
 BOOLEAN PhpSearchUpdateText(
     _In_ HWND WindowHandle,
     _In_ PPH_SEARCHCONTROL_CONTEXT Context,
@@ -620,7 +646,11 @@ BOOLEAN PhpSearchUpdateText(
     ULONG_PTR matchHandle;
     PH_STRINGREF newSearchboxText;
     SIZE_T searchboxTextBufferLength;
+    BOOLEAN forceUpdate = Force;
     WCHAR searchboxTextBuffer[0x100];
+
+    if (PhpSearchSyncOptions(Context))
+        forceUpdate = TRUE;
 
     //if (PhGetWindowTextLength(WindowHandle) == 0)
     //{
@@ -643,7 +673,7 @@ BOOLEAN PhpSearchUpdateText(
 
     Context->SearchButton.Active = (newSearchboxText.Length > 0);
 
-    if (!Force && PhEqualStringRef(&newSearchboxText, &Context->SearchboxText, FALSE))
+    if (!forceUpdate && PhEqualStringRef(&newSearchboxText, &Context->SearchboxText, FALSE))
         return FALSE;
 
     if (memcpy_s(Context->SearchboxTextBuffer, sizeof(Context->SearchboxTextBuffer), newSearchboxText.Buffer, newSearchboxText.Length))
@@ -1027,7 +1057,7 @@ LRESULT CALLBACK PhpSearchWndSubclassProc(
             {
                 context->CaseButton.Active = !context->CaseButton.Active;
                 PhSetIntegerSetting(context->CaseSetting, context->CaseButton.Active);
-                PhpSearchUpdateText(WindowHandle, context, FALSE);
+                PhpSearchUpdateText(WindowHandle, context, TRUE);
             }
 
             if (GetCapture() == WindowHandle)
@@ -1161,6 +1191,8 @@ LRESULT CALLBACK PhpSearchWndSubclassProc(
         {
             context->WindowFocus = TRUE;
             context->PreviousFocusWindowHandle = (HWND)wParam;
+
+            PhpSearchUpdateText(WindowHandle, context, FALSE);
 
             RedrawWindow(WindowHandle, NULL, NULL, RDW_FRAME | RDW_INVALIDATE);
         }

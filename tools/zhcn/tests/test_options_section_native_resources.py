@@ -87,7 +87,7 @@ PLUGIN_CALLS = {
 EXPECTED_COUNTS = {
     "sys_info.exe": 1423,
     "ExtendedNotifications.dll": 4,
-    "ExtendedTools.dll": 470,
+    "ExtendedTools.dll": 471,
     "HardwareDevices.dll": 396,
     "NetworkTools.dll": 62,
     "OnlineChecks.dll": 25,
@@ -98,7 +98,7 @@ EXPECTED_COUNTS = {
 EXPECTED_NEXT_SYMED_VALUES = {
     "SystemInformer": 3423,
     "UserNotes": 2052,
-    "ExtendedTools": 61470,
+    "ExtendedTools": 61471,
     "ExtendedNotifications": 12004,
     "HardwareDevices": 12396,
     "OnlineChecks": 12025,
@@ -312,7 +312,7 @@ class OptionsSectionNativeResourceTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(native.returncode, 0, native.stdout + native.stderr)
-        self.assertIn("3365 strings", native.stdout)
+        self.assertIn("3366 strings", native.stdout)
 
         self.assertFalse((REPO_ROOT / "phlib" / "phtranslation_zhcn.c").exists())
         self.assertFalse((REPO_ROOT / "tools" / "zhcn" / "generate_translation.py").exists())

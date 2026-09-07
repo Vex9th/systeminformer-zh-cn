@@ -501,10 +501,12 @@ INT_PTR CALLBACK PhpProcessHandlesDlgProc(
             handlesContext->ErrorMessage = NULL;
             handlesContext->FilterEntry = PhAddTreeNewFilter(&handlesContext->ListContext.TreeFilterSupport, PhpHandleTreeFilterCallback, handlesContext);
 
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 handlesContext->SearchWindowHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_HANDLES),
+                SETTING_SEARCH_HANDLES_REGEX,
+                SETTING_SEARCH_HANDLES_CASE_SENSITIVE,
                 PhpProcessHandlessSearchControlCallback,
                 handlesContext
                 );

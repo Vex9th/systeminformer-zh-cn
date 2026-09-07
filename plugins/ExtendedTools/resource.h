@@ -183,6 +183,7 @@
 #define IDD_PIPEDIALOG                  6001
 #define IDC_ATOMLIST                    6002
 #define IDC_PIPELIST                    6002
+#define IDC_PIPESEARCH                  6003
 #define ID_REPARSE_POINTS               7000
 #define ID_REPARSE_OBJID                7001
 #define ID_REPARSE_SDDL                 7002
@@ -734,8 +735,9 @@
 #define IDS_ET_GPU_ADAPTER_COLUMN_FORMAT             61467
 #define IDS_ET_GPU_NODE_COLUMN_NAMED_FORMAT          61468
 #define IDS_ET_GPU_NODE_COLUMN_FORMAT                61469
+#define IDS_ET_SEARCH_NAMED_PIPES                    61470
 #define IDS_ET_CACHED_FIRST             IDS_ET_DEDICATED_MEMORY
-#define IDS_ET_CACHED_LAST              IDS_ET_GPU_NODE_COLUMN_FORMAT
+#define IDS_ET_CACHED_LAST              IDS_ET_SEARCH_NAMED_PIPES
 
 // Next default values for new objects
 // 
@@ -744,6 +746,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        60043
 #define _APS_NEXT_COMMAND_VALUE         60043
 #define _APS_NEXT_CONTROL_VALUE         60043
-#define _APS_NEXT_SYMED_VALUE           61470
+#define _APS_NEXT_SYMED_VALUE           61471
 #endif
 #endif

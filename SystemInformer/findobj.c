@@ -905,16 +905,8 @@ static NTSTATUS NTAPI SearchHandleFunction(
         &bestObjectName
         )))
     {
-        PPH_STRING upperObjectName;
-        PPH_STRING upperBestObjectName;
-        PPH_STRING upperTypeName;
-
-        upperObjectName = PhUpperString(objectName);
-        upperBestObjectName = PhUpperString(bestObjectName);
-        upperTypeName = PhUpperString(typeName);
-
-        if (((context->SearchAll || MatchSearchString(context, &upperObjectName->sr) || MatchSearchString(context, &upperBestObjectName->sr)) &&
-            MatchTypeString(context, &upperTypeName->sr)) ||
+        if (((context->SearchAll || MatchSearchString(context, &objectName->sr) || MatchSearchString(context, &bestObjectName->sr)) &&
+            MatchTypeString(context, &typeName->sr)) ||
             PhSearchControlMatchPointer(context->SearchMatchHandle, handleContext->HandleInfo->Object) ||
             PhSearchControlMatchPointer(context->SearchMatchHandle, handleContext->HandleInfo->HandleValue))
         {
@@ -940,10 +932,6 @@ static NTSTATUS NTAPI SearchHandleFunction(
             PhDereferenceObject(objectName);
             PhDereferenceObject(bestObjectName);
         }
-
-        PhDereferenceObject(upperTypeName);
-        PhDereferenceObject(upperBestObjectName);
-        PhDereferenceObject(upperObjectName);
     }
 
     if (handleContext->NeedToFree)
@@ -966,17 +954,13 @@ static BOOLEAN NTAPI EnumModulesCallback(
 {
     PPH_HANDLE_SEARCH_CONTEXT context = Context->WindowContext;
     PPH_STRING filenameWin32;
-    PPH_STRING upperFileName;
-    PPH_STRING upperOriginalFileName;
 
     filenameWin32 = PhGetFileName(Module->FileName);
-    upperFileName = PhUpperString(filenameWin32);
-    upperOriginalFileName = PhUpperString(Module->FileName);
 
     if ((
         context->SearchAll ||
-        MatchSearchString(context, &upperFileName->sr) ||
-        MatchSearchString(context, &upperOriginalFileName->sr)) ||
+        MatchSearchString(context, &filenameWin32->sr) ||
+        MatchSearchString(context, &Module->FileName->sr)) ||
         PhSearchControlMatchPointer(context->SearchMatchHandle, Module->BaseAddress))
     {
         PPHP_OBJECT_SEARCH_RESULT searchResult;
@@ -1008,8 +992,6 @@ static BOOLEAN NTAPI EnumModulesCallback(
         PhReleaseQueuedLockExclusive(&context->SearchResultsLock);
     }
 
-    PhDereferenceObject(upperOriginalFileName);
-    PhDereferenceObject(upperFileName);
     PhDereferenceObject(filenameWin32);
 
     return TRUE;
@@ -1266,10 +1248,12 @@ INT_PTR CALLBACK PhFindObjectsDlgProc(
             PhAddLayoutItem(&context->LayoutManager, context->TreeNewHandle, NULL, PH_ANCHOR_ALL);
 
             PhRegisterDialog(hwndDlg);
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 context->SearchWindowHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_FIND_HANDLES_OR_DLLS),
+                SETTING_SEARCH_FIND_OBJECTS_REGEX,
+                SETTING_SEARCH_FIND_OBJECTS_CASE_SENSITIVE,
                 PhFindObjectsSearchControlCallback,
                 context
                 );

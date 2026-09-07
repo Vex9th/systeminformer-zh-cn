@@ -2623,10 +2623,12 @@ INT_PTR CALLBACK PhpProcessWmiProvidersDlgProc(
             context->ProcessItem = processItem;
             context->DefaultNamespace = PhpQueryWmiDefaultNamespace();
 
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 context->SearchWindowHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_WMI_PROVIDERS),
+                SETTING_SEARCH_WMI_PROVIDERS_REGEX,
+                SETTING_SEARCH_WMI_PROVIDERS_CASE_SENSITIVE,
                 PhpProcessWmiProvidersSearchControlCallback,
                 context
                 );

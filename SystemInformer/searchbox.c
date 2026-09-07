@@ -13,10 +13,12 @@
 #include <phapp.h>
 #include <phsettings.h>
 
-VOID PhCreateSearchControl(
+VOID PhCreateSearchControl2(
     _In_ HWND ParentWindowHandle,
     _In_ HWND SearchWindowHandle,
     _In_opt_ PCWSTR BannerText,
+    _In_ PCWSTR RegexSetting,
+    _In_ PCWSTR CaseSetting,
     _In_ PPH_SEARCHCONTROL_CALLBACK Callback,
     _In_opt_ PVOID Context
     )
@@ -30,6 +32,25 @@ VOID PhCreateSearchControl(
         PhEnableThemeSupport ? MAKEINTRESOURCE(IDB_SEARCH_ACTIVE_MODERN_LIGHT) : MAKEINTRESOURCE(IDB_SEARCH_ACTIVE_MODERN_DARK),
         PhEnableThemeSupport ? MAKEINTRESOURCE(IDB_SEARCH_REGEX_MODERN_LIGHT) : MAKEINTRESOURCE(IDB_SEARCH_REGEX_MODERN_DARK),
         PhEnableThemeSupport ? MAKEINTRESOURCE(IDB_SEARCH_CASE_MODERN_LIGHT) : MAKEINTRESOURCE(IDB_SEARCH_CASE_MODERN_DARK),
+        RegexSetting,
+        CaseSetting,
+        Callback,
+        Context
+        );
+}
+
+VOID PhCreateSearchControl(
+    _In_ HWND ParentWindowHandle,
+    _In_ HWND SearchWindowHandle,
+    _In_opt_ PCWSTR BannerText,
+    _In_ PPH_SEARCHCONTROL_CALLBACK Callback,
+    _In_opt_ PVOID Context
+    )
+{
+    PhCreateSearchControl2(
+        ParentWindowHandle,
+        SearchWindowHandle,
+        BannerText,
         SETTING_SEARCH_CONTROL_REGEX,
         SETTING_SEARCH_CONTROL_CASE_SENSITIVE,
         Callback,

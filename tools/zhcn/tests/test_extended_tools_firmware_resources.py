@@ -101,11 +101,11 @@ class ExtendedToolsFirmwareResourceTests(unittest.TestCase):
         header = source_text("resource.h")
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
+            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_SEARCH_NAMED_PIPES$",
         )
         self.assertRegex(
             header,
-            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61470$",
+            r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61471$",
         )
 
     def test_english_chinese_and_json_owners_are_exact(self):
@@ -221,7 +221,7 @@ class ExtendedToolsFirmwareResourceTests(unittest.TestCase):
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8-sig"
         )
-        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=470"), 2)
+        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=471"), 2)
         self.assertNotIn("plugins\\ExtendedTools.dll=188", workflow)
 
 

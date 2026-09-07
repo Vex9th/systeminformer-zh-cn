@@ -85,6 +85,7 @@ IDS_ET_MINI_GPU_MEMORY|61466|GPU Memory|GPU 内存
 IDS_ET_GPU_ADAPTER_COLUMN_FORMAT|61467|GPU %lu|GPU %lu
 IDS_ET_GPU_NODE_COLUMN_NAMED_FORMAT|61468|GPU %lu node %lu (%s)|GPU %lu 节点 %lu（%s）
 IDS_ET_GPU_NODE_COLUMN_FORMAT|61469|GPU %lu node %lu|GPU %lu 节点 %lu
+IDS_ET_SEARCH_NAMED_PIPES|61470|Search Named Pipes (Ctrl+K)|搜索命名管道（Ctrl+K）
 """.strip()
 RESOURCES = [tuple(line.split("|", 3)) for line in RESOURCE_DATA.splitlines()]
 
@@ -202,7 +203,7 @@ class ExtendedToolsCompleteNativeResourceTests(unittest.TestCase):
         chinese = parse_stringtable(PLUGIN_ROOT / "ExtendedTools.zh-cn.rc")
         data = json.loads((REPO_ROOT / "tools" / "zhcn" / "zh-CN.json").read_text(encoding="utf-8"))
 
-        self.assertEqual(list(range(61397, 61470)), [int(row[1]) for row in RESOURCES])
+        self.assertEqual(list(range(61397, 61471)), [int(row[1]) for row in RESOURCES])
         runtime_compatibility = {"Ser&vices": "服务(&V)"}
 
         for symbol, resource_id, en, zh in RESOURCES:
@@ -216,9 +217,9 @@ class ExtendedToolsCompleteNativeResourceTests(unittest.TestCase):
                 self.assertEqual(zh, data["native_strings"].get(en), en)
                 self.assertNotIn(en, data["strings"], en)
 
-        self.assertEqual(470, len(english))
-        self.assertEqual(470, len(chinese))
-        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61470$")
+        self.assertEqual(471, len(english))
+        self.assertEqual(471, len(chinese))
+        self.assertRegex(header, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61471$")
 
     def test_services_menu_keeps_exact_cross_module_runtime_consumers(self):
         services = self.audit.mask_c_comments(

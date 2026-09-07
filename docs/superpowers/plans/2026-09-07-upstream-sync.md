@@ -19,9 +19,9 @@
 
 运行：`PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/zhcn/tests -q`
 
-预期：687 项通过，0 失败。
+预期：698 项通过，0 失败。
 
-- [ ] **步骤 2：合并 `upstream/master` 并记录实际冲突集合**
+- [x] **步骤 2：合并 `upstream/master` 并记录实际冲突集合**
 
 运行：`git merge --no-ff upstream/master`
 
@@ -35,15 +35,15 @@
 - 修改：`SystemInformer/resources/settings.schema.json`
 - 修改：`SystemInformer/settings.c`
 
-- [ ] **步骤 1：保留上游 `PhCreateSearchControl2` 与每个搜索框独立设置键**
+- [x] **步骤 1：保留上游 `PhCreateSearchControl2` 与每个搜索框独立设置键**
 
 每个冲突调用保留当前 `PhGetApplicationUiString(IDS_*)` banner，同时加入上游新增的 regex/case-sensitive setting 参数。
 
-- [ ] **步骤 2：保留设置文件损坏检测和异步环境变量窗口行为**
+- [x] **步骤 2：保留设置文件损坏检测和异步环境变量窗口行为**
 
 按上游状态变量和生命周期合并，保留当前中文错误文字资源 getter。
 
-- [ ] **步骤 3：运行搜索框、设置与窗口资源定向测试**
+- [x] **步骤 3：运行搜索框、设置与窗口资源定向测试**
 
 运行：`python3 -m unittest -q tools.zhcn.tests.test_remaining_direct_window_and_tab_resources tools.zhcn.tests.test_phlib_runtime_native_resources tools.zhcn.tests.test_runtime_translation_layer_retired`
 
@@ -56,15 +56,15 @@
 - 修改：`tools/zhcn/zh-CN.json`
 - 修改：与 ExtendedTools 资源契约相关的测试
 
-- [ ] **步骤 1：采用上游 TreeNew、搜索和复制实现**
+- [x] **步骤 1：采用上游 TreeNew、搜索和复制实现**
 
 保留上游列模型、排序、搜索、复制、句柄/目录两种枚举路径和设置持久化。
 
-- [ ] **步骤 2：为所有新增列名、状态、菜单和搜索提示建立稳定资源 ID**
+- [x] **步骤 2：为所有新增列名、状态、菜单和搜索提示建立稳定资源 ID**
 
 英文和 zh-CN `STRINGTABLE` 必须同 ID、同占位符；调用点通过 `EtGetUiString` 获取并保留英文 fallback。
 
-- [ ] **步骤 3：先让审计/契约测试暴露新增裸英文，再生成资源并验证转绿**
+- [x] **步骤 3：先让审计/契约测试暴露新增裸英文，再生成资源并验证转绿**
 
 运行：`python3 tools/zhcn/audit.py && python3 tools/zhcn/check_translation.py --fail-on-untranslated`
 
@@ -79,15 +79,15 @@
 - 修改：`tools/peview/settings.c`
 - 修改：生成器数据和资源契约测试
 
-- [ ] **步骤 1：保留 Ping、Whois、Run As、菜单泄漏和主题修复**
+- [x] **步骤 1：保留 Ping、Whois、Run As、菜单泄漏和主题修复**
 
 这些纯行为修复按上游语义合入，不改变方案 B 的资源加载边界。
 
-- [ ] **步骤 2：同步英文 RC 结构并重新生成 zh-CN 资源**
+- [x] **步骤 2：同步英文 RC 结构并重新生成 zh-CN 资源**
 
 运行：`python3 tools/zhcn/generate_native_resources.py`
 
-- [ ] **步骤 3：验证资源和扫描清单**
+- [x] **步骤 3：验证资源和扫描清单**
 
 运行：`python3 tools/zhcn/generate_native_resources.py --check && python3 tools/zhcn/audit.py && python3 tools/zhcn/check_translation.py --fail-on-untranslated`
 
@@ -98,11 +98,11 @@
 **文件：**
 - 修改：`docs/superpowers/plans/2026-09-07-upstream-sync.md`
 
-- [ ] **步骤 1：运行完整离线回归和差异检查**
+- [x] **步骤 1：运行完整离线回归和差异检查**
 
 运行：`PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/zhcn/tests -q && git diff --check`
 
-- [ ] **步骤 2：只读代码审查并修复全部 P0/P1**
+- [x] **步骤 2：只读代码审查并修复全部 P0/P1**
 
 重点审查上游功能完整性、资源所有权、设置迁移、TreeNew 生命周期及审计 fail-closed 行为。
 

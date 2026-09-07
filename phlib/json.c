@@ -504,6 +504,13 @@ NTSTATUS PhLoadJsonObjectFromFile(
 
     if (NT_SUCCESS(status = PhFileReadAllText(&content, FileName, FALSE)))
     {
+        if (content->Length == 0)
+        {
+            // A blank file is OK.
+            PhDereferenceObject(content);
+            return STATUS_END_OF_FILE;
+        }
+
         status = PhCreateJsonParserEx(JsonObject, content, FALSE);
         PhDereferenceObject(content);
     }

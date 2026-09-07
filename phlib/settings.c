@@ -1449,6 +1449,15 @@ NTSTATUS PhLoadSettingsJson(
 
     status = PhLoadJsonObjectFromFile(&object, FileName);
 
+    if (status == STATUS_END_OF_FILE)
+        return STATUS_SUCCESS;
+
+    // The content couldn't be parsed, which the parser is alone in reporting with this status.
+    // Report it as a corrupt file like the XML store so the caller can offer to reset the file
+    // instead of discarding the settings.
+    if (status == STATUS_FAIL_CHECK)
+        return STATUS_FILE_CORRUPT_ERROR;
+
     if (NT_SUCCESS(status))
     {
         if (PhGetJsonObjectType(object) == PH_JSON_OBJECT_TYPE_OBJECT)
@@ -1559,7 +1568,12 @@ NTSTATUS PhLoadSettingsXml(
 
     PhpClearIgnoredSettings();
 
-    if (!NT_SUCCESS(status = PhLoadXmlObjectFromFile(FileName, &topNode)))
+    status = PhLoadXmlObjectFromFile(FileName, &topNode);
+
+    if (status == STATUS_END_OF_FILE)
+        return STATUS_SUCCESS;
+
+    if (!NT_SUCCESS(status))
         return status;
     if (!topNode) // Return corrupt status and reset the settings.
         return STATUS_FILE_CORRUPT_ERROR;
@@ -2259,6 +2273,19 @@ static VOID PhpFreeDiscoveryResults(
     }
 }
 
+/**
+ * Loads the settings from the best available settings store.
+ *
+ * \param BasePath The path to search, or NULL to search the portable, AppData and registry locations.
+ * \param DefaultName The name of the settings file in the AppData location.
+ * \param ActualPath Receives the settings file. This is the file that was loaded, the file to create
+ * when there were no settings, or the file that failed to load so the caller can report or reset it.
+ * The registry store has no file and doesn't set this.
+ * \param ActualFormat Receives the format of the settings that were loaded.
+ * \param IsPortable Receives whether the settings were loaded from the portable location.
+ * \return STATUS_OBJECT_NAME_NOT_FOUND when there were no settings to load, otherwise the status
+ * from loading the settings.
+ */
 NTSTATUS PhLoadSettingsAutoDetect(
     _In_opt_ PPH_STRING BasePath,
     _In_opt_ PCWSTR DefaultName,
@@ -2391,6 +2418,14 @@ NTSTATUS PhLoadSettingsAutoDetect(
             *ActualFormat = actualFormat;
 
         PhSettingsLoadedFormat = actualFormat;
+    }
+    else if (ActualPath && results[selectedIndex].FilePath)
+    {
+        // Hand back the file that failed to load, the caller needs it to report or reset the file.
+        *ActualPath = PhReferenceObject(results[selectedIndex].FilePath);
+
+        if (ActualFormat)
+            *ActualFormat = selectedStore->Format;
     }
 
 Cleanup:
@@ -3582,7 +3617,7 @@ static VOID PhStringStripSubstringZ(
     )
 {
     SIZE_T length = PhCountStringZ(SubString);
-    
+
     if (length == 0)
         return;
 

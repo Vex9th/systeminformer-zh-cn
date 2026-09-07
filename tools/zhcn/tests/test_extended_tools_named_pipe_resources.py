@@ -134,22 +134,22 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
         source = source_text()
         functions = {
             "EtEnumerateNamedPipeDirectory": {
-                "type": 3,
-                "configuration": 4,
-                "maximum": 5,
-                "state": 9,
-                "remote": 10,
-                "read": 11,
-                "completion": 12,
+                "type": "ET_PIPE_COLUMN_TYPE",
+                "configuration": "ET_PIPE_COLUMN_CONFIGURATION",
+                "maximum": "ET_PIPE_COLUMN_MAXIMUMINSTANCES",
+                "state": "ET_PIPE_COLUMN_STATE",
+                "remote": "ET_PIPE_COLUMN_REMOTECLIENTS",
+                "read": "ET_PIPE_COLUMN_READMODE",
+                "completion": "ET_PIPE_COLUMN_COMPLETIONMODE",
             },
-            "EtAddNamedPipeHandleToListView": {
-                "type": 5,
-                "configuration": 6,
-                "maximum": 7,
-                "state": 11,
-                "remote": 12,
-                "read": 13,
-                "completion": 14,
+            "EtAddNamedPipeHandleNode": {
+                "type": "ET_PIPE_COLUMN_TYPE",
+                "configuration": "ET_PIPE_COLUMN_CONFIGURATION",
+                "maximum": "ET_PIPE_COLUMN_MAXIMUMINSTANCES",
+                "state": "ET_PIPE_COLUMN_STATE",
+                "remote": "ET_PIPE_COLUMN_REMOTECLIENTS",
+                "read": "ET_PIPE_COLUMN_READMODE",
+                "completion": "ET_PIPE_COLUMN_COMPLETIONMODE",
             },
         }
         case_routes = (
@@ -171,32 +171,32 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
         for function, columns in functions.items():
             body = compact(function_body(source, function))
             expected_ui_string_calls = (
-                18 if function == "EtAddNamedPipeHandleToListView" else 16
+                18 if function == "EtAddNamedPipeHandleNode" else 16
             )
             self.assertEqual(body.count("EtGetUiString("), expected_ui_string_calls)
 
             for case, column_kind, symbol, english in case_routes:
                 with self.subTest(function=function, case=case):
                     self.assertIn(
-                        f'case{case}:PhSetListViewSubItem(Context->ListViewWndHandle,'
-                        f'lvItemIndex,{columns[column_kind]},EtGetUiString({symbol},'
+                        f'case{case}:EtSetPipeNodeColumn(node,'
+                        f'{columns[column_kind]},EtGetUiString({symbol},'
                         f'L"{english}"));break;',
                         body,
                     )
 
             self.assertIn(
                 "if(pipeLocalInfo.MaximumInstances==FILE_PIPE_UNLIMITED_INSTANCES)"
-                f"PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,{columns['maximum']},"
+                f"EtSetPipeNodeColumn(node,{columns['maximum']},"
                 'EtGetUiString(IDS_ET_PIPE_UNLIMITED,L"Unlimited"));else'
-                f"PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,{columns['maximum']},"
+                f"EtSetPipeNodeColumn(node,{columns['maximum']},"
                 "PhaFormatUInt64(pipeLocalInfo.MaximumInstances,FALSE)->Buffer);",
                 body,
             )
             self.assertIn(
                 "if(pipeLocalInfo.NamedPipeType&FILE_PIPE_REJECT_REMOTE_CLIENTS)"
-                f"PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,{columns['remote']},"
+                f"EtSetPipeNodeColumn(node,{columns['remote']},"
                 'EtGetUiString(IDS_ET_PIPE_REJECT,L"Reject"));else'
-                f"PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,{columns['remote']},"
+                f"EtSetPipeNodeColumn(node,{columns['remote']},"
                 'EtGetUiString(IDS_ET_PIPE_ACCEPT,L"Accept"));',
                 body,
             )
@@ -215,20 +215,20 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
         source = source_text()
         direct_routes = {
             "EtEnumerateNamedPipeDirectory": (
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,1,pipeName->Buffer);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,2,PH_AUTO_T(PH_STRING,PhStdGetClientIdName(&clientId))->Buffer);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,6,PhaFormatUInt64(pipeLocalInfo.CurrentInstances,FALSE)->Buffer);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,7,PhaFormatSize(pipeLocalInfo.ReadDataAvailable,FALSE)->Buffer);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,8,PhaFormatSize(pipeLocalInfo.OutboundQuota,FALSE)->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_NAME,pipeName->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_PROCESS,PH_AUTO_T(PH_STRING,PhStdGetClientIdName(&clientId))->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_CURRENTINSTANCES,PhaFormatUInt64(pipeLocalInfo.CurrentInstances,FALSE)->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_READDATAAVAILABLE,PhaFormatSize(pipeLocalInfo.ReadDataAvailable,FALSE)->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_OUTBOUNDQUOTA,PhaFormatSize(pipeLocalInfo.OutboundQuota,FALSE)->Buffer);",
             ),
-            "EtAddNamedPipeHandleToListView": (
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,1,PhGetString(PipeName));",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,2,PH_AUTO_T(PH_STRING,PhStdGetClientIdName(&clientId))->Buffer);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,3,handle);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,4,access);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,8,PhaFormatUInt64(pipeLocalInfo.CurrentInstances,FALSE)->Buffer);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,9,PhaFormatSize(pipeLocalInfo.ReadDataAvailable,FALSE)->Buffer);",
-                "PhSetListViewSubItem(Context->ListViewWndHandle,lvItemIndex,10,PhaFormatSize(pipeLocalInfo.OutboundQuota,FALSE)->Buffer);",
+            "EtAddNamedPipeHandleNode": (
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_NAME,PhGetString(PipeName));",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_PROCESS,PH_AUTO_T(PH_STRING,PhStdGetClientIdName(&clientId))->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_HANDLE,handle);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_GRANTEDACCESS,access);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_CURRENTINSTANCES,PhaFormatUInt64(pipeLocalInfo.CurrentInstances,FALSE)->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_READDATAAVAILABLE,PhaFormatSize(pipeLocalInfo.ReadDataAvailable,FALSE)->Buffer);",
+                "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_OUTBOUNDQUOTA,PhaFormatSize(pipeLocalInfo.OutboundQuota,FALSE)->Buffer);",
             ),
         }
 
@@ -256,26 +256,26 @@ class ExtendedToolsNamedPipeResourceTests(unittest.TestCase):
                 self.assertNotIn(en, data[other])
 
         self.assertEqual([row[1] for row in RESOURCES], list(range(61188, 61200)))
-        self.assertEqual(sorted(defines.values()), list(range(61000, 61470)))
+        self.assertEqual(sorted(defines.values()), list(range(61000, 61471)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 470)
-        self.assertEqual(len(chinese), 470)
+        self.assertEqual(len(english), 471)
+        self.assertEqual(len(chinese), 471)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
+            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_SEARCH_NAMED_PIPES$",
         )
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61470$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61471$")
 
         workflow = (REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=470"), 2)
+        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=471"), 2)
 
         generator_test = (
             REPO_ROOT / "tools" / "zhcn" / "tests" / "test_native_resource_generation.py"
         ).read_text(encoding="utf-8")
-        self.assertIn('self.assertIn("3365 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("3366 strings", result.stdout)', generator_test)
 
     def test_migrated_enum_literals_leave_the_fresh_audit(self):
         audit = load_audit_module()

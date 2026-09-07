@@ -157,7 +157,7 @@ jobs:
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=113' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=470' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=471' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=396' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=62' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=25' `
@@ -318,7 +318,7 @@ jobs:
           --expect-string-count-in 'bin\Release64\plugins\DotNetTools.dll=113' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedNotifications.dll=4' `
           --expect-string-count-in 'bin\Release64\plugins\ExtendedServices.dll=90' `
-          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=470' `
+          --expect-string-count-in 'bin\Release64\plugins\ExtendedTools.dll=471' `
           --expect-string-count-in 'bin\Release64\plugins\HardwareDevices.dll=396' `
           --expect-string-count-in 'bin\Release64\plugins\NetworkTools.dll=62' `
           --expect-string-count-in 'bin\Release64\plugins\OnlineChecks.dll=25' `

@@ -213,7 +213,7 @@ class GraphScrollNativeResourceTests(unittest.TestCase):
         self.assertEqual(workflow.count(r"peview.exe=327"), 2)
         self.assertNotIn(r"sys_info.exe=598", workflow)
         self.assertNotIn(r"peview.exe=298", workflow)
-        self.assertIn('self.assertIn("3365 strings", result.stdout)', generator_test)
+        self.assertIn('self.assertIn("3366 strings", result.stdout)', generator_test)
         self.assertNotIn('self.assertIn("1737 strings", result.stdout)', generator_test)
 
 

@@ -200,11 +200,11 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
         )
 
         self.assertEqual([row[1] for row in NEW_RESOURCES], list(range(61200, 61230)))
-        self.assertEqual(sorted(defines.values()), list(range(61000, 61470)))
+        self.assertEqual(sorted(defines.values()), list(range(61000, 61471)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 470)
-        self.assertEqual(len(chinese), 470)
+        self.assertEqual(len(english), 471)
+        self.assertEqual(len(chinese), 471)
 
         for symbol, resource_id, en, zh, owner in NEW_RESOURCES + list(REUSED_RESOURCES):
             with self.subTest(symbol=symbol):
@@ -217,14 +217,14 @@ class ExtendedToolsWindowRuntimeResourceTests(unittest.TestCase):
 
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
+            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_SEARCH_NAMED_PIPES$",
         )
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61470$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61471$")
 
         workflow = (REPO_ROOT / ".github/workflows/zh-cn-build.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=470"), 2)
+        self.assertEqual(workflow.count("plugins\\ExtendedTools.dll=471"), 2)
         self.assertNotIn("plugins\\ExtendedTools.dll=200", workflow)
 
     def test_all_43_visible_fixed_text_occurrences_use_the_exact_resource(self):

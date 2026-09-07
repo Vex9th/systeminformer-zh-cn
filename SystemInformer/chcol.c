@@ -11,6 +11,7 @@
  */
 
 #include <phapp.h>
+#include <phsettings.h>
 #include <settings.h>
 
 typedef struct _COLUMNS_DIALOG_CONTEXT
@@ -650,18 +651,22 @@ INT_PTR CALLBACK PhpColumnsDlgProc(
             context->ActiveListArray = PhCreateList(1);
             context->ControlFont = PhCreateMessageFont(dpiValue); // PhDuplicateFontUpdateDpi(PhTreeWindowFont, PhGetWindowDpi(hwndDlg))
 
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 context->SearchInactiveHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_INACTIVE_COLUMNS),
+                SETTING_SEARCH_COLUMNS_REGEX,
+                SETTING_SEARCH_COLUMNS_CASE_SENSITIVE,
                 PhpInactiveColumnsSearchControlCallback,
                 context
                 );
 
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 context->SearchActiveHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_ACTIVE_COLUMNS),
+                SETTING_SEARCH_COLUMNS_REGEX,
+                SETTING_SEARCH_COLUMNS_CASE_SENSITIVE,
                 PhpActiveColumnsSearchControlCallback,
                 context
                 );

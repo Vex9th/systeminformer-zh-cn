@@ -1670,6 +1670,8 @@ LOGICAL DllMain(
                 { ScalableIntegerPairSettingType, SETTING_NAME_PIPE_ENUM_WINDOW_SIZE, L"@96|510,380" },
                 { StringSettingType, SETTING_NAME_PIPE_ENUM_LISTVIEW_COLUMNS, L"" },
                 { StringSettingType, SETTING_NAME_PIPE_ENUM_LISTVIEW_COLUMNS_WITH_KSI, L"" },
+                { StringSettingType, SETTING_NAME_PIPE_ENUM_TREE_LIST_COLUMNS, L"" },
+                { IntegerPairSettingType, SETTING_NAME_PIPE_ENUM_TREE_LIST_SORT, L"0,0" },
                 { IntegerPairSettingType, SETTING_NAME_FIRMWARE_WINDOW_POSITION, L"0,0" },
                 { ScalableIntegerPairSettingType, SETTING_NAME_FIRMWARE_WINDOW_SIZE, L"@96|490,340" },
                 { StringSettingType, SETTING_NAME_FIRMWARE_LISTVIEW_COLUMNS, L"" },

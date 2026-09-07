@@ -1715,10 +1715,12 @@ INT_PTR CALLBACK PhpProcessEnvironmentDlgProc(
             context->SearchWindowHandle = GetDlgItem(hwndDlg, IDC_SEARCH);
             context->ProcessItem = processItem;
 
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 context->SearchWindowHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_ENVIRONMENT),
+                SETTING_SEARCH_ENVIRONMENT_REGEX,
+                SETTING_SEARCH_ENVIRONMENT_CASE_SENSITIVE,
                 PhpProcessEnvironmentSearchControlCallback,
                 context
                 );

@@ -112,15 +112,15 @@ class ExtendedToolsPoolTreeDynamicUiResourceTests(unittest.TestCase):
         english = parse_stringtable(ENGLISH_RC)
         chinese = parse_stringtable(CHINESE_RC)
 
-        self.assertEqual(len(header), 470)
-        self.assertEqual(len(english), 470)
-        self.assertEqual(len(chinese), 470)
-        self.assertEqual(sorted(header.values()), list(range(61000, 61470)))
+        self.assertEqual(len(header), 471)
+        self.assertEqual(len(english), 471)
+        self.assertEqual(len(chinese), 471)
+        self.assertEqual(sorted(header.values()), list(range(61000, 61471)))
         self.assertRegex(
             header_source,
-            r"(?m)^#define\s+IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
+            r"(?m)^#define\s+IDS_ET_CACHED_LAST\s+IDS_ET_SEARCH_NAMED_PIPES$",
         )
-        self.assertRegex(header_source, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61470$")
+        self.assertRegex(header_source, r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61471$")
 
         for resource_id, symbol, en_text, zh_text in NEW_RESOURCES:
             with self.subTest(symbol=symbol):

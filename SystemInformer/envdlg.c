@@ -23,7 +23,7 @@ static CONST PH_STRINGREF EtUserEnvironmentKeyName = PH_STRINGREF_INIT(L"Environ
 static CONST PH_STRINGREF EtSystemEnvironmentKeyName = PH_STRINGREF_INIT(L"System\\CurrentControlSet\\Control\\Session Manager\\Environment");
 static HWND EtEnvironmentVariablesWindowHandle = NULL;
 static HANDLE EtEnvironmentVariablesWindowThreadHandle = NULL;
-static PH_EVENT EtEnvironmentVariablesInitializedEvent = PH_EVENT_INIT;
+static PH_QUEUED_LOCK EtEnvironmentVariablesWindowLock = PH_QUEUED_LOCK_INIT;
 
 /**
  * Represents an environment variable entry.
@@ -43,6 +43,8 @@ typedef struct _ENV_VARIABLES_CONTEXT
 {
     HWND WindowHandle;
     HWND ListViewHandle;
+    HWND SearchBoxHandle;
+    ULONG_PTR SearchMatchHandle;
     HWND AddButtonHandle;
     HWND EditButtonHandle;
     HWND DeleteButtonHandle;
@@ -343,11 +345,34 @@ static VOID EtUpdateEnvironmentControls(
     );
 
 /**
- * Refreshes the list of environment variables in the dialog.
+ * Determines if an environment variable entry matches the search text.
+ *
+ * \param Context The environment variables context.
+ * \param Entry The environment variable entry.
+ * \return TRUE if the entry matches the search text, FALSE otherwise.
+ */
+static BOOLEAN EtMatchEnvironmentEntry(
+    _In_ PENV_VARIABLES_CONTEXT Context,
+    _In_ PENV_VARIABLE_ENTRY Entry
+    )
+{
+    if (!Context->SearchMatchHandle)
+        return TRUE;
+
+    if (PhSearchControlMatch(Context->SearchMatchHandle, &Entry->Name->sr))
+        return TRUE;
+    if (PhSearchControlMatch(Context->SearchMatchHandle, &Entry->Value->sr))
+        return TRUE;
+
+    return FALSE;
+}
+
+/**
+ * Populates the dialog with the environment variables matching the search text.
  *
  * \param Context The environment variables context.
  */
-static VOID EtRefreshEnvironmentVariables(
+static VOID EtPopulateEnvironmentVariables(
     _In_ PENV_VARIABLES_CONTEXT Context
     )
 {
@@ -355,15 +380,14 @@ static VOID EtRefreshEnvironmentVariables(
 
     ExtendedListView_SetRedraw(Context->ListViewHandle, FALSE);
     ListView_DeleteAllItems(Context->ListViewHandle);
-    EtClearEnvironmentEntries(Context);
-
-    EtReadEnvironmentKey(PH_KEY_CURRENT_USER, &EtUserEnvironmentKeyName, FALSE, Context->Entries);
-    EtReadEnvironmentKey(PH_KEY_LOCAL_MACHINE, &EtSystemEnvironmentKeyName, TRUE, Context->Entries);
 
     for (i = 0; i < Context->Entries->Count; i++)
     {
         PENV_VARIABLE_ENTRY entry = Context->Entries->Items[i];
         INT index;
+
+        if (!EtMatchEnvironmentEntry(Context, entry))
+            continue;
 
         index = PhAddListViewGroupItem(
             Context->ListViewHandle,
@@ -377,6 +401,38 @@ static VOID EtRefreshEnvironmentVariables(
 
     ExtendedListView_SetRedraw(Context->ListViewHandle, TRUE);
     EtUpdateEnvironmentControls(Context);
+}
+
+/**
+ * Refreshes the list of environment variables in the dialog.
+ *
+ * \param Context The environment variables context.
+ */
+static VOID EtRefreshEnvironmentVariables(
+    _In_ PENV_VARIABLES_CONTEXT Context
+    )
+{
+    EtClearEnvironmentEntries(Context);
+
+    EtReadEnvironmentKey(PH_KEY_CURRENT_USER, &EtUserEnvironmentKeyName, FALSE, Context->Entries);
+    EtReadEnvironmentKey(PH_KEY_LOCAL_MACHINE, &EtSystemEnvironmentKeyName, TRUE, Context->Entries);
+
+    EtPopulateEnvironmentVariables(Context);
+}
+
+_Function_class_(PH_SEARCHCONTROL_CALLBACK)
+static VOID NTAPI EtEnvironmentSearchControlCallback(
+    _In_ ULONG_PTR MatchHandle,
+    _In_opt_ PVOID Context
+    )
+{
+    PENV_VARIABLES_CONTEXT context = Context;
+
+    assert(context);
+
+    context->SearchMatchHandle = MatchHandle;
+
+    EtPopulateEnvironmentVariables(context);
 }
 
 static VOID EtUpdateEnvironmentControls(
@@ -1325,6 +1381,7 @@ static INT_PTR CALLBACK EtEnvironmentVariablesDlgProc(
         {
             context->WindowHandle = hwndDlg;
             context->ListViewHandle = GetDlgItem(hwndDlg, IDC_LIST);
+            context->SearchBoxHandle = GetDlgItem(hwndDlg, IDC_SEARCH);
             context->AddButtonHandle = GetDlgItem(hwndDlg, IDC_ENV_ADD);
             context->EditButtonHandle = GetDlgItem(hwndDlg, IDC_ENV_EDIT);
             context->DeleteButtonHandle = GetDlgItem(hwndDlg, IDC_ENV_DELETE);
@@ -1333,6 +1390,16 @@ static INT_PTR CALLBACK EtEnvironmentVariablesDlgProc(
             context->Elevated = !!PhGetOwnTokenAttributes().Elevated;
 
             PhSetApplicationWindowIcon(hwndDlg);
+
+            PhCreateSearchControl2(
+                hwndDlg,
+                context->SearchBoxHandle,
+                PhGetApplicationUiString(IDS_PH_SEARCH_ENVIRONMENT),
+                SETTING_SEARCH_ENVIRONMENT_REGEX,
+                SETTING_SEARCH_ENVIRONMENT_CASE_SENSITIVE,
+                EtEnvironmentSearchControlCallback,
+                context
+                );
 
             PhAddListViewColumn(context->ListViewHandle, 0, 0, 0, LVCFMT_LEFT, 160, PhGetApplicationUiString(IDS_PH_TOKEN_NAME));
             PhAddListViewColumn(context->ListViewHandle, 1, 1, 1, LVCFMT_LEFT, 320, PhGetApplicationUiString(IDS_PH_VALUE));
@@ -1353,6 +1420,7 @@ static INT_PTR CALLBACK EtEnvironmentVariablesDlgProc(
                 );
 
             PhInitializeLayoutManager(&context->LayoutManager, hwndDlg);
+            PhAddLayoutItem(&context->LayoutManager, context->SearchBoxHandle, NULL, PH_ANCHOR_LEFT | PH_ANCHOR_TOP | PH_ANCHOR_RIGHT);
             PhAddLayoutItem(&context->LayoutManager, context->ListViewHandle, NULL, PH_ANCHOR_ALL);
             PhAddLayoutItem(&context->LayoutManager, context->AddButtonHandle, NULL, PH_ANCHOR_LEFT | PH_ANCHOR_BOTTOM);
             PhAddLayoutItem(&context->LayoutManager, context->EditButtonHandle, NULL, PH_ANCHOR_LEFT | PH_ANCHOR_BOTTOM);
@@ -1368,10 +1436,7 @@ static INT_PTR CALLBACK EtEnvironmentVariablesDlgProc(
             else
                 PhCenterWindow(hwndDlg, GetParent(hwndDlg));
 
-            // N.B. Do not set focus here. The dialog is owned by the main window, whose thread is
-            // blocked waiting for this dialog to be created, and SetFocus on a window owned by a
-            // window on another thread synchronizes with that thread. Focus is set when the dialog
-            // is shown (WM_PH_SHOW_DIALOG) instead.
+            // N.B. The window is hidden here, focus is set when it's shown (WM_PH_SHOW_DIALOG).
 
             PhInitializeWindowTheme(hwndDlg, !!PhGetIntegerSetting(SETTING_ENABLE_THEME_SUPPORT));
         }
@@ -1381,7 +1446,7 @@ static INT_PTR CALLBACK EtEnvironmentVariablesDlgProc(
             PhSaveListViewColumnsToSetting(SETTING_ENVIRONMENT_VARIABLES_LIST_VIEW_COLUMNS, context->ListViewHandle);
             PhSaveWindowPlacementToSetting(SETTING_ENVIRONMENT_VARIABLES_WINDOW_POSITION, SETTING_ENVIRONMENT_VARIABLES_WINDOW_SIZE, hwndDlg);
 
-            PhUnregisterDialog(EtEnvironmentVariablesWindowHandle);
+            PhUnregisterDialog(hwndDlg);
 
             PhRemoveWindowContext(hwndDlg, PH_WINDOW_CONTEXT_DEFAULT);
 
@@ -1513,12 +1578,13 @@ static NTSTATUS EtEnvironmentVariablesWindowThreadStart(
     )
 {
     BOOL result;
+    HWND windowHandle;
     MSG message;
     PH_AUTO_POOL autoPool;
 
     PhInitializeAutoPool(&autoPool);
 
-    EtEnvironmentVariablesWindowHandle = PhCreateDialog(
+    windowHandle = PhCreateDialog(
         NtCurrentImageBase(),
         MAKEINTRESOURCE(IDD_ENVIRONMENTVARIABLES),
         !!PhGetIntegerSetting(SETTING_FORCE_NO_PARENT) ? NULL : Parameter,
@@ -1526,14 +1592,17 @@ static NTSTATUS EtEnvironmentVariablesWindowThreadStart(
         NULL
         );
 
-    if (EtEnvironmentVariablesWindowHandle)
-        PhRegisterDialog(EtEnvironmentVariablesWindowHandle);
+    PhAcquireQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
+    EtEnvironmentVariablesWindowHandle = windowHandle;
+    PhReleaseQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
 
-    PhSetEvent(&EtEnvironmentVariablesInitializedEvent);
-
-    if (!EtEnvironmentVariablesWindowHandle)
+    if (!windowHandle)
     {
+        PhShowError2(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), L"%s", L"");
+
         PhDeleteAutoPool(&autoPool);
+
+        PhAcquireQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
 
         if (EtEnvironmentVariablesWindowThreadHandle)
         {
@@ -1541,15 +1610,21 @@ static NTSTATUS EtEnvironmentVariablesWindowThreadStart(
             EtEnvironmentVariablesWindowThreadHandle = NULL;
         }
 
+        PhReleaseQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
+
         return STATUS_UNSUCCESSFUL;
     }
+
+    PhRegisterDialog(windowHandle);
+
+    SendMessage(windowHandle, WM_PH_SHOW_DIALOG, 0, 0);
 
     while (result = GetMessage(&message, NULL, 0, 0))
     {
         if (result == -1)
             break;
 
-        if (!IsDialogMessage(EtEnvironmentVariablesWindowHandle, &message))
+        if (!IsDialogMessage(windowHandle, &message))
         {
             TranslateMessage(&message);
             DispatchMessage(&message);
@@ -1559,14 +1634,18 @@ static NTSTATUS EtEnvironmentVariablesWindowThreadStart(
     }
 
     PhDeleteAutoPool(&autoPool);
-    PhResetEvent(&EtEnvironmentVariablesInitializedEvent);
+    PhAcquireQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
+
+    if (EtEnvironmentVariablesWindowHandle == windowHandle)
+        EtEnvironmentVariablesWindowHandle = NULL;
 
     if (EtEnvironmentVariablesWindowThreadHandle)
     {
         NtClose(EtEnvironmentVariablesWindowThreadHandle);
         EtEnvironmentVariablesWindowThreadHandle = NULL;
-        EtEnvironmentVariablesWindowHandle = NULL;
     }
+
+    PhReleaseQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
 
     return STATUS_SUCCESS;
 }
@@ -1580,23 +1659,29 @@ VOID PhShowEnvironmentVariablesDialog(
     _In_ HWND ParentWindowHandle
     )
 {
+    NTSTATUS status = STATUS_SUCCESS;
+    HWND windowHandle = NULL;
+
+    // N.B. The window is created and shown by its own thread. Don't wait for it here, this thread
+    // has to keep processing messages or anything the new thread does that synchronizes with it
+    // deadlocks the user interface.
+
+    PhAcquireQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
+
     if (!EtEnvironmentVariablesWindowThreadHandle)
     {
-        if (!NT_SUCCESS(PhCreateThreadEx(&EtEnvironmentVariablesWindowThreadHandle, EtEnvironmentVariablesWindowThreadStart, ParentWindowHandle)))
-        {
-            PhShowError2(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), L"%s", L"");
-            return;
-        }
-
-        PhWaitForEvent(&EtEnvironmentVariablesInitializedEvent, NULL);
-
-        if (!EtEnvironmentVariablesWindowHandle)
-        {
-            PhResetEvent(&EtEnvironmentVariablesInitializedEvent);
-            PhShowError2(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), L"%s", L"");
-            return;
-        }
+        status = PhCreateThreadEx(&EtEnvironmentVariablesWindowThreadHandle, EtEnvironmentVariablesWindowThreadStart, ParentWindowHandle);
+    }
+    else
+    {
+        windowHandle = EtEnvironmentVariablesWindowHandle;
     }
 
-    PostMessage(EtEnvironmentVariablesWindowHandle, WM_PH_SHOW_DIALOG, 0, 0);
+    PhReleaseQueuedLockExclusive(&EtEnvironmentVariablesWindowLock);
+
+    if (!NT_SUCCESS(status))
+        PhShowError2(NULL, PhGetApplicationUiString(IDS_PH_UNABLE_CREATE_WINDOW), L"%s", L"");
+
+    if (windowHandle)
+        PostMessage(windowHandle, WM_PH_SHOW_DIALOG, 0, 0);
 }
