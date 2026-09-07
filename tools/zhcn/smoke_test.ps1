@@ -1,7 +1,7 @@
 # Windows x64 smoke gate for the zh-CN community edition. Each iteration
 # starts an isolated sys_info.exe instance, verifies that its main window can
 # process WM_NULL, checks the expected plugin module mappings, and requests a
-# normal WM_CLOSE shutdown. This is not a visual or interactive UI test.
+# normal application Exit command. This is not a visual or interactive UI test.
 param(
     [Parameter(Mandatory = $true)]
     [string]$ExePath,
@@ -59,6 +59,7 @@ function Get-NewDumpFiles([string]$Directory, [string[]]$BaselinePaths) {
 $ExePath = (Resolve-Path -LiteralPath $ExePath).Path
 $workingDirectory = Split-Path -Parent $ExePath
 $launchArguments = @('-nosettings', '-newinstance')
+$exitCommandId = 10001 # ID_HACKER_EXIT in SystemInformer/resource.h
 $expectedModuleMappings = @(
     'ToolStatus.dll',
     'ExtendedTools.dll',
@@ -168,12 +169,12 @@ try {
 
             Write-Host "iteration ${iteration}: main window responsive; $($expectedModuleMappings.Count) plugin module mappings present"
 
-            if (-not [Native.Win]::PostMessage($mainWindow.Handle, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)) {
-                throw "iteration ${iteration}: failed to post WM_CLOSE"
+            if (-not [Native.Win]::PostMessage($mainWindow.Handle, 0x0111, [IntPtr]$exitCommandId, [IntPtr]::Zero)) {
+                throw "iteration ${iteration}: failed to post the application Exit command"
             }
 
             if (-not $process.WaitForExit(30000)) {
-                throw "iteration ${iteration}: process did not exit within 30 seconds after WM_CLOSE"
+                throw "iteration ${iteration}: process did not exit within 30 seconds after the application Exit command"
             }
 
             $process.Refresh()

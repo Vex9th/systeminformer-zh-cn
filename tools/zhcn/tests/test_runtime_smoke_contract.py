@@ -6,6 +6,7 @@ import unittest
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 SMOKE_PATH = REPO_ROOT / "tools" / "zhcn" / "smoke_test.ps1"
 WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
+RESOURCE_HEADER_PATH = REPO_ROOT / "SystemInformer" / "resource.h"
 
 
 class RuntimeSmokeContractTests(unittest.TestCase):
@@ -13,6 +14,7 @@ class RuntimeSmokeContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.smoke = SMOKE_PATH.read_text(encoding="utf-8-sig")
         cls.workflow = WORKFLOW_PATH.read_text(encoding="utf-8-sig")
+        cls.resource_header = RESOURCE_HEADER_PATH.read_text(encoding="utf-8-sig")
 
     def test_default_iterations_and_isolated_launch_arguments_are_locked(self) -> None:
         self.assertRegex(
@@ -71,9 +73,18 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         self.assertIn("module mapping", self.smoke)
         self.assertNotIn("plugins loaded", self.smoke.lower())
 
-    def test_success_path_requests_wm_close_and_requires_clean_exit(self) -> None:
+    def test_success_path_requests_application_exit_and_requires_clean_exit(self) -> None:
         self.assertIn("PostMessage", self.smoke)
-        self.assertIn("0x0010", self.smoke)
+        self.assertIn("$exitCommandId = 10001", self.smoke)
+        self.assertRegex(
+            self.resource_header,
+            r"#define\s+ID_HACKER_EXIT\s+10001\b",
+        )
+        self.assertRegex(
+            self.smoke,
+            r"PostMessage\([^\n]*0x0111[^\n]*\$exitCommandId",
+        )
+        self.assertNotIn("0x0010", self.smoke)
         self.assertIn("WaitForExit(30000)", self.smoke)
         self.assertRegex(self.smoke, r"\$process\.ExitCode\s*-ne\s*0")
 
