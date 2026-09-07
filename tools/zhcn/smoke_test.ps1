@@ -148,7 +148,15 @@ try {
             }
 
             if (-not $mainWindow) {
-                throw "iteration ${iteration}: main window was not found within 90 seconds"
+                $observedWindows = @(
+                    $windows | ForEach-Object {
+                        "class='$($_.ClassName)' title='$($_.Title)'"
+                    }
+                ) -join '; '
+                if (-not $observedWindows) {
+                    $observedWindows = '<none>'
+                }
+                throw "iteration ${iteration}: main window was not found within 90 seconds; observed visible windows: $observedWindows"
             }
 
             $probeResult = [IntPtr]::Zero

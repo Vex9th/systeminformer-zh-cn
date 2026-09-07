@@ -49,6 +49,23 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         self.assertIn("GetClassName", self.smoke)
         self.assertIn("$_.ClassName -eq 'sys_infoMainWindow'", self.smoke)
         self.assertNotIn("$_.Title -match 'sys_info'", self.smoke)
+        self.assertIn("observed visible windows", self.smoke)
+        self.assertRegex(
+            self.smoke,
+            r"(?s)\$observedWindows\s*=\s*@\(\s*"
+            r"\$windows\s*\|\s*ForEach-Object\s*\{.*?"
+            r"\$_\.ClassName.*?\$_\.Title.*?"
+            r"\}\s*\)\s*-join\s*'; '",
+        )
+        self.assertRegex(
+            self.smoke,
+            r"(?s)if\s*\(\s*-not\s+\$observedWindows\s*\)\s*\{\s*"
+            r"\$observedWindows\s*=\s*'<none>'\s*\}",
+        )
+        self.assertRegex(
+            self.smoke,
+            r"observed visible windows:\s*\$observedWindows",
+        )
         self.assertRegex(
             self.settings_source,
             r'PhpAddStringSetting\(SETTING_MAIN_WINDOW_CLASS_NAME, L"sys_infoMainWindow"\)',
