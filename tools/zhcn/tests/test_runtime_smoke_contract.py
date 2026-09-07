@@ -51,11 +51,11 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         expected_settings = {
             "Language": "'zh-CN'",
             "FirstRun": "0",
-            "OnlineChecks.PartnerPromptShown": "1",
-            "OnlineChecks.EnableScanning": "0",
-            "OnlineChecks.HybridAnalysisEnableLookups": "0",
-            "OnlineChecks.HybridAnalysisEnableAutoSubmit": "0",
-            "OnlineChecks.VirusTotalEnableLookups": "0",
+            "OnlineChecks.PartnerPromptShown": "'1'",
+            "OnlineChecks.EnableScanning": "'0'",
+            "OnlineChecks.HybridAnalysisEnableLookups": "'0'",
+            "OnlineChecks.HybridAnalysisEnableAutoSubmit": "'0'",
+            "OnlineChecks.VirusTotalEnableLookups": "'0'",
         }
         for name, value in expected_settings.items():
             self.assertRegex(
