@@ -7,6 +7,7 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 SMOKE_PATH = REPO_ROOT / "tools" / "zhcn" / "smoke_test.ps1"
 WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "zh-cn-build.yml"
 RESOURCE_HEADER_PATH = REPO_ROOT / "SystemInformer" / "resource.h"
+SETTINGS_SOURCE_PATH = REPO_ROOT / "SystemInformer" / "settings.c"
 
 
 class RuntimeSmokeContractTests(unittest.TestCase):
@@ -15,6 +16,7 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         cls.smoke = SMOKE_PATH.read_text(encoding="utf-8-sig")
         cls.workflow = WORKFLOW_PATH.read_text(encoding="utf-8-sig")
         cls.resource_header = RESOURCE_HEADER_PATH.read_text(encoding="utf-8-sig")
+        cls.settings_source = SETTINGS_SOURCE_PATH.read_text(encoding="utf-8-sig")
 
     def test_default_iterations_and_isolated_launch_arguments_are_locked(self) -> None:
         self.assertRegex(
@@ -44,6 +46,13 @@ class RuntimeSmokeContractTests(unittest.TestCase):
 
     def test_each_iteration_checks_window_response_and_module_mapping(self) -> None:
         self.assertIn("Get-ProcessWindows", self.smoke)
+        self.assertIn("GetClassName", self.smoke)
+        self.assertIn("$_.ClassName -eq 'sys_infoMainWindow'", self.smoke)
+        self.assertNotIn("$_.Title -match 'sys_info'", self.smoke)
+        self.assertRegex(
+            self.settings_source,
+            r'PhpAddStringSetting\(SETTING_MAIN_WINDOW_CLASS_NAME, L"sys_infoMainWindow"\)',
+        )
         self.assertRegex(
             self.smoke,
             r"SendMessageTimeout\([^\n]*0x0000",

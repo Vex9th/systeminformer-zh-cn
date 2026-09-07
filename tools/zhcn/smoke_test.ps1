@@ -19,6 +19,7 @@ Add-Type -Namespace Native -Name Win -MemberDefinition @'
 public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lp);
 [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pid);
 [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder sb, int max);
+[DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder sb, int max);
 [DllImport("user32.dll")] public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp, uint flags, uint timeout, out IntPtr result);
 [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wp, IntPtr lp);
 [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hWnd);
@@ -34,8 +35,14 @@ function Get-ProcessWindows([int]$Id) {
 
         if ($windowProcessId -eq $Id -and [Native.Win]::IsWindowVisible($windowHandle)) {
             $title = New-Object System.Text.StringBuilder 512
+            $className = New-Object System.Text.StringBuilder 256
             [Native.Win]::GetWindowText($windowHandle, $title, 512) | Out-Null
-            [void]$list.Add(@{ Handle = $windowHandle; Title = $title.ToString() })
+            [Native.Win]::GetClassName($windowHandle, $className, 256) | Out-Null
+            [void]$list.Add(@{
+                Handle = $windowHandle
+                Title = $title.ToString()
+                ClassName = $className.ToString()
+            })
         }
 
         return $true
@@ -130,7 +137,7 @@ try {
                 }
 
                 $windows = Get-ProcessWindows $process.Id
-                $mainWindow = @($windows | Where-Object { $_.Title -match 'sys_info' }) |
+                $mainWindow = @($windows | Where-Object { $_.ClassName -eq 'sys_infoMainWindow' }) |
                     Select-Object -First 1
 
                 if ($mainWindow) {
