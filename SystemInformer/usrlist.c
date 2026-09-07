@@ -1176,10 +1176,12 @@ INT_PTR CALLBACK PhpUserListDlgProc(
 
             PhSetApplicationWindowIcon(hwndDlg);
             PhRegisterDialog(hwndDlg);
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 context->SearchWindowHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_USERS),
+                SETTING_SEARCH_USERS_REGEX,
+                SETTING_SEARCH_USERS_CASE_SENSITIVE,
                 PhpUserListSearchControlCallback,
                 context
                 );

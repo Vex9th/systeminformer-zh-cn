@@ -3649,10 +3649,12 @@ VOID PhpInformerInitializeDialog(
 
     PhpInformerInitializeColumns(Context, ColumnSettingName);
 
-    PhCreateSearchControl(
+    PhCreateSearchControl2(
         WindowHandle,
         Context->SearchboxHandle,
         PhGetApplicationUiString(IDS_PH_SEARCH_MONITOR),
+        SETTING_SEARCH_MONITOR_REGEX,
+        SETTING_SEARCH_MONITOR_CASE_SENSITIVE,
         PhpInformerSearchCallback,
         Context
         );

@@ -822,10 +822,12 @@ INT_PTR CALLBACK PhRunAsPackageWndProc(
             PhRunAsPackageSetImagelist(context);
             PhRunAsPackageInitializeTree(context);
 
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 WindowHandle,
                 context->SearchBoxHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_PACKAGES),
+                SETTING_SEARCH_PACKAGES_REGEX,
+                SETTING_SEARCH_PACKAGES_CASE_SENSITIVE,
                 PhpRunAsPackageSearchControlCallback,
                 context
                 );

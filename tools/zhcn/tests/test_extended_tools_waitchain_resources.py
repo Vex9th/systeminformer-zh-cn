@@ -390,17 +390,17 @@ class ExtendedToolsWaitChainResourceTests(unittest.TestCase):
                 self.assertNotIn(en, data[other])
 
         self.assertEqual([row[1] for row in RESOURCES], list(range(61132, 61169)))
-        self.assertEqual(sorted(defines.values()), list(range(61000, 61470)))
+        self.assertEqual(sorted(defines.values()), list(range(61000, 61471)))
         self.assertEqual(set(defines), set(english))
         self.assertEqual(set(defines), set(chinese))
-        self.assertEqual(len(english), 470)
-        self.assertEqual(len(chinese), 470)
+        self.assertEqual(len(english), 471)
+        self.assertEqual(len(chinese), 471)
         self.assertRegex(
             header,
-            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
+            r"(?m)^#define IDS_ET_CACHED_LAST\s+IDS_ET_SEARCH_NAMED_PIPES$",
         )
         self.assertRegex(
-            header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61470$"
+            header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+61471$"
         )
 
     def test_no_unwrapped_waitchain_ui_literals_remain(self):

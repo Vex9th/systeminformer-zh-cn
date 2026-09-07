@@ -1652,10 +1652,12 @@ INT_PTR CALLBACK PhpThreadStacksDlgProc(
 
             PhSetApplicationWindowIcon(hwndDlg);
             PhRegisterDialog(hwndDlg);
-            PhCreateSearchControl(
+            PhCreateSearchControl2(
                 hwndDlg,
                 context->SearchWindowHandle,
                 PhGetApplicationUiString(IDS_PH_SEARCH_THREAD_STACKS),
+                SETTING_SEARCH_THREAD_STACKS_REGEX,
+                SETTING_SEARCH_THREAD_STACKS_CASE_SENSITIVE,
                 PhpThreadStacksSearchControlCallback,
                 context
                 );

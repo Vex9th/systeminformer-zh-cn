@@ -1099,7 +1099,10 @@ INT_PTR CALLBACK EtFindSecurityIdsDlgProc(
                         if (selectedItem && selectedItem->Id != ULONG_MAX)
                         {
                             if (PhHandleCopyListViewEMenuItem(selectedItem))
+                            {
+                                PhDestroyEMenu(menu);
                                 break;
+                            }
 
                             switch (selectedItem->Id)
                             {
@@ -1441,7 +1444,10 @@ INT_PTR CALLBACK EtReparseDlgProc(
                         if (selectedItem && selectedItem->Id != ULONG_MAX)
                         {
                             if (PhHandleCopyListViewEMenuItem(selectedItem))
+                            {
+                                PhDestroyEMenu(menu);
                                 break;
+                            }
 
                             switch (selectedItem->Id)
                             {

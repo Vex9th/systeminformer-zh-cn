@@ -847,7 +847,7 @@ VOID SetDefaultDesktopEntry(
 
     PhClearReference(&desktopName);
 }
- 
+
 /**
  * Gets the logon ID for the current session.
  *
@@ -2589,11 +2589,11 @@ NTSTATUS PhInvokeRunAsService(
         flags |= PH_CREATE_PROCESS_USE_PROCESS_TOKEN;
     }
 
-    if (Parameters->UserName)
-    {
-        createInfo.LogonId = PhRunAsGetLogonId();
-        flags |= PH_CREATE_PROCESS_SET_LOGON_ID;
-    }
+    //if (Parameters->UserName)
+    //{
+    //    createInfo.LogonId = PhRunAsGetLogonId();
+    //    flags |= PH_CREATE_PROCESS_SET_LOGON_ID;
+    //}
 
     if (Parameters->UseLinkedToken)
         flags |= PH_CREATE_PROCESS_USE_LINKED_TOKEN;

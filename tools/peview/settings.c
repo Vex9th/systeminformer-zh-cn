@@ -147,34 +147,29 @@ VOID PvInitializeSettings(
     // 1. Default locations (Portable, AppData or Registry)
     status = PhLoadSettingsAutoDetect(NULL, L"peview", &settingsPath, NULL, NULL);
 
-    if (NT_SUCCESS(status) || status == STATUS_OBJECT_NAME_NOT_FOUND)
+    if (NT_SUCCESS(status) || status == STATUS_OBJECT_NAME_NOT_FOUND || status == STATUS_FILE_CORRUPT_ERROR)
     {
+        // The file was loaded, will be created, or is corrupt and can be reset.
         PhMoveReference(&PvSettingsFileName, settingsPath);
     }
 
-    if (PvSettingsFileName)
+    if (status == STATUS_FILE_CORRUPT_ERROR)
     {
-        // If we didn't find the file, it will be created. Otherwise,
-        // there was probably a parsing error and we don't want to
-        // change anything.
-        if (status == STATUS_FILE_CORRUPT_ERROR)
+        if (PhShowMessage2(
+            NULL,
+            TDCBF_YES_BUTTON | TDCBF_NO_BUTTON,
+            TD_WARNING_ICON,
+            PvpLoadUiString(IDS_PV_CORRUPT_SETTINGS),
+            PvpLoadUiString(IDS_PV_CORRUPT_SETTINGS_CONTENT)
+            ) == IDYES)
         {
-            if (PhShowMessage2(
-                NULL,
-                TDCBF_YES_BUTTON | TDCBF_NO_BUTTON,
-                TD_WARNING_ICON,
-                PvpLoadUiString(IDS_PV_CORRUPT_SETTINGS),
-                PvpLoadUiString(IDS_PV_CORRUPT_SETTINGS_CONTENT)
-                ) == IDYES)
-            {
+            if (PvSettingsFileName)
                 PhResetSettingsFile(&PvSettingsFileName->sr);
-            }
-            else
-            {
-                // Pretend we don't have a settings store so bad things don't happen.
-                PhDereferenceObject(PvSettingsFileName);
-                PvSettingsFileName = NULL;
-            }
+        }
+        else
+        {
+            // Pretend we don't have a settings store so bad things don't happen.
+            PhClearReference(&PvSettingsFileName);
         }
     }
 

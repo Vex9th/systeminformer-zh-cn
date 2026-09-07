@@ -26,39 +26,25 @@ NEW_RESOURCES = (
     (61242, "IDS_ET_PIPE_COLUMN_REMOTE_CLIENTS", "Remote clients", "远程客户端数"),
     (61243, "IDS_ET_PIPE_COLUMN_READ_MODE", "Read mode", "读取模式"),
     (61244, "IDS_ET_PIPE_COLUMN_COMPLETION_MODE", "Completion mode", "完成模式"),
+    (61470, "IDS_ET_SEARCH_NAMED_PIPES", "Search Named Pipes (Ctrl+K)", "搜索命名管道（Ctrl+K）"),
 )
 
-KPH_COLUMNS = (
-    (0, 40, "IDS_ET_PIPE_COLUMN_END", "End"),
-    (1, 200, "IDS_ET_WCT_COLUMN_NAME", "Name"),
-    (2, 200, "IDS_ET_PIPE_COLUMN_PROCESS", "Process"),
-    (3, 200, "IDS_ET_PIPE_COLUMN_HANDLE", "Handle"),
-    (4, 50, "IDS_ET_PIPE_COLUMN_GRANTED_ACCESS", "Granted access"),
-    (5, 80, "IDS_ET_TYPE", "Type"),
-    (6, 80, "IDS_ET_PIPE_COLUMN_CONFIGURATION", "Configuration"),
-    (7, 80, "IDS_ET_PIPE_COLUMN_MAX_INSTANCES", "Max instances"),
-    (8, 80, "IDS_ET_PIPE_COLUMN_CURRENT_INSTANCES", "Current instances"),
-    (9, 80, "IDS_ET_PIPE_COLUMN_READ_DATA_AVAILABLE", "Read data available"),
-    (10, 80, "IDS_ET_PIPE_COLUMN_OUTBOUND_QUOTA", "Outbound quota"),
-    (11, 80, "IDS_ET_STATE", "State"),
-    (12, 80, "IDS_ET_PIPE_COLUMN_REMOTE_CLIENTS", "Remote clients"),
-    (13, 80, "IDS_ET_PIPE_COLUMN_READ_MODE", "Read mode"),
-    (14, 80, "IDS_ET_PIPE_COLUMN_COMPLETION_MODE", "Completion mode"),
-)
-
-DIRECTORY_COLUMNS = (
-    (1, 200, "IDS_ET_WCT_COLUMN_NAME", "Name"),
-    (2, 50, "IDS_ET_PIPE_SERVER", "Server"),
-    (3, 80, "IDS_ET_TYPE", "Type"),
-    (4, 80, "IDS_ET_PIPE_COLUMN_CONFIGURATION", "Configuration"),
-    (5, 80, "IDS_ET_PIPE_COLUMN_MAX_INSTANCES", "Max instances"),
-    (6, 80, "IDS_ET_PIPE_COLUMN_CURRENT_INSTANCES", "Current instances"),
-    (7, 80, "IDS_ET_PIPE_COLUMN_READ_DATA_AVAILABLE", "Read data available"),
-    (8, 80, "IDS_ET_PIPE_COLUMN_OUTBOUND_QUOTA", "Outbound quota"),
-    (9, 80, "IDS_ET_STATE", "State"),
-    (10, 80, "IDS_ET_PIPE_COLUMN_REMOTE_CLIENTS", "Remote clients"),
-    (11, 80, "IDS_ET_PIPE_COLUMN_READ_MODE", "Read mode"),
-    (12, 80, "IDS_ET_PIPE_COLUMN_COMPLETION_MODE", "Completion mode"),
+TREE_COLUMNS = (
+    ("ET_PIPE_COLUMN_END", "Context->UseKph", 50, "IDS_ET_PIPE_COLUMN_END", "End"),
+    ("ET_PIPE_COLUMN_NAME", "TRUE", 200, "IDS_ET_WCT_COLUMN_NAME", "Name"),
+    ("ET_PIPE_COLUMN_PROCESS", "TRUE", 200, "IDS_ET_PIPE_COLUMN_PROCESS", "Process"),
+    ("ET_PIPE_COLUMN_HANDLE", "Context->UseKph", 80, "IDS_ET_PIPE_COLUMN_HANDLE", "Handle"),
+    ("ET_PIPE_COLUMN_GRANTEDACCESS", "Context->UseKph", 140, "IDS_ET_PIPE_COLUMN_GRANTED_ACCESS", "Granted access"),
+    ("ET_PIPE_COLUMN_TYPE", "TRUE", 80, "IDS_ET_TYPE", "Type"),
+    ("ET_PIPE_COLUMN_CONFIGURATION", "TRUE", 80, "IDS_ET_PIPE_COLUMN_CONFIGURATION", "Configuration"),
+    ("ET_PIPE_COLUMN_MAXIMUMINSTANCES", "TRUE", 80, "IDS_ET_PIPE_COLUMN_MAX_INSTANCES", "Max instances"),
+    ("ET_PIPE_COLUMN_CURRENTINSTANCES", "TRUE", 80, "IDS_ET_PIPE_COLUMN_CURRENT_INSTANCES", "Current instances"),
+    ("ET_PIPE_COLUMN_READDATAAVAILABLE", "TRUE", 80, "IDS_ET_PIPE_COLUMN_READ_DATA_AVAILABLE", "Read data available"),
+    ("ET_PIPE_COLUMN_OUTBOUNDQUOTA", "TRUE", 80, "IDS_ET_PIPE_COLUMN_OUTBOUND_QUOTA", "Outbound quota"),
+    ("ET_PIPE_COLUMN_STATE", "TRUE", 80, "IDS_ET_STATE", "State"),
+    ("ET_PIPE_COLUMN_REMOTECLIENTS", "TRUE", 80, "IDS_ET_PIPE_COLUMN_REMOTE_CLIENTS", "Remote clients"),
+    ("ET_PIPE_COLUMN_READMODE", "TRUE", 80, "IDS_ET_PIPE_COLUMN_READ_MODE", "Read mode"),
+    ("ET_PIPE_COLUMN_COMPLETIONMODE", "TRUE", 80, "IDS_ET_PIPE_COLUMN_COMPLETION_MODE", "Completion mode"),
 )
 
 
@@ -109,16 +95,16 @@ class ExtendedToolsNamedPipesDynamicUiResourceTests(unittest.TestCase):
         english = parse_stringtable(ENGLISH_RC)
         chinese = parse_stringtable(CHINESE_RC)
 
-        self.assertEqual(len(header), 470)
-        self.assertEqual(len(english), 470)
-        self.assertEqual(len(chinese), 470)
+        self.assertEqual(len(header), 471)
+        self.assertEqual(len(english), 471)
+        self.assertEqual(len(chinese), 471)
         self.assertRegex(
             header_source,
-            r"(?m)^#define\s+IDS_ET_CACHED_LAST\s+IDS_ET_GPU_NODE_COLUMN_FORMAT$",
+            r"(?m)^#define\s+IDS_ET_CACHED_LAST\s+IDS_ET_SEARCH_NAMED_PIPES$",
         )
         self.assertRegex(
             header_source,
-            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61470$",
+            r"(?m)^#define\s+_APS_NEXT_SYMED_VALUE\s+61471$",
         )
 
         for resource_id, symbol, en_text, zh_text in NEW_RESOURCES:
@@ -136,27 +122,28 @@ class ExtendedToolsNamedPipesDynamicUiResourceTests(unittest.TestCase):
         ):
             self.assertIn(
                 compact(
-                    "PhAddListViewItem(Context->ListViewWndHandle,MAXINT,"
-                    f"EtGetUiString({symbol},L\"{english}\"),NULL)"
+                    "EtSetPipeNodeColumn(node,ET_PIPE_COLUMN_END,"
+                    f"EtGetUiString({symbol},L\"{english}\"))"
                 ),
                 source,
             )
 
-        for index, width, symbol, english in KPH_COLUMNS + DIRECTORY_COLUMNS:
-            with self.subTest(index=index, symbol=symbol):
+        for column, visible, width, symbol, english in TREE_COLUMNS:
+            with self.subTest(column=column, symbol=symbol):
                 self.assertIn(
                     compact(
-                        "PhAddListViewColumn(context->ListViewWndHandle,"
-                        f"{index},{index},{index},LVCFMT_LEFT,{width},"
-                        f"EtGetUiString({symbol},L\"{english}\"))"
+                        "PhAddTreeNewColumn(Context->TreeNewHandle,"
+                        f"{column},{visible},EtGetUiString({symbol},L\"{english}\"),"
+                        f"{width},PH_ALIGN_LEFT,index++,0)"
                     ),
                     source,
                 )
 
         self.assertIn(
             compact(
-                "PhAddListViewColumn(context->ListViewWndHandle,0,0,0,"
-                "LVCFMT_LEFT,40,L\"#\")"
+                "PhCreateSearchControl(WindowHandle,context->SearchBoxHandle,"
+                "EtGetUiString(IDS_ET_SEARCH_NAMED_PIPES,"
+                "L\"Search Named Pipes (Ctrl+K)\")"
             ),
             source,
         )

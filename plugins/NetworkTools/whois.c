@@ -876,6 +876,33 @@ VOID WhoisParseAddressString(
     }
 }
 
+/**
+ * Determines whether a hyperlink detected in the whois response may be passed to the shell.
+ *
+ * \param Hyperlink The text of the hyperlink clicked by the user.
+ *
+ * \return TRUE if the hyperlink uses an allowed scheme, otherwise FALSE.
+ */
+BOOLEAN WhoisIsAllowedHyperlink(
+    _In_ PCPH_STRINGREF Hyperlink
+    )
+{
+    static PCWSTR allowedSchemes[] =
+    {
+        L"http://",
+        L"https://",
+        L"mailto:",
+    };
+
+    for (ULONG i = 0; i < RTL_NUMBER_OF(allowedSchemes); i++)
+    {
+        if (PhStartsWithStringRef2(Hyperlink, allowedSchemes[i], TRUE))
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
 INT_PTR CALLBACK WhoisDlgProc(
     _In_ HWND WindowHandle,
     _In_ UINT WindowMessage,
@@ -998,7 +1025,11 @@ INT_PTR CALLBACK WhoisDlgProc(
 
                         if (SendMessage(context->RichEditHandle, EM_GETTEXTRANGE, 0, (LPARAM)&textRange))
                         {
-                            if (PhCountStringZ(buffer) > 4)
+                            PH_STRINGREF hyperlink;
+
+                            PhInitializeStringRefLongHint(&hyperlink, buffer);
+
+                            if (WhoisIsAllowedHyperlink(&hyperlink))
                             {
                                 PhShellExecute(context->WindowHandle, buffer, NULL);
                             }

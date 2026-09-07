@@ -1550,6 +1550,7 @@
     "Firewall": "防火墙",
     "Search Disk": "搜索磁盘",
     "Search Firewall": "搜索防火墙",
+    "Search Named Pipes (Ctrl+K)": "搜索命名管道（Ctrl+K）",
     "Disk monitoring requires System Informer to be restarted with administrative privileges.": "磁盘监控需要使用管理员权限重启 sys_info。",
     "Firewall monitoring requires System Informer to be restarted with administrative privileges.": "防火墙监控需要使用管理员权限重启 sys_info。",
     "Unable to start the kernel event tracing session: ": "无法启动内核事件跟踪会话：",
