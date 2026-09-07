@@ -1,7 +1,14 @@
 import importlib.util
 import pathlib
-import tempfile
 import unittest
+from unittest import mock
+
+try:
+    from tools.zhcn.tests.temp_source import scan_temporary_source
+except ModuleNotFoundError as error:
+    if error.name != "tools":
+        raise
+    from temp_source import scan_temporary_source
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -16,6 +23,20 @@ def load_audit_module():
 
 
 class AuditSysInfoSectionNameTests(unittest.TestCase):
+    def test_scanner_accepts_a_source_on_another_windows_drive(self) -> None:
+        audit = load_audit_module()
+        with mock.patch.object(
+            audit.os.path,
+            "relpath",
+            side_effect=ValueError("path is on mount 'C:', start on mount 'D:'"),
+        ):
+            entries = scan_temporary_source(
+                audit.scan_c_file,
+                'void sample(void) { PhSetWindowText(hwnd, L"Title"); }',
+            )
+
+        self.assertEqual(entries[0]["english"], "Title")
+
     def test_initialize_string_ref_section_name_is_a_visible_ui_sink(self) -> None:
         audit = load_audit_module()
         source = """
@@ -55,14 +76,7 @@ class AuditSysInfoSectionNameTests(unittest.TestCase):
                 PhInitializeStringRef(&section.Name, L"Unrelated field");
             }
         """
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(audit.scan_c_file, source)
 
         visible_entries = [
             entry for entry in entries if entry["category"] == "c_window_text"

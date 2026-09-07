@@ -5,8 +5,14 @@ import importlib.util
 import json
 import pathlib
 import re
-import tempfile
 import unittest
+
+try:
+    from tools.zhcn.tests.temp_source import scan_temporary_source
+except ModuleNotFoundError as error:
+    if error.name != "tools":
+        raise
+    from temp_source import scan_temporary_source
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -517,11 +523,7 @@ VOID AddInterfaces(VOID)
     PhAddListViewGroupItem(list, 0, 0, entry->ColumnName, NULL);
 }
 '''
-        with tempfile.NamedTemporaryFile("w", suffix=".c", encoding="utf-8") as source:
-            source.write(fixture)
-            source.flush()
-            entries = []
-            self.audit.scan_c_file(source.name, entries)
+        entries = scan_temporary_source(self.audit.scan_c_file, fixture)
 
         self.assertEqual(
             {
@@ -631,11 +633,7 @@ VOID AddAll(VOID)
     PhAddListViewGroupItem(list, 0, 0, DevicePropertyTableEntryGetColumnName(entry), NULL);
 }
 '''
-        with tempfile.NamedTemporaryFile("w", suffix=".c", encoding="utf-8") as source:
-            source.write(fixture)
-            source.flush()
-            entries = []
-            self.audit.scan_c_file(source.name, entries)
+        entries = scan_temporary_source(self.audit.scan_c_file, fixture)
 
         self.assertEqual(6, len(entries))
         self.assertEqual(
@@ -647,11 +645,7 @@ VOID AddAll(VOID)
             "return PhGetString(PH_AUTO(PhLoadUiString(module, Entry->ResourceId, NULL)));",
             "return PhGetStringOrDefault(HardwareDevicesGetUiStringObject(Entry->ResourceId), Entry->ColumnName);",
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".c", encoding="utf-8") as source:
-            source.write(stable)
-            source.flush()
-            entries = []
-            self.audit.scan_c_file(source.name, entries)
+        entries = scan_temporary_source(self.audit.scan_c_file, stable)
 
         self.assertEqual(
             {
@@ -678,13 +672,7 @@ VOID AddAll(VOID)
         }
         for mutation_name, mutated in helper_mutations.items():
             with self.subTest(mutation=mutation_name):
-                with tempfile.NamedTemporaryFile(
-                    "w", suffix=".c", encoding="utf-8"
-                ) as source:
-                    source.write(mutated)
-                    source.flush()
-                    entries = []
-                    self.audit.scan_c_file(source.name, entries)
+                entries = scan_temporary_source(self.audit.scan_c_file, mutated)
                 self.assertEqual(6, len(entries))
 
 

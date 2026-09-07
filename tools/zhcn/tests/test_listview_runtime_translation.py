@@ -1,9 +1,15 @@
 import importlib.util
 import pathlib
 import re
-import tempfile
 import unittest
 from collections import Counter
+
+try:
+    from tools.zhcn.tests.temp_source import scan_temporary_source
+except ModuleNotFoundError as error:
+    if error.name != "tools":
+        raise
+    from temp_source import scan_temporary_source
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -229,14 +235,7 @@ class ListViewRuntimeTranslationTests(unittest.TestCase):
                     );
             }
         '''
-        entries = []
-
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".c", encoding="utf-8"
-        ) as source_file:
-            source_file.write(source)
-            source_file.flush()
-            self.audit.scan_c_file(source_file.name, entries)
+        entries = scan_temporary_source(self.audit.scan_c_file, source)
 
         self.assertEqual(
             Counter(

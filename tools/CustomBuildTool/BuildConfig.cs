@@ -141,6 +141,7 @@ namespace CustomBuildTool
             "lsasup.h",
             "mapimg.h",
             "mapldr.h",
+            "phappresourceid.h",
             "ph.h",
             "phbase.h",
             "phbasesup.h",

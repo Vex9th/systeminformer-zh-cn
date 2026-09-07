@@ -19,6 +19,7 @@
 #include <settings.h>
 #include <emenu.h>
 #include <json.h>
+#include <mapldr.h>
 
 #include <mainwnd.h>
 #include <mainwndp.h>

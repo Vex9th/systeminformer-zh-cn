@@ -61,6 +61,8 @@ typedef enum _USERNOTES_COMMAND_ID
 #define COMMENT_COLUMN_ID 1
 #define AFFINITY_COLUMN_ID 2
 
+extern PPH_PLUGIN PluginInstance;
+
 typedef struct _PROCESS_EXTENSION
 {
     LIST_ENTRY ListEntry;
