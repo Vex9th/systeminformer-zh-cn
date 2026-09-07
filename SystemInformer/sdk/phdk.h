@@ -23,6 +23,7 @@
 #include "filestream.h"
 #include "fastlock.h"
 #include "lsasup.h"
+#include "mapldr.h"
 #include "svcsup.h"
 #include "circbuf.h"
 #include "dltmgr.h"
