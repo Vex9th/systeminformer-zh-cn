@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -217,7 +218,7 @@ class TranslationManifestContractTests(unittest.TestCase):
 
 
 class TranslationCheckerContractTests(unittest.TestCase):
-    def run_checker(self, manifest: dict, translations: dict):
+    def run_checker(self, manifest: dict, translations: dict, *, output_encoding=None):
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = pathlib.Path(temp_dir)
             manifest_path = temp_path / "manifest.json"
@@ -229,6 +230,10 @@ class TranslationCheckerContractTests(unittest.TestCase):
             translation_path.write_text(
                 json.dumps(translations, ensure_ascii=False), encoding="utf-8"
             )
+
+            env = os.environ.copy()
+            if output_encoding:
+                env["PYTHONIOENCODING"] = output_encoding
 
             result = subprocess.run(
                 [
@@ -244,6 +249,7 @@ class TranslationCheckerContractTests(unittest.TestCase):
                 capture_output=True,
                 text=True,
                 check=False,
+                env=env,
             )
             report = (
                 report_path.read_text(encoding="utf-8")
@@ -409,7 +415,11 @@ class TranslationCheckerContractTests(unittest.TestCase):
         }
         translations = {"strings": {}, "native_strings": {"Open %s": "打开 %lu"}}
 
-        result, _ = self.run_checker(manifest, translations)
+        result, _ = self.run_checker(
+            manifest,
+            translations,
+            output_encoding="cp1252",
+        )
 
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(result.stdout.count("format specifiers differ"), 1)

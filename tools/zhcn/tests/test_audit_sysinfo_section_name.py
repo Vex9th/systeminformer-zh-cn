@@ -2,6 +2,7 @@ import importlib.util
 import pathlib
 import tempfile
 import unittest
+from unittest import mock
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -16,6 +17,24 @@ def load_audit_module():
 
 
 class AuditSysInfoSectionNameTests(unittest.TestCase):
+    def test_scanner_accepts_a_source_on_another_windows_drive(self) -> None:
+        audit = load_audit_module()
+        entries = []
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".c", encoding="utf-8"
+        ) as source_file:
+            source_file.write('void sample(void) { PhSetWindowText(hwnd, L"Title"); }')
+            source_file.flush()
+            with mock.patch.object(
+                audit.os.path,
+                "relpath",
+                side_effect=ValueError("path is on mount 'C:', start on mount 'D:'"),
+            ):
+                audit.scan_c_file(source_file.name, entries)
+
+        self.assertEqual(entries[0]["english"], "Title")
+
     def test_initialize_string_ref_section_name_is_a_visible_ui_sink(self) -> None:
         audit = load_audit_module()
         source = """

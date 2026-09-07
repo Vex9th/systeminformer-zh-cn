@@ -39,6 +39,13 @@ from translation_contract import (  # noqa: E402
     module_for_path,
 )
 
+
+def configure_diagnostic_streams() -> None:
+    """Keep diagnostics printable on legacy Windows console encodings."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
+
 FORMAT_SPEC_RE = re.compile(
     r"(?<![0-9])%(?:%|[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?"
     r"(?:I64|I32|ll|hh|[hlLwIjzt])?[diuoxXfFeEgGaAcCsSpn])"
@@ -495,4 +502,5 @@ def main():
 
 
 if __name__ == "__main__":
+    configure_diagnostic_streams()
     sys.exit(main())

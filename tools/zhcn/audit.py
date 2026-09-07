@@ -55,6 +55,15 @@ from translation_contract import (  # noqa: E402
     module_for_path,
 )
 
+
+def repo_relative_path(path: str) -> str:
+    """Return a stable source label even when a fixture is on another drive."""
+    try:
+        relative_path = os.path.relpath(path, REPO_ROOT)
+    except ValueError:
+        relative_path = os.path.basename(os.path.abspath(path))
+    return relative_path.replace("\\", "/")
+
 # ---------------------------------------------------------------------------
 # C wide string literal handling
 # ---------------------------------------------------------------------------
@@ -2808,7 +2817,7 @@ def scan_combo_box_struct_arrays(text: str, scan_text: str, rel: str, entries):
 
 
 def scan_c_file(path: str, entries):
-    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    rel = repo_relative_path(path)
     try:
         with open(path, "r", encoding="utf-8", errors="replace") as f:
             text = f.read()
@@ -2833,7 +2842,7 @@ def scan_c_file(path: str, entries):
             except OSError:
                 continue
             related_device_property_sources.append((
-                os.path.relpath(related_path, REPO_ROOT).replace("\\", "/"),
+                repo_relative_path(related_path),
                 related_text,
                 mask_c_comments(related_text),
             ))
@@ -2940,7 +2949,7 @@ def scan_c_file(path: str, entries):
 
 def scan_statusbar(path: str, entries):
     """Count only status bar fallbacks routed through native resources."""
-    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    rel = repo_relative_path(path)
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         text = mask_c_comments(f.read())
     for name, args, spans, call_start in find_calls(
@@ -2975,7 +2984,7 @@ OPTIONS_SECTION_RE = re.compile(r'\bPhOptionsCreateSection\s*\(\s*(L"(?:[^"\\]|\
 
 def scan_extra_statics(path: str, entries):
     """TreeNew empty-list hints and options section tree labels."""
-    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    rel = repo_relative_path(path)
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         text = mask_c_comments(f.read())
     for m in EMPTY_TEXT_RE.finditer(text):
@@ -2993,7 +3002,7 @@ def scan_extra_statics(path: str, entries):
 def scan_page_names(path: str, entries):
     """Main tab page labels (PH_STRINGREF constants handed to
     PhMwpCreatePage), translated at runtime by the TabNew hook."""
-    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    rel = repo_relative_path(path)
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         text = mask_c_comments(f.read())
 
@@ -3098,7 +3107,7 @@ def scan_page_names(path: str, entries):
 
 
 def scan_tabnew(path: str, entries):
-    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    rel = repo_relative_path(path)
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         text = mask_c_comments(f.read())
     for m in TABNEW_INSERT_RE.finditer(text):
@@ -3194,7 +3203,7 @@ def mask_rc_comments(source: str) -> str:
 
 
 def scan_rc_file(path: str, entries):
-    rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+    rel = repo_relative_path(path)
     base = os.path.basename(path).lower()
     if base == "version.rc" or base.endswith(".zh-cn.rc"):
         return
@@ -3284,7 +3293,7 @@ EXCLUDE_FILES = {
 def iter_source_files():
     for top in SCAN_DIRS:
         for root, dirs, files in os.walk(os.path.join(REPO_ROOT, top)):
-            rel_root = os.path.relpath(root, REPO_ROOT).replace("\\", "/")
+            rel_root = repo_relative_path(root)
             if any(rel_root == ex or rel_root.startswith(ex + "/") for ex in EXCLUDE_PATHS):
                 continue
             for fn in files:
@@ -3358,7 +3367,7 @@ def main():
 
     entries = []
     for path in iter_source_files():
-        rel = os.path.relpath(path, REPO_ROOT).replace("\\", "/")
+        rel = repo_relative_path(path)
         if path.endswith(".rc"):
             scan_rc_file(path, entries)
             continue
