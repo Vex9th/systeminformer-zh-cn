@@ -52,8 +52,22 @@ class PhlibRuntimeNativeResourceTests(unittest.TestCase):
             name: cls.audit.mask_c_comments(
                 (REPO_ROOT / "phlib" / name).read_text(encoding="utf-8-sig")
             )
-            for name in ("extlv.c", "searchbox.c", "util.c", "mapldr.c", "guisup.c")
+            for name in (
+                "extlv.c",
+                "graphscroll.c",
+                "searchbox.c",
+                "util.c",
+                "mapldr.c",
+                "guisup.c",
+            )
         }
+
+    def test_phlib_resource_consumers_include_their_public_contracts(self) -> None:
+        for name in ("extlv.c", "graphscroll.c", "searchbox.c"):
+            with self.subTest(source=name):
+                source = self.sources[name]
+                self.assertIn("#include <mapldr.h>", source)
+                self.assertIn("#include <phappresourceid.h>", source)
 
     def test_resources_are_contiguous_bilingual_and_exported_to_phlib(self) -> None:
         root = REPO_ROOT / "SystemInformer"

@@ -18,6 +18,7 @@
 
 #include <ph.h>
 #include <phappresourceid.h>
+#include <mapldr.h>
 #include <guisup.h>
 #include <emenu.h>
 

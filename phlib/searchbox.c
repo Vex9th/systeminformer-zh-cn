@@ -12,6 +12,7 @@
 
 #include <ph.h>
 #include <phappresourceid.h>
+#include <mapldr.h>
 #include <searchbox.h>
 #include <guisup.h>
 #include <settings.h>
