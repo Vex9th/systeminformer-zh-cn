@@ -140,7 +140,7 @@ git diff --check
 
 确认新字体创建失败时保留旧字体；创建成功时先发布并绑定新字体，再删除旧字体；窗口销毁时仅删除进程详情窗口拥有的句柄。
 
-- [ ] **步骤 3：推送并等待 GitHub Windows x64 CI**
+- [x] **步骤 3：推送并等待 GitHub Windows x64 CI**
 
 ```bash
 git push origin zh-cn
@@ -148,6 +148,8 @@ gh run watch --exit-status
 ```
 
 预期：Windows x64 构建、完整回归和启动冒烟全部通过。CI 不作为字体视觉清晰度证据。
+
+结果：GitHub Actions 运行 `34154314107` 全部通过。
 
 - [ ] **步骤 4：记录实机验证边界**
 
