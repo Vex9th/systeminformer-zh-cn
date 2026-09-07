@@ -93,11 +93,14 @@ $exitCommandId = 10001 # ID_HACKER_EXIT in SystemInformer/resource.h
 $isolatedSettings = [ordered]@{
     'Language' = 'zh-CN'
     'FirstRun' = 0
-    'OnlineChecks.PartnerPromptShown' = 1
-    'OnlineChecks.EnableScanning' = 0
-    'OnlineChecks.HybridAnalysisEnableLookups' = 0
-    'OnlineChecks.HybridAnalysisEnableAutoSubmit' = 0
-    'OnlineChecks.VirusTotalEnableLookups' = 0
+    # Plugin settings are unknown when the core first parses the file. The
+    # ignored-settings bridge preserves them as strings, then converts them to
+    # the plugin's declared integer type after plugin registration.
+    'OnlineChecks.PartnerPromptShown' = '1'
+    'OnlineChecks.EnableScanning' = '0'
+    'OnlineChecks.HybridAnalysisEnableLookups' = '0'
+    'OnlineChecks.HybridAnalysisEnableAutoSubmit' = '0'
+    'OnlineChecks.VirusTotalEnableLookups' = '0'
 }
 $settingsJson = $isolatedSettings | ConvertTo-Json -Compress
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
