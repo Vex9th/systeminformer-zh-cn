@@ -1725,11 +1725,11 @@ INT_PTR CALLBACK PhpMemoryStringsDlgProc(
 
                 menu = PhCreateEMenu();
 
-                readWrite = PhCreateEMenuItem(0, IDC_SHOW, L"Read/Write memory", NULL, NULL);
+                readWrite = PhCreateEMenuItem(0, IDC_SHOW, PhGetApplicationUiString(IDS_PH_MENU_READ_WRITE_MEMORY_PLAIN), NULL, NULL);
                 readWrite->Flags |= PH_EMENU_DEFAULT;
                 PhInsertEMenuItem(menu, readWrite, ULONG_MAX);
                 PhInsertEMenuItem(menu, PhCreateEMenuSeparator(), ULONG_MAX);
-                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, L"Copy", NULL, NULL), ULONG_MAX);
+                PhInsertEMenuItem(menu, PhCreateEMenuItem(0, IDC_COPY, PhGetApplicationUiString(IDS_PH_SEARCH_COPY), NULL, NULL), ULONG_MAX);
                 PhInsertCopyCellEMenuItem(menu, IDC_COPY, context->TreeNewHandle, contextMenuEvent->Column);
 
                 if (numberOfNodes != 1)
@@ -1799,15 +1799,15 @@ INT_PTR CALLBACK PhpMemoryStringsDlgProc(
                     if (!PhGetWindowRect(GetDlgItem(hwndDlg, IDC_SETTINGS), &rect))
                         break;
 
-                    ansi = PhCreateEMenuItem(0, 1, L"ANSI", NULL, NULL);
-                    unicode = PhCreateEMenuItem(0, 2, L"Unicode", NULL, NULL);
-                    extendedUnicode = PhCreateEMenuItem(0, 3, L"Extended character set", NULL, NULL);
-                    private = PhCreateEMenuItem(0, 4, L"Private", NULL, NULL);
-                    image = PhCreateEMenuItem(0, 5, L"Image", NULL, NULL);
-                    mapped = PhCreateEMenuItem(0, 6, L"Mapped", NULL, NULL);
-                    minimumLength = PhCreateEMenuItem(0, 7, L"Minimum length...", NULL, NULL);
-                    zeroPad = PhCreateEMenuItem(0, 8, L"Zero pad addresses", NULL, NULL);
-                    refresh = PhCreateEMenuItem(0, 9, L"Refresh\bF5", NULL, NULL);
+                    ansi = PhCreateEMenuItem(0, 1, PhGetApplicationUiString(IDS_PH_MENU_ANSI), NULL, NULL);
+                    unicode = PhCreateEMenuItem(0, 2, PhGetApplicationUiString(IDS_PH_MENU_UNICODE), NULL, NULL);
+                    extendedUnicode = PhCreateEMenuItem(0, 3, PhGetApplicationUiString(IDS_PH_MENU_EXTENDED_CHARACTER_SET), NULL, NULL);
+                    private = PhCreateEMenuItem(0, 4, PhGetApplicationUiString(IDS_PH_TREENEW_PRIVATE), NULL, NULL);
+                    image = PhCreateEMenuItem(0, 5, PhGetApplicationUiString(IDS_PH_HANDLE_SECTION_IMAGE), NULL, NULL);
+                    mapped = PhCreateEMenuItem(0, 6, PhGetApplicationUiString(IDS_PH_MENU_MAPPED), NULL, NULL);
+                    minimumLength = PhCreateEMenuItem(0, 7, PhGetApplicationUiString(IDS_PH_MENU_MINIMUM_LENGTH), NULL, NULL);
+                    zeroPad = PhCreateEMenuItem(0, 8, PhGetApplicationUiString(IDS_PH_MENU_ZERO_PAD_ADDRESSES), NULL, NULL);
+                    refresh = PhCreateEMenuItem(0, 9, PhGetApplicationUiString(IDS_PH_MENU_REFRESH_F5), NULL, NULL);
                     if (context->ThreadCount == 0)
                         swprintf_s(threadCountLabel, RTL_NUMBER_OF(threadCountLabel), PhGetApplicationUiString(IDS_PH_THREAD_COUNT_AUTO));
                     else

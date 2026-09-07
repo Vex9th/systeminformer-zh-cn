@@ -249,10 +249,10 @@ class SystemInformerProcessThreadMenuResourceTests(unittest.TestCase):
             self.assertEqual(zh, data[owner].get(en), en)
             self.assertNotIn(en, data[other], en)
 
-        self.assertEqual(1340, len(english))
-        self.assertEqual(1340, len(chinese))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_STRINGS$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3340$")
+        self.assertEqual(1370, len(english))
+        self.assertEqual(1370, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
 
     def test_all_115_routes_are_resource_backed_and_no_raw_menu_remains(self) -> None:
         target_symbols = {row[0] for row in NEW_RESOURCES} | {row[0] for row in REUSED_RESOURCES}

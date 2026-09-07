@@ -11,22 +11,19 @@ APP_ROOT = REPO_ROOT / "SystemInformer"
 
 
 RESOURCES = r"""
-IDS_PH_MENU_DECOMMIT|3324|&Decommit|解除提交(&D)
-IDS_PH_MENU_EMPTY_WORKING_SET|3325|&Empty working set...|清空工作集(&E)...
-IDS_PH_MENU_FREE|3326|&Free|释放(&F)
-IDS_PH_MENU_READ_WRITE_MEMORY|3327|&Read/Write memory...|读/写内存(&R)...
-IDS_PH_MENU_SAVE_SHORTCUT|3328|&Save...|保存(&S)...
-IDS_PH_MENU_CHANGE_PROTECTION|3329|Change &protection...|更改保护属性(&P)...
-IDS_PH_MENU_HIDE_FREE_PAGES|3330|Hide free pages|隐藏空闲页
-IDS_PH_MENU_HIDE_GUARD_PAGES|3331|Hide guard pages|隐藏保护页
-IDS_PH_MENU_HIDE_RESERVED_PAGES|3332|Hide reserved pages|隐藏保留页
-IDS_PH_MENU_HIGHLIGHT_CFG_PAGES|3333|Highlight CFG pages|高亮 CFG 页
-IDS_PH_MENU_HIGHLIGHT_EXECUTABLE_PAGES|3334|Highlight executable pages|高亮可执行页
-IDS_PH_MENU_HIGHLIGHT_PRIVATE_PAGES|3335|Highlight private pages|高亮专用页
-IDS_PH_MENU_HIGHLIGHT_SYSTEM_PAGES|3336|Highlight system pages|高亮系统页
-IDS_PH_MENU_MODIFIED|3337|Modified...|已修改...
-IDS_PH_MENU_READ_WRITE_ADDRESS|3338|Read/Write &address...|读/写地址(&A)...
-IDS_PH_MENU_STRINGS|3339|Strings...|字符串...
+IDS_PH_MENU_CLOSE_DELETE_SHORTCUT|3340|C&lose\bDel|关闭(&L)\bDel
+IDS_PH_MENU_PROTECTED_SHORTCUT|3341|&Protected|保护(&P)
+IDS_PH_MENU_INHERIT|3342|&Inherit|继承(&I)
+IDS_PH_MENU_SECURITY_SHORTCUT|3343|Secu&rity|安全(&R)
+IDS_PH_MENU_PROPERTIES_ENTER_ALT_SHORTCUT|3344|Prope&rties\bEnter|属性(&R)\bEnter
+IDS_PH_MENU_HIDE_PROTECTED_HANDLES|3345|Hide protected handles|隐藏受保护句柄
+IDS_PH_MENU_HIDE_INHERIT_HANDLES|3346|Hide inherit handles|隐藏可继承句柄
+IDS_PH_MENU_HIDE_UNNAMED_HANDLES|3347|Hide unnamed handles|隐藏未命名句柄
+IDS_PH_MENU_HIDE_ETW_HANDLES|3348|Hide etw handles|隐藏 ETW 句柄
+IDS_PH_MENU_HANDLE_SNAPSHOTS|3349|Handle snapshots|句柄快照
+IDS_PH_MENU_HIGHLIGHT_PROTECTED_HANDLES|3350|Highlight protected handles|高亮受保护句柄
+IDS_PH_MENU_HIGHLIGHT_INHERIT_HANDLES|3351|Highlight inherit handles|高亮可继承句柄
+IDS_PH_MENU_STATISTICS|3352|Statistics|统计
 """.strip()
 
 
@@ -40,7 +37,7 @@ NEW_RESOURCES = tuple(
 
 def load_audit_module():
     path = REPO_ROOT / "tools" / "zhcn" / "audit.py"
-    spec = importlib.util.spec_from_file_location("memory_menu_audit", path)
+    spec = importlib.util.spec_from_file_location("handle_menu_audit", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -56,12 +53,12 @@ def parse_stringtable(path: pathlib.Path) -> dict[str, str]:
     }
 
 
-class SystemInformerMemoryMenuNativeResourceTests(unittest.TestCase):
+class SystemInformerHandleMenuNativeResourceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.audit = load_audit_module()
         cls.source = cls.audit.mask_c_comments(
-            (APP_ROOT / "prpgmem.c").read_text(encoding="utf-8-sig")
+            (APP_ROOT / "prpghndl.c").read_text(encoding="utf-8-sig")
         )
 
     def test_resources_routes_tail_and_scan_are_exact(self) -> None:
@@ -75,14 +72,12 @@ class SystemInformerMemoryMenuNativeResourceTests(unittest.TestCase):
             self.assertEqual(zh, chinese.get(symbol))
             self.assertEqual(1, self.source.count(f"PhGetApplicationUiString({symbol})"))
 
-        for symbol in ("IDS_PH_MENU_HEAPS", "IDS_PH_MENU_SAVE", "IDS_PH_MENU_ZERO_PAD_ADDRESSES"):
-            self.assertEqual(1, self.source.count(f"PhGetApplicationUiString({symbol})"))
-
+        self.assertEqual(1, self.source.count("PhGetApplicationUiString(IDS_PH_MENU_COPY_SHORTCUT)"))
         self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
         self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
 
         entries = []
-        self.audit.scan_c_file(str(APP_ROOT / "prpgmem.c"), entries)
+        self.audit.scan_c_file(str(APP_ROOT / "prpghndl.c"), entries)
         self.assertEqual([], [entry for entry in entries if entry["category"] == "c_emenu"])
 
 

@@ -91,8 +91,8 @@ class SystemInformerModuleMenuNativeResourceTests(unittest.TestCase):
 
     def test_resource_tail_and_fresh_scan_are_exact(self) -> None:
         header = (APP_ROOT / "resource.h").read_text(encoding="utf-8-sig")
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_STRINGS$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3340$")
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
 
         entries = []
         self.audit.scan_c_file(str(APP_ROOT / "prpgmod.c"), entries)

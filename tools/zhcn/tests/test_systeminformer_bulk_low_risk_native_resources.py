@@ -82,10 +82,10 @@ class SystemInformerBulkLowRiskNativeResourceTests(unittest.TestCase):
             other = "native_strings" if owner == "strings" else "strings"
             self.assertEqual(zh, data[owner].get(en))
             self.assertNotIn(en, data[other])
-        self.assertEqual(1340, len(english))
-        self.assertEqual(1340, len(chinese))
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_STRINGS$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3340$")
+        self.assertEqual(1370, len(english))
+        self.assertEqual(1370, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
 
     def test_small_runtime_sinks_use_stable_resources(self) -> None:
         delay = self.audit.mask_c_comments((APP_ROOT / "delayhook.c").read_text(encoding="utf-8-sig"))

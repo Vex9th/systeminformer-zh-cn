@@ -660,10 +660,10 @@ class SystemInformerTreeNewNativeResourceTests(unittest.TestCase):
             self.assertEqual(zh, data[layer].get(en), en)
             self.assertNotIn(en, data[other], en)
 
-        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_STRINGS$")
-        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3340$")
-        self.assertEqual(1340, len(english))
-        self.assertEqual(1340, len(chinese))
+        self.assertRegex(header, r"(?m)^#define IDS_PH_LAST\s+IDS_PH_MENU_COLLAPSE_ALL_PLAIN$")
+        self.assertRegex(header, r"(?m)^#define _APS_NEXT_SYMED_VALUE\s+3370$")
+        self.assertEqual(1370, len(english))
+        self.assertEqual(1370, len(chinese))
 
     def test_shared_runtime_compatibility_set_is_explicit_and_treenew_hooks_remain(self) -> None:
         source = (REPO_ROOT / "phlib" / "treenew.c").read_text(encoding="utf-8-sig")

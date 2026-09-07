@@ -2317,8 +2317,38 @@
 #define IDS_PH_MENU_MODIFIED                                                    3337
 #define IDS_PH_MENU_READ_WRITE_ADDRESS                                          3338
 #define IDS_PH_MENU_STRINGS                                                     3339
+#define IDS_PH_MENU_CLOSE_DELETE_SHORTCUT                                       3340
+#define IDS_PH_MENU_PROTECTED_SHORTCUT                                          3341
+#define IDS_PH_MENU_INHERIT                                                     3342
+#define IDS_PH_MENU_SECURITY_SHORTCUT                                           3343
+#define IDS_PH_MENU_PROPERTIES_ENTER_ALT_SHORTCUT                               3344
+#define IDS_PH_MENU_HIDE_PROTECTED_HANDLES                                      3345
+#define IDS_PH_MENU_HIDE_INHERIT_HANDLES                                        3346
+#define IDS_PH_MENU_HIDE_UNNAMED_HANDLES                                        3347
+#define IDS_PH_MENU_HIDE_ETW_HANDLES                                            3348
+#define IDS_PH_MENU_HANDLE_SNAPSHOTS                                             3349
+#define IDS_PH_MENU_HIGHLIGHT_PROTECTED_HANDLES                                 3350
+#define IDS_PH_MENU_HIGHLIGHT_INHERIT_HANDLES                                   3351
+#define IDS_PH_MENU_STATISTICS                                                  3352
+#define IDS_PH_MENU_GO_TO_PROCESS_ELLIPSIS                                      3353
+#define IDS_PH_MENU_GO_TO_THREAD_ELLIPSIS                                       3354
+#define IDS_PH_MENU_HIDE_USER_FRAMES                                            3355
+#define IDS_PH_MENU_HIDE_SYSTEM_FRAMES                                          3356
+#define IDS_PH_MENU_HIDE_INLINE_FRAMES                                          3357
+#define IDS_PH_MENU_HIGHLIGHT_USER_FRAMES                                       3358
+#define IDS_PH_MENU_HIGHLIGHT_SYSTEM_FRAMES                                     3359
+#define IDS_PH_MENU_HIGHLIGHT_INLINE_FRAMES                                     3360
+#define IDS_PH_MENU_READ_WRITE_MEMORY_PLAIN                                     3361
+#define IDS_PH_MENU_ANSI                                                        3362
+#define IDS_PH_MENU_UNICODE                                                     3363
+#define IDS_PH_MENU_EXTENDED_CHARACTER_SET                                      3364
+#define IDS_PH_MENU_MINIMUM_LENGTH                                              3365
+#define IDS_PH_MENU_REFRESH_F5                                                  3366
+#define IDS_PH_MENU_MAPPED                                                      3367
+#define IDS_PH_MENU_EXPAND_ALL_PLAIN                                            3368
+#define IDS_PH_MENU_COLLAPSE_ALL_PLAIN                                          3369
 #define IDS_PH_FIRST                                 IDS_PH_RESET_ALL_SETTINGS
-#define IDS_PH_LAST                                  IDS_PH_MENU_STRINGS
+#define IDS_PH_LAST                                  IDS_PH_MENU_COLLAPSE_ALL_PLAIN
 
 #define IDDYNAMIC                       50000
 #define IDPLUGINS                       55000
@@ -2330,6 +2360,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        294
 #define _APS_NEXT_COMMAND_VALUE         10327
 #define _APS_NEXT_CONTROL_VALUE         1519
-#define _APS_NEXT_SYMED_VALUE           3340
+#define _APS_NEXT_SYMED_VALUE           3370
 #endif
 #endif
