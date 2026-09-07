@@ -111,7 +111,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tools.zhcn.tests.test_process_prop
 
 预期：所有测试 PASS，退出码为 0。
 
-- [ ] **步骤 4：提交最少实现**
+- [x] **步骤 4：提交最少实现**
 
 ```bash
 git add SystemInformer/procprp.c tools/zhcn/tests/test_process_properties_tab_font_contract.py docs/superpowers/plans/2026-09-08-process-properties-tab-font.md
@@ -123,7 +123,7 @@ git commit -m "fix(ui): 修复进程详情选项卡字体过小"
 **文件：**
 - 修改：`docs/superpowers/plans/2026-09-08-process-properties-tab-font.md`
 
-- [ ] **步骤 1：运行完整离线回归**
+- [x] **步骤 1：运行完整离线回归**
 
 运行：
 
@@ -136,7 +136,7 @@ git diff --check
 
 预期：测试、汉化审计和差异检查全部退出码为 0。
 
-- [ ] **步骤 2：自审字体句柄生命周期**
+- [x] **步骤 2：自审字体句柄生命周期**
 
 确认新字体创建失败时保留旧字体；创建成功时先发布并绑定新字体，再删除旧字体；窗口销毁时仅删除进程详情窗口拥有的句柄。
 
