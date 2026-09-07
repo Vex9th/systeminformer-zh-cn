@@ -106,7 +106,7 @@
 
 重点审查上游功能完整性、资源所有权、设置迁移、TreeNew 生命周期及审计 fail-closed 行为。
 
-- [ ] **步骤 3：提交隔离同步分支并合回 `zh-cn`**
+- [x] **步骤 3：提交隔离同步分支并合回 `zh-cn`**
 
 合回前确认主工作树仍只保留用户的 `SystemInformer/SystemInformer.def.h`，不将其暂存或覆盖。
 
