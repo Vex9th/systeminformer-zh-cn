@@ -72,7 +72,14 @@ $expectedModuleMappings = @(
     'ExtendedNotifications.dll'
 )
 $dumpRegistryKey = 'HKCU:\Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\sys_info.exe'
+$dumpParentKeys = @(
+    'HKCU:\Software\Microsoft',
+    'HKCU:\Software\Microsoft\Windows',
+    'HKCU:\Software\Microsoft\Windows\Windows Error Reporting',
+    'HKCU:\Software\Microsoft\Windows\Windows Error Reporting\LocalDumps'
+)
 $dumpKeyCreated = $false
+$createdDumpParentKeys = @()
 $baselineDumpPaths = @()
 
 try {
@@ -82,6 +89,13 @@ try {
 
         if (Test-Path -LiteralPath $dumpRegistryKey) {
             throw "LocalDumps key already exists; refusing to overwrite user settings: $dumpRegistryKey"
+        }
+
+        foreach ($dumpParentKey in $dumpParentKeys) {
+            if (-not (Test-Path -LiteralPath $dumpParentKey)) {
+                New-Item -Path $dumpParentKey | Out-Null
+                $createdDumpParentKeys += $dumpParentKey
+            }
         }
 
         New-Item -Path $dumpRegistryKey | Out-Null
@@ -201,5 +215,12 @@ try {
 finally {
     if ($dumpKeyCreated) {
         Remove-Item -LiteralPath $dumpRegistryKey -Recurse -Force
+    }
+
+    for ($parentIndex = $createdDumpParentKeys.Count - 1; $parentIndex -ge 0; $parentIndex--) {
+        $createdParentKey = $createdDumpParentKeys[$parentIndex]
+        if (Test-Path -LiteralPath $createdParentKey) {
+            Remove-Item -LiteralPath $createdParentKey
+        }
     }
 }

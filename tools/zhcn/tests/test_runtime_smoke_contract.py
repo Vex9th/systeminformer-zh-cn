@@ -101,6 +101,13 @@ class RuntimeSmokeContractTests(unittest.TestCase):
         )
         self.assertIn("DumpFolder", self.smoke)
         self.assertIn("$dumpKeyCreated = $true", self.smoke)
+        self.assertIn("$dumpParentKeys = @(", self.smoke)
+        self.assertIn("$createdDumpParentKeys", self.smoke)
+        self.assertRegex(
+            self.smoke,
+            r"foreach\s*\(\$dumpParentKey\s+in\s+\$dumpParentKeys\)",
+        )
+        self.assertIn("$createdDumpParentKeys.Count - 1", self.smoke)
         self.assertRegex(
             self.smoke,
             r"if\s*\(\$dumpKeyCreated\)\s*\{[^}]*"
