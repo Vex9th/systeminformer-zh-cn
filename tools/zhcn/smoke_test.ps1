@@ -99,7 +99,7 @@ try {
         $iterationSucceeded = $false
 
         try {
-            Write-Host "iteration $iteration/$Iterations: launching $ExePath"
+            Write-Host "iteration $iteration/${Iterations}: launching $ExePath"
             $process = Start-Process `
                 -FilePath $ExePath `
                 -ArgumentList $launchArguments `
@@ -111,7 +111,7 @@ try {
 
             while ((Get-Date) -lt $startupDeadline) {
                 if ($process.HasExited) {
-                    throw "iteration $iteration: process exited during startup with code $($process.ExitCode)"
+                    throw "iteration ${iteration}: process exited during startup with code $($process.ExitCode)"
                 }
 
                 $windows = Get-ProcessWindows $process.Id
@@ -126,19 +126,19 @@ try {
             }
 
             if (-not $mainWindow) {
-                throw "iteration $iteration: main window was not found within 90 seconds"
+                throw "iteration ${iteration}: main window was not found within 90 seconds"
             }
 
             $probeResult = [IntPtr]::Zero
             $probeOk = [Native.Win]::SendMessageTimeout($mainWindow.Handle, 0x0000, [IntPtr]::Zero, [IntPtr]::Zero, 2, 5000, [ref]$probeResult)
             if (-not $probeOk) {
-                throw "iteration $iteration: main window did not respond to WM_NULL"
+                throw "iteration ${iteration}: main window did not respond to WM_NULL"
             }
 
             Start-Sleep -Seconds 5
             $process.Refresh()
             if ($process.HasExited) {
-                throw "iteration $iteration: process exited before module mapping check with code $($process.ExitCode)"
+                throw "iteration ${iteration}: process exited before module mapping check with code $($process.ExitCode)"
             }
 
             $mappedModules = @($process.Modules | ForEach-Object { $_.ModuleName })
@@ -146,37 +146,37 @@ try {
                 $expectedModuleMappings | Where-Object { $mappedModules -notcontains $_ }
             )
             if ($missingMappings.Count -gt 0) {
-                throw "iteration $iteration: missing plugin module mapping: $($missingMappings -join ', ')"
+                throw "iteration ${iteration}: missing plugin module mapping: $($missingMappings -join ', ')"
             }
             if ($mappedModules -contains 'Updater.dll') {
-                throw "iteration $iteration: forbidden plugin module mapping: Updater.dll"
+                throw "iteration ${iteration}: forbidden plugin module mapping: Updater.dll"
             }
 
-            Write-Host "iteration $iteration: main window responsive; $($expectedModuleMappings.Count) plugin module mappings present"
+            Write-Host "iteration ${iteration}: main window responsive; $($expectedModuleMappings.Count) plugin module mappings present"
 
             if (-not [Native.Win]::PostMessage($mainWindow.Handle, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)) {
-                throw "iteration $iteration: failed to post WM_CLOSE"
+                throw "iteration ${iteration}: failed to post WM_CLOSE"
             }
 
             if (-not $process.WaitForExit(30000)) {
-                throw "iteration $iteration: process did not exit within 30 seconds after WM_CLOSE"
+                throw "iteration ${iteration}: process did not exit within 30 seconds after WM_CLOSE"
             }
 
             $process.Refresh()
             if ($process.ExitCode -ne 0) {
-                throw "iteration $iteration: process exited with code $($process.ExitCode)"
+                throw "iteration ${iteration}: process exited with code $($process.ExitCode)"
             }
 
             if ($DumpDirectory) {
                 Start-Sleep -Seconds 2
                 $newDumps = Get-NewDumpFiles $DumpDirectory $baselineDumpPaths
                 if ($newDumps.Count -gt 0) {
-                    throw "iteration $iteration: new crash dump detected: $($newDumps.FullName -join ', ')"
+                    throw "iteration ${iteration}: new crash dump detected: $($newDumps.FullName -join ', ')"
                 }
             }
 
             $iterationSucceeded = $true
-            Write-Host "iteration $iteration: clean exit confirmed"
+            Write-Host "iteration ${iteration}: clean exit confirmed"
         }
         finally {
             if ($process) {

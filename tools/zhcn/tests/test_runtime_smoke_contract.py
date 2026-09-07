@@ -34,6 +34,12 @@ class RuntimeSmokeContractTests(unittest.TestCase):
             r"\$launchArguments\s*=\s*@\(\s*'-nosettings'\s*,\s*'-newinstance'\s*\)",
         )
 
+    def test_expandable_strings_do_not_use_ambiguous_colon_interpolation(self) -> None:
+        self.assertNotRegex(
+            self.smoke,
+            r'"[^"\n]*\$(?:iteration|Iterations):',
+        )
+
     def test_each_iteration_checks_window_response_and_module_mapping(self) -> None:
         self.assertIn("Get-ProcessWindows", self.smoke)
         self.assertRegex(
