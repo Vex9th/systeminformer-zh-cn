@@ -2,6 +2,8 @@
 
 基于 [System Informer](https://github.com/winsiderss/systeminformer) 的非官方简体中文版，用于查看和管理 Windows 进程。
 
+开发声明：本分支相较上游的全部代码修改均由 Codex + GPT 5.6 SOL 开发。
+
 ## 下载与运行
 
 从 [最新 Release](https://github.com/Vex9th/systeminformer-zh-cn/releases/latest) 下载 ZIP，解压后运行 `amd64\sys_info.exe`。仅提供 Windows x64 便携版，无需安装。
