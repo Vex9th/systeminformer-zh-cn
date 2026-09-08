@@ -414,6 +414,7 @@ jobs:
       run: |
         $tag = "${{ github.ref_name }}"
         $meta = @{}
+        $title = 'Sys Info 中文版 ' + ($tag -replace '^.*-zh-cn', '')
         Get-Content .\release-meta.txt | ForEach-Object {
           $k, $v = $_ -split '=', 2
           $meta[$k.Trim()] = $v.Trim()
@@ -421,7 +422,7 @@ jobs:
         $zip = $meta['ZIP_NAME']
         $sha = $meta['SHA256']
         $lines = @(
-          "# System Informer 简体中文社区版 $tag",
+          "# $title",
           '',
           '本项目是非官方社区 Fork，与 System Informer 官方团队及任何游戏、发行商或反作弊厂商无隶属关系。',
           '',
@@ -453,4 +454,4 @@ jobs:
           '上游源码与许可证：https://github.com/winsiderss/systeminformer（MIT）'
         )
         $lines | Out-File -FilePath release-notes.md -Encoding utf8
-        gh release create $tag --repo $env:REPO --title "System Informer 简体中文社区版 $tag" --notes-file release-notes.md $zip SHA256SUMS.txt
+        gh release create $tag --repo $env:REPO --title $title --notes-file release-notes.md $zip SHA256SUMS.txt

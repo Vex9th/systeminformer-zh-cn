@@ -1,55 +1,21 @@
-# System Informer 简体中文社区版
+# Sys Info
 
-System Informer 的非官方简体中文、无驱动便携版。程序名为 `sys_info.exe`，可与官方版并存。当前仍在开发，不是“100% 汉化”或“全部测试通过”的成品。
+基于 [System Informer](https://github.com/winsiderss/systeminformer) 的非官方简体中文版，用于查看和管理 Windows 进程。
 
 ## 下载与运行
 
-从 [Releases](https://github.com/Vex9th/systeminformer-zh-cn/releases) 下载便携包，解压后运行：
+从 [最新 Release](https://github.com/Vex9th/systeminformer-zh-cn/releases/latest) 下载 ZIP，解压后运行 `amd64\sys_info.exe`。仅提供 Windows x64 便携版，无需安装。
 
-- 64 位 Windows：`amd64\sys_info.exe`
-- ARM64 Windows：`arm64\sys_info.exe`
-- 32 位 Windows：`i386\sys_info.exe`
+发布包未签名，SHA-256 校验值见 Release 附件 `SHA256SUMS.txt`。
 
-无需安装。发布包未签名；遇到 SmartScreen 提示时，请先核对 Release 中公布的 SHA-256。
+## 为什么改名
 
-## 必须知道
+作者在玩游戏时遇到原版程序被检测、游戏强制退出的情况，因此将程序改名为 `sys_info.exe`，并调整部分窗口标题和标识。具体检测机制尚未确认，改名是否有效未知，也不保证游戏兼容性或绕过反作弊检测。
 
-- 部分界面仍有英文，也可能出现崩溃、字体模糊、文字截断或控件重叠。
-- 本项目不构建、不打包 KSystemInformer 内核驱动；依赖驱动的功能不可用。
-- 本项目不构建、不加载、不打包自动更新插件；新版本需手动下载。
-- 无驱动不等于反作弊白名单。运行受保护游戏时，建议退出本程序。
-- 当前开发设备是 macOS，尚不能确认本地改动在 Windows 上的启动、UI 和插件表现。
+## 使用说明
 
-## 切换语言
+- 不含内核驱动，依赖驱动的高级功能不可用。
+- 已移除自动更新，新版本需手动下载。
+- 仍可能有漏译或显示问题；遇到问题请在 [Issues](https://github.com/Vex9th/systeminformer-zh-cn/issues) 附上版本号和截图。
 
-关闭程序后，编辑便携目录中的 `sys_info.exe.settings.json`，只修改或添加 `Language` 字段：
-
-```json
-{
-  "Language": "en"
-}
-```
-
-使用 `"zh-CN"` 恢复中文。不要用示例覆盖整个设置文件，修改后重启程序。
-
-## 开发与验证
-
-macOS 本地只能检查源码、生成结果和资源契约：
-
-```bash
-python3 tools/zhcn/audit.py
-python3 tools/zhcn/check_translation.py --fail-on-untranslated
-python3 tools/zhcn/generate_native_resources.py --check
-python3 -m unittest discover -s tools/zhcn/tests -v
-git diff --check
-```
-
-这些命令不能证明 Windows 可执行文件、UI、字体或插件正常。Windows 构建和冒烟测试见 [zh-cn-build 工作流](.github/workflows/zh-cn-build.yml)；只有对应提交的 CI 或实机记录实际通过，才能写成“已验证”。
-
-## 相关链接
-
-- [汉化工具说明](tools/zhcn/README.md)
-- [上游项目](https://github.com/winsiderss/systeminformer) 与 [上游构建说明](https://systeminformer.sourceforge.io/documentation.php)
-- [MIT 许可证](LICENSE.txt)
-
-本项目与 System Informer 官方团队、游戏发行商及反作弊厂商无隶属关系。
+[开发与汉化说明](tools/zhcn/README.md) · [MIT 许可证](LICENSE.txt)。本项目与上游官方团队、游戏厂商及反作弊厂商无隶属关系。
