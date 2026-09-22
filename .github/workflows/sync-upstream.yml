@@ -2,8 +2,6 @@ name: 'sync-upstream'
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '30 21 * * *'  # daily 21:30 UTC (05:30 Beijing)
 
 concurrency:
   group: sync-upstream
@@ -14,8 +12,6 @@ permissions:
 
 jobs:
   sync:
-    # Requires the default branch to be zh-cn (scheduled workflows only run
-    # from the default branch).
     permissions:
       contents: write
       issues: write
