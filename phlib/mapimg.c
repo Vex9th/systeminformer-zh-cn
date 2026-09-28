@@ -35,6 +35,7 @@ NTSTATUS PhInitializeMappedImage(
     PIMAGE_NT_HEADERS ntHeaders;
     ULONG_PTR dosHeaderOffset;
     ULONG_PTR ntHeadersOffset;
+    ULONG directoryOffset;
 
     memset(MappedImage, 0, sizeof(PH_MAPPED_IMAGE));
     MappedImage->ViewBase = ViewBase;
@@ -83,10 +84,12 @@ NTSTATUS PhInitializeMappedImage(
 
     __try
     {
+        // Through Magic, not up to it: the checks below read Magic before SizeOfOptionalHeader has
+        // said whether an optional header is there at all.
         PhMappedImageProbe(
             MappedImage,
             ntHeaders,
-            UFIELD_OFFSET(IMAGE_NT_HEADERS, OptionalHeader)
+            RTL_SIZEOF_THROUGH_FIELD(IMAGE_NT_HEADERS, OptionalHeader.Magic)
             );
         PhMappedImageProbe(
             MappedImage,
@@ -110,6 +113,21 @@ NTSTATUS PhInitializeMappedImage(
         ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC &&
         ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR64_MAGIC
         )
+        return STATUS_INVALID_IMAGE_FORMAT;
+
+    // The magic says which optional header this is, but only SizeOfOptionalHeader says how much of
+    // one the file actually carries, and everything below reads the fields the magic implies.
+
+    if (ntHeaders->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC)
+        directoryOffset = UFIELD_OFFSET(IMAGE_OPTIONAL_HEADER32, DataDirectory);
+    else
+        directoryOffset = UFIELD_OFFSET(IMAGE_OPTIONAL_HEADER64, DataDirectory);
+
+    // The header has to reach NumberOfRvaAndSizes. What that count claims is not judged here:
+    // Windows runs an image claiming more directories than the header carries, so the count is
+    // held to the header where a directory is read rather than refusing the image outright.
+
+    if (ntHeaders->FileHeader.SizeOfOptionalHeader < directoryOffset)
         return STATUS_INVALID_IMAGE_FORMAT;
 
     // Get a pointer to the first section.
@@ -1181,6 +1199,30 @@ NTSTATUS PhGetMappedImageSectionName(
 }
 
 /**
+ * Answers whether a data directory of the given index lies inside the optional header.
+ *
+ * NumberOfRvaAndSizes may claim more directories than SizeOfOptionalHeader carries, and Windows
+ * runs such an image, so the header is what bounds the read.
+ */
+BOOLEAN PhpMappedImageDataDirectoryInHeader(
+    _In_ PPH_MAPPED_IMAGE MappedImage,
+    _In_ ULONG DirectoryOffset,
+    _In_ ULONG Index
+    )
+{
+    ULONG end;
+
+    if (!NT_SUCCESS(RtlULongAdd(Index, 1, &end)))
+        return FALSE;
+    if (!NT_SUCCESS(RtlULongMult(end, sizeof(IMAGE_DATA_DIRECTORY), &end)))
+        return FALSE;
+    if (!NT_SUCCESS(RtlULongAdd(end, DirectoryOffset, &end)))
+        return FALSE;
+
+    return end <= MappedImage->NtHeaders->FileHeader.SizeOfOptionalHeader;
+}
+
+/**
  * Retrieves a data directory from the PE optional header.
  *
  * \param MappedImage A pointer to the mapped image.
@@ -1203,6 +1245,9 @@ NTSTATUS PhGetMappedImageDataDirectory(
 
         optionalHeader = (PIMAGE_OPTIONAL_HEADER32)&MappedImage->NtHeaders32->OptionalHeader;
 
+        if (!PhpMappedImageDataDirectoryInHeader(MappedImage, UFIELD_OFFSET(IMAGE_OPTIONAL_HEADER32, DataDirectory), Index))
+            return STATUS_INVALID_PARAMETER_2;
+
         if (Index >= optionalHeader->NumberOfRvaAndSizes)
             return STATUS_INVALID_PARAMETER_2;
 
@@ -1220,6 +1265,9 @@ NTSTATUS PhGetMappedImageDataDirectory(
         PIMAGE_DATA_DIRECTORY dataDirectory;
 
         optionalHeader = (PIMAGE_OPTIONAL_HEADER64)&MappedImage->NtHeaders->OptionalHeader;
+
+        if (!PhpMappedImageDataDirectoryInHeader(MappedImage, UFIELD_OFFSET(IMAGE_OPTIONAL_HEADER64, DataDirectory), Index))
+            return STATUS_INVALID_PARAMETER_2;
 
         if (Index >= optionalHeader->NumberOfRvaAndSizes)
             return STATUS_INVALID_PARAMETER_2;
@@ -2498,6 +2546,32 @@ NTSTATUS PhGetMappedImageExports(
 }
 
 /**
+ * Answers whether a string in the mapped view terminates before the view ends.
+ *
+ * \param MappedImage A pointer to the mapped image.
+ * \param String A pointer inside the mapped view.
+ * \return TRUE when the string terminates inside the view.
+ */
+BOOLEAN PhpMappedImageStringTerminates(
+    _In_ PPH_MAPPED_IMAGE MappedImage,
+    _In_ PCSTR String
+    )
+{
+    PCSTR end;
+    PCSTR i;
+
+    end = PTR_ADD_OFFSET(MappedImage->ViewBase, MappedImage->ViewSize);
+
+    for (i = String; i < end; i++)
+    {
+        if (*i == ANSI_NULL)
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**
  * Retrieves information about a specific export entry by index.
  *
  * \param Exports A pointer to the export information structure.
@@ -2548,7 +2622,9 @@ NTSTATUS PhGetMappedImageExportEntry(
         if (!NT_SUCCESS(status))
             return status;
 
-        // TODO: Probe the name.
+        // Every caller reads this as a string, so it has to end inside the view.
+        if (!PhpMappedImageStringTerminates(Exports->MappedImage, name))
+            return STATUS_INVALID_IMAGE_FORMAT;
 
         Entry->Name = name;
         Entry->Hint = nameIndex;
@@ -2576,6 +2652,7 @@ ULONG PhLookupMappedImageExportName(
     _In_ PCSTR Name
     )
 {
+    SIZE_T length;
     LONG low;
     LONG high;
     LONG i;
@@ -2583,12 +2660,14 @@ ULONG PhLookupMappedImageExportName(
     if (Exports->ExportDirectory->NumberOfNames == 0)
         return ULONG_MAX;
 
+    length = strlen(Name) + sizeof(ANSI_NULL);
     low = 0;
     high = Exports->ExportDirectory->NumberOfNames - 1;
 
     do
     {
         PCSTR name;
+        SIZE_T remaining;
         INT comparison;
 
         i = (low + high) / 2;
@@ -2601,9 +2680,19 @@ ULONG PhLookupMappedImageExportName(
             return ULONG_MAX;
         }
 
-        // TODO: Probe the name.
+        // The name lives in the image and need not terminate inside the view, so the comparison is
+        // bounded by what is mapped rather than by a terminator that may not be there.
+        remaining = (SIZE_T)PTR_SUB_OFFSET(
+            PTR_ADD_OFFSET(Exports->MappedImage->ViewBase, Exports->MappedImage->ViewSize),
+            name
+            );
 
-        comparison = strcmp(Name, name);
+        comparison = strncmp(Name, name, remaining);
+
+        // A name the view cuts short is not the name that was asked for, however far the two agree;
+        // what is mapped is a prefix of it, and a prefix sorts before it.
+        if (comparison == 0 && remaining < length)
+            comparison = 1;
 
         if (comparison == 0)
             return i;
@@ -3765,6 +3854,52 @@ static NTSTATUS PhpProbeMappedImageResourceDataEntry(
 }
 
 /**
+ * Resolves the bytes a resource data entry points at.
+ *
+ * \param MappedImage The mapped image.
+ * \param DataEntry The resource data entry.
+ * \param ResourceLength A variable which receives the length of the resource.
+ * \param ResourceBuffer A variable which receives a pointer to the resource.
+ * \return NTSTATUS Successful or errant status.
+ * \remarks Both the offset and the size come from the image, so the span they describe is checked
+ * against the view before either is handed back. Neither output is written unless both hold.
+ */
+static NTSTATUS PhpGetMappedImageResourceData(
+    _In_ PPH_MAPPED_IMAGE MappedImage,
+    _In_ PIMAGE_RESOURCE_DATA_ENTRY DataEntry,
+    _Out_opt_ ULONG* ResourceLength,
+    _Out_opt_ PVOID* ResourceBuffer
+    )
+{
+    NTSTATUS status;
+    PVOID buffer;
+    ULONG_PTR offset;
+    ULONG_PTR end;
+
+    status = PhMappedImageRvaToVa(MappedImage, DataEntry->OffsetToData, &buffer);
+
+    if (!NT_SUCCESS(status))
+        return status;
+
+    offset = (ULONG_PTR)PTR_SUB_OFFSET(buffer, MappedImage->ViewBase);
+
+    status = RtlULongPtrAdd(offset, DataEntry->Size, &end);
+
+    if (!NT_SUCCESS(status))
+        return status;
+
+    if (end > MappedImage->ViewSize)
+        return STATUS_INVALID_IMAGE_FORMAT;
+
+    if (ResourceLength)
+        *ResourceLength = DataEntry->Size;
+    if (ResourceBuffer)
+        *ResourceBuffer = buffer;
+
+    return STATUS_SUCCESS;
+}
+
+/**
  * Searches a resource directory for a given name or ID using binary search.
  *
  * \param MappedImage The MappedImage parameter.
@@ -4338,17 +4473,12 @@ NTSTATUS PhGetMappedImageResource(
                     continue;
                 }
 
-                if (ResourceLength)
-                {
-                    *ResourceLength = resourceData->Size;
-                }
-
-                if (ResourceBuffer)
-                {
-                    PhMappedImageRvaToVa(MappedImage, resourceData->OffsetToData, ResourceBuffer);
-                }
-
-                return STATUS_SUCCESS;
+                return PhpGetMappedImageResourceData(
+                    MappedImage,
+                    resourceData,
+                    ResourceLength,
+                    ResourceBuffer
+                    );
             }
         }
     }
@@ -4529,18 +4659,15 @@ NTSTATUS PhGetMappedImageResourceBinarySearch(
         if (!NT_SUCCESS(status))
             return status;
 
-        if (ResourceLength)
-        {
-            *ResourceLength = resourceData->Size;
-        }
-
-        if (ResourceBuffer)
-        {
-            PhMappedImageRvaToVa(MappedImage, resourceData->OffsetToData, ResourceBuffer);
-        }
+        status = PhpGetMappedImageResourceData(
+            MappedImage,
+            resourceData,
+            ResourceLength,
+            ResourceBuffer
+            );
     }
 
-    return STATUS_SUCCESS;
+    return status;
 }
 
 /**
@@ -4565,7 +4692,6 @@ NTSTATUS PhGetMappedImageResourceIndex(
 {
     ULONG resourceIndex;
     ULONG resourceCount;
-    PVOID resourceBuffer;
     PIMAGE_RESOURCE_DIRECTORY nameDirectory;
     PIMAGE_RESOURCE_DIRECTORY languageDirectory;
     PIMAGE_RESOURCE_DIRECTORY_ENTRY resourceType;
@@ -4629,13 +4755,8 @@ NTSTATUS PhGetMappedImageResourceIndex(
     if (!resourceData)
         return STATUS_RESOURCE_DATA_NOT_FOUND;
 
-    if (!NT_SUCCESS(PhMappedImageRvaToVa(MappedImage, resourceData->OffsetToData, &resourceBuffer)))
+    if (!NT_SUCCESS(PhpGetMappedImageResourceData(MappedImage, resourceData, ResourceLength, ResourceBuffer)))
         return STATUS_RESOURCE_DATA_NOT_FOUND;
-
-    if (ResourceLength)
-        *ResourceLength = resourceData->Size;
-    if (ResourceBuffer)
-        *ResourceBuffer = resourceBuffer;
 
     // if (LDR_IS_IMAGEMAPPING(ImageBaseAddress))
     // PhLoaderEntryImageRvaToVa(ImageBaseAddress, resourceData->OffsetToData, resourceBuffer);
@@ -5519,7 +5640,8 @@ NTSTATUS PhGetMappedImageDebug(
     Debug->MappedImage = MappedImage;
     Debug->DataDirectory = dataDirectory;
     Debug->DebugDirectory = debugDirectory;
-    Debug->NumberOfEntries = currentCount;
+    // The walk stops at the first entry that is not there, so what was filled is what may be read.
+    Debug->NumberOfEntries = (ULONG)PhFinalArrayCount(&debugEntryArray);
     Debug->DebugEntries = PhFinalArrayItems(&debugEntryArray);
 
     return status;
