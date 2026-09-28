@@ -1,6 +1,7 @@
 /* 上游修复的原生行为回归：使用畸形 PE 和真实设置表。 */
 #include "tests.h"
 #include <mapimg.h>
+#include <guisup.h>
 #include <settings.h>
 #include <stdio.h>
 #include <stdlib.h>
