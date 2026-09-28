@@ -22,6 +22,7 @@ static VOID TestOptionalHeader(BOOLEAN Is64)
     PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)(bytes + 128);
     PH_MAPPED_IMAGE image;
     PIMAGE_DATA_DIRECTORY directory;
+    PIMAGE_DATA_DIRECTORY directories;
     USHORT offset = Is64 ? FIELD_OFFSET(IMAGE_OPTIONAL_HEADER64, DataDirectory) :
         FIELD_OFFSET(IMAGE_OPTIONAL_HEADER32, DataDirectory);
 
@@ -38,6 +39,11 @@ static VOID TestOptionalHeader(BOOLEAN Is64)
         ((PIMAGE_OPTIONAL_HEADER64)&nt->OptionalHeader)->NumberOfRvaAndSizes = 16;
     else
         ((PIMAGE_OPTIONAL_HEADER32)&nt->OptionalHeader)->NumberOfRvaAndSizes = 16;
+    directories = (PIMAGE_DATA_DIRECTORY)((PBYTE)&nt->OptionalHeader + offset);
+    directories[0].VirtualAddress = 0x1000;
+    directories[0].Size = 4;
+    directories[1].VirtualAddress = 0x2000;
+    directories[1].Size = 4;
     CHECK(NT_SUCCESS(PhInitializeMappedImage(&image, bytes, 1024)));
     CHECK(NT_SUCCESS(PhGetMappedImageDataDirectory(&image, 0, &directory)));
     CHECK(!NT_SUCCESS(PhGetMappedImageDataDirectory(&image, 1, &directory)));
@@ -109,8 +115,94 @@ static VOID TestSettingsGrowth(VOID)
     CHECK(PhGetIntegerSetting(L"BackportCachedSetting") == 42);
     PhAddSetting(IntegerSettingType, &name, &value);
     CHECK(PhGetIntegerSetting(L"BackportCachedSetting") == 42);
-    PhResetSettings();
+    PhResetSettings(NULL);
     CHECK(PhGetIntegerSetting(L"BackportCachedSetting") == 1);
+}
+
+static VOID TestResourceBounds(VOID)
+{
+    PBYTE bytes = PhAllocateZero(1024);
+    PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)bytes;
+    PIMAGE_NT_HEADERS32 nt = (PIMAGE_NT_HEADERS32)(bytes + 128);
+    PIMAGE_SECTION_HEADER section;
+    PIMAGE_RESOURCE_DATA_ENTRY data = (PIMAGE_RESOURCE_DATA_ENTRY)(bytes + 584);
+    PH_MAPPED_IMAGE image;
+    PVOID buffer;
+    ULONG length;
+
+    dos->e_magic = IMAGE_DOS_SIGNATURE;
+    dos->e_lfanew = 128;
+    nt->Signature = IMAGE_NT_SIGNATURE;
+    nt->FileHeader.SizeOfOptionalHeader = sizeof(IMAGE_OPTIONAL_HEADER32);
+    nt->FileHeader.NumberOfSections = 1;
+    nt->OptionalHeader.Magic = IMAGE_NT_OPTIONAL_HDR32_MAGIC;
+    nt->OptionalHeader.NumberOfRvaAndSizes = 16;
+    nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress = 0x1000;
+    nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size = 88;
+    section = IMAGE_FIRST_SECTION(nt);
+    section->VirtualAddress = 0x1000;
+    section->PointerToRawData = 512;
+    section->SizeOfRawData = 512;
+    for (ULONG i = 0; i < 3; i++)
+    {
+        PIMAGE_RESOURCE_DIRECTORY dir = (PIMAGE_RESOURCE_DIRECTORY)(bytes + 512 + i * 24);
+        PIMAGE_RESOURCE_DIRECTORY_ENTRY entry = (PIMAGE_RESOURCE_DIRECTORY_ENTRY)(dir + 1);
+        dir->NumberOfIdEntries = 1;
+        entry->Id = i == 0 ? 16 : (i == 1 ? 1 : 1033);
+        entry->OffsetToData = (i + 1) * 24;
+        entry->DataIsDirectory = i < 2;
+    }
+    data->OffsetToData = 0x11fc;
+    data->Size = 4;
+    CHECK(NT_SUCCESS(PhInitializeMappedImage(&image, bytes, 1024)));
+    CHECK(NT_SUCCESS(PhGetMappedImageResource(&image, MAKEINTRESOURCE(1), RT_VERSION, 1033, &length, &buffer)));
+    CHECK(length == 4 && buffer == bytes + 1020);
+    data->Size = 5;
+    length = 123;
+    buffer = NULL;
+    CHECK(!NT_SUCCESS(PhGetMappedImageResource(&image, MAKEINTRESOURCE(1), RT_VERSION, 1033, &length, &buffer)));
+    CHECK(length == 123 && buffer == NULL);
+    CHECK(!NT_SUCCESS(PhGetMappedImageResourceBinarySearch(&image, MAKEINTRESOURCE(1), RT_VERSION, 1033, &length, &buffer)));
+    PhFree(bytes);
+}
+
+static VOID TestEmptyFileQuery(VOID)
+{
+    WCHAR temp[MAX_PATH];
+    WCHAR path[MAX_PATH];
+    HANDLE handle;
+    PVOID streams = NULL;
+    NTSTATUS status;
+    DWORD length = GetTempPath(RTL_NUMBER_OF(temp), temp);
+
+    CHECK(length > 0 && length < RTL_NUMBER_OF(temp));
+    if (!length || length >= RTL_NUMBER_OF(temp))
+        return;
+    if (swprintf_s(path, RTL_NUMBER_OF(path), L"%sphlib-backport-%lu-%llu",
+        temp, GetCurrentProcessId(), GetTickCount64()) < 0)
+    {
+        CHECK(FALSE);
+        return;
+    }
+    // 每次测试独占一个空目录，不读取或清理用户文件。
+    if (!CreateDirectory(path, NULL))
+    {
+        CHECK(FALSE);
+        return;
+    }
+    handle = CreateFile(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    CHECK(handle != INVALID_HANDLE_VALUE);
+    if (handle != INVALID_HANDLE_VALUE)
+    {
+        status = PhEnumFileStreams(handle, &streams);
+        CHECK(status == STATUS_NO_MORE_ENTRIES);
+        CHECK(streams == NULL);
+        if (streams)
+            PhFree(streams);
+        CloseHandle(handle);
+    }
+    CHECK(RemoveDirectory(path));
 }
 
 VOID Test_backports(VOID)
@@ -118,6 +210,8 @@ VOID Test_backports(VOID)
     TestOptionalHeader(FALSE);
     TestOptionalHeader(TRUE);
     TestExportNames();
+    TestResourceBounds();
+    TestEmptyFileQuery();
     TestSettingsGrowth();
     printf("Backport regressions: %lu failures\n", Failures);
     fflush(stdout);
