@@ -14,6 +14,8 @@
 
 #include <ph.h>
 
+VOID Test_backports(VOID);
+
 VOID Test_basesup(
     VOID
     );

@@ -24,6 +24,7 @@ int __cdecl wmain(int argc, wchar_t *argv[])
     Test_format();
     Test_util();
     Test_resource();
+    Test_backports();
 
     return 0;
 }

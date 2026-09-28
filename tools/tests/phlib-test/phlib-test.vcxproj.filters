@@ -17,6 +17,9 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="t_backports.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="t_basesup.c">
       <Filter>Source Files</Filter>
     </ClCompile>
